@@ -1,9 +1,15 @@
 % mgstat_binary : returns the path to the binary gstat
 function gstat=mgstat_binary;
-  % gstat='/home/tmh/RESEARCH/PROGRAMMING/mGstat/gstat/gstat';
-  % gstat='c:\thomas\Programming\mGstat\gstat.exe';
+  
+% YOU CAN EITHER SPECIFY THE PATH TO GSTAT HERE BELOW
   gstat='';
-    
+% gstat='/home/tmh/RESEARCH/PROGRAMMING/mGstat/gstat/gstat';
+% gstat='c:\thomas\Programming\mGstat\gstat.exe';
+  
+% IF THE gstat VARAIABLE IS ÆEFT EMPTY(DEFAULT)
+% IT WILL BE LOCATED ON YOUR SYSTEM IF THE 
+% GSTAT EXECUTABLE IS SOMEWEHRE IN THE PATH
+
   if isempty(gstat)  
     if isunix
       [s,w]=system('which gstat');
@@ -29,10 +35,16 @@ function gstat=mgstat_binary;
     end
   end
   
- % gstat='/home/tmh/RESEARCH/PROGRAMMING/mGstat/gstat/gstat';
   
   if isempty(gstat)  
-    mgstat_verbose(sprintf('COULD NOT FIND GSTAT EXECUTABLE !! edit -> %s',mfilename),-1);
+    mgstat_verbose('--------------------------------------------------',-1);
+    mgstat_verbose('FATAL ERROR !!! ----------------------------------',-1);
+
+    mgstat_verbose('COULD NOT FIND GSTAT EXECUTABLE ',-1);
+    mgstat_verbose(sprintf('Please edit ''%s.m'' to point to the',mfilename),-1);
+    mgstat_verbose('the location of gstat or put gstat somewhere',-1);
+    mgstat_verbose('in the system path !',-1);
+    mgstat_verbose('--------------------------------------------------',-1);
     gstat='';
     return;
   end
