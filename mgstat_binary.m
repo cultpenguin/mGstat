@@ -1,7 +1,7 @@
 % mgstat_binary : returns the path to the binary gstat
 function gstat=mgstat_binary;
-  gstat='/home/tmh/RESEARCH/PROGRAMMING/mGstat/gstat/gstat';
-  % gstat='';
+  % gstat='/home/tmh/RESEARCH/PROGRAMMING/mGstat/gstat/gstat';
+  gstat='c:\thomas\Programming\mGstat\gstat.exe';
   
   if isempty(gstat)  
     if isunix

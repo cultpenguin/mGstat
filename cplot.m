@@ -10,7 +10,7 @@ function cplot(x,y,z,cax,MarkerSize,cmap)
   if exist('MarkerSize')==0, MarkerSize=35; end
   if exist('cmap')==0, cmap=colormap; end
 
-  dMS=0.9;
+  dMS=0.8;
   
   nc=size(cmap,1);
   
