@@ -9,11 +9,13 @@ function [data,header]=read_eas(filename);
    txt_title=fgetl(fid);
 
    disp(txt_title);
-   
-   nc=str2num(fgetl(fid));
-   
-
-   
+   l=fgetl(fid);
+   % next 3 lines to satisfy sisim.f
+   if  isempty(str2num(l))
+     l=fgetl(fid);
+   end
+   nc=str2num(l);
+      
    for i=1:nc,
      header{i}=fgetl(fid);
    end

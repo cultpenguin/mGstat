@@ -44,7 +44,7 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     if isempty(V)
       d=sqrt(x.^2+y.^2);e=max(d)./10;
       V=sprintf('0.3 Nug(0) + 1 Sph(%6.2f)',e);
-      V=semivar_optim([x y],val,linspace(0,nanmean(d),20),V,1);
+      %V=semivar_optim([x y],val,linspace(0,nanmean(d),20),V,1);
       figure,
     end
   end
@@ -58,7 +58,7 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     %y_arr=[.9*min(y):dx:max(y)*1.1];
     
     % THE FOLLOWING LINES SET NX=100
-    nx=15;
+    nx=100
     wx=(max(x)-min(x))*.1;
     x_arr=linspace(min(x)-wx,max(x)+wx,nx);
     dx=x_arr(2)-x_arr(1);
