@@ -1,4 +1,4 @@
-March 18, 2004 : mgstat_krig2d sometimes returns bad results when the input coordinates are not transformed like x=(x-mean(x))./std(x). This should be handles internally by mgstat.
+March 18, 2003 : mgstat_krig should be implemented, to allow easy kriging of point data.
 
-March 18, 2003 : mgstat_krig3d shuld be implemented in a manner similar to mgstat_krig2d.
+March 18, 2003 : mgstat_krig3d sohuld be implemented, to allow easy kriging of 3D data.
 

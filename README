@@ -1,0 +1,15 @@
+0.1 (2004-03-19) : Initial Release
+I read somewhepoint data. in a manner similar to mgstat_krig2d. 'release early and release often'. So. I will honor the first part of the statement by releasing mGstat very early.
+
+Currently mGstat contains the framework to read and write gstat parameter files, and m-files to read and write data suitable for gstat.
+Also, it contains mgstat_krig2d that should make it easy to perform 2d kriging from within Matlab.
+
+To use mGstat :
+* Download gstat and put it somewhere in your path (or manually edit mgstat_binary.m to point to the executable).
+* Add a path to mGstat and the examples directory from withing Matlab. If you unpack mGstat to /home/tmh/mGstat do :
+>> addpath /home/tmh/mGstat
+>> addpath /home/tmh/mGstat/examples
+and you are ready to run
+
+http://www.gfy.ku.dk/~tmh/mgstat/ will contain some examples of what you can do.
+Email questions to tmh@gfy.ku.dk
