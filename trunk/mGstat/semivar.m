@@ -1,8 +1,10 @@
 % semivar : calcualte semivariogram
 %
-% [binc,sv,svM]=semivar(loc,val,bin_array);
+% [binc,sv,bin_array,svM]=semivar(loc,val,bin_array);
 %
-function [binc,sv,svM]=semivar(loc,val,bin_array);
+% loc : [ndim,n]
+%
+function [binc,sv,bin_array,svM]=semivar(loc,val,bin_array);
 
   ndata=size(loc,1);  
   ndim_loc=size(loc,2);
@@ -36,7 +38,7 @@ function [binc,sv,svM]=semivar(loc,val,bin_array);
   
   if nargin==2,
     % NO BIN ARRAY DEFINED
-    bin_array=linspace(0,max(dist)./2,10);
+    bin_array=linspace(0,max(dist_array)./2,10);
   end
   nbins=length(bin_array)-1;
   binc=(bin_array(1:nbins)+bin_array(2:nbins+1))./2;
