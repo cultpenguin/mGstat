@@ -53,8 +53,8 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
 
     x_arr=[1:1:nx]*dx;    y_arr=[1:1:ny]*dy;
             
-    % ntestdata=120;
-    ntestdata=20;
+    ntestdata=120;
+
     x=rand(ntestdata,1)*(ix-1)+1;
     y=rand(ntestdata,1)*(iy-1)+1;
     [xx,yy]=meshgrid(x_arr,y_arr);
