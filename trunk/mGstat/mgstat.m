@@ -30,7 +30,8 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
         mgstat_convert(G.predictions{ip}.file);
         
         if exist(G.predictions{ip}.file)==2;
-          [pred{ip},x,y,dx,nanval]=read_gstat_ascii([G.predictions{ip}.file,'.ascii']);
+          % [pred{ip},x,y,dx,nanval]=read_gstat_ascii([G.predictions{ip}.file,'.ascii']);
+          [pred{ip},x,y,dx,nanval]=read_arcinfo_ascii([G.predictions{ip}.file,'.ascii']);
         else
           pred{ip}=[];mgstat_verbose(sprintf('Cannot find "%s"',G.predictions{ip}.file));
         end
@@ -49,7 +50,8 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
         mgstat_convert(G.variances{ip}.file);
         
         if exist(G.variances{ip}.file)==2;
-          [pred_var{ip},x,y,dx,nanval]=read_gstat_ascii([G.variances{ip}.file,'.ascii']);
+          % [pred_var{ip},x,y,dx,nanval]=read_gstat_ascii([G.variances{ip}.file,'.ascii']);
+          [pred_var{ip},x,y,dx,nanval]=read_arcinfo_ascii([G.variances{ip}.file,'.ascii']);
         else
           pred_var{ip}=[];mgstat_verbose(sprintf('Cannot find "%s"',G.variances{ip}.file));
         end
@@ -67,7 +69,8 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
         mgstat_convert(G.covariances{ip}.file);
         
         if exist(G.covariances{ip}.file)==2;
-          [pred_covar{ip},x,y,dx,nanval]=read_gstat_ascii([G.covariances{ip}.file,'.ascii']);
+          % [pred_covar{ip},x,y,dx,nanval]=read_gstat_ascii([G.covariances{ip}.file,'.ascii']);
+          [pred_covar{ip},x,y,dx,nanval]=read_arcinfo_ascii([G.covariances{ip}.file,'.ascii']);
         else
           pred_covar{ip}=[];mgstat_verbose(sprintf('Cannot find "%s"',G.covariances{ip}.file));
         end
@@ -86,7 +89,8 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
         mgstat_convert(G.mask{ip}.file);
         
         if exist(G.mask{ip}.file)==2;
-          [mask{ip},x,y,dx,nanval]=read_gstat_ascii([G.mask{ip}.file,'.ascii']);
+          % [mask{ip},x,y,dx,nanval]=read_gstat_ascii([G.mask{ip}.file,'.ascii']);
+          [mask{ip},x,y,dx,nanval]=read_arcinfo_ascii([G.mask{ip}.file,'.ascii']);
         else
           mask{ip}=[];mgstat_verbose(sprintf('Cannot find "%s"',G.mask{ip}.file));
         end

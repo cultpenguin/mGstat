@@ -21,8 +21,8 @@
 %   write_gstat_par   - write gstat parameter file
 %   read_eas          - read EAS ascii formatted files
 %   write_eas         - write EAS ascii formatted files
-%   read_gstat_ascii  - read GSTAT ascii formatted files
-%   write_gstat_ascii - write GSTAT ascii formatted files
+%   read_arcinfo_ascii  - read ARCINFO ascii formatted files
+%   write_arcinfo_ascii - write ARCINFO ascii formatted files
 % PLOT 
 %   cplot       - plot data as dots in specific colormap
 % MISC 

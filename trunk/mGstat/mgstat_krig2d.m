@@ -69,7 +69,7 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     %ntestdata=round(10+20*rand);
     % SHOW DEMO
     mgstat_verbose(sprintf('%s : No Input Pars Given -> Running demo;',mfilename),1)
-    rseed=4;  dx=1;dy=dx;  ax=110;ay=ax;  nx=250;ny=500;  ix=nx*dx;  iy=ny*dy;
+    rseed=4;  dx=1;dy=dx;  ax=10;ay=ax;  nx=45;ny=100;  ix=nx*dx;  iy=ny*dy;
     pop=1;    med=1;  nu=.7;
     mgstat_verbose(sprintf('%s : Calculating random field.',mfilename),1)
     data=vonk2d(rseed,dx,dy,ax,ay,ix,iy,pop,med,nu);
@@ -77,14 +77,14 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     x_arr=[1:1:nx]*dx;    y_arr=[1:1:ny]*dy;
 
     ntestdata=42;
-    x=rand(ntestdata,1)*(ix-1)+1;
-    y=rand(ntestdata,1)*(iy-1)+1;
+    x=round(rand(ntestdata,1)*(ix-1)+1);
+    y=round(rand(ntestdata,1)*(iy-1)+1);
     [xx,yy]=meshgrid(x_arr,y_arr);
     val=interp2(xx,yy,data,x,y);
         
     %V=('0.3 Nug(0) + 1 Gau(100)');
     V=('7.6 Lin(62)');
-    V=semivar_optim([x y],val,linspace(0,130,20),V,1);
+    % V=semivar_optim([x y],val,linspace(0,130,20),V,1);
     figure;
 
   end
@@ -134,7 +134,8 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
   % mask
   mask=zeros(ny,nx).*0+1;
   mask_file='krig2d_mask.ascii';
-  write_gstat_ascii(mask_file,mask,x_arr,y_arr,-9999);
+  % write_gstat_ascii(mask_file,mask,x_arr,y_arr,-9999);
+  write_arcinfo_ascii(mask_file,mask,x_arr,y_arr,-9999);
   G.mask{1}.file=mask_file;
 
   % Predictions
