@@ -68,7 +68,7 @@ function [gamma,h]=synthetic_variogram(V,h)
     gamma=h.^v2;
   elseif strmatch(type,'Exp')
     mgstat_verbose(type,12);
-    gamma=1-exp(-h/v2);
+    gamma=v1.*(1-exp(-h/v2));
   else
     mgstat_verbose(sprintf('%s : ''%s'' type is not recognized',mfilename,type),-1);
   end
