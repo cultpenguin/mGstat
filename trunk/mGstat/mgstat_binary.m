@@ -1,7 +1,7 @@
 % mgstat_binary : returns the path to the binary gstat
 function gstat=mgstat_binary;
   
-gstat='';    
+gstat='/usr/local/bin/gstat';    
 % YOU CAN EITHER SPECIFY THE PATH TO GSTAT HERE BELOW
 %  gstat='/home/tmh/bin/gstat-2.4.0';
 %  gstat='/home/tmh/bin/gstat-2.4.3/src/gstat';
