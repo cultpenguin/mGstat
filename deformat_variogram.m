@@ -69,9 +69,15 @@ function V=deformat_variogram(txt);
 			itype=3;
 		elseif (strcmp(type,'Exp'))
 			itype=4;
+		elseif (strcmp(type,'Log'))
+			itype=5;
 		elseif (strcmp(type,'Lin'))
+			itype=6;
+		elseif (strcmp(type,'Pow'))
+			itype=7;
+		else 
 			disp(['Unknown type : ',type])
-			V(ivar).itype=5;			
+			itype=8;			
 		end
 		
 		% disp(sprintf('par1=%5.1f par2=%5.1f type=%4s itype=%d',par1,par2,type,itype))

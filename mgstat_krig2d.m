@@ -162,8 +162,8 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     if nargin==0,
       if nx<ny,subplot(1,3,1),else,subplot(3,1,1);end
       
-      imagesc(data);axis image
-      %contourf(data,linspace(min(val),max(val),10));axis image
+      imagesc(data);%axis image
+      %contourf(data,linspace(min(val),max(val),10));%axis image
       caxis([min(val) max(val)]);
       title('Orig Data');colorbar
 
@@ -176,12 +176,12 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     else
       if nx<ny,subplot(1,2,1),else,subplot(2,1,1);end
     end
-    imagesc(x_arr,y_arr,pred);axis image
-    %contourf(x_arr,y_arr,pred,linspace(min(val),max(val),10));axis image    
+    imagesc(x_arr,y_arr,pred);%axis image
+    %contourf(x_arr,y_arr,pred,linspace(min(val),max(val),10));%axis image    
     caxis([min(val) max(val)]);cax=caxis;
     hold on;cplot(x,y,val,[],29);hold off;
     title('Predictions');colorbar
-    axis image
+    %axis image
     
     if nargin==0
       if nx<ny,subplot(1,3,3),else,subplot(3,1,3);end
@@ -191,7 +191,7 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     imagesc(x_arr,y_arr,pred_var)
     hold on;plot(x,y,'k.','MarkerSize',10);hold off;
     title('Variances');colorbar
-    axis image
+    %axis image
 
     set(findobj('type','axes'),'FontSize',7)
 
