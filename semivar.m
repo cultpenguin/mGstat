@@ -1,10 +1,14 @@
 % semivar : calcualte semivariogram
+%
+% [binc,sv,svM]=semivar(loc,val,bin_array);
+%
 function [binc,sv,svM]=semivar(loc,val,bin_array);
 
   ndata=size(loc,1);  
   ndim_loc=size(loc,2);
   ndim_val=size(loc,2);
-  
+
+ 
   ndd=0;
   for i=(ndata-1):-1:1,
     ndd=ndd+i;
@@ -59,23 +63,12 @@ function [binc,sv,svM]=semivar(loc,val,bin_array);
     
   end
   
-  [ax,h1,h2]=plotyy(binc,sv,binc,sv2) ;
-  set(ax(1),'ylim',[0 1.1*max(sv)])
-  set(ax(2),'ylim',[0 1.1*max(sv2)])
-
-  set(get(ax(1),'Ylabel'),'String','mean')
-  set(get(ax(2),'Ylabel'),'String','log-mean')
-  
-  return
-  
-  subplot(1,2,1)
-  plot(binc,[sv],'*');
-  ax=axis;
-  axis([0 max(bin_array) 0 max(sv).*1.1])  
-  
-  subplot(1,2,2)
-  plot(binc,[sv2],'*');
-  ax=axis;
-  axis([0 max(bin_array) 0 max(sv2).*1.1])  
-  
-  
+  doPlot=0;
+  if doPlot==1,
+    [ax,h1,h2]=plotyy(binc,sv,binc,sv2) ;
+    set(ax(1),'ylim',[0 1.1*max(sv)])
+    set(ax(2),'ylim',[0 1.1*max(sv2)])
+    
+    set(get(ax(1),'Ylabel'),'String','mean')
+    set(get(ax(2),'Ylabel'),'String','log-mean')
+  end
