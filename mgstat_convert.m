@@ -1,4 +1,7 @@
 % mgstat_convert : convert between ascii/binary formats
+%
+%  CALL : [data,x,y,dx,nanval]=mgstat_convert(file,f,suf)
+%
 function [data,x,y,dx,nanval]=mgstat_convert(file,f,suf)
 
   data=[];x=[];y=[];dx=[];nanval=[];

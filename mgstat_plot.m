@@ -11,13 +11,21 @@ function mgstat_plot(G,MarkerSize,cax);
   if nargin==1,
     MarkerSize=1;
   end
-  
-  if ~isstruct(G)
+
+  if isstruct(G)==1,
+    gstat_filename=write_gstat_par(G);
     [p,v,c,mask,G]=mgstat(G);
   else
-    parfile=write_gstat_par(G);
-    [p,v,c,mask,G]=mgstat(parfile);
+    gstat_filename=G;
+    [p,v,c,mask,G]=mgstat(G);      
   end
+
+%   if ~isstruct(G)
+%     [p,v,c,mask,G]=mgstat(G);
+%   else
+%     parfile=write_gstat_par(G);
+%     [p,v,c,mask,G]=mgstat(parfile);
+%   end
   
   if isfield(G,'predictions')
   for i=1:length(G.predictions);

@@ -50,13 +50,19 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
   end
   
   if ((nargin<5)&(nargin~=0))
-    dx=round((max(x)-min(x))/500);
-    if dx==0, dx=1; end
-    x_arr=[min(x):dx:max(x)];
-    y_arr=[min(y):dx:max(y)];
-    x_arr=linspace(min(x),max(x),180);
-    y_arr=linspace(min(y),max(y),180);
+    dx=round(10*(max(x)-min(x))/100)./10;
+    if dx==0,       
+      dx=1; 
+    end
+    %x_arr=[.9*min(x):dx:max(x)*1.1];
+    %y_arr=[.9*min(y):dx:max(y)*1.1];
     
+    % THE FOLLOWING LINES SET NX=100
+    nx=15;
+    wx=(max(x)-min(x))*.1;
+    x_arr=linspace(min(x)-wx,max(x)+wx,nx);
+    dx=x_arr(2)-x_arr(1);
+    y_arr=[min(y)-wx:dx:max(y)+wx];
   end
   
   if nargin==0,
@@ -86,7 +92,9 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
   if (size(x,2)~=1), x=x(:); end
   if (size(y,2)~=1), y=y(:); end
   if (size(val,2)~=1), val=val(:); end
-    
+  
+  x=x(:); y=y(:); val=val(:);
+  
   nx=length(x_arr);ny=length(y_arr);
   
   % Obs FILE
@@ -108,6 +116,12 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
   G.data{1}.x=1;
   G.data{1}.y=2;
   G.data{1}.v=3;
+  %G.data{1}.min=min(val);
+  %G.data{1}.max=max(val);
+  %% NEXT LINE FOR STABILITY ONLY !!!
+  %G.data{1}.radius=5*max(sqrt((x-nanmean(x)).^2+(y-nanmean(y)).^2));
+  
+  
   
   % variogram
   G.variogram{1}.data=G.data{1}.data;
@@ -116,11 +130,11 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
   else
     G.variogram{1}.V=deformat_variogram(V);
   end
-
+  
   % mask
   mask=zeros(ny,nx).*0+1;
   mask_file='krig2d_mask.ascii';
-  write_gstat_ascii(mask_file,mask',x_arr,y_arr,-9999);
+  write_gstat_ascii(mask_file,mask,x_arr,y_arr,-9999);
   G.mask{1}.file=mask_file;
 
   % Predictions
