@@ -41,7 +41,7 @@ if doTest2
       axis image;drawnow
     end
   end
-  suptitle('Sperical')
+  set(gcf,'Name','Sperical')
   %set(findobj('type','axes'),'FontSize',7)
 end
 

@@ -197,6 +197,8 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
 
     var=format_variogram(G.variogram{1}.V);
     
-    %suptitle(sprintf('Simple 2D Kriging : %s',var));
+
+    % suptitle(sprintf('Simple 2D Kriging : %s',var));
+    set(gcf,'Name',sprintf('Simple 2D Kriging : %s',var))
 
   end
