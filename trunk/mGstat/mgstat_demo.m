@@ -1,6 +1,10 @@
 
 
-doTest1=0;
+if exist('ex05.cmd')==2
+  doTest1=1;
+else
+  doTest1=0;
+end
 if doTest1
   G=read_gstat_par('ex05.cmd');
   G.mgstat.parfile='demo.cmd';
@@ -88,9 +92,9 @@ if doTest3;
   %G.data{1}.max=ceil(max(obs));
   %G.data{1}.radius=30;
   %G.data{1}.sk_mean=mean(obs);
-
   % variogram
   G.variogram{1}.data=G.data{1}.data;
+  clear V;
   V(1).par1=-2.5;V(1).par2=0;  V(1).type='Nug';
   V(2).par1=59;V(2).par2=157;V(2).type='Sph';
   G.variogram{1}.V=V;
@@ -100,7 +104,7 @@ if doTest3;
   yy=[1:1:ny];
   mask=data.*0+1;
   mask_file='maskdemo.ascii';
-  write_gstat_ascii(mask_file,mask',yy,xx,-9999);
+  write_gstat_ascii(mask_file,mask,xx,yy,-9999);
 
   G.mask{1}.file=mask_file;
   
