@@ -46,6 +46,9 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     if dx==0, dx=1; end
     x_arr=[min(x):dx:max(x)];
     y_arr=[min(y):dx:max(y)];
+    x_arr=linspace(min(x),max(x),180);
+    y_arr=linspace(min(y),max(y),180);
+    
   end
   
   if nargin==0,
@@ -72,7 +75,10 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
 
   end
 
-  
+  if (size(x,2)~=1), x=x(:); end
+  if (size(y,2)~=1), y=y(:); end
+  if (size(val,2)~=1), val=val(:); end
+    
   nx=length(x_arr);ny=length(y_arr);
   
   % Obs FILE
