@@ -39,7 +39,8 @@ function read_eas(filename,data,header,line1);
   end
   
   for id=1:size(data,1),
-    fprintf(fid,'%7.4g   %7.4g   %7.4g ',data(id,:));
+    %fprintf(fid,'%7.4g   %7.4g   %7.4g ',data(id,:));
+    fprintf(fid,'%9.6g   %9.6g   %9.6g ',data(id,:));
     fprintf(fid,'\n');
   end
   

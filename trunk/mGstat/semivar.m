@@ -4,12 +4,11 @@
 %
 % loc : [ndim,n]
 %
-function [binc,sv,bin_array,svM]=semivar(loc,val,bin_array);
+function [binc,sv,bin_array,svM,gamma_array,dist_array]=semivar(loc,val,bin_array);
 
   ndata=size(loc,1);  
   ndim_loc=size(loc,2);
   ndim_val=size(loc,2);
-
  
   ndd=0;
   for i=(ndata-1):-1:1,
@@ -19,6 +18,10 @@ function [binc,sv,bin_array,svM]=semivar(loc,val,bin_array);
   
   dist_array=ones(ndd,1);
   gamma_array=ones(ndd,1);
+
+
+
+  
   
   pos=1;
   for i1=1:ndata-1
@@ -40,6 +43,12 @@ function [binc,sv,bin_array,svM]=semivar(loc,val,bin_array);
     % NO BIN ARRAY DEFINED
     bin_array=linspace(0,max(dist_array)./2,10);
   end
+  
+  if length(bin_array)==1
+    bin_array=linspace(0,max(dist_array)./2,bin_array);
+  end
+  
+  
   nbins=length(bin_array)-1;
   binc=(bin_array(1:nbins)+bin_array(2:nbins+1))./2;
   sv=zeros(1,nbins);
@@ -47,10 +56,7 @@ function [binc,sv,bin_array,svM]=semivar(loc,val,bin_array);
   for i=1:nbins
     ip=find( (dist_array>=bin_array(i))&(dist_array<bin_array(i+1)) );
   
-    %if isempty(ip)
-      g=gamma_array(ip);
-    %else
-    %  g=[];
+    g=gamma_array(ip);
     %end
     
     if isempty(g)

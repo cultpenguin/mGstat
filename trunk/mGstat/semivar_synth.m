@@ -41,8 +41,7 @@ function [gamma,h]=synthetic_variogram(V,h)
   
   if strmatch(type,'Nug')
     mgstat_verbose('Nug',12);
-    gamma(1)=0;
-    gamma(2:length(h))=v1;
+    gamma=h.*0+v1;
     %% SEE GSTAT MANUAL FOR TYPES....
   elseif strmatch(type,'Sph')
     mgstat_verbose('Sph',12);
