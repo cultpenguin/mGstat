@@ -70,20 +70,21 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     % SHOW DEMO
     mgstat_verbose(sprintf('%s : No Input Pars Given -> Running demo;',mfilename),1)
     rseed=4;  dx=1;dy=dx;  ax=10;ay=ax;  nx=45;ny=100;  ix=nx*dx;  iy=ny*dy;
-    pop=1;    med=1;  nu=.7;
+    pop=1;    med=3;  nu=.7;
     mgstat_verbose(sprintf('%s : Calculating random field.',mfilename),1)
     data=vonk2d(rseed,dx,dy,ax,ay,ix,iy,pop,med,nu);
 
     x_arr=[1:1:nx]*dx;    y_arr=[1:1:ny]*dy;
 
-    ntestdata=42;
+    ntestdata=22;
     x=round(rand(ntestdata,1)*(ix-1)+1);
     y=round(rand(ntestdata,1)*(iy-1)+1);
     [xx,yy]=meshgrid(x_arr,y_arr);
     val=interp2(xx,yy,data,x,y);
         
-    %V=('0.3 Nug(0) + 1 Gau(100)');
-    V=('7.6 Lin(62)');
+    V=('0 Nug(0) + 1 Sph(1000000)');
+    %V=('1 Lin(1)');
+    %V=('7.6 Lin(62)');
     % V=semivar_optim([x y],val,linspace(0,130,20),V,1);
     figure;
 
@@ -196,6 +197,6 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
 
     var=format_variogram(G.variogram{1}.V);
     
-    suptitle(sprintf('Simple 2D Kriging : %s',var));
+    %suptitle(sprintf('Simple 2D Kriging : %s',var));
 
   end

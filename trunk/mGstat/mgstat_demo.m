@@ -63,7 +63,7 @@ if doTest3;
   subplot(2,2,1);imagesc(data);axis image
   title('Orig Map')
   
-  ntestdata=200;
+  ntestdata=20;
   x=round(rand(ntestdata,1)*(ix-1)+1);
   y=round(rand(ntestdata,1)*(iy-1)+1);
 

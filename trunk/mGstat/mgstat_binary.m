@@ -23,13 +23,14 @@ gstat='';
       else
         gstat=w(1:length(w)-1);
       end
-    else 
-      [p,f,s]=fileparts(which('mgstat'));
-      if isempty(p),
-        gstat='gstat.exe';
-      else
-        gstat=fullfile(p,'gstat.exe');
-      end
+    else
+			gstat='gstat.exe';
+    %  [p,f,s]=fileparts(which('mgstat'));
+    %  if isempty(p),
+    %    gstat='gstat.exe';
+		%  else
+    %       gstat=fullfile(p,'gstat.exe');
+		%  end
     end
     
     if exist(gstat)==0, 
