@@ -6,11 +6,15 @@ function cplot(x,y,z,cax,MarkerSize,cmap)
 %
 % tmh / 11/2003
 %
+  if nargin>3 
+    if isempty(cax), cax=caxis;end
+  end
+  
   if exist('cax')==0, cax=caxis; end
   if exist('MarkerSize')==0, MarkerSize=35; end
   if exist('cmap')==0, cmap=colormap; end
 
-  dMS=0.8;
+  dMS=0.6;
   
   nc=size(cmap,1);
   

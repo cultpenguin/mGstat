@@ -33,12 +33,20 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     return;
   end
     
-  if ((nargin<4)&(nargin~=0)),
+  if (((nargin<4)&(nargin~=0))),
     d=sqrt(x.^2+y.^2);e=max(d)./10;
     V=sprintf('0.3 Nug(0) + 1 Sph(%6.2f)',e);
     V=semivar_optim([x y],val,linspace(0,nanmean(d),20),V,1);
     figure,
-    
+  end
+  
+  if nargin>4
+    if isempty(V)
+      d=sqrt(x.^2+y.^2);e=max(d)./10;
+      V=sprintf('0.3 Nug(0) + 1 Sph(%6.2f)',e);
+      V=semivar_optim([x y],val,linspace(0,nanmean(d),20),V,1);
+      figure,
+    end
   end
   
   if ((nargin<5)&(nargin~=0))
@@ -112,7 +120,7 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
   % mask
   mask=zeros(ny,nx).*0+1;
   mask_file='krig2d_mask.ascii';
-  write_gstat_ascii(mask_file,mask',y_arr,x_arr,-9999);
+  write_gstat_ascii(mask_file,mask',x_arr,y_arr,-9999);
   G.mask{1}.file=mask_file;
 
   % Predictions
@@ -155,7 +163,7 @@ function [pred,pred_var,x_arr,y_arr,G]=mgstat_krig2d(x,y,val,V,x_arr,y_arr)
     imagesc(x_arr,y_arr,pred);axis image
     %contourf(x_arr,y_arr,pred,linspace(min(val),max(val),10));axis image    
     caxis([min(val) max(val)]);cax=caxis;
-    hold on;cplot(x,y,val,cax,15);hold off;
+    hold on;cplot(x,y,val,[],29);hold off;
     title('Predictions');colorbar
     axis image
     
