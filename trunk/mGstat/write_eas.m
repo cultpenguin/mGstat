@@ -1,0 +1,53 @@
+% write_eas : writes a GEO EAS formatted file into Matlab.
+%
+% Call write_eas(filename,data,header,title);
+%
+% TMH (tmh@gfy.ku.dk)
+%
+function read_eas(filename,data,header,line1);
+  
+  if nargin<1,
+    help write_eas;
+    return;
+  end
+  
+  if nargin==1,
+    data=filename;
+    filename='dummy.eas';;
+    mgstat_verbose(sprintf('%s : Filename not set, using ''%s''.',mfilename,filename),0)
+  end
+ 
+  if nargin<3,
+    for i=1:size(data,2);
+      header{i}=sprintf('col%d, unknown',i);
+    end
+  end
+  
+  if nargin<4,
+    line1=sprintf('Data written by mGstat %s',date);
+  end
+
+  
+  nd=size(data,2);
+  
+  fid=fopen(filename,'w');
+  
+  fprintf(fid,'%s\n',line1);
+  fprintf(fid,'%d\n',nd);
+  for ih=1:nd,
+    fprintf(fid,'%s\n',header{ih});
+  end
+  
+  for id=1:size(data,1),
+    fprintf(fid,'%7.4g   %7.4g   %7.4g ',data(id,:));
+    fprintf(fid,'\n');
+  end
+  
+  fclose(fid);
+  
+  
+  
+  return
+  
+   
+   
