@@ -15,7 +15,7 @@ function V=deformat_variogram(txt);
   fp=regexp(txt,'\+');
   
   nvar=length(fp)+1;
-  disp(sprintf('Found %d variograms',nvar))  
+  % disp(sprintf('Found %d variograms',nvar))  
 
   if  nvar==1,
     ifp_array=[0];
