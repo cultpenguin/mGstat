@@ -21,8 +21,8 @@ function [data,x,y,dx,nanval]=mgstat_convert(file,f,suf)
   end
   
   gstat=mgstat_binary;
-  
-  sysout=system([gstat,' -e convert -f ',f,' ',file,' ',file,suf]);
+	
+	sysout=system([gstat,' -e convert -f ',f,' ',file,' ',file,suf]);
 
   if (nargout>0)&(f=='a');
     % [data,x,y,dx,nanval]=read_gstat_ascii([file,suf]);

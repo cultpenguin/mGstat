@@ -65,8 +65,11 @@ function mgstat_plot(G,MarkerSize,cax);
       hold off
     end
 
-    title(sprintf('%s - %s',G.mgstat.parfile,G.predictions{i}.data),'interpreter','none');
-    
+		if isfield(G,'mgstat')
+			title(sprintf('%s - %s',G.mgstat.parfile,G.predictions{i}.data),'interpreter','none');
+		else
+			title(sprintf('%s',G.predictions{i}.data),'interpreter','none');
+		end
     set(findobj('type','axes'),'FontSize',7)
 
   end
