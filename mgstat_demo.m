@@ -104,7 +104,8 @@ if doTest3;
   yy=[1:1:ny];
   mask=data.*0+1;
   mask_file='maskdemo.ascii';
-  write_gstat_ascii(mask_file,mask,xx,yy,-9999);
+  % write_gstat_ascii(mask_file,mask,xx,yy,-9999);
+  write_arcinfo_ascii(mask_file,mask,xx,yy,-9999);
 
   G.mask{1}.file=mask_file;
   

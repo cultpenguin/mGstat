@@ -43,7 +43,8 @@ function mgstat_plot(G,MarkerSize,cax);
     mgstat_convert(G.predictions{i}.file);
 
     
-    [pred{i},x,y,dx,nanval]=read_gstat_ascii([G.predictions{i}.file,'.ascii']);
+    % [pred{i},x,y,dx,nanval]=read_gstat_ascii([G.predictions{i}.file,'.ascii']);
+    [pred{i},x,y,dx,nanval]=read_arcinfo_ascii([G.predictions{i}.file,'.ascii']);
   
    
     ix=G.data{i}.x; iy=G.data{i}.y; iv=G.data{i}.v;

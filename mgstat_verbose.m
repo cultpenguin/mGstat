@@ -11,7 +11,7 @@ function mgstat_verbose(txt,verbose)
   
   
   
-  vlevel=1; % SHOW ALL VERBOSE INFO ABOVE 1
+  vlevel=2; % SHOW ALL VERBOSE INFO ABOVE 1
   
   if (verbose<=vlevel),
     disp(sprintf('mGstat : %s',txt));
