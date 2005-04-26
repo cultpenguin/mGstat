@@ -2,6 +2,11 @@
 %
 % Call write_eas(filename,data,header,title);
 %
+% filename [string]
+% data [ndata,natts] 
+% header [structure{natts}] : header values for data columns
+% title [string] : optional title for EAS file
+%
 % TMH (tmh@gfy.ku.dk)
 %
 function read_eas(filename,data,header,line1);
@@ -40,7 +45,7 @@ function read_eas(filename,data,header,line1);
   
   for id=1:size(data,1),
     %fprintf(fid,'%7.4g   %7.4g   %7.4g ',data(id,:));
-    fprintf(fid,'%9.6g   %9.6g   %9.6g ',data(id,:));
+    fprintf(fid,'%11.7g   %11.7g   %11.7g ',data(id,:));
     fprintf(fid,'\n');
   end
   

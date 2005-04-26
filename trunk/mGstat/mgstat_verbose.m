@@ -9,8 +9,6 @@ function mgstat_verbose(txt,verbose)
     verbose=10;
   end
   
-  
-  
   vlevel=2; % SHOW ALL VERBOSE INFO ABOVE 1
   
   if (verbose<=vlevel),

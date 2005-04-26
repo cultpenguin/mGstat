@@ -7,7 +7,12 @@
 %    V(2).par1=0.1;V(2).par2=0;V(2).type='Nug';
 %    [sv,d]=semivar_synth(V,[0:.1:6]);plot(d,sv)
 %
-function [sv,d]=semivar_synth(V,d);
+function [sv,d]=semivar_synth(V,d,gstat);
+
+  
+  if nargin<3
+    gstat=0;
+  end
   
   if nargin==0,
     V='5 Nug(0) + 1 Sph(5)'
@@ -25,11 +30,14 @@ function [sv,d]=semivar_synth(V,d);
   sv=zeros(size(d));
   
   for iv=1:length(V),
-    [gamma]=synthetic_variogram(V(iv),d);
-    sv=sv+gamma;
+    [gamma]=synthetic_variogram(V(iv),d,gstat);		
+		sv=sv+gamma;
   end
-  
-function [gamma,h]=synthetic_variogram(V,h)
+ 
+	% Make sure sv(0)=0;
+	sv(find(d<1e-9))=0;
+	
+function [gamma,h]=synthetic_variogram(V,h,gstat)
   
   type=V.type;
   v1=V.par1;
@@ -49,7 +57,11 @@ function [gamma,h]=synthetic_variogram(V,h)
     gamma(s2)=v1;
   elseif strmatch(type,'Gau')
     mgstat_verbose('Gau',12);
-    gamma=v1.*(1-exp(-(h./v2).^2));
+    if gstat==0
+      gamma=v1.*(1-exp(-3*h.^2/v2.^2)); % GSLIB2/Goovaerts
+    else
+      gamma=v1.*(1-exp(-h.^2/v2.^2)); % GSTAT
+    end
   elseif strmatch(type,'Lin')
     mgstat_verbose('Lin',12);
     if v2==0,
@@ -67,7 +79,11 @@ function [gamma,h]=synthetic_variogram(V,h)
     gamma=h.^v2;
   elseif strmatch(type,'Exp')
     mgstat_verbose(type,12);
-    gamma=v1.*(1-exp(-h/v2));
+    if gstat==0
+      gamma=v1.*(1-exp(-3*h./v2)); % GSLIB2/Goovaerts
+    else
+      gamma=v1.*(1-exp(-h./v2)); % GSTAT
+    end
   else
     mgstat_verbose(sprintf('%s : ''%s'' type is not recognized',mfilename,type),-1);
   end

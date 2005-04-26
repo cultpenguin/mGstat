@@ -1,4 +1,4 @@
-% mgstat_plot
+% mgstat_plot : visualize GSTAT results
 %
 % CALL :  mgstat_plot(G,MarkerSize,cax);
 %
@@ -61,7 +61,7 @@ function mgstat_plot(G,MarkerSize,cax);
     end
     if MarkerSize>0
       hold on
-      cplot(data(:,ix),data(:,iy),data(:,iv),cax,MarkerSize);
+      scatter(data(:,ix),data(:,iy),MarkerSize,data(:,iv),'filled');
       hold off
     end
 

@@ -1,5 +1,18 @@
-% write_gstat_par2 : write gstat.par file from Matlab structure
-function filename=write_gstat_par2(G,filename)
+% write_gstat_par : write gstat.par file from Matlab structure
+% 
+% CALL :
+%
+%    filename=write_gstat_par(G,filename);
+%
+%  input --:
+%  G [struct]: gstat matlab structure
+%  filename [string] : optinal filename
+%
+%  output --:
+%  filename [string] : filename of command file written to disk 
+%
+
+function filename=write_gstat_par(G,filename)
   if nargin==0,
     help write_gstat_par
   end
@@ -46,13 +59,17 @@ function filename=write_gstat_par2(G,filename)
     
     elseif strcmp('set',fn{ifn}),
       % SET
-      n=length(G.set);      
       df=fieldnames(G.set);
+      n=length(df);
       for i=1:n;
         cmd=df{i};
         data=G.set(1).(df{1});
         if isnumeric(data)
-          fprintf(fid,'set %s = %3.1g;\n',cmd,data);
+          if data==round(data)
+            fprintf(fid,'set %s = %d;\n',cmd,data);
+          else
+            fprintf(fid,'set %s = %3.1f;\n',cmd,data);
+          end
         else
           fprintf(fid,'set %s = ''%s'';\n',cmd,data);
         end
