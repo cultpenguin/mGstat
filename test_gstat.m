@@ -1,59 +1,46 @@
-for i=1:17,
-  if i<10
-    filename=['ex0',num2str(i),'.cmd'];
-  else
-    filename=['ex',num2str(i),'.cmd'];
-  end
-  try
-    read_gstat_par(filename);
-    disp(sprintf('READING PARFILE %d success',i))
-  catch
-    disp(sprintf('READING PARFILE %d FAILED',i))
-  end
-  
-  if i>2
-    try
-      [p,v,c,mask,G]=mgstat(filename);
-      
-      disp(sprintf('EXECUTION of %d success',i))
-    catch
-      disp(sprintf('EXECUTION of %d FAILED',i))
-    end
+% test_gstat : An mfile to test the Matlab interface to GSTAT
+[p,Pheader]=read_eas('prediction.dat');
+% CREATE PRED GRID
+dx=.04;
+x=[0:dx:5.5];
+y=[0:dx:6];
+nx=length(x);
+ny=length(y);
+write_arcinfo_ascii('2dmask',zeros(ny,nx),x,y,[],0,0);
 
-    try
-      nrows=( (length(p)>0)+(length(v)>0)+(length(c)>0));
-      
-      figure(i),
-      % PREDS;
-      for is=1:length(p); 
-        subplot(nrows,length(p),is);
-        imagesc(p{is});axis image
-        title(sprintf('pred %d',is));
-        colorbar
-      end 
-      % VAR;
-      for is=1:length(v); 
-        subplot(nrows,length(v),is+length(v));
-        imagesc(v{is});axis image
-        title(sprintf('var %d',is))
-        colorbar
-      end 
-       % COVAR;
-      for is=1:length(c); 
-        subplot(nrows,length(c),is+2*length(c));
-        imagesc(c{is});axis image
-        title(sprintf('covar %d',is))
-        colorbar
-      end 
-      suptitle(filename)
-      set(findobj('type','axes'),'FontSize',7)
 
-      % fignan;eval(sprintf('print -dpng -r150 ex%d.png',i));close
-      
-    catch
-      disp(sprintf('PLOTTING of %d failed',i))
-    end
-  end
+% G=read_gstat_par('gstat_ok.cmd');
+[pred,var,pcv,mask,G]=mgstat('gstat_ok.cmd');
+ivar=G.data{1}.v;
 
-  
-end
+
+subplot(2,2,1)
+imagesc(x,y,pred{1})
+hold on
+MS=30
+plot(p(:,1),p(:,2),'k.','MarkerSize',MS*1.2)
+scatter(p(:,1),p(:,2),MS,p(:,ivar),'filled')
+hold off
+set(gca,'ydir','normal')
+colorbar
+axis image
+
+subplot(2,2,2)
+imagesc(x,y,var{1})
+set(gca,'ydir','normal')
+axis image
+colorbar
+
+
+subplot(2,1,2)
+pred{1}(find(var{1}>.95))=NaN;
+imagesc(x,y,pred{1})
+hold on
+MS=30
+plot(p(:,1),p(:,2),'k.','MarkerSize',MS*1.2)
+scatter(p(:,1),p(:,2),MS,p(:,ivar),'filled')
+hold off
+set(gca,'ydir','normal')
+colorbar
+axis image
+

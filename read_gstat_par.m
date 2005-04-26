@@ -89,14 +89,15 @@ function G=read_gstat_par(filename);
         if isfield(G,'set')==0,
           iset=1;
         else
-          iset=length(G.set)+1
+          iset=length(G.set)+1;
         end
-        G.set{iset}.(cmd)=data;
+%        G.set{iset}.(cmd)=data;
+        G.set.(cmd)=data;
         mgstat_verbose(sprintf('SET line %d : %s',iset,cline),10)
       elseif (strmatch(cmd,'variogram'))
         % GET VARIOGRAM....
         %if icmd==2, keyboard; end
-        mgstat_verbose(sprintf('Found variogram : %s',options),10)
+        mgstat_verbose(sprintf('%s : Found variogram : %s',mfilename,options),10)
         G.(cmd){icmd}.V=deformat_variogram(options);
       else         % EXTRACT OPTIONS
 
@@ -140,7 +141,7 @@ function G=read_gstat_par(filename);
           cop=options(is1:is2);
           cop=strip_space(cop);
           
-          mgstat_verbose(sprintf('cop="%s"',cop),12)
+          mgstat_verbose(sprintf('%s : cop="%s"',mfilename,cop),12)
           
           % mgstat_verbose(['--',cop])
           chkfile=find(cop==char(39));
@@ -200,7 +201,6 @@ function [cmd,data]=strip_command(str)
   
 function [cmd,data]=deformat_set_entry(cline)
   
-  
   cline=regexprep(cline,'set','');
   cline=strip_comment(cline);
   cline=regexprep(cline,';','');  
@@ -212,13 +212,14 @@ function [cmd,data]=deformat_set_entry(cline)
   
   if str2num(data)
     data=str2num(data);
+    mgstat_verbose(sprintf('SET DEFORMAT : cmd="%s" data=%5.1g',cmd,data));
   else    
     if data(1)=='''';
       data=data(2:length(data)-1);
     end 
+    mgstat_verbose(sprintf('SET DEFORMAT : cmd="%s" data="%s" ',cmd,data));
   end
     
-  mgstat_verbose(sprintf('SET DEFORMAT : cmd="%s" data="%s" ',cmd,data));
 
   
 function txt=strip_comment(txt)

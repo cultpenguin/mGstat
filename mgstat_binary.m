@@ -1,13 +1,13 @@
 % mgstat_binary : returns the path to the binary gstat
 function gstat=mgstat_binary;
   
-gstat='/usr/local/bin/gstat';    
+%gstat='/usr/local/bin/gstat';    
 % YOU CAN EITHER SPECIFY THE PATH TO GSTAT HERE BELOW
 %  gstat='/home/tmh/bin/gstat-2.4.0';
 %  gstat='/home/tmh/bin/gstat-2.4.3/src/gstat';
 % gstat='/home/tmh/RESEARCH/PROGRAMMING/mGstat/gstat/gstat';
 %gstat='d:\thomas\Programming\mGstat\gstat.exe';
-%gstat='';  
+gstat='';  
 % IF THE gstat VARAIABLE IS ÆEFT EMPTY(DEFAULT)
 % IT WILL BE LOCATED ON YOUR SYSTEM IF THE 
 % GSTAT EXECUTABLE IS SOMEWEHRE IN THE PATH

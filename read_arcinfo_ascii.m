@@ -22,9 +22,11 @@
 % Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 %
 function [data,x,y,dx,nanval,x0,y0,xll,yll]=read_arcinfo_ascii(filename);
+  mfilename='';
 
   mgstat_verbose(sprintf('Calling %s, file %s',mfilename,filename),2);
-    
+  
+
   fid=fopen(filename,'r');
 
   % NCOLS 
@@ -66,6 +68,7 @@ function [data,x,y,dx,nanval,x0,y0,xll,yll]=read_arcinfo_ascii(filename);
   % NO DATA VALUE
   fpos=ftell(fid); % GET POSITION IN FILE
   l=fgetl(fid);
+
   if (strcmp(upper(l(1:12)),'NODATA_VALUE'))
     nanval=str2num(l(14:length(l)));
     mgstat_verbose(sprintf('%s : NANVALUE=%8.4g',l(1:12),nanval),10);
@@ -81,7 +84,7 @@ function [data,x,y,dx,nanval,x0,y0,xll,yll]=read_arcinfo_ascii(filename);
     x=[0:1:(nc-1)].*dx+x0;  
     mgstat_verbose(sprintf('X : AT CENTER'),10);
   else
-    x=[0:1:(nc-1)].*dx+x0-dx/2;  
+    x=[0:1:(nc-1)].*dx+x0+dx/2;  
     mgstat_verbose(sprintf('X : AT CORNER'),10);        
   end
   
@@ -89,7 +92,7 @@ function [data,x,y,dx,nanval,x0,y0,xll,yll]=read_arcinfo_ascii(filename);
     y=[0:1:(nr-1)].*dx+y0;  
     mgstat_verbose(sprintf('Y : AT CENTER'),10);
   else
-    y=[0:1:(nr-1)].*dx+y0-dx/2;   
+    y=[0:1:(nr-1)].*dx+y0+dx/2;   
     mgstat_verbose(sprintf('Y : AT CORNER'),10);        
   end
   

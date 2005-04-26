@@ -1,4 +1,4 @@
-% mgstat : geostatistical ..
+% mgstat : call gstat from Matlab
 %
 % CALL : mgstat(G)
 %    G : mgstat data structure OR gstat parameter file on disk
@@ -18,25 +18,53 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
     G=read_gstat_par(gstat_filename);
   end
   
+  mgstat_verbose(sprintf('Trying to run GSTAT on %s',gstat_filename),-1)
   [s,w]=system([gstat,' ',gstat_filename]);
+
+  mgstat_verbose(w,1)
   
+  if ~isempty(regexp(w,'fail'))
+    mgstat_verbose('GSTAT FAILED ............',-1)
+    p=[];v=[];
+    return
+  end
   
-  
-  
+ 
   % RETURN PREDICTIONS OF SET
   if nargout>0
     if isfield(G,'predictions')
-      for ip=1:length(G.predictions)
-        mgstat_convert(G.predictions{ip}.file);
-        
-        if exist(G.predictions{ip}.file)==2;
-          % [pred{ip},x,y,dx,nanval]=read_gstat_ascii([G.predictions{ip}.file,'.ascii']);
-          [pred{ip},x,y,dx,nanval]=read_arcinfo_ascii([G.predictions{ip}.file,'.ascii']);
-        else
-          pred{ip}=[];mgstat_verbose(sprintf('Cannot find "%s"',G.predictions{ip}.file));
+      
+      nsim=1; % DEFAULT ONLY ONE SIM/ESTIMATION
+      % FIND NUMBER OF SIMULATIONS
+      if isfield(G,'set')
+        if (isfield(G.set,'nsim')),
+          nsim=G.set.nsim;
         end
       end
-      %if ip==1, pred=pred{1};end
+      for ip=1:length(G.predictions)
+        % LOOP OVER NUMBER OF PREDICTION LINES
+
+        % CONVERT GSTAT OUTPUT TO ASCII
+        % IT ALLREADY IS SO COMMENTED OUT
+        %mgstat_convert(G.predictions{ip}.file);
+        
+        for isim=1:nsim
+          file=G.predictions{ip}.file;
+          if nsim>1, 
+            if isim>10
+              file=sprintf('%s%d',file,isim-1);
+            else
+              file=sprintf('%s0%d',file,isim-1);
+            end
+          end          
+          
+          if exist(file)==2;
+            [pred{ip,isim},x,y,dx,nanval]=read_arcinfo_ascii(file);
+          else
+            pred{ip,isim}=[];mgstat_verbose(sprintf('Cannot find "%s"',file),-1);
+          end
+        end
+      end
     else
       pred=[];mgstat_verbose(sprintf('NO PREDICTION FILE SET'));
     end
@@ -51,7 +79,8 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
         
         if exist(G.variances{ip}.file)==2;
           % [pred_var{ip},x,y,dx,nanval]=read_gstat_ascii([G.variances{ip}.file,'.ascii']);
-          [pred_var{ip},x,y,dx,nanval]=read_arcinfo_ascii([G.variances{ip}.file,'.ascii']);
+          %[pred_var{ip},x,y,dx,nanval]=read_arcinfo_ascii([G.variances{ip}.file,'.ascii']);
+          [pred_var{ip},x,y,dx,nanval]=read_arcinfo_ascii(G.variances{ip}.file);        
         else
           pred_var{ip}=[];mgstat_verbose(sprintf('Cannot find "%s"',G.variances{ip}.file));
         end
