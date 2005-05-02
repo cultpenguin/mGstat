@@ -1,0 +1,1 @@
+G=read_gstat_par('ex05.cmd');
