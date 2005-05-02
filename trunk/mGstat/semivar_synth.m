@@ -11,7 +11,7 @@ function [sv,d]=semivar_synth(V,d,gstat);
 
   
   if nargin<3
-    gstat=0;
+    gstat=1;
   end
   
   if nargin==0,
