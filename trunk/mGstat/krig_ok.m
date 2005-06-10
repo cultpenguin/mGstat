@@ -5,13 +5,16 @@
 %
 % TMH/2005
 %
-function [d_est,d_var,lambda_ok,d_mean]=krig_ok(pos_known,val_known,pos_est,V,Kin,kin);
+function [d_est,d_var,lambda_ok,d_mean]=krig_ok(pos_known,val_known,pos_est,V,att_range,Kin,kin);
 
   % if DoGraphics=1, some illustrative plotting is generated
   % if DoGraphics=0, no grapics will be generated
     DoGraphics=0;
-
-  
+    
+    if exist('att_range')==0
+      att_range=ones(1,size(pos_known,2));
+    end
+    
   if isstr(V),
     V=deformat_variogram(V);
   end 
@@ -31,7 +34,7 @@ function [d_est,d_var,lambda_ok,d_mean]=krig_ok(pos_known,val_known,pos_est,V,Ki
   % FIRST FIND THE CLOSEST DATA
   d=zeros(nknown,1);
   for ir=1:nknown
-    d(ir)=edist(pos_est,pos_known(ir,:));
+    d(ir)=edist(pos_est,pos_known(ir,:),att_range);
   end
   id=[1:nknown]';
   order_list=sortrows([id,d],[2]);
@@ -69,7 +72,7 @@ function [d_est,d_var,lambda_ok,d_mean]=krig_ok(pos_known,val_known,pos_est,V,Ki
   else
     for i=1:nknown;
       for j=1:nknown;
-        d=edist(pos_known(i,:),pos_known(j,:));
+        d=edist(pos_known(i,:),pos_known(j,:),att_range);
         %d=sqrt([pos_known(i,:)-pos_known(j,:)]*[pos_known(i,:)-pos_known(j,:)]');
         K_ok(i,j)=sum([V.par1])-semivar_synth(V,d);
       end
@@ -84,7 +87,7 @@ function [d_est,d_var,lambda_ok,d_mean]=krig_ok(pos_known,val_known,pos_est,V,Ki
     k_ok(1:nknown)=kin;
   else
     for i=1:nknown;
-      d=edist(pos_known(i,:),pos_est);
+      d=edist(pos_known(i,:),pos_est,att_range);
       k_ok(i)=sum([V.par1])-semivar_synth(V,d);
     end
   end

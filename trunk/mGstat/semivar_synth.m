@@ -33,10 +33,10 @@ function [sv,d]=semivar_synth(V,d,gstat);
     [gamma]=synthetic_variogram(V(iv),d,gstat);		
 		sv=sv+gamma;
   end
- 
-	% Make sure sv(0)=0;
-	sv(find(d<1e-9))=0;
-	
+  
+  % Make sure sv(0)=0;
+  sv(find(d<1e-9))=0;
+  
 function [gamma,h]=synthetic_variogram(V,h,gstat)
   
   type=V.type;

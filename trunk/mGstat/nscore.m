@@ -32,7 +32,7 @@
 function [normscore_org,o_nscore]=nscore(d,w1,w2,dmin,dmax,DoPlot)
 
  if nargin<6
-   DoPlot=1;
+   DoPlot=0;
  end
 
   
