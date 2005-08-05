@@ -32,6 +32,7 @@ function [d_est,d_var,lambda_ok,d_mean]=krig_ok(pos_known,val_known,pos_est,V,at
   
   
   % FIRST FIND THE CLOSEST DATA
+  % MAKE A MORE GENERAL SUBROUTINE HERE !!!!
   d=zeros(nknown,1);
   for ir=1:nknown
     d(ir)=edist(pos_est,pos_known(ir,:),att_range);
@@ -49,6 +50,8 @@ function [d_est,d_var,lambda_ok,d_mean]=krig_ok(pos_known,val_known,pos_est,V,at
   val_known=val_known(order_list(1:usemax),:);
   nknown=size(pos_known,1);
 
+  
+  
   %% RESHAPE INPUT COVARIANCE FUNCTIONS IF PRESENTED
   if exist('Kin')
     Kin2=zeros(nknown,nknown);      
@@ -92,7 +95,7 @@ function [d_est,d_var,lambda_ok,d_mean]=krig_ok(pos_known,val_known,pos_est,V,at
     end
   end
   k_ok(nknown+1)=1;
-  
+
   lambda_ok = inv(K_ok)*k_ok;
   
   d_mean=lambda_ok(nknown+1);
