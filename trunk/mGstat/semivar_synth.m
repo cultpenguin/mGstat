@@ -30,8 +30,17 @@ function [sv,d]=semivar_synth(V,d,gstat);
   sv=zeros(size(d));
   
   for iv=1:length(V),
-    [gamma]=synthetic_variogram(V(iv),d,gstat);		
-		sv=sv+gamma;
+    if exist('semivariance')==3
+      type=V.itype;
+      sill=V.par1;
+      range=V.par2;
+      gamma=semivariance(d,sill,range,type);
+    else
+      [gamma]=synthetic_variogram(V(iv),d,gstat);
+    end
+    
+    sv=sv+gamma;
+    
   end
   
   % Make sure sv(0)=0;

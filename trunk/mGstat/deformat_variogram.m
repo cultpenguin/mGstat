@@ -66,17 +66,17 @@ function V=deformat_variogram(txt);
 		elseif (strcmp(type,'Sph')),
 			itype=1;
 		elseif (strcmp(type,'Gau'))
-			itype=2;
-		elseif (strcmp(type,'Sph')),
 			itype=3;
 		elseif (strcmp(type,'Exp'))
-			itype=4;
+			itype=2;
 		elseif (strcmp(type,'Log'))
-			itype=5;
+			itype=15;
 		elseif (strcmp(type,'Lin'))
 			itype=6;
 		elseif (strcmp(type,'Pow'))
-			itype=7;
+			itype=4;
+		elseif (strcmp(type,'Hole'))
+			itype=5;
 		else 
 			disp(['Unknown type : ',type])
 			itype=8;			
