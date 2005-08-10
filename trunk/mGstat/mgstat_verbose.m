@@ -6,10 +6,10 @@
 %
 function mgstat_verbose(txt,verbose)
   if nargin==1,
-    verbose=10;
+    verbose=0;
   end
   
-  vlevel=2; % SHOW ALL VERBOSE INFO ABOVE 1
+  vlevel=1; % SHOW ALL VERBOSE INFO ABOVE 1
   
   if (verbose<=vlevel),
     disp(sprintf('mGstat : %s',txt));

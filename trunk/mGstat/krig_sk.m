@@ -1,14 +1,14 @@
 % krig_sk : Simple Kriging
 %
 % Call :
-%  function [d_est,d_var,lambda_sk,K_sk,k_sk]=krig_sk(pos_known,val_known,pos_est,V,val_0);
+%  function [d_est,d_var,lambda_sk,K_sk,k_sk]=krig_sk(pos_known,val_known,pos_est,V,val_0,gvar,noise_known);
 %
 % TMH/2005
 %
 
-function [d_est,d_var,lambda_sk,K_sk,k_sk]=krig_sk(pos_known,val_known,pos_est,V,val_0);
+function [d_est,d_var,lambda_sk,K_sk,k_sk]=krig_sk(pos_known,val_known,pos_est,V,val_0,gvar,noise_known);
 
-  if isstr(V),
+   if isstr(V),
     V=deformat_variogram(V);
   end 
   
@@ -37,9 +37,13 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk]=krig_sk(pos_known,val_known,pos_est,V
   nknown=size(pos_known,1);
   
   
-  
-  
-  gvar=sum([V.par1]);
+  if exist('gvar')==0;
+    if length(V)==1,
+      gvar=V.par1;
+    else
+      gvar=sum([V.par1]);
+    end
+  end
   
   % Data to Data matrix
   K_sk=zeros(nknown,nknown);
@@ -47,6 +51,15 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk]=krig_sk(pos_known,val_known,pos_est,V
     for j=1:nknown;
       d=edist(pos_known(i,:),pos_known(j,:));
       K_sk(i,j)=gvar-semivar_synth(V,d);
+      if i==j
+        if exist('noise_known')==1
+          if length(noise_known)==1,
+            K_sk(i,j)=K_sk(i,j)+noise_known;
+          else
+            K_sk(i,j)=K_sk(i,j)+noise_known(i);
+          end
+        end
+      end
     end
   end
   

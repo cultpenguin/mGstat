@@ -61,6 +61,8 @@ function V=deformat_variogram(txt);
 
 		if (strcmp(type,'Nug'))
 			itype=0;
+		elseif (strcmp(type,'iNug')),
+			itype=14;
 		elseif (strcmp(type,'Sph')),
 			itype=1;
 		elseif (strcmp(type,'Gau'))
