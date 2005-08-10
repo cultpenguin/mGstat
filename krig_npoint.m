@@ -30,17 +30,20 @@ elseif ~isfield(options,'noprecalc_d2d')
   % Precalculte Data to data Covariance matrix
   % unless explicitly chosen not to in 'options'
   d2d=zeros(ndata,ndata);
+  d=zeros(ndata,ndata);
   mgstat_verbose([mfilename,' : Setting up d2d covariance']);
   for i=1:ndata;
     if (i/100)==round(i/100), 
       mgstat_verbose(sprintf('Setting up d2d covariance %d/%d',i,ndata));
     end
     for j=i:ndata;
-      d=edist(pos_known(i,:),pos_known(j,:));
-      d2d(i,j)=gvar-semivar_synth(V,d);    
-      d2d(j,i)=d2d(i,j);
+      d(i,j)=edist(pos_known(i,:),pos_known(j,:));
+      d(j,i)=d(i,j);
+      %d2d(i,j)=gvar-semivar_synth(V,d(i,j));    
+      %d2d(j,i)=d2d(i,j);
     end
   end
+  d2d=gvar-semivar_synth(V,d);    
 end
 
 if isfield(options,'d2u')
@@ -50,16 +53,17 @@ elseif isfield(options,'precalc_d2u')
   % ONLY IF chosen in 'options'
   n_est=size(pos_est,1);
   d2u=zeros(ndata,n_est);
+  d=zeros(ndata,n_est);
   mgstat_verbose([mfilename,' : Setting up d2u covariance']);
   for i=1:ndata;
     if (i/100)==round(i/100), 
       mgstat_verbose(sprintf('Setting up d2u covariance %d/%d',i,ndata));
     end
     for j=1:n_est;
-      d=edist(pos_known(i,:),pos_est(j,:));
-      d2u(i,j)=gvar-semivar_synth(V,d);    
+      d(i,j)=edist(pos_known(i,:),pos_est(j,:));
     end
   end
+  d2u=gvar-semivar_synth(V,d);    
   options.d2u=d2u;
 end
 
@@ -72,7 +76,7 @@ if isfield(options,'d2u');
     if (i/100)==round(i/100), 
       mgstat_verbose(sprintf('%s : kriging : %d/%d',mfilename,i,n_est));
     end    
-    options.k=d2u(:,i);
+    options.d2u=d2u(:,i);
     [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i,:),V,options);
   end
 else
