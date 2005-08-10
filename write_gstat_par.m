@@ -36,9 +36,8 @@ function filename=write_gstat_par(G,filename)
   
   fn=fieldnames(G);
   
-  
   for ifn=1:length(fn)
-
+    
     if strcmp('mgstat',fn{ifn}),
       % COMMENTS
       if isfield(G.mgstat,'comment')
@@ -47,7 +46,7 @@ function filename=write_gstat_par(G,filename)
           %% fprintf(fid,'%s\n',G.mgstat.comment{i});
         end
       end
-    
+      
     elseif strcmp('variogram',fn{ifn}),
       % VARIOGRAM
       nv=length(G.variogram);
@@ -56,7 +55,7 @@ function filename=write_gstat_par(G,filename)
         vartxt=format_variogram(G.variogram{i}.V);
         fprintf(fid,' %s;\n',vartxt);
       end
-    
+      
     elseif strcmp('set',fn{ifn}),
       % SET
       df=fieldnames(G.set);
@@ -73,23 +72,29 @@ function filename=write_gstat_par(G,filename)
         else
           fprintf(fid,'set %s = ''%s'';\n',cmd,data);
         end
-         
+        
       end
       
     else
       % MISC
       fname=fn{ifn};
       n=length(G.(fname));
-            
+      
+      
       for i=1:n
         if isfield(G.(fname){i},'data'),
           fprintf(fid,'%s(%s): ',fname,G.(fname){i}.data);
           idf1=2;
         else
-          fprintf(fid,'%s: ',fname);
+          if strcmp(fname,'data')
+            % data(): requires empty () !
+            fprintf(fid,'%s(): ',fname);
+          else
+            fprintf(fid,'%s: ',fname);
+          end
           idf1=1;
         end
-        
+                
         
         df=fieldnames(G.(fname){i});
         for idf=idf1:length(df);
@@ -115,7 +120,7 @@ function filename=write_gstat_par(G,filename)
       end
       
       
- 
+      
     end
     
   end

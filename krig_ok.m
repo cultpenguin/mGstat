@@ -35,14 +35,15 @@ function [d_est,d_var,lambda_ok,d_mean]=krig_ok(pos_known,val_known,pos_est,V,at
   % MAKE A MORE GENERAL SUBROUTINE HERE !!!!
   d=zeros(nknown,1);
   for ir=1:nknown
-    d(ir)=edist(pos_est,pos_known(ir,:),att_range);
+    d(ir)=edist(pos_est,pos_known(ir,:));
+    %d(ir)=edist(pos_est,pos_known(ir,:),att_range);
   end
   id=[1:nknown]';
   order_list=sortrows([id,d],[2]);
   order_list=order_list(:,1);
   
   % SELECT NEIGHBORHOOD
-  usemax=16;
+  usemax=40;
   usemax=min(usemax,nknown);
   
   d_known=d(order_list(1:usemax));

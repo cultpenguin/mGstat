@@ -1,8 +1,7 @@
 % krig_sk : Simple Kriging
 %
 % Call :
-%  function [d_est,d_var,lambda_sk,K_dd,k_du]=krig(pos_known,val_known,pos_est,V,val_0);
-%
+% [d_est,d_var,lambda_sk,K_dd,k_du,inhood]=krig(pos_known,val_known,pos_est,V,val_0);
 %
 % ndata : number of data observations
 % ndims : dimensions of data location (>=1)
@@ -73,13 +72,19 @@
 % TMH/2005
 %
 
-function [d_est,d_var,lambda_sk,K_sk,k_sk]=krig_sk(pos_known,val_known,pos_est,V,val_0);
+function [d_est,d_var,lambda_sk,K_sk,k_sk,inhood]=krig(pos_known,val_known,pos_est,V,options);
 
   if isstr(V),
     V=deformat_variogram(V);
   end 
+
+  if nargin<5
+    options.null=0;
+  end
   
-  if nargin==4,
+  if isfield(options,'mean')
+    val_0=options.mean;
+  else
     val_0=mean(val_known(:,1));
   end
   
@@ -93,12 +98,15 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk]=krig_sk(pos_known,val_known,pos_est,V
   ndim=size(pos_known,2);
   n_est=size(pos_est,1);
   if n_est~=1, 
-    mgstat_verbose('ERROR : CURRENTLY size(pos_est,1) must equal 1',0);
+    [d_est,d_var,d2d,d2u]=krig_npoint(pos_known,val_known,pos_est,V,options);
+    mgstat_verbose('Warning : you called krig with more than one')
+    mgstat_verbose('unknown data location')
+    mgstat_verbose('--- Calling krig_npoint instead')
+    lambda_sk=[];K_sk=[];k_sk=[];inhood=[];
+    return
   end
-  
-    
+      
   % SELECT NEIGHBORHOOD
-  options.max=7;
   [inhood,order_list]=nhood(pos_known,pos_est,options);
  
   pos_known=pos_known(inhood,:);
@@ -110,25 +118,33 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk]=krig_sk(pos_known,val_known,pos_est,V
   gvar=sum([V.par1]);
   
   % Data to Data matrix
-  K_sk=zeros(nknown,nknown);
-  for i=1:nknown;
-    for j=1:nknown;
-      d=edist(pos_known(i,:),pos_known(j,:));
-      K_sk(i,j)=gvar-semivar_synth(V,d);
-      if i==j
-        % APPLY UNCERTAINTY
-        K_sk(i,j)=K_sk(i,j)+unc_known(i);
+  if isfield(options,'K')
+    K_sk=options.K(inhood,inhood);
+  else
+    K_sk=zeros(nknown,nknown);
+    for i=1:nknown;
+      for j=1:nknown;
+        d=edist(pos_known(i,:),pos_known(j,:));
+        K_sk(i,j)=gvar-semivar_synth(V,d);
       end
     end
   end
+  % APPLY GAUSSIAN DATA UNCERTAINTY
+  for i=1:nknown
+    K_sk(i,i)=K_sk(i,i)+unc_known(i);
+  end
+    
   
   % Data to Unknown matrix
-  k_sk=zeros(nknown,1);
-  for i=1:nknown;
-    d=edist(pos_known(i,:),pos_est(1,:));      
-    k_sk(i)=gvar-semivar_synth(V,d);
+  if isfield(options,'k')
+    k_sk=options.k(inhood,:);
+  else
+    k_sk=zeros(nknown,1);
+    for i=1:nknown;
+      d=edist(pos_known(i,:),pos_est(1,:));      
+      k_sk(i)=gvar-semivar_synth(V,d);
+    end
   end
- 
   lambda_sk = inv(K_sk)*k_sk;
   
   d_est = (val_known' - val_0)*lambda_sk(:)+ val_0;
