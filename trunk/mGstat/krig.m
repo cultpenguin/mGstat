@@ -82,7 +82,8 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk,inhood]=krig(pos_known,val_known,pos_e
     options.null=0;
   end
   
-  if isfield(options,'mean')
+  
+  if any(strcmp(fieldnames(options),'mean')); 
     val_0=options.mean;
   else
     val_0=mean(val_known(:,1));
@@ -98,17 +99,19 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk,inhood]=krig(pos_known,val_known,pos_e
   ndim=size(pos_known,2);
   n_est=size(pos_est,1);
   if n_est~=1, 
-    [d_est,d_var,d2d,d2u]=krig_npoint(pos_known,val_known,pos_est,V,options);
     mgstat_verbose('Warning : you called krig with more than one')
     mgstat_verbose('unknown data location')
     mgstat_verbose('--- Calling krig_npoint instead')
+    [d_est,d_var,d2d,d2u]=krig_npoint(pos_known,val_known,pos_est,V,options);
     lambda_sk=[];K_sk=[];k_sk=[];inhood=[];
     return
   end
       
   % SELECT NEIGHBORHOOD
   [inhood,order_list]=nhood(pos_known,pos_est,options);
- 
+  %inhood=1:1:nknown;
+  %order_list=1:1:nknwon;
+  
   pos_known=pos_known(inhood,:);
   unc_known=val_known(inhood,2);
   val_known=val_known(inhood,1);
@@ -117,17 +120,19 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk,inhood]=krig(pos_known,val_known,pos_e
   % SET GLOBAL VARIANCE
   gvar=sum([V.par1]);
   
+  
   % Data to Data matrix
-  if isfield(options,'K')
-    K_sk=options.K(inhood,inhood);
+  if any(strcmp(fieldnames(options),'d2d')); 
+    K_sk=options.d2d(inhood,inhood);
   else
     K_sk=zeros(nknown,nknown);
+    d=zeros(nknown,nknown);
     for i=1:nknown;
       for j=1:nknown;
-        d=edist(pos_known(i,:),pos_known(j,:));
-        K_sk(i,j)=gvar-semivar_synth(V,d);
+        d(i,j)=edist(pos_known(i,:),pos_known(j,:));
       end
     end
+    K_sk=gvar-semivar_synth(V,d);
   end
   % APPLY GAUSSIAN DATA UNCERTAINTY
   for i=1:nknown
@@ -136,17 +141,17 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk,inhood]=krig(pos_known,val_known,pos_e
     
   
   % Data to Unknown matrix
-  if isfield(options,'k')
-    k_sk=options.k(inhood,:);
+  if any(strcmp(fieldnames(options),'d2u')); 
+    k_sk=options.d2u(inhood,:);
   else
     k_sk=zeros(nknown,1);
+    d=zeros(nknown,1);
     for i=1:nknown;
-      d=edist(pos_known(i,:),pos_est(1,:));      
-      k_sk(i)=gvar-semivar_synth(V,d);
+      d(i)=edist(pos_known(i,:),pos_est(1,:));      
     end
+    k_sk=gvar-semivar_synth(V,d);
   end
   lambda_sk = inv(K_sk)*k_sk;
   
   d_est = (val_known' - val_0)*lambda_sk(:)+ val_0;
-  % d_var = gvar - k_sk'*inv(K_sk)*k_sk;
   d_var = gvar - k_sk'*lambda_sk;
