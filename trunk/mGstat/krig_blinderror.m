@@ -11,15 +11,16 @@ for i=1:nknown
   
   [d_est(i),d_var(i)]=krig(pos_known(used,:),val_known(used,:),...
                     pos_known(i,:),V,options);
-  
+
   if (i/10)==round(i/10), 
-    mgstat_verbose(sprintf('%s cross validation  %d/%d',mfilename,i,nknown));
+    % mgstat_verbose(sprintf('%s cross validation  %d/%d',mfilename,i,nknown));
   end
 end
 
 
-d=d_est-val_known;
-d=(d_est-val_known)./d_var;
+d=d_est-val_known(:,1);
+%d=(d_est-val_known(:,1)).*val_known(:,2);
+
 
 be=sqrt(d(:)'*d(:));
 
