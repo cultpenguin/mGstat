@@ -109,8 +109,6 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk,inhood]=krig(pos_known,val_known,pos_e
       
   % SELECT NEIGHBORHOOD
   [inhood,order_list]=nhood(pos_known,pos_est,options);
-  %inhood=1:1:nknown;
-  %order_list=1:1:nknwon;
   
   pos_known=pos_known(inhood,:);
   unc_known=val_known(inhood,2);
