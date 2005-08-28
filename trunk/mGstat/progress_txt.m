@@ -2,7 +2,7 @@
 %
 % Ex1 : 
 %   for i=1:10000;
-%     progressbar_txt(i,10000,'Ciao');
+%     progress_txt(i,10000,'Ciao');
 %   end
 %
 % Ex1 :
@@ -10,7 +10,7 @@
 %   for i=1:10;
 %   for j=1:10;
 %   for k=1:10;
-%     progressbar_txt([i j k],[10 100 1000],'i','j','k');
+%     progress_txt([i j k],[10 100 1000],'i','j','k');
 %   end
 %   end
 %   end
