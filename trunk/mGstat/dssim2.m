@@ -5,13 +5,11 @@
 
 function [simdata,options]=dssim(pos_known,val_known,pos_est,V,options);
 
-  rand('seed',1);
-  
   pos_known_orig=pos_known;
   val_known_orig=val_known;
   
-%  n_known=size(pos_known,1);
-%  n_pos_est=size(pos_est,1);
+  n_known=size(pos_known,1)
+  n_pos_est=size(pos_est,1)
 
   
   npos_known=size(pos_known,1);
@@ -20,11 +18,11 @@ function [simdata,options]=dssim(pos_known,val_known,pos_est,V,options);
 
   
   % ALLOCATE SPACE
-  pos_known=zeros(npos_known+npos_est,size(pos_known_orig,2));
-  val_known=zeros(npos_known+npos_est,size(val_known_orig,2));
+%  pos_known=zeros(npos_known+npos_est,size(pos_known_orig,2));
+ % val_known=zeros(npos_known+npos_est,size(val_known_orig,2));
   
-  pos_known(1:npos_known,:)=pos_known_orig;
-  val_known(1:npos_known,:)=val_known_orig;
+%  pos_known(1:npos_known,:)=pos_known_orig;
+%  val_known(1:npos_known,:)=val_known_orig;
   
   
   if nargin==4
@@ -59,6 +57,7 @@ function [simdata,options]=dssim(pos_known,val_known,pos_est,V,options);
   if isfield(options,'CovMat')==0,
     options.CovMat=precal_cov([pos_known_orig;pos_est],[pos_known_orig;pos_est],V);    
   end
+  save options options
   
   simdata=zeros(n_est,nsim).*NaN;
   
@@ -79,7 +78,7 @@ function [simdata,options]=dssim(pos_known,val_known,pos_est,V,options);
       for i=1:n_est
         t=toc;
         % progress bar
-        if t>.3
+        if t>.1
           try 
           if (i/di)==round(i/di)
             i1=(isim-1)*n_est+i;
@@ -95,47 +94,36 @@ function [simdata,options]=dssim(pos_known,val_known,pos_est,V,options);
         % get current position
         cpos = rpath(i); 
         
-        % Update covariance from lookup table
-        %options.d2d = options.CovMat([1:npos_known,npos_known+rpath(1:(i-1))'],[1:npos_known,npos_known+rpath(1:(i-1))']);    
-        if isfield(options,'d2d');        options=rmfield(options,'d2d');;end
+        % Update covariance from loolup table
+        options.d2d = options.CovMat([1:npos_known,npos_known+rpath(1:(i-1))'],[1:npos_known,npos_known+rpath(1:(i-1))']);    
         options.d2u = options.CovMat([1:npos_known,npos_known+rpath(1:(i-1))'],npos_known+cpos);    
-
         
         % calculate local cpdf (kriging)
-        pos_known_krig=pos_known(1:(npos_known+(i-1)),:);
-        val_known_krig=val_known(1:(npos_known+(i-1)),:);
-        [dm,dv,l,K,k]=krig(pos_known_krig,val_known_krig,pos_est(cpos,:),V,options);
+        [de,dv,l,K,k]=krig(pos_known,val_known,pos_est(cpos,:),V,options);
         
         % find close cond hist fro mllokup table
-        p_mean=(x_mean-dm);
+        p_mean=(x_mean-de);
         p_var=(x_var-dv);
         dis=([p_mean.^2 + p_var.^2]);
         loc=find(dis==min(dis));
-                        
+        
+        
+        
         % DRAW FROM LOOKED UP HISTOGRAM
         %
-        %      disp(sprintf('Local Mean = %5.3f (Lookup Mean = %5.3f)',dm,MulG(loc).x_mean))
+        %      disp(sprintf('Local Mean = %5.3f (Lookup Mean = %5.3f)',de,MulG(loc).x_mean))
         %      disp(sprintf('Local Var  = %5.3f (Lookup Var  = %5.3f)',dv,MulG(loc).x_var))
         
         %      pause(1)
         
         if dv<0.00001;
-          d_draw=dm;
+          d_draw=de;
         else
           
           try
             % draw from local cpdf (use lookup table
             r=rand(1);
-            %d_draw=interp1(p,MulG(loc).x_cpdf,r);
-            d_draw=MulG(loc).x_cpdf(floor(r*length(MulG(loc).x_cpdf))+1);
-
-            
-            Fmean(i)=MulG(loc).x_mean;
-            Fstd(i)=sqrt(MulG(loc).x_var);
-            Kmean(i)=dm;
-            Kstd(i)=sqrt(dv);
-
-            % d_draw = (Kstd(i)/Fstd(i))*d_draw + (Kmean(i)-Fmean(i));
+            d_draw=interp1(p,MulG(loc).x_cpdf,r);
             
             if isnan(d_draw)
               if r<0.5
@@ -146,35 +134,32 @@ function [simdata,options]=dssim(pos_known,val_known,pos_est,V,options);
             end
             
           catch
-            disp(sprintf('Some trouble dm=%4.2f dv=%4.2f',dm,dv))
+            disp(sprintf('Some trouble de=%4.2f dv=%4.2f',de,dv))
             keyboard
-            %d_draw=0;
+            d_draw=0;
           end
         end
         
         if isnan(d_draw)
-          %d_draw=norminv(rand(1),dm,dv);
-          disp(sprintf('Some NAN trouble dm=%4.2f dv=%4.2f',dm,dv))
+          %d_draw=norminv(rand(1),de,dv);
+          disp(sprintf('Some NAN trouble de=%4.2f dv=%4.2f',de,dv))
         end      
         
-        pos_known(npos_known+i,:)=pos_est(cpos,:);
-        val_known(npos_known+i,:)=[d_draw 0];
-                
+        pos_known=[pos_known;pos_est(cpos,:)];
+        val_known=[val_known;d_draw 0];
+        
         
         % save simulated data for output
         simdata(cpos,isim)=d_draw;
 
+        whos *known*
+        
         
       end % loop over node
-      
-      
-    end % loop over simulations
     
-
-    subplot(2,1,1)
-    plot(Kstd,Fstd,'.');xlabel('Kstd');ylabel('Fstd')
-    subplot(2,1,2)
-    plot(Kmean,Fmean,'.');xlabel('Kmean');ylabel('Fmean')
     
+  end % loop over simulations
   
-  keyboard
+  
+  
+  
