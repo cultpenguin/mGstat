@@ -28,7 +28,7 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk]=krig_sk(pos_known,val_known,pos_est,V
   order_list=sortrows([id,d],[2]);
   order_list=order_list(:,1);
   % SELECT NEIGHBORHOOD
-  usemax=114;
+  usemax=10;
   usemax=min(usemax,nknown);
   
   d_known=d(order_list(1:usemax));

@@ -23,14 +23,30 @@ gvar=1;
 
 used=[1:1:size(pos_known,1)];
 %used=[1:1:size(pos_known,1)];
+used=[1 2];
 
 options.noprecalc_d2d=1;
 options.precalc_d2u=1;
 options.max=15;
 options.target_hist=val_known(:,1);
+options.target_hist=1+randn(1200,1)*1;
+
+
+c=2.5;v=1;
+options.target_hist=[-c+randn(1200,1).*v; c+randn(1200,1).*v];
+
+
+options.target_hist=randn(1000,1);
 
 %%%% SIMULATION
 
-options.nsim=4;
-[simdata]=dssim(pos_known(used,:),val_known(used,:),pos_est,V,options);
-
+options.max=10;
+options.mean=0;
+options.nsim=20;
+[MulG,p]=create_nscore_lookup(options.target_hist);
+options.MulG=MulG;
+options.p=p;
+profile on
+%[simdata,options]=dssim(pos_known(used,:),val_known(used,:),pos_est,V,options);
+[simdata,options]=dssim(pos_known(used,:),[0 0;0.1 0.1],pos_est,V,options);
+profile report
