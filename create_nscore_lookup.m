@@ -1,19 +1,21 @@
 function [MulG,p]=create_nscore_lookup(target_hist)
   t_max=max(target_hist);
   t_min=min(target_hist);
-  score_max=t_max+.1*(t_max-t_min)
-  score_min=t_min-.1*(t_max-t_min)
+  score_min=4.2; %t_min-.1*(t_max-t_min)
+  score_max=5.8; %t_max+.1*(t_max-t_min)
   [d_nscore,o_nscore]=nscore(target_hist,.5,.5,score_min,score_max);
 
-  ngm=170;
-  ngv=170;
-  ng=300;
-
-  gmean_arr=linspace(-3.5,3.5,ngm);
-  % gvar_arr=exp(linspace(-3,2,ngv));
-  gvar_arr=[1:1:ng]./ng;
+  ngm=100;
+  ngv=100;
+  ng=30;
+  n_monte=10000;
+  min_gmean=-3.5;max_gmean=3.5;
+  min_gvar=0;max_gvar=2;
   
-  p= (1/ngv).*[1:1:ngv]-1/(2*ngv) % SELECT QUANTILES TO CALCULATE
+  gmean_arr=min_gmean+[1:1:ngm].*(max_gmean-min_gmean)./ngm;
+  gvar_arr=min_gvar+[1:1:ngv].*(max_gvar-min_gvar)./ngv;
+  
+  p= (1/ng).*[1:1:ng]-1/(2*ng); % SELECT QUANTILES TO CALCULATE
                                   %if isfield(options,'MulG')==0,
                                   % ONLY CALCUALTE MulG IF NOT ALLREADY SET...
   %end
@@ -21,7 +23,7 @@ function [MulG,p]=create_nscore_lookup(target_hist)
   for i=1:length(gmean_arr);
     progress_txt([i],[length(gmean_arr)],'Lookup Local CPDF')
     for j=1:length(gvar_arr);
-      % progress_txt([i j],[length(gmean_arr) length(gvar_arr)],'mean','var')
+      
       
       % GET QUANTILES IN GAUSS SPACE
       x_gauss=norminv(p,gmean_arr(i),sqrt(gvar_arr(j)));
@@ -30,14 +32,17 @@ function [MulG,p]=create_nscore_lookup(target_hist)
       
       % NEW TRY
       MulG(i,j).x_cpdf=x_inscore;
-      % Calculate c_mean from Gaussian_Mean=0, quantile 0.5
-      % Only valid for symmtric target histograms.!
-      %MulG(i,j).x_mean1=x_inscore(round(length(p)/2));
-      % to get variance we have to simulate the back transformed
-      % distribition
-      d=inscore(gmean_arr(i)+randn(1,ng).*(gvar_arr(j)),o_nscore);
+      
+      g=find(~isnan(x_inscore));
+      pr=rand(1,n_monte);
+      pr(find(pr<p(g(1))))=p(g(1));
+      pr(find(pr>max(max(g))))=p(max(g));
+      d=interp1(p(g),x_inscore(g),pr);
+
+%      d=inscore(gmean_arr(i)+randn(1,n_monte).*(gvar_arr(j)),o_nscore);
       MulG(i,j).x_var=nanvar(d);
       MulG(i,j).x_mean=nanmean(d);
+
       
     end
   end
