@@ -5,7 +5,7 @@
 %
 % TMH/2005
 %
-function [d_est,d_var,lambda_trend]=krig_trend(pos_known,val_known,pos_est,V);
+function [d_est,d_var,lambda_trend,K_trend,k_trend]=krig_trend(pos_known,val_known,pos_est,V);
 
   nknown=size(pos_known,1);
   ndim=size(pos_known,2);
@@ -20,7 +20,7 @@ function [d_est,d_var,lambda_trend]=krig_trend(pos_known,val_known,pos_est,V);
   order_list=sortrows([id,d],[2]);
   order_list=order_list(:,1);
    % SELECT NEIGHBORHOOD
-  usemax=10;
+  usemax=50;
   usemax=min(usemax,nknown);
   
   d_known=d(order_list(1:usemax));

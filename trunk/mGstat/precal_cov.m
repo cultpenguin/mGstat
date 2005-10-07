@@ -1,5 +1,7 @@
 function cov=precal_cov(pos1,pos2,V);
   
+  
+  
   n_est1=size(pos1,1);
   n_est2=size(pos2,1);
 
@@ -25,4 +27,7 @@ function cov=precal_cov(pos1,pos2,V);
   end
   gvar=sum([V.par1]);
   cov=gvar-semivar_synth(V,d);  
+  
+  
+  
   

@@ -16,12 +16,18 @@
 % Hypotheses, Math Geol(34), 2002
 % 
 %
-function pAgBC=comb_cprob(pA,pAgB,pAgC)
+function pAgBC=comb_cprob(pA,pAgB,pAgC,tau)
+  
+  if nargin==3, 
+    tau=1;
+  end
   
   a = (1-pA)./pA;
   
   b=(1-pAgB)./pAgB;
   c=(1-pAgC)./pAgC;
   
-  pAgBC = a./(a+b.*c);
+  pAgBC=1./(1+b.*(c./a).^tau);
+  
+%  pAgBC = a./(a+b.*c);
   
