@@ -25,9 +25,15 @@ d_sk=zeros(1,nx).*NaN;
 d_sk_var=zeros(1,nx).*NaN;
 weight_mean_sk=zeros(1,nx).*NaN;
 figure;
+
+%options.mean=0;
+options.max=3;
+
 Cd_mean=mean(Cd_obs);
 for i=1:length(x);
-  [d_sk(i),d_sk_var(i),lambda_sk,Ksk]=krig_sk(x_obs,Cd_obs,x(i),Vobj,Cd_mean);
+  [d_sk(i),d_sk_var(i),lambda_sk,Ksk]=krig(x_obs,Cd_obs,x(i),Vobj);
+  [d_ok(i),d_ok_var(i),lambda_ok,Kok]=krig(x_obs,Cd_obs,x(i),Vobj,options);
+  % [d_sk2(i),d_sk_var2(i),lambda_sk2,Ksk2]=krig_sk(x_obs,Cd_obs,x(i),Vobj,Cd_mean);
   weight_mean_sk(i)=1-sum(lambda_sk);
   if (i/10)==round(i/10), 
     disp(sprintf('%d/%d',i,length(x))), 
@@ -85,7 +91,7 @@ hold on
 y = normpdf(x2,mean(d2),gvar);
 plot(x2,y./sum(y),'-')
 hold off
-title('using ALL Cd data only')
+title('using ALL Cd data')
 xlabel('Cd');ylabel('Probability')
 suptitle('Comparison of true vs. assumed PDF')
 print -dpng Goovaerts7_CompareCdToNormalPDF.png
@@ -106,7 +112,7 @@ hold on
 y = normcdf(x2,mean(d2),gvar);
 plot(x2,y,'r-')
 hold off
-title('using ALL Cd data only')
+title('using ALL Cd data')
 xlabel('Cd');ylabel('Probability')
 suptitle('Comparison of true vs. assumed CDF')
 print -dpng Goovaerts7_CompareCdToNormalCDF.png

@@ -97,8 +97,15 @@ function [data,x,y,dx,nanval,x0,y0,xll,yll]=read_arcinfo_ascii(filename);
   end
   
   % now read the data
-  d=fread(fid,'char');
-  data=flipud(str2num(setstr(d)'));
+  try
+    fpos=ftell(fid);
+    data=flipud(reshape(fscanf(fid,'%g'),length(x),length(y))');
+  catch
+    fseek(fid,0,'bof');
+    fseek(fid,fpos,'bof'); % RETURN TO 'FPOS' (START OF LINE)
+    d=fread(fid,'char');
+    data=flipud(str2num(setstr(d)'));
+  end
   
   if ~isempty(nanval)
     data(find(data==nanval))=NaN;

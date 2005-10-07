@@ -1,4 +1,4 @@
-% krig_sk : Simple Kriging
+% krig : Simple/Ordinar/Trend Kriging
 %
 % Call :
 % [d_est,d_var,lambda_sk,K_dd,k_du,inhood]=krig(pos_known,val_known,pos_est,V,val_0);
@@ -72,7 +72,7 @@
 % TMH/2005
 %
 
-function [d_est,d_var,lambda_sk,K_sk,k_sk,inhood]=krig(pos_known,val_known,pos_est,V,options);
+function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,options);
 
   if isstr(V),
     V=deformat_variogram(V);
@@ -94,7 +94,21 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk,inhood]=krig(pos_known,val_known,pos_e
      val_known=repmat(val_known(:,1),1,2);
      val_known(:,2)=0; % NO UNCERTAINTY
   end
+
   
+  
+  % DETERMINE TYPE OF KRIGING
+  if  any(strcmp(fieldnames(options),'trend'))
+    ktype=2; % Ktrend
+    mgstat_verbose('Kriging with a trend',20);
+  elseif  any(strcmp(fieldnames(options),'mean'))
+    ktype=0; % SK
+    mgstat_verbose('Simple Kriging',20);
+  else 
+    ktype=1; % OK
+    mgstat_verbose('Ordinary Kriging',20);
+  end
+
   nknown=size(pos_known,1);
   ndim=size(pos_known,2);
   n_est=size(pos_est,1);
@@ -103,7 +117,7 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk,inhood]=krig(pos_known,val_known,pos_e
     mgstat_verbose('unknown data location')
     mgstat_verbose('--- Calling krig_npoint instead')
     [d_est,d_var,d2d,d2u]=krig_npoint(pos_known,val_known,pos_est,V,options);
-    lambda_sk=[];K_sk=[];k_sk=[];inhood=[];
+    lambda_sk=[];K=[];k=[];inhood=[];
     return
   end
       
@@ -118,38 +132,77 @@ function [d_est,d_var,lambda_sk,K_sk,k_sk,inhood]=krig(pos_known,val_known,pos_e
   % SET GLOBAL VARIANCE
   gvar=sum([V.par1]);
   
+
+    
+  if ktype==0
+    K=zeros(nknown,nknown);
+    k=zeros(nknown,1);
+  elseif ktype==1
+    K=zeros(nknown+1,nknown+1);
+    k=zeros(nknown+1,1);
+  else % KTREND
+    K=zeros(nknown+ndim,nknown+ndim);
+    k=zeros(nknown+ndim,1);
+  end
   
   % Data to Data matrix
   if any(strcmp(fieldnames(options),'d2d')); 
-    K_sk=options.d2d(inhood,inhood);
+    K=options.d2d(inhood,inhood);
   else
-    K_sk=zeros(nknown,nknown);
+    K=zeros(nknown,nknown);
     d=zeros(nknown,nknown);
     for i=1:nknown;
       for j=1:nknown;
         d(i,j)=edist(pos_known(i,:),pos_known(j,:));
       end
     end
-    K_sk=gvar-semivar_synth(V,d);
+    K=gvar-semivar_synth(V,d);
   end
   % APPLY GAUSSIAN DATA UNCERTAINTY
   for i=1:nknown
-    K_sk(i,i)=K_sk(i,i)+unc_known(i);
+    K(i,i)=K(i,i)+unc_known(i);
   end
-    
   
   % Data to Unknown matrix
   if any(strcmp(fieldnames(options),'d2u')); 
-    k_sk=options.d2u(inhood,:);
+    k=options.d2u(inhood,:);
   else
-    k_sk=zeros(nknown,1);
+    k=zeros(nknown,1);
     d=zeros(nknown,1);
     for i=1:nknown;
       d(i)=edist(pos_known(i,:),pos_est(1,:));      
     end
-    k_sk=gvar-semivar_synth(V,d);
+    k=gvar-semivar_synth(V,d);
   end
-  lambda_sk = inv(K_sk)*k_sk;
+
+  % ADJUST K and k for KRIGING METHODS
+  if ktype==1
+    K(nknown+1,1:nknown)=ones(1,nknown);
+    K(1:nknown,nknown+1)=ones(nknown,1);
+    k(nknown+1)=1;
+  elseif ktype==2
+    K(1:nknown,nknown+1)=ones(nknown,1);
+    K(nknown+1,1:nknown)=ones(1,nknown);
+    for id=1:ndim
+      K(nknown+1+id,1:nknown)=pos_known(:,id)';
+      K(1:nknown,nknown+1+id)=pos_known(:,id);
+    end
+    k(nknown+1)=1;
+    for id=1:ndim
+      k(nknown+1+id)=pos_est(id);
+    end
+  end  
+
+  % SOLVE THE LINEAR SYSTEM
   
-  d_est = (val_known' - val_0)*lambda_sk(:)+ val_0;
-  d_var = gvar - k_sk'*lambda_sk;
+  lambda = inv(K)*k;
+
+  if ktype==0
+    d_est = (val_known' - val_0)*lambda(:)+ val_0;
+  elseif ktype==1
+    d_est =  val_known'*lambda(1:nknown);
+  elseif ktype==2
+    d_est = val_known'*lambda(1:nknown);
+  else
+  end
+  d_var = gvar - k'*lambda;
