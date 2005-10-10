@@ -1,7 +1,7 @@
 % krig : Simple/Ordinar/Trend Kriging
 %
 % Call :
-% [d_est,d_var,lambda_sk,K_dd,k_du,inhood]=krig(pos_known,val_known,pos_est,V,val_0);
+% [d_est,d_var,lambda_sk,K_dd,k_du,inhood]=krig(pos_known,val_known,pos_est,V,options);
 %
 % ndata : number of data observations
 % ndims : dimensions of data location (>=1)
@@ -82,7 +82,13 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     options.null=0;
   end
   
-  
+  if any(strcmp(fieldnames(options),'pos_weight')); 
+  	for i=1:size(pos_known,2);
+		pos_known(:,i)=pos_known(:,i)./options.pos_weight(i);
+		pos_est(:,i)=pos_est(:,i)./options.pos_weight(i);
+	end  
+  end
+
   if any(strcmp(fieldnames(options),'mean')); 
     val_0=options.mean;
   else
