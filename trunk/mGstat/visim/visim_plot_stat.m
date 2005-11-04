@@ -24,7 +24,7 @@ function M=visim_make_movie(V,nsim,cax)
   l2=plot(xall,orgpdf,'r--','linewidth',3);
   hold off
   xlabel('Value');ylabel('#counts')
-  legend([l1 l2 l0(1)],'A priori','All realizations','Relisations')
+  legend([l2 l1 l0(1)],'A priori','All realizations','Relisations')
   
   x0=0.03;
   text(x0,.9,'A priori :','units','norm')

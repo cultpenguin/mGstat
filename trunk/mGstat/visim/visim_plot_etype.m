@@ -23,26 +23,44 @@ function V=visim_plot_etype(V,info,cax1,cax2)
     info=0;
   end
     
-  
   clf;
   
+  
+  if V.nsim==0
+    [d]=read_eas(['visim_estimation_',V.out.fname]);
+    etype.mean=reshape(d(:,1),V.nx,V.ny);
+    etype.var=reshape(d(:,2),V.nx,V.ny);
+  else
+    etype=V.etype;
+  end
+  
+  
   subplot(1,2+info,1)
-  imagesc(V.x, V.y, V.etype.mean');
+  imagesc(V.x, V.y, etype.mean');
   axis image
   if exist('cax1')==1
     caxis(cax1);
   end
   colorbar;
-  title(sprintf('E-type mean'))
+  if V.nsim==0
+    title(sprintf('LSQ mean'))
+  else
+    title(sprintf('E-type mean'))
+  end
   
   subplot(1,2+info,2)
-  imagesc(V.x, V.y, V.etype.var');
+  imagesc(V.x, V.y, etype.var');
   if exist('cax2')==1
     caxis(cax2);
   end
   colorbar;
   axis image
-  title(sprintf('E-type variance'))
+  if V.nsim==0
+    title(sprintf([V.parfile,' - LSQ var']),'interpr','none')
+  else
+    title(sprintf('E-type var'))
+  end
+
   
   if info==1
     subplot(1,3,3)
@@ -53,6 +71,6 @@ function V=visim_plot_etype(V,info,cax1,cax2)
   end
   
   [f1,f2,f3]=fileparts(V.parfile);
-  title([f2,' E-type'],'interpr','none')
+  % title([f2],'interpr','none')
 
   print_mul(sprintf('%s_etype',f2))
