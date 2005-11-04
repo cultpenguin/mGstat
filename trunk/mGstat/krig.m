@@ -84,8 +84,8 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   
   if any(strcmp(fieldnames(options),'pos_weight')); 
   	for i=1:size(pos_known,2);
-		pos_known(:,i)=pos_known(:,i)./options.pos_weight(i);
-		pos_est(:,i)=pos_est(:,i)./options.pos_weight(i);
+		pos_known(:,i)=pos_known(:,i).*options.pos_weight(i);
+		pos_est(:,i)=pos_est(:,i).*options.pos_weight(i);
 	end  
   end
 
@@ -119,9 +119,9 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   ndim=size(pos_known,2);
   n_est=size(pos_est,1);
   if n_est~=1, 
-    mgstat_verbose('Warning : you called krig with more than one')
-    mgstat_verbose('unknown data location')
-    mgstat_verbose('--- Calling krig_npoint instead')
+    mgstat_verbose('Warning : you called krig with more than one',100)
+    mgstat_verbose('unknown data location',100)
+    mgstat_verbose('--- Calling krig_npoint instead',100)
     [d_est,d_var,d2d,d2u]=krig_npoint(pos_known,val_known,pos_est,V,options);
     lambda_sk=[];K=[];k=[];inhood=[];
     return
