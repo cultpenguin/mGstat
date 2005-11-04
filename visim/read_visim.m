@@ -199,16 +199,22 @@ function obj=read_visim(filename)
   obj.tail.upper(1)=tmp(1);
   obj.tail.upper(2)=tmp(2);
   
+  obj.nsim
+  
   % CREATE A MARIX OF SIM DATA :
   if isfield(obj,'out')
     
     nxyz=obj.nx*obj.ny*obj.nz;
     
-    if (size(obj.out.data)==nxyz*obj.nsim)
-      nsim==obj.nsim;
+    if obj.nsim>0
+      if (size(obj.out.data)==nxyz*obj.nsim)
+        nsim==obj.nsim;
+      else
+        nsim=length(obj.out.data)./(nxyz);
+        nsim=floor(nsim);
+      end
     else
-      nsim=length(obj.out.data)./(nxyz);
-      nsim=floor(nsim);
+      nsim=obj.nsim;
     end
     
     if nsim>0
@@ -223,6 +229,10 @@ function obj=read_visim(filename)
       obj.etype.var=Ev;
       
       obj.nsim=nsim;
+    else
+      [d]=read_eas(['visim_estimation_',obj.out.fname]);
+      obj.etype.mean=reshape(d(:,1),obj.nx,obj.ny);
+      obj.etype.var=reshape(d(:,2),obj.nx,obj.ny);
     end
   end
   
