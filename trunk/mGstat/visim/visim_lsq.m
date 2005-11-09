@@ -1,5 +1,5 @@
 % visim_lsq : least squares inversion of visim data
-function [m_est]=visim_lsq(V);
+function [m_est,Cm_est]=visim_lsq(V);
   
   if isstruct(V)~=1
     V=read_visim(V);
@@ -24,7 +24,12 @@ function [m_est]=visim_lsq(V);
   
   m0=zeros(nxyz,1)+V.gmean;
   
-  [m_est]=estim_taran(G,Cm,Cd,m0,d_obs);  
+  
+  if nargout==2
+    [m_est,Cm_est]=estim_taran(G,Cm,Cd,m0,d_obs);  
+  else
+    [m_est]=estim_taran(G,Cm,Cd,m0,d_obs);  
+  end
   %Cd=Cd.*.1;
   %[m_est2]=estim_taran(G,Cm,Cd,m0,d_obs);  
   %clear Cm

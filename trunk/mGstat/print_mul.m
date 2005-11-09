@@ -1,7 +1,9 @@
 % print both EPS and PNG files
 function print_mul(fname);
-  print(gcf, '-depsc', fname )
+
   print(gcf, '-dpng', fname )
+
+  print(gcf, '-depsc2', fname )
   
   trim_cmd='/home/tmh/bin/trim_image';
   
