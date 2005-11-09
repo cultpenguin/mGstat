@@ -28,6 +28,7 @@ function [hc,garr,h,gamma,hangc,z_head,z_tail,dp]=semivar_exp(pos,val,nbin,nbina
 ndata=size(pos,1);
 ndims=size(pos,2);
 
+meanv=mean(val);
 ndata_types=size(val,2);
 
 % First calculate the 'distance' vector
@@ -54,7 +55,7 @@ for i2=(i1+1):ndata
   h(i)=sqrt( (p1-p2)*(p1-p2)' ); 
   z_head(i,:)=val(i1,:);
   z_tail(i,:)=val(i2,:);
-  gamma(i,:)=0.5*(val(i1,:)-val(i2,:)).^2;
+  gamma(i,:)=(val(i1,:)-meanv).*(val(i2,:)-meanv);
   % ANGLE
   aa=sqrt(sum(p1.^2));
   bb=sqrt(sum(p2.^2));

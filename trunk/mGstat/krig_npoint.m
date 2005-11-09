@@ -53,7 +53,7 @@ if isfield(options,'d2u');
   end
 else
   for i=1:n_est
-    if (i/500)==round(i/500), 
+    if (i/50)==round(i/50), 
       progress_txt(i,n_est,sprintf('%s : kriging',mfilename));
     end    
     [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i,:),V,options);

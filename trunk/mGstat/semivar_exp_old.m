@@ -28,6 +28,7 @@ function [hc,garr,h,gamma,hangc,z_head,z_tail,dp]=semivar_exp(pos,val,nbin,nbina
 ndata=size(pos,1);
 ndims=size(pos,2);
 
+meanv=mean(val);
 ndata_types=size(val,2);
 
 % First calculate the 'distance' vector

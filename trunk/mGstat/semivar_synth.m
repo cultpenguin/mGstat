@@ -7,13 +7,17 @@
 %    V(2).par1=0.1;V(2).par2=0;V(2).type='Nug';
 %    [sv,d]=semivar_synth(V,[0:.1:6]);plot(d,sv)
 %
-function [sv,d]=semivar_synth(V,d,gstat);
+function [sv,d]=semivar_synth(V,d,gstat,nugtype);
 
   
   if nargin<3
     gstat=1;
   end
-  
+
+  if nargin<4
+    nugtype=1;
+  end
+
   if nargin==0,
     V='5 Nug(0) + 1 Sph(5)'
     d=[0:.1:20];
@@ -44,7 +48,9 @@ function [sv,d]=semivar_synth(V,d,gstat);
   end
   
   % Make sure sv(0)=0;
-  sv(find(d<1e-9))=0;
+  if nugtype==1;
+    sv(find(d<1e-9))=0;
+  end
   
 function [gamma,h]=synthetic_variogram(V,h,gstat)
   
@@ -93,7 +99,7 @@ function [gamma,h]=synthetic_variogram(V,h,gstat)
     else
       gamma=v1.*(1-exp(-h./v2)); % GSTAT
     end
-  else
+  else      
     mgstat_verbose(sprintf('%s : ''%s'' type is not recognized',mfilename,type),-1);
   end
   
