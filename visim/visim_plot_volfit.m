@@ -1,9 +1,15 @@
 % visim_plot_vol_fit : Plot Histogram of d_obs<>d_est
-function [m_est]=visim_plot_volfit(V);
+function [m_est]=visim_plot_volfit(V,Xlim,doPrint);
   
   if isstruct(V)~=1
     V=read_visim(V);
   end
+
+  if nargin<3
+    doPrint=1;
+  end
+  
+  FS=5;
   
   [G,d_obs,d_var]=visim_to_G(V);
 
@@ -21,13 +27,24 @@ function [m_est]=visim_plot_volfit(V);
   
       
   x0=0.03;
-  text(x0,.90,sprintf('mean=%6.3f',mean(d_dif(:))),'units','norm')
-  text(x0,.85,sprintf('var=%6.3g',var(d_dif(:))),'units','norm')
-  text(x0,.80,sprintf('std=%6.3g',std(d_dif(:))),'units','norm')
- 
+  text(x0,.90,sprintf('mean=%6.3f',mean(d_dif(:))),'units','norm','FontSize',FS)
+  text(x0,.85,sprintf('var=%6.3g',var(d_dif(:))),'units','norm','FontSize',FS)
+  text(x0,.80,sprintf('std=%6.3g',std(d_dif(:))),'units','norm','FontSize',FS)
+  
+  if nargin>1
+    if ~isempty(Xlim)
+      set(gca,'Xlim',Xlim)
+    end
+  end
+  
+  xlabel('Data Misfit (d_{est}-d_{obs})')
+  ylabel('# Count')
+  
   [f1,f2,f3]=fileparts(V.parfile);
 
-  title([f2,' Data Fit'],'interpr','none')
+  % title([f2,' Data Fit'],'interpr','none')
 
-  print_mul(sprintf('%s_volfit',f2))
+  if doPrint==1
+    print_mul(sprintf('%s_volfit',f2))
+  end
   

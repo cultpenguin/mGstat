@@ -20,7 +20,7 @@ function obj=read_visim(filename)
   head=1;
   while (head==1)
     line=fgetl(fid);
-    disp(line)
+    %disp(line)
     if length(line)>=19
       if (strcmp(line(1:19),'START OF PARAMETERS')) 
       head=0;
@@ -164,29 +164,31 @@ function obj=read_visim(filename)
   obj.gmean=g(1);
   obj.gvar=g(2);
   
+
+  % VARIOGRAM 
   
   % NUGGET 
   line=fgetl(fid);
   tmp=sscanf(line,'%d %f');
-  obj.nst=tmp(1);
-  obj.nugget=tmp(2);
+  obj.Va.nst=tmp(1);
+  obj.Va.nugget=tmp(2);
 
-  for ist=1:obj.nst
+  for ist=1:obj.Va.nst
     % VARIOGRAM 1
     line=fgetl(fid);
     tmp=sscanf(line,'%d %f %f %f %f');
-    obj.it(ist)=tmp(1);
-    obj.cc(ist)=tmp(2);
-    obj.ang1(ist)=tmp(3);
-    obj.ang2(ist)=tmp(4);
-    obj.ang3(ist)=tmp(5);
+    obj.Va.it(ist)=tmp(1);
+    obj.Va.cc(ist)=tmp(2);
+    obj.Va.ang1(ist)=tmp(3);
+    obj.Va.ang2(ist)=tmp(4);
+    obj.Va.ang3(ist)=tmp(5);
     
     % VARIOGRAM 2
     line=fgetl(fid);
     tmp=sscanf(line,'%f %f %f');
-    obj.a_hmax(ist)=tmp(1);
-    obj.a_hmin(ist)=tmp(2);
-    obj.a_vert(ist)=tmp(3);
+    obj.Va.a_hmax(ist)=tmp(1);
+    obj.Va.a_hmin(ist)=tmp(2);
+    obj.Va.a_vert(ist)=tmp(3);
   end
   
   tmp=sscanf(line,'%f %f');
@@ -198,8 +200,6 @@ function obj=read_visim(filename)
   tmp=sscanf(line,'%f %f');
   obj.tail.upper(1)=tmp(1);
   obj.tail.upper(2)=tmp(2);
-  
-  obj.nsim
   
   % CREATE A MARIX OF SIM DATA :
   if isfield(obj,'out')
