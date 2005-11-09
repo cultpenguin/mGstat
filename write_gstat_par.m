@@ -52,8 +52,19 @@ function filename=write_gstat_par(G,filename)
       nv=length(G.variogram);
       for i=1:nv
         fprintf(fid,'variogram(%s): ',G.variogram{i}.data);
-        vartxt=format_variogram(G.variogram{i}.V);
-        fprintf(fid,' %s;\n',vartxt);
+        if isfield(G.variogram{i},'file')
+          fprintf(fid,'''%s''',G.variogram{i}.file);
+          
+          if (isfield(G.variogram{i},'V'))
+            fprintf(fid, ', ');
+          end
+          
+        end
+        if isfield(G.variogram{i},'V')
+          vartxt=format_variogram(G.variogram{i}.V);
+          fprintf(fid,' %s',vartxt);
+        end
+        fprintf(fid,';\n');
       end
       
     elseif strcmp('set',fn{ifn}),
@@ -62,7 +73,7 @@ function filename=write_gstat_par(G,filename)
       n=length(df);
       for i=1:n;
         cmd=df{i};
-        data=G.set(1).(df{1});
+        data=G.set(1).(df{i});
         if isnumeric(data)
           if data==round(data)
             fprintf(fid,'set %s = %d;\n',cmd,data);

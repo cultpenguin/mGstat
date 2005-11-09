@@ -22,7 +22,7 @@ d=d_est-val_known(:,1);
 %d=(d_est-val_known(:,1)).*val_known(:,2);
 
 
-be=sqrt(d(:)'*d(:));
-
+%be=sqrt(d(:)'*d(:));
+be=mean(abs(d));
 
 %REMEMBER TO NORMALIZE MISFIT BY IT VARIANCE

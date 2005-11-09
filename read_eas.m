@@ -8,7 +8,7 @@ function [data,header,txtdata,txtheader]=read_eas(filename);
    fid=fopen(filename,'r');
    txt_title=fgetl(fid);
 
-   disp(txt_title);
+   %disp(txt_title);
    l=fgetl(fid);
    % next 3 lines to satisfy sisim.f
    if  isempty(str2num(l))
