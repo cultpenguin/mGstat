@@ -21,7 +21,7 @@ function visim_plot_hist(V,doPrint)
   end
 
   
- FS=5;
+  FS=5;
   
   orgpdf=normpdf(xall,V.gmean,sqrt(V.gvar));
   orgpdf=V.nx*V.ny*V.nz*orgpdf./(sum(orgpdf));  
@@ -35,23 +35,28 @@ function visim_plot_hist(V,doPrint)
   l1=plot(xall,hall,'g--','linewidth',1);
   l2=plot(xall,orgpdf,'r-+','linewidth',1);
   hold off
-  xlabel('Value');ylabel('#counts')
-  l=legend([l2 l1 l0(1)],'A priori','All real','Real');
+  xlabel('Value');ylabel('# Counts')
+  l=legend([l2 l1 l0(1)],'A priori','All real','a priori',2);
   set(l,'FontSize',5)
   
   x0=0.03;
-  text(x0,.9,'A priori :','units','norm','FontSize',FS)
-  text(x0,.85,sprintf('mean=%6.3f',V.gmean),'units','norm','FontSize',FS)
-  text(x0,.8,sprintf('var=%6.3g',V.gvar),'units','norm','FontSize',FS)
-  text(x0,.75,sprintf('std=%6.3g',sqrt(V.gvar)),'units','norm','FontSize',FS)
+  y0=0.7; 
+  dy=.05;
+  text(x0,y0,'A priori :','units','norm','FontSize',FS)
+  text(x0,y0-1*dy,sprintf('mean=%6.3g',V.gmean),'units','norm','FontSize',FS)
+  text(x0,y0-2*dy,sprintf('var=%5.3g',V.gvar),'units','norm','FontSize',FS)
+  text(x0,y0-3*dy,sprintf('std=%4.3g',sqrt(V.gvar)),'units','norm','FontSize',FS)
 
-    
+  y0=.48;
   x0=0.03;
-  text(x0,.65,'Simulations :','units','norm','FontSize',FS)
-  text(x0,.60,sprintf('mean=%6.3f',mean(V.out.data)),'units','norm','FontSize',FS)
-  text(x0,.55,sprintf('var=%6.3g',var(V.out.data)),'units','norm','FontSize',FS)
-  text(x0,.50,sprintf('std=%6.3g',std(V.out.data)),'units','norm','FontSize',FS)
+  text(x0,y0,'Simulations :','units','norm','FontSize',FS)
+  text(x0,y0-1*dy,sprintf('mean=%6.3g',mean(V.out.data)),'units','norm','FontSize',FS)
+  text(x0,y0-2*dy,sprintf('var=%5.3g',var(V.out.data)),'units','norm','FontSize',FS)
+  text(x0,y0-3*dy,sprintf('std=%4.3g',std(V.out.data)),'units','norm','FontSize',FS)
   
+  Xlim=get(gca,'Xlim');
+  Xlim=[Xlim(1)-(Xlim(2)-Xlim(1))*.1 Xlim(2)];
+  set(gca,'Xlim',Xlim)
   
 
   [f1,f2,f3]=fileparts(V.parfile);

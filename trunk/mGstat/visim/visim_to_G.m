@@ -1,4 +1,8 @@
 % visim_to_G : Setup linear forward matrix (only 2D)
+%
+% CALL : 
+%  [G,d_obs,d_var]=visim_to_G(V);
+%
 function [G,d_obs,d_var]=visim_to_G(V);
   
   if isstruct(V)~=1

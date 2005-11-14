@@ -27,9 +27,9 @@ function [m_est]=visim_plot_volfit(V,Xlim,doPrint);
   
       
   x0=0.03;
-  text(x0,.90,sprintf('mean=%6.3f',mean(d_dif(:))),'units','norm','FontSize',FS)
-  text(x0,.85,sprintf('var=%6.3g',var(d_dif(:))),'units','norm','FontSize',FS)
-  text(x0,.80,sprintf('std=%6.3g',std(d_dif(:))),'units','norm','FontSize',FS)
+  text(x0,.90,sprintf('mean=%6.3g',mean(d_dif(:))),'units','norm','FontSize',FS)
+  text(x0,.85,sprintf('var=%5.3g',var(d_dif(:))),'units','norm','FontSize',FS)
+  text(x0,.80,sprintf('std=%4.3g',std(d_dif(:))),'units','norm','FontSize',FS)
   
   if nargin>1
     if ~isempty(Xlim)

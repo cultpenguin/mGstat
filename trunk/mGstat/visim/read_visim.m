@@ -44,7 +44,6 @@ function obj=read_visim(filename)
   line=fgetl(fid);
   obj.cols=sscanf(line,'%d');
 
-  
   % Volume Geometry
   line=fgetl(fid);
   [fname]=get_string(line);
@@ -139,10 +138,11 @@ function obj=read_visim(filename)
 
   % RANDPATH
   line=fgetl(fid);
-  tmp=sscanf(line,'%d %d %d');
+  %tmp=sscanf(line,'%d %d %d');
+  tmp=sscanf(line,'%d');
   obj.densitypr=tmp(1);
-  obj.shuffvol=tmp(2);
-  obj.shuffinvol=tmp(3);
+  %obj.shuffvol=tmp(2);
+  %obj.shuffinvol=tmp(3);
 
   
   obj.assign_to_nodes=sscanf(fgetl(fid),'%d');
