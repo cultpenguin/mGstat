@@ -1,3 +1,4 @@
+% [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,etype)
 function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,etype)
   
   if isstruct(V)~=1

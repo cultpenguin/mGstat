@@ -23,8 +23,6 @@ function V=visim_plot_etype(V,info,cax1,cax2)
     info=0;
   end
     
-  clf;
-  
   
   if V.nsim==0
     [d]=read_eas(['visim_estimation_',V.out.fname]);
@@ -34,8 +32,7 @@ function V=visim_plot_etype(V,info,cax1,cax2)
     etype=V.etype;
   end
   
-  
-  subplot(1,2,1)
+  if info>0, subplot(1,2,1); end
   imagesc(V.x, V.y, etype.mean');
   axis image
   if exist('cax1')==1

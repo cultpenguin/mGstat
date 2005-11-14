@@ -5,7 +5,7 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
   end
   
   if nargin<3
-    doPrint=1;
+    doPlot=0;
   end
 
   if nargin<2
@@ -32,7 +32,8 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
   m{2}=('+');
   m{3}=('o');
   
-  
+
+  [g0,hc0]=visim_semivar(V1,isim,0,180);
   
   for i=1:nang
     
@@ -47,8 +48,12 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
       if i==1; hold on; end
     end
     drawnow;
-    leg{i}=sprintf('%4.1f^o',ang(i));
+    leg{i}=sprintf('%4.1f^o +/- %3.1f^o',ang(i),tolerance);
   end
+
+  i=i+1;
+  pmg1(i)=plot(hc0,mean(g0')','b-o','linewidth',1);  
+  leg{i}='All directions';
   hold off
   
   L=(num2str(ang'));
@@ -66,8 +71,8 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
   hold off
 
   
-  leg{i+1}=[format_variogram(v1),' Hx'];
-  leg{i+2}=[format_variogram(v2),' Hy'];  
+  leg{i+1}=[format_variogram(v1,1)];
+  leg{i+2}=[format_variogram(v2,1)];  
   
   l=legend([pmg1 p1 p2],leg,4);
   set(l,'FontSize',5)
@@ -82,6 +87,3 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
   if doPlot==1
     print_mul(sprintf('%s_%d_semivar',f2,method))
   end
-  
-  
-  
