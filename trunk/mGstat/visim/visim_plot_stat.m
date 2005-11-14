@@ -24,8 +24,8 @@ function visim_plot_stat(V,doPrint)
   set(gca,'FontSize',FS);
 
   subplot(2,3,2);
-%  visim_plot_semivar(V,1:V.nsim,doPrintSub);
-  visim_plot_semivar(V,1:5,doPrintSub);
+  visim_plot_semivar(V,1:V.nsim,doPrintSub);
+%  visim_plot_semivar(V,1:5,doPrintSub);
   set(gca,'FontSize',FS);
 
   subplot(2,3,3);
