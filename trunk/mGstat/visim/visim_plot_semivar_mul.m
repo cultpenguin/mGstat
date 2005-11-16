@@ -1,5 +1,5 @@
+% visim_plot_semivar_mul(V,name,cax)
 function visim_plot_semivar_mul(V,name,cax)
-
 %V{1}=read_visim('visim_25_geomod.par');
 %V{2}=read_visim('visim_25_geomod_unc.par');
 %name{1}='cond';
@@ -7,14 +7,16 @@ function visim_plot_semivar_mul(V,name,cax)
 
 ang=[0 90];
 tolerance=15;
-isim=1:100;
+isim=1:2;
 
 col{1}=[0 0 0];
 col{2}=[1 0 0];
 col{3}=[0 0 1];
+col{4}=[0 1 1];
 lstyle{1}=('-');
 lstyle{2}=('--');
 lstyle{3}=(':');
+lstyle{3}=('-.');
 
 for iv=1:length(V);
   for ia=1:length(ang)

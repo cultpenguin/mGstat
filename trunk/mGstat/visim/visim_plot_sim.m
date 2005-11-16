@@ -1,6 +1,6 @@
 % visim_plot_sim : plots VISIM simulations
 %
-% V=visim_plot_sim(V,nsim,cax,FS)
+% V=visim_plot_sim(V,nsim,cax,FS,nxsub,nysub)
 %
 function V=visim_plot_sim(V,nsim,cax,FS,nxsub,nysub)
   

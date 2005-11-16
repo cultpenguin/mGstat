@@ -28,7 +28,14 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,etype)
   
   nsim=length(usesim);
   
-  [xx,yy,zz]=meshgrid(V.x,V.y,V.z);  
+  usex=[1:1:V.nx];
+  usey=[1:1:V.ny];
+  %usey=[1:1:40];
+  V.nx=length(usex);
+  V.ny=length(usey);
+
+  
+  [xx,yy,zz]=meshgrid(V.x(usex),V.y(usey),V.z);  
   xx=xx';
   yy=yy';
   zz=zz';
@@ -39,9 +46,10 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,etype)
   
   
   
+  
   for isim=1:nsim
        
-    Md=V.D(:,:,usesim(isim));    
+    Md=V.D(usex,usey,usesim(isim));    
     %Md=V.D(:,:,usesim(isim))-etype;    
     Md=Md(:);
 
