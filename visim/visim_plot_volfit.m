@@ -1,5 +1,5 @@
 % visim_plot_vol_fit : Plot Histogram of d_obs<>d_est
-function [m_est]=visim_plot_volfit(V,Xlim,doPrint);
+function [m_est,d_est,d_obs]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
   
   if isstruct(V)~=1
     V=read_visim(V);
@@ -20,8 +20,12 @@ function [m_est]=visim_plot_volfit(V,Xlim,doPrint);
   for i=1:V.nsim
     m=V.D(:,:,i);
     d_est(:,i)=G*m(:);
-    d_dif(:,i)=G*m(:)-d_obs;
-  end
+    if nargin>=4
+      d_dif(:,i)= rayl./d_est(:,i)-rayt;
+    else
+      d_dif(:,i)=G*m(:)-d_obs;
+    end
+  end  
   
   hist(d_dif(:),max([10 V.nsim]))
   
