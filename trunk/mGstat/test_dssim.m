@@ -42,7 +42,7 @@ options.target_hist=randn(1000,1);
 
 options.max=10;
 options.mean=0;
-options.nsim=20;
+options.nsim=1;
 [MulG,p]=create_nscore_lookup(options.target_hist);
 options.MulG=MulG;
 options.p=p;

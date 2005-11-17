@@ -15,6 +15,11 @@ function [inhood,order_list]=nhood(pos_known,pos_est,options);
   ndim=size(pos_known,2);
   usemax=min(options.max,nknown);
   
+  if (nknown<=usemax)
+    inhood=[1:1:nknown];
+    order_list=[1:1:nknown];
+    return
+  end
   
   method=2;
   if isfield(options,'d2u');

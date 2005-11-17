@@ -19,6 +19,7 @@ end
 
 
 d=d_est-val_known(:,1);
+%d=(d_est-val_known(:,1))./d_var;
 %d=(d_est-val_known(:,1)).*val_known(:,2);
 
 
