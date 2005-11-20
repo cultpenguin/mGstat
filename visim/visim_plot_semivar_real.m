@@ -40,7 +40,8 @@ for ia=1:length(ang)
   ptrue=plot(hc2,sv{i},'k-','linewidth',3,'linestyle',lstyle{1});
   
   l=legend([pall,pmean,ptrue],'All Sim','Mean',vtxt{ia});
-  set(l,'Location','SouthEast');
+%  set(l,'Location','SouthEast');
+  set(l,'Location','Best');
 
   xlabel('Distance')
   ylabel('Semivariance, \gamma')
