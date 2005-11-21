@@ -55,7 +55,6 @@ p(i+1)=plot(hc2,sv1,'k','linewidth',3,'linestyle',lstyle{1});
 p(i+2)=plot(hc2,sv2,'k','linewidth',3,'linestyle',lstyle{2});
 leg{i+1}='hx prim';
 leg{i+2}='hx sec';
-
 legend(p,leg,0)
 
 xlabel('Distance')
