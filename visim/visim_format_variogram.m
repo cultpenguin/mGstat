@@ -1,4 +1,8 @@
-function [str1,str2]=visim_format_variogram(V);
+function [str1,str2]=visim_format_variogram(V,comp);
+  
+  if nargin<2
+    comp=0;
+  end
   
   Va=V.Va;
   
@@ -15,9 +19,13 @@ function [str1,str2]=visim_format_variogram(V);
       type='Gau';
     end
     
-    str1=sprintf('%s %5.1g %s(%5.1f)',str,Va.cc(i),type,Va.a_hmax);
-    str2=sprintf('%s %5.1g %s(%5.1f)',str,Va.cc(i),type,Va.a_hmin);
-    
+    if comp==0,
+      str1=sprintf('%s %5.1g %s(%5.1f)',str,Va.cc(i),type,Va.a_hmax);
+      str2=sprintf('%s %5.1g %s(%5.1f)',str,Va.cc(i),type,Va.a_hmin);
+    else
+      str1=sprintf('%s %3.1g %s(%3.1f)',str,Va.cc(i),type,Va.a_hmax);
+      str2=sprintf('%s %3.1g %s(%3.1f)',str,Va.cc(i),type,Va.a_hmin);
+    end
     
   end
   

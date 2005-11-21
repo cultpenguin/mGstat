@@ -54,5 +54,5 @@ hold off
 
 
 [f1,f2,f3]=fileparts(V.parfile);
-print_mul(sprintf('%s_semivar_compare',f2))
+print_mul(sprintf('%s_semivar_real',f2))
 
