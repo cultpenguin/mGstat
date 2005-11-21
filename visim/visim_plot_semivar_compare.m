@@ -40,7 +40,7 @@ for ia=1:length(ang)
   i=i+1;
   subplot(2,2,i)
 
-  punc=plot(hcu{ia},gu{ia},'-','color',[1 1 1].*.8,'linewidth',1.4);
+  punc=plot(hcu{ia},gu{ia},'-','color',[1 1 1].*.8,'linewidth',.1);
   hold on
   punc=punc(1);
   pall=plot(hc{ia},g{ia},'-','color',[0 1 1].*.7,'linewidth',.1);
