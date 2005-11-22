@@ -6,7 +6,7 @@
 function [inhood,order_list]=nhood(pos_known,pos_est,options);
   
   if ~isfield(options,'max')
-    options.max=40;
+    options.max=1e+9;
   end
   
   
