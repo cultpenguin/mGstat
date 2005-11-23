@@ -75,7 +75,7 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
   if nargout>1
     if isfield(G,'variances')
       for ip=1:length(G.variances)
-        mgstat_convert(G.variances{ip}.file);
+        %mgstat_convert(G.variances{ip}.file);
         
         if exist(G.variances{ip}.file)==2;
           % [pred_var{ip},x,y,dx,nanval]=read_gstat_ascii([G.variances{ip}.file,'.ascii']);
@@ -95,11 +95,12 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
   if nargout>2
     if isfield(G,'covariances')
       for ip=1:length(G.covariances)
-        mgstat_convert(G.covariances{ip}.file);
+        %mgstat_convert(G.covariances{ip}.file);
         
         if exist(G.covariances{ip}.file)==2;
           % [pred_covar{ip},x,y,dx,nanval]=read_gstat_ascii([G.covariances{ip}.file,'.ascii']);
-          [pred_covar{ip},x,y,dx,nanval]=read_arcinfo_ascii([G.covariances{ip}.file,'.ascii']);
+          %[pred_covar{ip},x,y,dx,nanval]=read_arcinfo_ascii([G.covariances{ip}.file,'.ascii']);
+        [pred_covar{ip},x,y,dx,nanval]=read_arcinfo_ascii(G.covariances{ip}.file);
         else
           pred_covar{ip}=[];mgstat_verbose(sprintf('Cannot find "%s"',G.covariances{ip}.file));
         end
@@ -115,7 +116,7 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
   if nargout>3
     if isfield(G,'mask')
       for ip=1:length(G.mask)
-        mgstat_convert(G.mask{ip}.file);
+        %mgstat_convert(G.mask{ip}.file);
         
         if exist(G.mask{ip}.file)==2;
           % [mask{ip},x,y,dx,nanval]=read_gstat_ascii([G.mask{ip}.file,'.ascii']);

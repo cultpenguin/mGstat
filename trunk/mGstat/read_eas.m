@@ -80,7 +80,7 @@ function [data,header,txtdata,txtheader]=read_eas(filename);
            end
          catch
            disp('READ ERROR')
-           keyboard
+
          end
        end
        
