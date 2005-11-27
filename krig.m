@@ -187,16 +187,23 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     K(1:nknown,nknown+1)=ones(nknown,1);
     k(nknown+1)=1;
   elseif ktype==2
-    K(1:nknown,nknown+1)=ones(nknown,1);
-    K(nknown+1,1:nknown)=ones(1,nknown);
-    for id=1:ndim
-      K(nknown+1+id,1:nknown)=pos_known(:,id)';
-      K(1:nknown,nknown+1+id)=pos_known(:,id);
-    end
-    k(nknown+1)=1;
-    for id=1:ndim
-      k(nknown+1+id)=pos_est(id);
-    end
+    
+	if isfield(options,'polytrend')==0
+	   polytrend=1;
+	else
+	   polytrend=options.polytrend
+	end
+	
+	%polytrend=4;
+	for it=0:1:polytrend
+		for id=1:ndim
+     			K(nknown+it+id,1:nknown)=[pos_known(:,id)'].^(it);
+      			K(1:nknown,nknown+it+id)=[pos_known(:,id)].^(it);
+				k(nknown+it+id)=[pos_est(id)].^(it);
+    		end
+	end
+	
+	
   end  
 
   % SOLVE THE LINEAR SYSTEM
