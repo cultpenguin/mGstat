@@ -191,10 +191,13 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
 	if isfield(options,'polytrend')==0
 	   polytrend=1;
 	else
-	   polytrend=options.polytrend
+	   polytrend=options.polytrend;
 	end
-	
-	%polytrend=4;
+        
+	if length(polytrend)==1,
+          polytrend=ones(1,ndim).*polytrend;
+        end
+        
 	for it=0:1:polytrend
 		for id=1:ndim
      			K(nknown+it+id,1:nknown)=[pos_known(:,id)'].^(it);
