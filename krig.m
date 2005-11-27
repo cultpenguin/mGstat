@@ -198,15 +198,22 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
           polytrend=ones(1,ndim).*polytrend;
         end
         
-	for it=0:1:polytrend
-		for id=1:ndim
-     			K(nknown+it+id,1:nknown)=[pos_known(:,id)'].^(it);
-      			K(1:nknown,nknown+it+id)=[pos_known(:,id)].^(it);
-				k(nknown+it+id)=[pos_est(id)].^(it);
-    		end
+        
+        %polytrend=4;
+
+        K(nknown+1,1:nknown)=ones(size(pos_known(:,1),1),1);
+        K(1:nknown,nknown+1)=ones(size(pos_known(:,1),1),1);
+        k(nknown+1)=1;
+                   
+        ik=1;
+        for id=1:ndim
+          for it=1:1:polytrend(id)
+            ik=ik+1;
+            K(nknown+ik,1:nknown)=[pos_known(:,id)'].^(it);
+            K(1:nknown,nknown+ik)=[pos_known(:,id)].^(it);
+            k(nknown+ik)=[pos_est(id)].^(it);
+          end
 	end
-	
-	
   end  
 
   % SOLVE THE LINEAR SYSTEM
