@@ -22,12 +22,8 @@ function cov=precal_cov(pos1,pos2,V);
         end
         end
     for j=1:n_est2;
-      d(i,j)=edist(pos1(i,:),pos2(j,:));
+      d(i,j)=edist(pos1(i,:),pos2(j,:),V(1).par2);
     end
   end
   gvar=sum([V.par1]);
-  cov=gvar-semivar_synth(V,d);  
-  
-  
-  
-  
+  cov=gvar-semivar_synth(V,d);
