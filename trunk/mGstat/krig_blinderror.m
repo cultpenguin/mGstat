@@ -13,6 +13,7 @@ d_var=zeros(nknown,1);
 d2u=precal_cov(pos_known,pos_known,V);
 
 for i=1:nknown
+  progress_txt(i,nknown,'Crossvalidation')
   used=find(pos~=i);
   
   options.d2u=d2u(used,i);
@@ -21,7 +22,6 @@ for i=1:nknown
                     pos_known(i,:),V,options);
 
   if (i/10)==round(i/10), 
-    progress_txt(i,nknown,'BE')
     % mgstat_verbose(sprintf('%s cross validation  %d/%d',mfilename,i,nknown));
   end
 end

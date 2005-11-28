@@ -5,7 +5,7 @@
 % 
 % p1,p2 : vectors
 %
-function D=edist(p1,p2,rescale,rotate)
+function D=edist(p1,p2,transform)
   
   if nargin==1;
     p2=0.*p1;
@@ -18,24 +18,29 @@ function D=edist(p1,p2,rescale,rotate)
     dp=(p1-p2);
   end
   
-  %  if exist('rotate')==1
-  if nargin>=4;
+
+	
+  % 2D COORDINATE TRANSFORMATION
+  if (nargin>2)&(length(p1)==2);
+  
+    rescale=transform(1:2);
+  	rotate=transform(3);
+  
     RotMat=[cos(rotate) -sin(rotate);sin(rotate) cos(rotate)];
     dp=RotMat*dp;
-  end
-  
-  if nargin>=3;
-    % if exist('rescale')==1
-    RescaleMat=eye(length(rescale));
+    
+	RescaleMat=eye(length(rescale));
     for i=1:length(rescale)
       RescaleMat(i,i)=rescale(i);
     end
-    %dpp=dp;
     dp=RescaleMat*dp;
-    %disp(sprintf('',dpp,dp)
+
   end
-  
-%  dp=RescaleMat*RotMat*dp;
-  
+
+  % 3D COORDINATE TRANSFORMATION
+  if (nargin>2)&(length(p1)==3);
+    % NOT YET IMPLEMENTED, SEE GSLIB BOOK
+  end
+
+
   D=sqrt(dp'*dp);
-    

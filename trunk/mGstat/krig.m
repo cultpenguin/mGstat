@@ -138,7 +138,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   % SET GLOBAL VARIANCE
   gvar=sum([V.par1]);
   
-
+  transform=V(1).par2;
     
   if ktype==0
     K=zeros(nknown,nknown);
@@ -159,7 +159,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     d=zeros(nknown,nknown);
     for i=1:nknown;
       for j=1:nknown;
-        d(i,j)=edist(pos_known(i,:),pos_known(j,:));
+        d(i,j)=edist(pos_known(i,:),pos_known(j,:),transform);
       end
     end
     K=gvar-semivar_synth(V,d);
@@ -176,7 +176,11 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     k=zeros(nknown,1);
     d=zeros(nknown,1);
     for i=1:nknown;
-      d(i)=edist(pos_known(i,:),pos_est(1,:));      
+	try
+      d(i)=edist(pos_known(i,:),pos_est(1,:),transform);      
+	  catch
+	  keyboard
+	  end
     end
     k=gvar-semivar_synth(V,d);
   end
@@ -193,27 +197,17 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
 	else
 	   polytrend=options.polytrend;
 	end
-        
-	if length(polytrend)==1,
-          polytrend=ones(1,ndim).*polytrend;
-        end
-        
-        
-        %polytrend=4;
-
-        K(nknown+1,1:nknown)=ones(size(pos_known(:,1),1),1);
-        K(1:nknown,nknown+1)=ones(size(pos_known(:,1),1),1);
-        k(nknown+1)=1;
-                   
-        ik=1;
-        for id=1:ndim
-          for it=1:1:polytrend(id)
-            ik=ik+1;
-            K(nknown+ik,1:nknown)=[pos_known(:,id)'].^(it);
-            K(1:nknown,nknown+ik)=[pos_known(:,id)].^(it);
-            k(nknown+ik)=[pos_est(id)].^(it);
-          end
+	
+	
+	for it=0:1:polytrend
+		for id=1:ndim
+     			K(nknown+it+id,1:nknown)=[pos_known(:,id)'].^(it);
+      			K(1:nknown,nknown+it+id)=[pos_known(:,id)].^(it);
+				k(nknown+it+id)=[pos_est(id)].^(it);
+    		end
 	end
+	
+	
   end  
 
   % SOLVE THE LINEAR SYSTEM
