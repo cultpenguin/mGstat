@@ -26,4 +26,8 @@ function cov=precal_cov(pos1,pos2,V);
     end
   end
   gvar=sum([V.par1]);
-  cov=gvar-semivar_synth(V,d);
+  try
+    cov=gvar-semivar_synth(V,d);
+  catch
+    keyboard
+  end

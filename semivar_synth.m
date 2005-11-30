@@ -59,6 +59,7 @@ function [gamma,h]=synthetic_variogram(V,h,gstat)
   v2=V.par2;
   gamma=h.*0;
   
+  
   s1=find(h<v2);
   s2=find(h>=v2);      
   
