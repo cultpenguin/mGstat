@@ -22,19 +22,22 @@ function D=edist(p1,p2,transform)
 	
   % 2D COORDINATE TRANSFORMATION
   if (nargin>2)&(length(p1)==2);
-  
-    rescale=transform(1:2);
-  	rotate=transform(3);
-  
-    RotMat=[cos(rotate) -sin(rotate);sin(rotate) cos(rotate)];
-    dp=RotMat*dp;
-    
-	RescaleMat=eye(length(rescale));
-    for i=1:length(rescale)
-      RescaleMat(i,i)=rescale(i);
-    end
-    dp=RescaleMat*dp;
 
+    if length(transform)>1
+    
+      rescale=transform(1:2);
+      rotate=transform(3);
+      
+      
+      RotMat=[cos(rotate) -sin(rotate);sin(rotate) cos(rotate)];
+      dp=RotMat*dp;
+      
+      RescaleMat=eye(length(rescale));
+      for i=1:length(rescale)
+        RescaleMat(i,i)=rescale(i);
+      end
+      dp=RescaleMat*dp;
+    end
   end
 
   % 3D COORDINATE TRANSFORMATION
