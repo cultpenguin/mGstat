@@ -2,13 +2,17 @@
 %
 % CALL : 
 %
-% [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol)
+% [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol,width,cutoff)
 %
 % IN : 
 %    pos : [ndata,ndims] : location of data
 %    val : [ndata,1] : data values
 %    angle [1] : angle 
 %    tol [1] : angle tolerance around 'angle'
+%    width[1] : width of bin use to average semivariance
+%    cutoff[1] : max distance for whoch to compute semivariance
+%
+%
 %
 % 'angle' and 'tol' are optional
 %
@@ -23,7 +27,7 @@
 %
 %
 %
-function [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol)
+function [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol,width,cutoff)
   
     
   if nargin<3
@@ -51,15 +55,24 @@ function [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol)
   G.variogram{1}.file=[file,'.variogram'];
   G.set.alpha=angle;
   G.set.tol_hor=tol;
-  G.set.width=.4;
-  G.set.cutoff=6;
+  if exist('width')==1
+    G.set.width=width;
+  end
+  if exist('cutoff')==1
+    G.set.cutoff=cutoff;
+  end
   
   write_gstat_par(G,[file,'.cmd']);
-
   
   mgstat(G);
   
   d=read_gstat_semivar('tempSemi.variogram');
+   
+  av_dist=d(:,4);
+  gamma=d(:,5);
+  hc=(d(:,1)+d(:,2))./2;
+  np=d(:,3);
+  return
   
   Cav_dist=d(:,4);
   Cgamma=d(:,5);
