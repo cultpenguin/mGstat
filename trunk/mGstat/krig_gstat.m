@@ -1,4 +1,4 @@
-% krig_gstat : Simple/Ordinar/Trend Kriging
+% krig_gstat : Simple/Ordinary Kriging using GSTAT
 %
 % Call :
 % [d_est,d_var,lambda_sk,K_dd,k_du,inhood]=krig_gstat(pos_known,val_known,pos_est,V,options);
@@ -22,7 +22,7 @@
 % pos_est=[0:.01:10]';
 % V=deformat_variogram('1 Sph(1)');
 % for i=1:length(pos_est);
-%   [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i),V);
+%   [d_est(i),d_var(i)]=krig_gstat(pos_known,val_known,pos_est(i),V);
 % end
 % plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
 % legend('SK estimate','SK variance','Observed Data')
@@ -32,14 +32,13 @@
 % See source code for more examples
 %
 %
-
 % Example 1 : 1D - NO DATA UNCERTAINTY
 % pos_known=[1;5;10];
 % val_known=[0 3 2]'; % adding some uncertainty
 % pos_est=[0:.01:10]';
 % V='1 Sph(.2)';
 % for i=1:length(pos_est);
-%   [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i),V);
+%   [d_est(i),d_var(i)]=krig_gstat(pos_known,val_known,pos_est(i),V);
 % end
 % plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
 % legend('SK estimate','SK variance','Observed Data')
@@ -51,7 +50,7 @@
 % pos_est=[0:.01:10]';
 % V=deformat_variogram('1 Sph(2)');
 % for i=1:length(pos_est);
-%   [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i),V);
+%   [d_est(i),d_var(i)]=krig_gstat(pos_known,val_known,pos_est(i),V);
 % end
 % plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
 % legend('SK estimate','SK variance','Observed Data')
@@ -63,7 +62,7 @@
 % val_known=[0 3 2]';
 % pos_est=[1.1 1];
 % V='1 Sph(2)';
-% [d_est,d_var]=krig(pos_known,val_known,pos_est,V);
+% [d_est,d_var]=krig_gstat(pos_known,val_known,pos_est,V);
 %
 %
 
@@ -79,8 +78,10 @@ function [d_est,d_var]=krig_gstat(pos_known,val_known,pos_est,V,options);
   if nargin<5
     options.null=0;
   end
-
-   % WRITE DATA TO EAS FILES
+  
+  % WRITE DATA TO EAS FILES
+  delete('obs.eas'); 
+  delete('est.eas'); 
   write_eas('obs.eas',[pos_known val_known]);
   write_eas('est.eas',pos_est);
   
