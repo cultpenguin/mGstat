@@ -78,7 +78,7 @@ function V=deformat_variogram(txt);
 		elseif (strcmp(type,'Hole'))
 			itype=5;
 		else 
-			disp(['Unknown type : ',type])
+			disp(['Unknown semivariogram type : ',type])
 			itype=8;			
 		end
 		
