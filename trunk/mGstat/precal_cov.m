@@ -1,3 +1,15 @@
+% precal_cov : Precalculate covariance matrix
+%
+% CALL : 
+%   cov=precal_cov(pos1,pos2,V);
+%
+% pos1   [ndata1,ndims] : Location of data to be estimated
+% pos2   [ndata2,ndims] : Location of data to be estimated
+% V [struct] : Variogram structure
+%
+% cov [ndata1,ndata1] : Covariance matrix
+%
+
 function cov=precal_cov(pos1,pos2,V);
   
   
