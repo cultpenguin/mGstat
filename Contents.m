@@ -1,36 +1,49 @@
 % mGstat Toolbox
 % Version 0.1 Feb 18, 2004
 %
-% CALLING GSTAT AND GEOSTATISCTICAL COMMANDS
-%   mgstat         - call gstat with parfile of mat-structure
-%   mgstat_convert - convert binary GSTAT output to ASCII
+% mGstat COMMANDS
 %   mgstat_verbose - display verbose information
-%   mgstat_krig    - Point kriging
-%   mgstat_cokrig  - Point cokriging
-%   mgstat_krig2d  - 2D kriging
-%   mgstat_cokrig2d- 2D cokriging
-%   mgstat_var     - plot variogram
-%   mgstat_binary  - returns the path to the binary gstat
-%   mgstat_test    - Runs all the example distributed with GSTAT
-%   mgstat_demo    - mGstat demos
-% PLOT 
-%   mgstat_plot    - Plot predcition/simulation results.
-%   cplot       - plot data as dots in specific colormap
+%   krig - simple/ordinary/tren kriging
+%   precal_covar - precalculate covariance matrix
+%   semivar_synth
+%   semivar_exp
+%   nscore : Normal socre transformation
+%   inscore : Normal socre back transformation
+%
+%   sgsim    : Sequential Gaussian Simulation
+%   dssim    : Direct sequential simulation
+%   dssim-hr : Direct sequential simulation with histogram reprod.
+%   etype : E-Type from reaslizations.
+%
+% GSTAT SPECIFIC COMMANDS
+%   gstat         - call gstat with parfile of mat-structure
+%   gstat_convert - convert binary GSTAT output to ASCII
+%   gstat_krig    - Point kriging
+%   --gstat_cokrig  - Point cokriging
+%   --gstat_krig2d  - 2D kriging
+%   --gstat_cokrig2d- 2D cokriging
+%   gstat_binary  - returns the path to the binary gstat
+%   gstat_demo    - mGstat demos
+%   gstat_plot    - Plot predcition/simulation results.
+%   semivar_exp_gstat - 
+%
 % IO
+%   read_petrel    - read petrel ascii formatted file
 %   read_gstat_par    - read gstat parameter file
 %   write_gstat_par   - write gstat parameter file
 %   read_eas          - read EAS ascii formatted files
 %   write_eas         - write EAS ascii formatted files
 %   read_arcinfo_ascii  - read ARCINFO ascii formatted files
 %   write_arcinfo_ascii - write ARCINFO ascii formatted files
-% PLOT 
-%   cplot       - plot data as dots in specific colormap
+%
 % MISC 
 %   nanmean - mean of array, where NaN are excluded.
 %   strip_space.m
 %   format_variogram.m
 %   deformat_variogram.m
 %   vonk2d  - random field generator
+%   watermark - adds label to figure
+%   progress_txt - ascii progress bar
 %
 
 % Copyright (C) 2004 Thomas Mejer Hansen

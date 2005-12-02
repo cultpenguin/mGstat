@@ -1,5 +1,7 @@
 % read_gstat_par : Reads gstat.par file into Matlab data structure
 %
+% CALL : 
+%    G = read_gstat_par('ex01.cmd');
 %
 % KNOWN BUGS (FEB 2004)
 %   Cannot load covariogram : covariogram(data1,data2)

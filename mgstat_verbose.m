@@ -1,4 +1,4 @@
-% mgstat_verbose : list versbose information to the console
+% mgstat_verbose : list verbose information to the console
 %
 % verbose [0] : everything
 %         [10] : function progress 
@@ -12,5 +12,5 @@ function mgstat_verbose(txt,verbose)
   vlevel=-1; % SHOW ALL VERBOSE INFO ABOVE 1
   
   if (verbose<=vlevel),
-    disp(sprintf('mGstat : %s',txt));
+    disp(sprintf('%s : %s',mfilename,txt));
   end
