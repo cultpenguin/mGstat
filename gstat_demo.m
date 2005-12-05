@@ -14,7 +14,7 @@ if doTest1
     i=i+1;
     G.variogram{1}.V(1).par1=par1;
     subplot(2,2,i);
-    mgstat_plot(G,20);
+    gstat_plot(G,20);
     title(sprintf('par1=%7.4g',par1))
     axis image
   end
@@ -35,7 +35,7 @@ if doTest2
       G.variogram{1}.V(2).par1=par1;
       G.variogram{1}.V(2).par2=par2;
       subplot(2,3,i);
-      mgstat_plot(G,5);
+      gstat_plot(G,5);
       title(sprintf('%7.4g Sph(%7.4g)',par1,par2))
       axis off
       axis image;drawnow
@@ -119,7 +119,7 @@ if doTest3;
   write_gstat_par(G,Gfile);
   
   subplot(2,2,2);
-  mgstat_plot(G,20)
+  gstat_plot(G,20)
   axis image;
   
   

@@ -1,14 +1,14 @@
-% mgstat : call gstat from Matlab
+% gstat : call gstat from Matlab
 %
-% CALL : mgstat(G)
-%    G : mgstat data structure OR gstat parameter file on disk
+% CALL : gstat(G)
+%    G : gstat data structure OR gstat parameter file on disk
 %
-%        [pred,pred_var,pred_covar,mask,G]=mgstat(G)
+%        [pred,pred_var,pred_covar,mask,G]=gstat(G)
 %
-function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
+function [pred,pred_var,pred_covar,mask,G]=gstat(G)
 
   
-  gstat=mgstat_binary;
+  gstat_bin=gstat_binary;
   
   % check if input is STRUCTURE or FILE
   if isstruct(G)==1,
@@ -19,7 +19,7 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
   end
   
   mgstat_verbose(sprintf('Trying to run GSTAT on %s',gstat_filename),-1)
-  [s,w]=system([gstat,' ',gstat_filename]);
+  [s,w]=system([gstat_bin,' ',gstat_filename]);
 
   mgstat_verbose(w,1)
   
@@ -46,7 +46,7 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
 
         % CONVERT GSTAT OUTPUT TO ASCII
         % IT ALLREADY IS SO COMMENTED OUT
-        %mgstat_convert(G.predictions{ip}.file);
+        %gstat_convert(G.predictions{ip}.file);
         
         for isim=1:nsim
           file=G.predictions{ip}.file;
@@ -75,7 +75,7 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
   if nargout>1
     if isfield(G,'variances')
       for ip=1:length(G.variances)
-        %mgstat_convert(G.variances{ip}.file);
+        %gstat_convert(G.variances{ip}.file);
         
         if exist(G.variances{ip}.file)==2;
           % [pred_var{ip},x,y,dx,nanval]=read_gstat_ascii([G.variances{ip}.file,'.ascii']);
@@ -95,7 +95,7 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
   if nargout>2
     if isfield(G,'covariances')
       for ip=1:length(G.covariances)
-        %mgstat_convert(G.covariances{ip}.file);
+        %gstat_convert(G.covariances{ip}.file);
         
         if exist(G.covariances{ip}.file)==2;
           % [pred_covar{ip},x,y,dx,nanval]=read_gstat_ascii([G.covariances{ip}.file,'.ascii']);
@@ -116,7 +116,7 @@ function [pred,pred_var,pred_covar,mask,G]=mgstat(G)
   if nargout>3
     if isfield(G,'mask')
       for ip=1:length(G.mask)
-        %mgstat_convert(G.mask{ip}.file);
+        %gstat_convert(G.mask{ip}.file);
         
         if exist(G.mask{ip}.file)==2;
           % [mask{ip},x,y,dx,nanval]=read_gstat_ascii([G.mask{ip}.file,'.ascii']);

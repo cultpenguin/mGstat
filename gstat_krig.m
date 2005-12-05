@@ -1,7 +1,7 @@
-% krig_gstat : Simple/Ordinary Kriging using GSTAT
+% gstat_krig : Simple/Ordinary Kriging using GSTAT
 %
 % Call :
-% [d_est,d_var,lambda_sk,K_dd,k_du,inhood]=krig_gstat(pos_known,val_known,pos_est,V,options);
+% [d_est,d_var,lambda_sk,K_dd,k_du,inhood]=gstat_krig(pos_known,val_known,pos_est,V,options);
 %
 % ndata : number of data observations
 % ndims : dimensions of data location (>=1)
@@ -22,7 +22,7 @@
 % pos_est=[0:.01:10]';
 % V=deformat_variogram('1 Sph(1)');
 % for i=1:length(pos_est);
-%   [d_est(i),d_var(i)]=krig_gstat(pos_known,val_known,pos_est(i),V);
+%   [d_est(i),d_var(i)]=gstat_krig(pos_known,val_known,pos_est(i),V);
 % end
 % plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
 % legend('SK estimate','SK variance','Observed Data')
@@ -38,7 +38,7 @@
 % pos_est=[0:.01:10]';
 % V='1 Sph(.2)';
 % for i=1:length(pos_est);
-%   [d_est(i),d_var(i)]=krig_gstat(pos_known,val_known,pos_est(i),V);
+%   [d_est(i),d_var(i)]=gstat_krig(pos_known,val_known,pos_est(i),V);
 % end
 % plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
 % legend('SK estimate','SK variance','Observed Data')
@@ -50,7 +50,7 @@
 % pos_est=[0:.01:10]';
 % V=deformat_variogram('1 Sph(2)');
 % for i=1:length(pos_est);
-%   [d_est(i),d_var(i)]=krig_gstat(pos_known,val_known,pos_est(i),V);
+%   [d_est(i),d_var(i)]=gstat_krig(pos_known,val_known,pos_est(i),V);
 % end
 % plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
 % legend('SK estimate','SK variance','Observed Data')
@@ -62,14 +62,14 @@
 % val_known=[0 3 2]';
 % pos_est=[1.1 1];
 % V='1 Sph(2)';
-% [d_est,d_var]=krig_gstat(pos_known,val_known,pos_est,V);
+% [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
 %
 %
 
 % TMH/2005
 %
 
-function [d_est,d_var]=krig_gstat(pos_known,val_known,pos_est,V,options);
+function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
 
   if isstr(V),
     V=deformat_variogram(V);
@@ -123,7 +123,7 @@ function [d_est,d_var]=krig_gstat(pos_known,val_known,pos_est,V,options);
 %  G.set(1).xvalid=1;
 
   write_gstat_par(G);
-  mgstat(G);
+  gstat(G);
   
   d=read_eas(outfile);
   d_est=d(:,ndim+1);

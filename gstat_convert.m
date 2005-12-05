@@ -1,13 +1,13 @@
-% mgstat_convert : convert between ascii/binary formats
+% gstat_convert : convert between ascii/binary formats
 %
-%  CALL : [data,x,y,dx,nanval]=mgstat_convert(file,f,suf)
+%  CALL : [data,x,y,dx,nanval]=gstat_convert(file,f,suf)
 %
-function [data,x,y,dx,nanval]=mgstat_convert(file,f,suf)
+function [data,x,y,dx,nanval]=gstat_convert(file,f,suf)
 
   data=[];x=[];y=[];dx=[];nanval=[];
   
   if nargin<1,
-    help mgstat_convert
+    help gstat_convert
     return;
   end
   if nargin<2
@@ -20,7 +20,7 @@ function [data,x,y,dx,nanval]=mgstat_convert(file,f,suf)
     return;
   end
   
-  gstat=mgstat_binary;
+  gstat=gstat_binary;
   
   sysout=system([gstat,' -e convert -f ',f,' ',file,' ',file,suf]);
 

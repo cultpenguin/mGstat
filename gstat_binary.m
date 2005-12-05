@@ -1,5 +1,9 @@
-% mgstat_binary : returns the path to the binary gstat
-function gstat=mgstat_binary;
+% gstat_binary : returns the path to the binary gstat
+%
+% Call :
+%    gstat_bin = gstat_binary;
+%
+function gstat=gstat_binary;
   
 %gstat='/usr/local/bin/gstat';    
 % YOU CAN EITHER SPECIFY THE PATH TO GSTAT HERE BELOW
@@ -18,14 +22,14 @@ gstat='';
       
       
       if isempty(w),
-        [p,f,s]=fileparts(which('mgstat'));
+        [p,f,s]=fileparts(which('gstat'));
         gstat=fullfile(p,'gstat');            
       else
         gstat=w(1:length(w)-1);
       end
     else
 			gstat='gstat.exe';
-    %  [p,f,s]=fileparts(which('mgstat'));
+    %  [p,f,s]=fileparts(which('gstat'));
     %  if isempty(p),
     %    gstat='gstat.exe';
 		%  else
