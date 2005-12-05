@@ -1,11 +1,11 @@
-% mgstat_plot : visualize 2D GSTAT results
+% gstat_plot : visualize 2D GSTAT results
 %
-% CALL :  mgstat_plot(G,MarkerSize,cax);
+% CALL :  gstat_plot(G,MarkerSize,cax);
 %
-function mgstat_plot(G,MarkerSize,cax);
+function gstat_plot(G,MarkerSize,cax);
   
   if nargin<1,
-    help mgstat_plot;
+    help gstat_plot;
     return;
   end
   if nargin==1,
@@ -14,10 +14,10 @@ function mgstat_plot(G,MarkerSize,cax);
 
   if isstruct(G)==1,
     gstat_filename=write_gstat_par(G);
-    [p,v,c,mask,G]=mgstat(G);
+    [p,v,c,mask,G]=gstat(G);
   else
     gstat_filename=G;
-    [p,v,c,mask,G]=mgstat(G);      
+    [p,v,c,mask,G]=gstat(G);      
   end
 
   np=length(p);
@@ -120,7 +120,7 @@ function mgstat_plot(G,MarkerSize,cax);
       data=[];header=[];
     end
 
-    % mgstat_convert(G.predictions{i}.file);        
+    % gstat_convert(G.predictions{i}.file);        
     %[pred{i},x,y,dx,nanval]=read_arcinfo_ascii([G.predictions{i}.file,'.ascii']);
   [pred{i},x,y,dx,nanval]=read_arcinfo_ascii(G.predictions{i}.file);
   
