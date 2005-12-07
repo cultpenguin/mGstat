@@ -18,6 +18,15 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
     G=read_gstat_par(gstat_filename);
   end
   
+  % DELETE ANY EXISTING OUTPUT FILES
+  if isfield(G,'set');
+    if isfield(G.set,'output');
+      if exist(G.set.output)==2
+        delete(G.set.output);
+      end
+    end
+  end
+  
   mgstat_verbose(sprintf('Trying to run GSTAT on %s',gstat_filename),-1)
   [s,w]=system([gstat_bin,' ',gstat_filename]);
 
@@ -78,8 +87,6 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
         %gstat_convert(G.variances{ip}.file);
         
         if exist(G.variances{ip}.file)==2;
-          % [pred_var{ip},x,y,dx,nanval]=read_gstat_ascii([G.variances{ip}.file,'.ascii']);
-          %[pred_var{ip},x,y,dx,nanval]=read_arcinfo_ascii([G.variances{ip}.file,'.ascii']);
           [pred_var{ip},x,y,dx,nanval]=read_arcinfo_ascii(G.variances{ip}.file);        
         else
           pred_var{ip}=[];mgstat_verbose(sprintf('Cannot find "%s"',G.variances{ip}.file));

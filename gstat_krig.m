@@ -79,6 +79,12 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
     options.null=0;
   end
   
+  if (isfield(options,'sk_mean')&isfield(options,'d'))
+    mgstat_verbose(sprintf('%s : You have specified both ''sk_mean''  ',mfilename),-1)
+    mgstat_verbose(sprintf('%s : and ''d''. GSTAT will not run. ',mfilename))
+    return 
+  end
+  
   % WRITE DATA TO EAS FILES
   delete('obs.eas'); 
   delete('est.eas'); 
@@ -101,12 +107,26 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
   if size(val_known,2)>1, G.data{1}.V=ndim+2; end
     
 
-  % PARSE mGstat options ot GSTAT
+  % PARSE mGstat options to GSTAT
   if isfield(options,'sk_mean'),
     G.data{1}.sk_mean=options.sk_mean;
   end
   if isfield(options,'max'),
     G.data{1}.max=options.max;
+  end
+  if isfield(options,'d'),
+    G.data{1}.d=options.d;
+  end
+  if isfield(options,'polytrend'),
+    G.data{1}.d=options.polytrend;
+  end
+
+  if isfield(options,'trend'),
+    G.method{1}.trend='';
+  end
+
+  if isfield(options,'xvalid'),
+    G.set(1).xvalid=options.xvalid;
   end
   
   G.variogram{1}.data='obs';
@@ -120,11 +140,30 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
 
   outfile='EsthecKrig.out';
   G.set(1).output=outfile;
-%  G.set(1).xvalid=1;
 
   write_gstat_par(G);
   gstat(G);
+
+  try
+    d=read_eas(outfile);
+  catch
+    mgstat_verbose(sprintf('%s : Could not read GSTAT output file',mfilename),-1)
+    mgstat_verbose(sprintf('%s : GSTAT probably failed !!!',mfilename),-1)
+    return
+    
+  end
+
+  if isfield(options,'xvalid')==1
+    if options.xvalid==1
+      d_est=d(:,ndim+2);
+      d_var=d(:,ndim+3);
+    else
+      d_est=d(:,ndim+1);
+      d_var=d(:,ndim+2);
+    end
+  else
+    d_est=d(:,ndim+1);
+    d_var=d(:,ndim+2);
+  end
   
-  d=read_eas(outfile);
-  d_est=d(:,ndim+1);
-  d_var=d(:,ndim+2);
+  
