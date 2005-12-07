@@ -11,7 +11,7 @@
 % val_known [ndata,1 or 2]  : col1 : Data value as measured at 'pos_known'
 %                             col2 : Data uncertainty as measured at
 %                             'pos_known' (optional)
-% pos_est   [1 ,ndims] : Location of data to be estimated
+% pos_est   [N ,ndims] : Location of N data locations to be estimated
 % V : Variogram model, e.g. '1 Sph(100)'
 % val_0 : A priori assumed data value (default=mean(val_known))
 %
@@ -23,9 +23,7 @@
 % val_known=rand(size(pos_known)); % adding some uncertainty
 % pos_est=[0:.01:10]';
 % V=deformat_variogram('1 Sph(1)');
-% for i=1:length(pos_est);
-%   [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i),V);
-% end
+% [d_est,d_var]=krig(pos_known,val_known,pos_est,V);
 % plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
 % legend('SK estimate','SK variance','Observed Data')
 % %title(['V = ',V])
@@ -33,6 +31,8 @@
 %
 % See source code for more examples
 %
+%
+% see also : krig_npoint, krig_blinderror
 %
 
 % Example 1 : 1D - NO DATA UNCERTAINTY
@@ -65,7 +65,7 @@
 % val_known=[0 3 2]';
 % pos_est=[1.1 1];
 % V='1 Sph(2)';
-% [d_est,d_var]=krig(pos_known,val_known,pos_est,V);
+% [d_est,d_var]=krig(pos_known,val_known,pos_est,V,options);
 %
 %
 
@@ -73,26 +73,48 @@
 %
 
 function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,options);
+  lambda=[];
+  K=[];
+  k=[];
+  inhood=[];
 
+  if nargin<5
+    if isfield(V,'options')==1
+      options=V.options;
+    else
+      options.null=1;
+    end
+  end
+  
   if isstr(V),
     V=deformat_variogram(V);
   end 
 
-  if nargin<5
-    options.null=0;
+  if isfield(options,'xvalid')
+    if options.xvalid==1,
+      mgstat_verbose(sprintf('%s : doing cross validation since xvalid=%d', mfilename,options.xvalid),-1)
+      [be,d,d_est,d_var]=krig_blinderror(pos_known,val_known,V,options);
+      lambda=be;
+      K=d;
+      k=[];
+      inhood=[];
+      return
+    end
   end
   
-  if any(strcmp(fieldnames(options),'pos_weight')); 
-  	for i=1:size(pos_known,2);
-		pos_known(:,i)=pos_known(:,i).*options.pos_weight(i);
-		pos_est(:,i)=pos_est(:,i).*options.pos_weight(i);
-	end  
-  end
+%  if any(strcmp(fieldnames(options),'pos_weight')); 
+%  	for i=1:size(pos_known,2);
+%		pos_known(:,i)=pos_known(:,i).*options.pos_weight(i);
+%		pos_est(:,i)=pos_est(:,i).*options.pos_weight(i);
+%	end  
+%  end
 
+  val_0=mean(val_known(:,1));
   if any(strcmp(fieldnames(options),'mean')); 
     val_0=options.mean;
-  else
-    val_0=mean(val_known(:,1));
+  end
+  if any(strcmp(fieldnames(options),'sk_mean')); 
+    val_0=options.sk_mean;
   end
   
   if size(val_known,2)==1;
@@ -104,7 +126,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   
   
   % DETERMINE TYPE OF KRIGING
-  if  any(strcmp(fieldnames(options),'trend'))
+  if  any(strcmp(fieldnames(options),'polytrend'))
     ktype=2; % Ktrend
     mgstat_verbose('Kriging with a trend',20);
   elseif  any(strcmp(fieldnames(options),'mean'))

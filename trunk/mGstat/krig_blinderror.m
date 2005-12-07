@@ -12,12 +12,18 @@ d_var=zeros(nknown,1);
 
 d2u=precal_cov(pos_known,pos_known,V);
 
+% Make sure not to go into recirsive call loop
+options=rmfield(options,'xvalid');
+
 for i=1:nknown
-  progress_txt(i,nknown,'Crossvalidation')
+  if ((i/20)==round(i/20))
+    progress_txt(i,nknown,'Crossvalidation')
+  end
   used=find(pos~=i);
   
   options.d2u=d2u(used,i);
-
+  options.d2d=d2u(used,used);
+  
   [d_est(i),d_var(i)]=krig(pos_known(used,:),val_known(used,:),...
                     pos_known(i,:),V,options);
 
