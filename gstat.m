@@ -27,7 +27,7 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
     end
   end
   
-  mgstat_verbose(sprintf('Trying to run GSTAT on %s',gstat_filename),-1)
+  mgstat_verbose(sprintf('Trying to run GSTAT on %s',gstat_filename),0)
   [s,w]=system([gstat_bin,' ',gstat_filename]);
 
   mgstat_verbose(w,1)
