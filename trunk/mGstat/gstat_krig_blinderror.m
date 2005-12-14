@@ -13,6 +13,6 @@ function [d_est,d_var,be,d_diff]=gstat_krig_blinderror(pos_known,val_known,pos_e
   options.xvalid=1;
   
   [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
-  d_diff=d_est-val_known;
+  d_diff=d_est-val_known(:,1);
   be=mean(abs(d_diff));
   
