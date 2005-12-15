@@ -9,6 +9,10 @@
 % /TMH 12/2005
 %
 function [d_est,d_var,be,d_diff]=gstat_krig_blinderror(pos_known,val_known,pos_est,V,options);
+    
+  if isstr(V),
+    V=deformat_variogram(V);
+  end 
   
   options.xvalid=1;
   

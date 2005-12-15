@@ -79,9 +79,9 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
     if length(V(iV).par2)==2,
       % 2 dimensional scaling
       if (V(iV).par2(1)>V(iV).par2(2))
-        V(iV).par2=[V(iV).par2(1) 90 V(iV).par2(2)];
+        V(iV).par2=[V(iV).par2(1) 90 V(iV).par2(2)/V(iV).par2(1)];
       else
-        % V(iV).par2=[V(iV).par2(1) 90 V(iV).par2(2)];
+        V(iV).par2=[V(iV).par2(2) 0 V(iV).par2(1)/V(iV).par2(2)];
       end
     end
       
