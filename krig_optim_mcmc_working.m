@@ -49,39 +49,27 @@ for i=1:imax
 
   
   % 
-  %step=0.55;
   step=0.05;
   V_new(2).par2=V_new(2).par2 + step*randn(size(std_known)).*std_known;
 
-  % MAKE SURE RANGE IS POSITIVE  
-  %V_new(2).par2(find(V_new(2).par2<=0))=0.01;
-  %V_new(2).par2(find(V_new(2).par2>1500))=1500;
+  % MAKE SURE RANGE IS POSITIVE
+  V_new(2).par2(find(V_new(2).par2<=0))=0.01;
 
-  % TEST FOR 
-  compL=1;
-  if ~isempty(find(V_new(2).par2<=0)), compL=0; end
-  if ~isempty(find(V_new(2).par2>=2000)), compL=0; end
   
-  if compL==1
-    try
-      [d1,d2,be_new,d_diff,L_new]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_new,options);
-    catch
-      keyboard
-    end
-    
-  else
-    L_new=-1e-45;
+  try
+    [d1,d2,be_new,d_diff,L_new]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_new,options);
+  catch
+    keyboard
   end
-    
+
   % Pacc=min([(L_new-L_min)/(L_old-L_min),1]);
   Pacc=min([(L_new)/(L_old),1]);
 
-  thres=100000;
+  thres=1;
   if (Pacc<1)&(i>thres)
     fac= (1+sin( pi/2 + (i-thres)/(imax-thres).*pi))./2;
     fac=fac.*.1;
-    disp(fac)
-    fac=0.1;
+%    disp(fac)
      Pacc=Pacc.*fac;
   end
   
@@ -89,6 +77,7 @@ for i=1:imax
   Prand=rand(1);
   
   if Pacc>Prand
+    
 %  if Pacc==1
     % ACCEPT
     
@@ -103,15 +92,8 @@ for i=1:imax
     L_acc(nacc) = L_new;
     be_acc(nacc) = be_new;
     V_acc{nacc} = V_new; 
-
-    subplot(1,2,1)
     plotyy(1:nacc,L_acc,1:nacc,be_acc);drawnow;
-    subplot(1,2,2)
-    if size(par2,2)==1
-      scatter(par2(:,1),L_acc,'k.')
-    elseif size(par2,2)==2
-      scatter(par2(:,1),par2(:,2),22,L_acc,'filled')
-    end
+    
     V_old=V_new;
     L_old=L_new;
     disp(sprintf('%3d --OK-- L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
