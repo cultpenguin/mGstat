@@ -116,7 +116,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   if any(strcmp(fieldnames(options),'sk_mean')); 
     val_0=options.sk_mean;
   end
-  
+
   if size(val_known,2)==1;
     % Specify uncertainty of zero;
      val_known=repmat(val_known(:,1),1,2);
@@ -129,7 +129,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   if  any(strcmp(fieldnames(options),'polytrend'))
     ktype=2; % Ktrend
     mgstat_verbose('Kriging with a trend',20);
-  elseif  any(strcmp(fieldnames(options),'mean'))
+  elseif  (any(strcmp(fieldnames(options),'mean')) | any(strcmp(fieldnames(options),'sk_mean')))
     ktype=0; % SK
     mgstat_verbose('Simple Kriging',20);
   else 
@@ -238,6 +238,15 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
 	end
   end  
 
+  if any(strcmp(fieldnames(options),'trend')); 
+    % krig only the trend, by setting data to unknown covariances
+    % to zero
+    k(1:nknown)=0;
+  end
+
+  
+  
+  
   % SOLVE THE LINEAR SYSTEM
   
   lambda = inv(K)*k;

@@ -49,8 +49,8 @@ for i=1:imax
 
   
   % 
-  %step=0.55;
-  step=0.05;
+  step=0.15;
+  %step=0.05;
   V_new(2).par2=V_new(2).par2 + step*randn(size(std_known)).*std_known;
 
   % MAKE SURE RANGE IS POSITIVE  
@@ -60,7 +60,8 @@ for i=1:imax
   % TEST FOR 
   compL=1;
   if ~isempty(find(V_new(2).par2<=0)), compL=0; end
-  if ~isempty(find(V_new(2).par2>=2000)), compL=0; end
+ 
+  if ~isempty(find(V_new(2).par2>=200000)), compL=0; end
   
   if compL==1
     try
@@ -89,7 +90,7 @@ for i=1:imax
   Prand=rand(1);
   
   if Pacc>Prand
-%  if Pacc==1
+%  if Pacc==1  % ONLY ACCPET IMPROVEMENTS
     % ACCEPT
     
     V_old=V_new;
