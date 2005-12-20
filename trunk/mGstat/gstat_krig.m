@@ -123,6 +123,10 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
   if isfield(options,'sk_mean'),
     G.data{1}.sk_mean=options.sk_mean;
   end
+  if isfield(options,'mean'),
+    % FOR mGstat compatability
+    G.data{1}.sk_mean=options.mean;
+  end
   if isfield(options,'max'),
     G.data{1}.max=options.max;
   end
