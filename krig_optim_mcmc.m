@@ -1,12 +1,37 @@
 % krig_optim_mcmc
 % CALL : 
-%   [V,be]=krig_optim_range(pos_known,val_known,V,options)
+%   [V,be]=krig_optim_mcmc(pos_known,val_known,V,options)
 %
 function [V,be_acc,L_acc,par2]=krig_optim_mcmc(pos_known,val_known,V,options);
 
 if isstr(V),
   V=deformat_variogram(V);
 end 
+
+if isfield(options,'max_range')
+  max_range=options.max_range;
+else
+  max_range=4*std(pos_known);
+end
+
+if isfield(options,'step')
+  step=options.step;
+else
+  step=std(pos_known)/10;
+end
+
+if isfield(options,'annealing')
+  annealing=options.annealing;
+else
+  annealing=0;
+end
+
+if isfield(options,'descent')
+  descent=options.descent;
+else
+  descent=0;
+end
+
 
 ndim=size(pos_known,2);
 
@@ -41,28 +66,32 @@ L_arr=[];
 range_min=0.001;
 
 nacc=0;
-imax=1000;
+imax=10000;
 for i=1:imax
-  
+
+  % Simulated Annealing
+  if annealing==1,
+    T=exp(-(i-1)/1000);
+    options.T=T;
+  end
+
   % perturb model 
   V_new = V_old;
 
-  
-  % 
-  step=0.15;
-  %step=0.05;
-  V_new(2).par2=V_new(2).par2 + step*randn(size(std_known)).*std_known;
 
-  % MAKE SURE RANGE IS POSITIVE  
-  %V_new(2).par2(find(V_new(2).par2<=0))=0.01;
-  %V_new(2).par2(find(V_new(2).par2>1500))=1500;
+  %step=0.25;
+  %V_new(2).par2=V_new(2).par2 + step*randn(size(std_known)).*std_known;
+  V_new(2).par2=V_new(2).par2 + randn(size(step)).*step;
+  % MAKE SURE RANGE IS POSITIVE AND WITHIN RANGE 
 
   % TEST FOR 
   compL=1;
-  if ~isempty(find(V_new(2).par2<=0)), compL=0; end
- 
-  if ~isempty(find(V_new(2).par2>=200000)), compL=0; end
-  
+  if ~isempty(find(V_new(2).par2<=0)), compL=0; end 
+  for idim=1:ndim
+    if ~isempty(find(V_new(2).par2(idim)>=max_range(idim))), 
+      compL=0;
+    end
+  end  
   if compL==1
     try
       [d1,d2,be_new,d_diff,L_new]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_new,options);
@@ -86,12 +115,16 @@ for i=1:imax
      Pacc=Pacc.*fac;
   end
   
+
+  if descent==1
+    % ONLY ACCEPT IMPROVEMENETS
+    Prand=1;
+  else
+    Prand=rand(1);
+    end
   
-  Prand=rand(1);
-  
-  if Pacc>Prand
+  if Pacc>=Prand
 %  if Pacc==1  % ONLY ACCPET IMPROVEMENTS
-    % ACCEPT
     
     V_old=V_new;
     L_old=L_new;
@@ -109,9 +142,11 @@ for i=1:imax
     plotyy(1:nacc,L_acc,1:nacc,be_acc);drawnow;
     subplot(1,2,2)
     if size(par2,2)==1
-      scatter(par2(:,1),L_acc,'k.')
+      plot(par2(:,1),L_acc,'k.')
     elseif size(par2,2)==2
       scatter(par2(:,1),par2(:,2),22,L_acc,'filled')
+    elseif size(par2,2)==3
+      scatter3(par2(:,1),par2(:,2),par3(:,1),22,L_acc,'filled')
     end
     V_old=V_new;
     L_old=L_new;
@@ -121,22 +156,4 @@ for i=1:imax
   end
 
   
-end
-
-
-return
-
-for in=1:nnug
-  dnug=nugarr(in);
-  V(1).par1=dnug.*gvar;
-  V(2).par1=(1-dnug).*gvar;  
-
-  for a1=1:narr{1}  
-%    for a2=1:narr{2}  
-      V(2).par2=arr{1}(a1);    
-      [d1,d2,be(in,a1),d_diff,L]=gstat_krig_blinderror(pos_known,val_known,pos_known,V,options);
-      disp(sprintf('be=%6.4f V=%s',be(in,a1),format_variogram(V)))  
-%    end
-  end
-  imagesc(be);drawnow
 end

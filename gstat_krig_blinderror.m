@@ -9,7 +9,13 @@
 % /TMH 12/2005
 %
 function [d_est,d_var,be,d_diff,L]=gstat_krig_blinderror(pos_known,val_known,pos_est,V,options);
-    
+   
+  if isfield(options,'T');
+    T=options.T;
+  else
+    T=1;
+  end
+  
   if isstr(V),
     V=deformat_variogram(V);
   end 
@@ -28,6 +34,6 @@ function [d_est,d_var,be,d_diff,L]=gstat_krig_blinderror(pos_known,val_known,pos
     for i=1:nd
       Cd(i,i)=d_var(i);
     end
-    L=exp(-.5*d_diff'*inv(Cd)*d_diff);
+    L=exp(-.5*d_diff'*inv(Cd)*d_diff./T);
     
   end
