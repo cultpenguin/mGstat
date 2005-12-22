@@ -84,7 +84,6 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
         V(iV).par2=[V(iV).par2(2) 0 V(iV).par2(1)/V(iV).par2(2)];
       end
     end
-      
   end
   
   if nargin<5
