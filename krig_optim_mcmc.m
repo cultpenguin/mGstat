@@ -175,14 +175,14 @@ for i=1:maxit
         scatter(par2(:,1),nugfrac_acc,20,L_acc,'filled')
         xlabel('Range');ylabel('Nugget Fraction');title('L')
         subplot(2,3,6)
-        scatter(par2(:,1),nugfrac_acc,20,be_acc,'filled')
+        scatter(par2(:,1),nugfrac_acc,20,-be_acc,'filled')
         xlabel('Range');ylabel('Nugget Fraction');title('BE')
       elseif size(par2,2)==2
         subplot(2,3,4)
         scatter(par2(:,1),par2(:,2),22,L_acc,'filled')
         %colorbar
         subplot(2,3,5)
-        scatter(par2(:,1),par2(:,2),22,be_acc,'filled')
+        scatter(par2(:,1),par2(:,2),22,-be_acc,'filled')
         %colorbar
         subplot(2,3,6)
       plot(nugfrac_acc,L_acc,'k-*')
