@@ -131,8 +131,8 @@ for i=1:maxit
   
   L_min=min([L_min L_new]);
   
-  Pacc=min([(L_new-L_min)/(L_old-L_min),1]);
-  % Pacc=min([(L_new)/(L_old),1]);
+  % Pacc=min([(L_new-L_min)/(L_old-L_min),1]);
+  Pacc=min([(L_new)/(L_old),1]);
 
   if compL==0
     Pacc=0;
@@ -168,7 +168,15 @@ for i=1:maxit
       plotyy(1:nacc,L_acc,1:nacc,be_acc);drawnow;
       
       if size(par2,2)==1
+        subplot(2,3,4)
         plot(par2(:,1),L_acc,'k.')
+        xlabel('Range');ylabel('L')
+        subplot(2,3,5)
+        scatter(par2(:,1),nugfrac_acc,20,L_acc,'filled')
+        xlabel('Range');ylabel('Nugget Fraction');title('L')
+        subplot(2,3,6)
+        scatter(par2(:,1),nugfrac_acc,20,be_acc,'filled')
+        xlabel('Range');ylabel('Nugget Fraction');title('BE')
       elseif size(par2,2)==2
         subplot(2,3,4)
         scatter(par2(:,1),par2(:,2),22,L_acc,'filled')
