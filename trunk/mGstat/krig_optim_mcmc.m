@@ -187,7 +187,8 @@ for i=1:maxit
         subplot(2,3,6)
       plot(nugfrac_acc,L_acc,'k-*')
       elseif size(par2,2)==3
-        scatter3(par2(:,1),par2(:,2),par3(:,1),22,L_acc,'filled')
+        subplot(2,3,4)
+        scatter3(par2(:,1),par2(:,2),par2(:,3),22,L_acc,'filled')
       end
     end
     V_old=V_new;

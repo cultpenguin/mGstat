@@ -75,16 +75,9 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
     V=deformat_variogram(V);
   end 
 
-  for iV=1:length(V),
-    if length(V(iV).par2)==2,
-      % 2 dimensional scaling
-      if (V(iV).par2(1)>V(iV).par2(2))
-        V(iV).par2=[V(iV).par2(1) 90 V(iV).par2(2)/V(iV).par2(1)];
-      else
-        V(iV).par2=[V(iV).par2(2) 0 V(iV).par2(1)/V(iV).par2(2)];
-      end
-    end
-  end
+  % IF options.iso_range=1;
+  V=range_iso2gstat(V);
+  
   
   if nargin<5
     options.null=0;
