@@ -1,15 +1,16 @@
-% range_iso2gstat : convert range scaling to gstat/gslib range settings
+% isorange : convert range scaling to gstat/gslib range settings
 %
 %
 % for example
 %   V = '1.0 Sph(0.7,0.8,0.9)';
 %
-%   Vgstat=isorange(V)
-%
+%   Vgstat=isorange(V);
+%   format_variogram(Vgstat,1)
+% 
 % Used when 'options.isorange=1'
 %
 
-function V=range_iso2gstat(V);
+function V=isorange(V);
 
   if isstruct(V)==0
     V=deformat_variogram(V);
