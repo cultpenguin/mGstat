@@ -12,7 +12,7 @@ pos=1:1:nknown;
 d_est=zeros(nknown,1);
 d_var=zeros(nknown,1);
 
-d2u=precal_cov(pos_known,pos_known,V);
+d2u=precal_cov(pos_known,pos_known,V,options);
 
 % Make sure not to go into recirsive call loop
 if isfield(options,'xvalid');
@@ -21,7 +21,7 @@ end
 
 for i=1:nknown
   if ((i/20)==round(i/20))
-    progress_txt(i,nknown,'Crossvalidation')
+    %progress_txt(i,nknown,'Crossvalidation')
   end
   used=find(pos~=i);
   

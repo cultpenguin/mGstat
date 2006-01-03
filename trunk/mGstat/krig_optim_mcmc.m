@@ -8,6 +8,8 @@ if isstr(V),
   V=deformat_variogram(V);
 end 
 
+options.isorange=1;
+
 if isfield(options,'max_range')
   max_range=options.max_range;
 else
@@ -73,7 +75,8 @@ end
 
 V_init=V;
 V_old=V;
-[d_est,d_var,be_init,d_diff,L_init]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_init,options);
+%[d_est,d_var,be_init,d_diff,L_init]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_init,options);
+[d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);
 
 be_old=be_init;
 L_old=L_init;
@@ -118,9 +121,11 @@ for i=1:maxit
   
   if compL==1
     try
-      [d1,d2,be_new,d_diff,L_new]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_new,options);
+      %[d1,d2,be_new,d_diff,L_new]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_new,options);
+      [d1,d2,be_new,d_diff,L_new]=krig_blinderror(pos_known,val_known,pos_known,V_new,options);
+
     catch
-      keyboard
+      %keyboard
     end
     
   else
@@ -128,11 +133,10 @@ for i=1:maxit
   end
   
   
-  
   L_min=min([L_min L_new]);
   
-  % Pacc=min([(L_new-L_min)/(L_old-L_min),1]);
-  Pacc=min([(L_new)/(L_old),1]);
+  Pacc=min([(L_new-L_min)/(L_old-L_min),1]);
+  %Pacc=min([(L_new)/(L_old),1]);
 
   if compL==0
     Pacc=0;
