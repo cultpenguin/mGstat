@@ -127,6 +127,12 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
      val_known(:,2)=0; % NO UNCERTAINTY
   end
 
+  % DETERMINE ISORANGE
+  if  any(strcmp(fieldnames(options),'isorange'))
+    isorange=options.isorange;
+  else
+    isorange=0;
+  end
   
   
   % DETERMINE TYPE OF KRIGING
@@ -183,12 +189,16 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   else
     K=zeros(nknown,nknown);
     d=zeros(nknown,nknown);
-    for i=1:nknown;
-      for j=1:nknown;
-        d(i,j)=edist(pos_known(i,:),pos_known(j,:),transform);
+    for iV=1:length(V);
+      % if V(iV).par2==0, , V(iV).par2=1e-9; end
+      for i=1:nknown;
+        for j=1:nknown;          
+          d(i,j)=edist(pos_known(i,:),pos_known(j,:),V(iV).par2,isorange);
+        end
       end
-    end
-    K=gvar-semivar_synth(V,d);
+      K=K+semivar_synth(V(iV),d);
+    end    
+    K=gvar-K;
   end
   % APPLY GAUSSIAN DATA UNCERTAINTY
   for i=1:nknown
@@ -201,10 +211,14 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   else
     k=zeros(nknown,1);
     d=zeros(nknown,1);
-    for i=1:nknown;
-      d(i)=edist(pos_known(i,:),pos_est(1,:),transform);      
+    for iV=1:length(V);
+      % if V(iV).par2==0, , V(iV).par2=1e-9; end
+      for i=1:nknown;
+        d(i)=edist(pos_known(i,:),pos_est(1,:),V(iV).par2,isorange);      
+      end      
+      k=k+semivar_synth(V(iV),d);
     end
-    k=gvar-semivar_synth(V,d);
+    k=gvar-k;
   end
 
   % ADJUST K and k for KRIGING METHODS

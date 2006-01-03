@@ -1,6 +1,20 @@
-% range_iso2gstat : convert range sacling to gstat/gslib range settings
+% range_iso2gstat : convert range scaling to gstat/gslib range settings
+%
+%
+% for example
+%   V = '1.0 Sph(0.7,0.8,0.9)';
+%
+%   Vgstat=isorange(V)
+%
+% Used when 'options.isorange=1'
+%
+
 function V=range_iso2gstat(V);
 
+  if isstruct(V)==0
+    V=deformat_variogram(V);
+  end
+  
   for iV=1:length(V),
     
   
@@ -8,10 +22,12 @@ function V=range_iso2gstat(V);
     
     if ndim==2,
       % 2 dimensional scaling
-      if (V(iV).par2(1)>V(iV).par2(2))
-        V(iV).par2=[V(iV).par2(1) 90 V(iV).par2(2)/V(iV).par2(1)];
+      rx=V(iV).par2(1);
+      ry=V(iV).par2(2);
+      if (rx>ry)
+        V(iV).par2=[rx 90 ry/rx];
       else
-        V(iV).par2=[V(iV).par2(2) 0 V(iV).par2(1)/V(iV).par2(2)];
+        V(iV).par2=[ry  0 rx/ry];
       end
     end
   
@@ -47,12 +63,12 @@ function V=range_iso2gstat(V);
         a=ry;
         if (rx>rz)
           % X-dir secondary direction
-          r=90;
+          r=0;
           s=rx/ry;
           t=rz/ry;
         else          
           % Z-dir secondary direction
-          r=0;
+          r=90;
           s=rz/ry;
           t=rx/ry;
         end
@@ -64,12 +80,12 @@ function V=range_iso2gstat(V);
         a=rz;
         if (rx>ry)
           % X-dir secondary direction
-          r=0;
+          r=90;
           s=rx/rz;
           t=ry/rz;
         else
           % Y-dir secondary direction
-          r=90;
+          r=0;
           s=ry/rz;
           t=rx/rz;
         end

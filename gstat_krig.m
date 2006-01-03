@@ -75,9 +75,15 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
     V=deformat_variogram(V);
   end 
 
-  % IF options.iso_range=1;
-  V=range_iso2gstat(V);
-  
+  % CHECK FOR ISORANGE
+  if  ~any(strcmp(fieldnames(options),'isorange'))
+    options.isorange=0;
+  end
+
+  if options.isorange==1;
+    % Reshape the range format to suit GSTAT 
+    V=isorange(V);
+  end
   
   if nargin<5
     options.null=0;
