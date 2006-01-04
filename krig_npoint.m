@@ -27,7 +27,7 @@ gvar=sum([V.par1]);
 if isfield(options,'d2d')
   d2d=options.d2d;
 elseif ~isfield(options,'noprecalc_d2d')
-  d2d=precal_cov(pos_known,pos_known,V);
+  d2d=precal_cov(pos_known,pos_known,V,options);
   options.d2d=d2d;
 end
 
