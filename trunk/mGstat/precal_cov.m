@@ -34,7 +34,7 @@ function cov=precal_cov(pos1,pos2,V,options);
     for i=1:n_est1;
       t=toc;
       % progress bar
-      if t>0.2
+      if t>0.3
         try 
           if (i/di)==round(i/di)
             progress_txt(i,n_est1,sprintf('%s : ',mfilename));
