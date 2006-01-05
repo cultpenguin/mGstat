@@ -20,5 +20,10 @@ Vop1=Vall{iop};
 options.step_nugfrac=options.step_nugfrac.*.01;
 options.step_range=options.step_range.*.01;
 options.descent=1;
-[Vop2,be,L,par2,nugfrac,Vall]=krig_optim_mcmc(pos_known,val_known,Vop1,options);
-
+figure
+try
+  [Vop2,be,L,par2,nugfrac,Vall]=krig_optim_mcmc(pos_known,val_known,Vop1,options);
+catch
+  Vop2=Vop1
+end
+return

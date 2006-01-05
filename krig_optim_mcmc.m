@@ -1,8 +1,10 @@
 % krig_optim_mcmc
 % CALL : 
-%   [V,be]=krig_optim_mcmc(pos_known,val_known,V,options)
+%   [V_new,be_acc,L_acc,par2,nugfrac_acc,V_acc]=krig_optim_mcmc(pos_known,val_known,V,options)
 %
 function [V_new,be_acc,L_acc,par2,nugfrac_acc,V_acc]=krig_optim_mcmc(pos_known,val_known,V,options);
+
+V_new=V;
 
 if isstr(V),
   V=deformat_variogram(V);
@@ -13,19 +15,19 @@ options.isorange=1;
 if isfield(options,'max_range')
   max_range=options.max_range;
 else
-  max_range=4*std(pos_known);
+  max_range=20*std(pos_known);
 end
 
 if isfield(options,'step_range')
   step_range=options.step_range;
 else
-  step_range=std(pos_known)/10;
+  step_range=std(pos_known);
 end
 
 if isfield(options,'step_nugfrac')
   step_nugfrac=options.step_nugfrac;
 else
-  step_nugfrac=std(pos_known)/10;
+  step_nugfrac=.1;
 end
 
 if isfield(options,'annealing')
@@ -79,7 +81,7 @@ V_old=V;
 [d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);
 
 be_old=be_init;
-L_old=L_init;
+L_old=1.0001*L_init;
 L_arr=[];
 L_min=L_init;
 L_new=L_init;
@@ -105,7 +107,7 @@ for i=1:maxit
   nugfrac=nugfrac+randn(1).*step_nugfrac;
   V_new(1).par1=gvar.*nugfrac;
   V_new(2).par1=gvar.*(1-nugfrac);
-  
+
   % TEST FOR BOUNDS 
   compL=1;
   if ~isempty(find(V_new(2).par2<=0)), compL=0; end 
@@ -114,16 +116,18 @@ for i=1:maxit
       compL=0;
     end
   end
+%  disp(compL)
 
   if ((nugfrac<0)|(nugfrac>1))
     compL=0;
   end
+%  disp(compL)
+%  disp(format_variogram(V_new))
   
   if compL==1
     try
       %[d1,d2,be_new,d_diff,L_new]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_new,options);
       [d1,d2,be_new,d_diff,L_new]=krig_blinderror(pos_known,val_known,pos_known,V_new,options);
-
     catch
       %keyboard
     end
@@ -135,8 +139,8 @@ for i=1:maxit
   
   L_min=min([L_min L_new]);
   
-  Pacc=min([(L_new-L_min)/(L_old-L_min),1]);
-  %Pacc=min([(L_new)/(L_old),1]);
+  %Pacc=min([(L_new-L_min)/(L_old-L_min),1]);
+  Pacc=min([(L_new)/(L_old),1]);
 
   if compL==0
     Pacc=0;
@@ -167,13 +171,23 @@ for i=1:maxit
 
     
     doPlot=1;
-    if doPlot==1;
+    if ((doPlot==1)&(nacc>10));
       subplot(2,1,1)
-      plotyy(1:nacc,L_acc,1:nacc,be_acc);drawnow;
+      plotyy(1:nacc,L_acc,1:nacc,-be_acc);
       
       if size(par2,2)==1
         subplot(2,3,4)
-        plot(par2(:,1),L_acc,'k.')
+        %plot(par2(:,1),L_acc,'k.')
+        [ax,h1,h2]=plotyy(par2(:,1),L_acc,par2(:,1),-be_acc);
+        set(h1,'LineStyle','none')
+        set(h2,'LineStyle','none')
+        set(h1,'Marker','.')
+        set(h2,'Marker','.')
+        set(h1,'color',[0 0 1])
+        set(h2,'color',[1 0 0])
+        set(get(ax(1),'Ylabel'),'String','L')
+        set(get(ax(2),'Ylabel'),'String','-be')
+
         xlabel('Range');ylabel('L')
         subplot(2,3,5)
         scatter(par2(:,1),nugfrac_acc,20,L_acc,'filled')
@@ -181,15 +195,20 @@ for i=1:maxit
         subplot(2,3,6)
         scatter(par2(:,1),nugfrac_acc,20,-be_acc,'filled')
         xlabel('Range');ylabel('Nugget Fraction');title('BE')
+        drawnow;
       elseif size(par2,2)==2
         subplot(2,3,4)
         scatter(par2(:,1),par2(:,2),22,L_acc,'filled')
+        xlabel('Range 1');ylabel('Range 2');title('Likelihood')
         %colorbar
         subplot(2,3,5)
         scatter(par2(:,1),par2(:,2),22,-be_acc,'filled')
+        xlabel('Range 1');ylabel('Range 2');title('-be')
         %colorbar
         subplot(2,3,6)
-      plot(nugfrac_acc,L_acc,'k-*')
+        scatter3(par2(:,1),par2(:,2),nugfrac_acc,20,L_acc,'filled');
+        xlabel('Range 1');ylabel('Range 2');zlabel('Nugget Fraction');title('Likelihood')
+        drawnow;
       elseif size(par2,2)==3
         subplot(2,3,4)
         scatter3(par2(:,1),par2(:,2),par2(:,3),22,L_acc,'filled')
