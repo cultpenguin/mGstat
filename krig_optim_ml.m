@@ -1,4 +1,4 @@
-function [Vop2,Vop1]=krig_optim_ml(pos_known,val_known,V,options)
+function [Vop2,Vop1,be,L,par2,nugfrac,Vall]=krig_optim_ml(pos_known,val_known,V,options)
 
 if nargin==3;
   options.dummy='';
@@ -22,7 +22,7 @@ options.step_range=options.step_range.*.01;
 options.descent=1;
 figure
 try
-  [Vop2,be,L,par2,nugfrac,Vall]=krig_optim_mcmc(pos_known,val_known,Vop1,options);
+  [Vop2,be2,L2,par22,nugfrac2,Vall2]=krig_optim_mcmc(pos_known,val_known,Vop1,options);
 catch
   Vop2=Vop1
 end
