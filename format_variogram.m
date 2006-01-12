@@ -28,7 +28,7 @@ function txt=format_variogram(V,short);
     if short==0 
       txt=[txt,sprintf('%11.8f %s(%s)',V(i).par1,V(i).type,range)];
     else
-      txt=[txt,sprintf('%3.1f %s(%s)',V(i).par1,V(i).type,range)];
+      txt=[txt,sprintf('%4.1f %s(%s)',V(i).par1,V(i).type,range)];
     end
 
 %    OLD CODE BEFORE ANISOTROPY HANDLING
