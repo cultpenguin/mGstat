@@ -1,3 +1,4 @@
+% watermark : add watermark to figure : watermark(txt);
 function ax=watermark(txt);
 
 if nargin==0
