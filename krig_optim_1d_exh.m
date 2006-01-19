@@ -4,8 +4,17 @@
 %
 function [V_L,V_be,ML,Mbe,par2_range,nugfrac_range]=krig_optim_1d_exh(pos_known,val_known,V,options);
 
-par2_range=linspace(1,200,30);
-nugfrac_range=[0:.05:1];
+if isfield(options,'par2_range')
+  par2_range=options.par2_range;
+else
+  par2_range=linspace(1,200,30);
+end
+if isfield(options,'nugfrac_range')
+  nugfrac_range=options.nugfrac_range;
+else
+  nugfrac_range=[0:.05:1];
+end
+
 
 for ipar2=1:length(par2_range);
   for inug=1:length(nugfrac_range);
@@ -30,13 +39,12 @@ V_be=MV{ibe(1)};
 
 if (isfield(options,'pos_known_all'))
   pos_est=options.pos_known_all;
-  rr=.1*max(options.pos_known_all)-min(options.pos_known_all);
+  rr=.1*abs(max(options.pos_known_all)-min(options.pos_known_all));
   pos_est=linspace(min(options.pos_known_all)-rr,max(options.pos_known_all)+rr,100)+rand(1).*.0001;
 else
-  rr=.1*max(pos_known)-min(pos_known);
+  rr=.1*abs(max(pos_known)-min(pos_known));
   pos_est=linspace(min(pos_known)-rr,max(pos_known)+rr,100)+rand(1).*.0001;
 end
-
 xrange=[min(pos_est) max(pos_est)];
 
 if (isfield(options,'val_known_all'))
@@ -86,7 +94,7 @@ subplot(2,2,3)
 p1=plot(pos_est,[d_L d_L+sqrt(v_L) d_L-sqrt(v_L)],'r-',pos_known,val_known(:,1),'k*');
 if (isfield(options,'pos_known_all')&isfield(options,'val_known_all'))
   hold on
-  plot(options.pos_known_all,options.val_known_all,'k-')
+  plot(options.pos_known_all,options.val_known_all,'k.')
   hold off
 end
 set(p1(1),'LineWidth',2)
@@ -99,7 +107,7 @@ p2=plot(pos_est,[d_be d_be+sqrt(v_be) d_be-sqrt(v_be)],'b-',pos_known,val_known(
 set(p2(1),'LineWidth',2)
 if (isfield(options,'pos_known_all')&isfield(options,'val_known_all'))
   hold on
-  plot(options.pos_known_all,options.val_known_all,'k-')
+  plot(options.pos_known_all,options.val_known_all,'k.')
   hold off
 end
 set(gca,'Xlim',xrange);
