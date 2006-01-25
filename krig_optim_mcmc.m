@@ -108,6 +108,8 @@ for i=1:maxit
   V_new(1).par1=gvar.*nugfrac;
   V_new(2).par1=gvar.*(1-nugfrac);
 
+  
+  
   % TEST FOR BOUNDS 
   compL=1;
   if ~isempty(find(V_new(2).par2<=0)), compL=0; end 
@@ -116,14 +118,14 @@ for i=1:maxit
       compL=0;
     end
   end
-%  disp(compL)
+  disp(format_variogram(V_new))
 
   if ((nugfrac<0)|(nugfrac>1))
     compL=0;
   end
 %  disp(compL)
 %  disp(format_variogram(V_new))
-  
+ 
   if compL==1
     try
       %[d1,d2,be_new,d_diff,L_new]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_new,options);
