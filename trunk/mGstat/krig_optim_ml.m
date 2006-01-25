@@ -1,3 +1,9 @@
+% krig_optim_ml : MCMC Maximum likelihood optimization
+%
+% Call : 
+%
+%    [Vop2,Vop1,be,L,par2,nugfrac,Vall]=krig_optim_ml(pos_known,val_known,V,options)
+%
 function [Vop2,Vop1,be,L,par2,nugfrac,Vall]=krig_optim_ml(pos_known,val_known,V,options)
 
 if nargin==3;
