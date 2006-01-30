@@ -28,6 +28,8 @@ function obj=read_visim(filename)
     end
   end
   
+  try
+  
   % COND SIM
   line=fgetl(fid);
   obj.cond_sim=sscanf(line,'%d');
@@ -59,10 +61,11 @@ function obj=read_visim(filename)
   obj.fvolsum.data=data;
   obj.fvolsum.header=header;
   obj.fvolsum.fname=fname;
-
-  
+   
   line=fgetl(fid);
+  obj.trimlimits=sscanf(line,'%f %f');
   line=fgetl(fid);
+  obj.debuglevel=sscanf(line,'%d');
 
   % OUTPUT
   line=fgetl(fid);
@@ -132,9 +135,12 @@ function obj=read_visim(filename)
 
   % nvoldata
   line=fgetl(fid);
-  tmp=sscanf(line,'%d %d');
-  obj.volmethod=tmp(1);
-  obj.voluse=tmp(2);
+  tmp=sscanf(line,'%d %d %f');
+  %obj.volmethod=tmp(1);
+  %obj.voluse=tmp(2);
+  obj.volnh.method=tmp(1);
+  obj.volnh.max=tmp(2);
+  obj.volnh.cov=tmp(3);
 
   % RANDPATH
   line=fgetl(fid);
@@ -236,6 +242,9 @@ function obj=read_visim(filename)
     end
   end
   
+  catch
+    keyboard
+  end
 
   
   
