@@ -16,6 +16,6 @@ function V=visim(parfile);
     parfile=parfile.parfile;
   end
     
-  unix(sprintf('%s %s',visim,parfile))
+  unix(sprintf('%s %s',visim,parfile));
   V=read_visim(parfile);
   
