@@ -197,12 +197,17 @@ function obj=read_visim(filename)
     obj.Va.a_vert(ist)=tmp(3);
   end
   
+  line=fgetl(fid);
   tmp=sscanf(line,'%f %f');
   obj.tail.zmin=tmp(1);
   obj.tail.zmax=tmp(2);
+
+  line=fgetl(fid);
   tmp=sscanf(line,'%f %f');
   obj.tail.lower(1)=tmp(1);
   obj.tail.lower(2)=tmp(2);
+
+  line=fgetl(fid);
   tmp=sscanf(line,'%f %f');
   obj.tail.upper(1)=tmp(1);
   obj.tail.upper(2)=tmp(2);
@@ -233,8 +238,11 @@ function obj=read_visim(filename)
 
       obj.etype.mean=E;
       obj.etype.var=Ev;
-      
+            
       obj.nsim=nsim;
+      if (nsim~=obj.nsim),
+        disp(sprintf('SETTING NSIM=%d TO MATCH SIM DATA',nsim));
+      end
     else
       [d]=read_eas(['visim_estimation_',obj.out.fname]);
       obj.etype.mean=reshape(d(:,1),obj.nx,obj.ny);
