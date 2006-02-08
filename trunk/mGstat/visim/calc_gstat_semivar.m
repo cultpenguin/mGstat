@@ -32,7 +32,7 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol)
   write_gstat_par(G,[file,'.cmd']);
 
   
-  mgstat(G);
+  gstat(G);
   
   d=read_gstat_semivar('tempSemi.variogram');
   

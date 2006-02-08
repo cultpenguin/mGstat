@@ -1,3 +1,4 @@
+% V1=visim_plot_semivar(V1,isim,doPlot)
 function V1=visim_plot_semivar(V1,isim,doPlot)
   
   if isstruct(V1)~=1

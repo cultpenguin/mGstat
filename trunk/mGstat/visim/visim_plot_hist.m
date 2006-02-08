@@ -2,18 +2,26 @@
 %
 % visim_plot_hist(V)
 %
-function visim_plot_hist(V,doPrint)
+function visim_plot_hist(V,isim,doPrint)
      
   if isstruct(V)~=1
     V=read_visim(V);
   end
 
-  if nargin==1
+  if nargin<3
     doPrint=1;
   end
-    
-  
-  [hall,xall]=hist(V.out.data,30);
+
+  if nargin<2
+    isim=1:1:V.nsim;
+  end
+
+
+  d=V.D(:,:,isim);
+  d=d(:);
+  xall=linspace(.07,.19,40);
+  [hall,xall]=hist(d,xall);
+  % [hall,xall]=hist(d,30);
   
   for i=1:V.nsim
     d=V.D(:,:,i);d=d(:);
@@ -30,7 +38,7 @@ function visim_plot_hist(V,doPrint)
   
     
   
-  l0=plot(xall,h,'k-','linewidth',.1);
+  l0=plot(xall,h(isim,:),'k-','linewidth',.1);
   hold on
   l1=plot(xall,hall,'g--','linewidth',1);
   l2=plot(xall,orgpdf,'r-+','linewidth',1);

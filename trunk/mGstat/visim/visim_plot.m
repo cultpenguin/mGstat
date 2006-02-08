@@ -1,3 +1,5 @@
+% visim_plot(V,cax);
+
 function visim_plot(V,cax);
   
   if isstruct(V)~=1

@@ -1,3 +1,4 @@
+% visim_plot_semivar_real(V,name,cax)
 function visim_plot_semivar_real(V,name,cax)
 
 ang=[0 90];
