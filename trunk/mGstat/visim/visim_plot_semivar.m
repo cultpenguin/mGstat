@@ -36,12 +36,23 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
 
   [g0,hc0]=visim_semivar(V1,isim,0,180);
   
+  if length(isim)>1
+    mg0=mean(g0')';
+  else
+    mg0=g0;
+  end
+  
   for i=1:nang
     
     [g,hc]=visim_semivar(V1,isim,ang(i),tolerance);
+    if length(isim)>1
+      mg=mean(g')';
+    else
+      mg=g;
+    end
     
     if (length(isim)>1)&(method==1);
-      pmg1(i)=plot(hc,mean(g')','b-','linewidth',i*2/4,'Marker',m{i});
+      pmg1(i)=plot(hc,mg,'b-','linewidth',i*2/4,'Marker',m{i});
       if i==1; hold on; end
     else
       pm1=plot(hc,g,'b-+','linewidth',i*2/4,'Marker',m{i});
@@ -53,7 +64,7 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
   end
 
   i=i+1;
-  pmg1(i)=plot(hc0,mean(g0')','b-o','linewidth',1);  
+  pmg1(i)=plot(hc0,mg0,'b-o','linewidth',1);  
   leg{i}='All directions';
   hold off
   

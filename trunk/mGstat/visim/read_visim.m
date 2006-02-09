@@ -251,7 +251,7 @@ function obj=read_visim(filename)
   end
   
   catch
-    keyboard
+    disp('something went wrong...')
   end
 
   

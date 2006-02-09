@@ -31,9 +31,14 @@ function visim_plot_hist(V,isim,doPrint)
   
   FS=5;
   
-  orgpdf=normpdf(xall,V.gmean,sqrt(V.gvar));
-  orgpdf=V.nx*V.ny*V.nz*orgpdf./(sum(orgpdf));  
-
+  if V.ccdf==0
+    orgpdf=normpdf(xall,V.gmean,sqrt(V.gvar));    
+    orgpdf=V.nx*V.ny*V.nz*orgpdf./(sum(orgpdf));  
+  else
+    d=read_eas(V.refhist.fname);
+    orgpdf=hist(d,xall);
+    orgpdf=V.nx*V.ny*V.nz*orgpdf./(sum(orgpdf));      
+  end
   hall=V.nx*V.ny*V.nz*hall./sum(hall);
   
     
