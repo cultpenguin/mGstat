@@ -9,7 +9,7 @@
 %
 % TMH (tmh@gfy.ku.dk)
 %
-function read_eas(filename,data,header,line1);
+function write_eas(filename,data,header,line1);
   
   if nargin<1,
     help write_eas;
