@@ -44,4 +44,4 @@ function V=visim_plot_sim(V,nsim,cax,FS,nxsub,nysub)
   [f1,f2,f3]=fileparts(V.parfile);
   %title([f2,' Realizations'],'interpr','none')
   
-  print_mul(sprintf('%s_sim',f2))
+  %print_mul(sprintf('%s_sim',f2))
