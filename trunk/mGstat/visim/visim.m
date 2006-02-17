@@ -9,13 +9,23 @@
 %
 function V=visim(parfile);
   
-  visim='/home/tmh/bin/visim';
+  visim_bin='~/bin/visim';
+
+  if (exist('~/bin/visim'))==0
+    disp(sprintf('COULD NOT FIND VISIM binary : %s',visim_bin));
+    if nargin==0
+      disp(sprintf('Using VISIM binary : %s',visim_bin));
+      V=[];
+      return
+    end	
+  end
+
   
   if isstruct(parfile);    
     write_visim(parfile);
     parfile=parfile.parfile;
   end
     
-  unix(sprintf('%s %s',visim,parfile));
+  unix(sprintf('%s %s',visim_bin,parfile));
   V=read_visim(parfile);
   
