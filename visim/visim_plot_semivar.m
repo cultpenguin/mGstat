@@ -93,7 +93,7 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
   xlabel('Distance')
   ylabel('\gamma')
   
-  set(gca,'ylim',[0 1.1*sum([v1.par1])])
+  set(gca,'ylim',[0 1.4*sum([v1.par1])])
   
   [f1,f2,f3]=fileparts(V1.parfile);
   if doPlot==1
