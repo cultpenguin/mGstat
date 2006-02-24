@@ -22,8 +22,7 @@
 
 function print_mul(fname,color,trim);
   print(gcf, '-depsc2', [fname,'.eps'] )
-
-  return
+  
   print(gcf, '-dpng','-r300', [fname,'.png'] )
 
   [a,mogrifybin]=unix('which mogrify');

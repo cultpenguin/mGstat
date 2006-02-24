@@ -29,5 +29,10 @@ function d_out=inscore(d_normal,o_nscore)
   % INTERPOLATE BETWEEN KNOWN DATA
   % 'help interp1' to see list of interpolation options.
   d_out=interp1(o_nscore.normscore(id),s_origdata(id),d_normal,style');
-
+  
+  % THERE IS SOME TROUBLE AT THE TAILS, FOR SOME VERSION OF MATLAB ... -->
+  ibad=find(isnan(d_out));
+  if ~isempty(ibad);
+    d_out(ibad)=interp1(o_nscore.normscore(id),s_origdata(id),d_normal(ibad),'nearest');
+  end
   

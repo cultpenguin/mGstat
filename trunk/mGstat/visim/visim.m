@@ -9,17 +9,38 @@
 %
 function V=visim(parfile);
   
-  visim_bin='~/bin/visim';
 
-  if (exist('~/bin/visim'))==0
-    disp(sprintf('COULD NOT FIND VISIM binary : %s',visim_bin));
-    if nargin==0
-      disp(sprintf('Using VISIM binary : %s',visim_bin));
-      V=[];
-      return
-    end	
+  % FIRST TRY TO FIND THE VISIM BINARY IN THE mGstat/bin/ DIRECTORY
+  [p,f,s]=fileparts(which('visim'));
+  if isunix
+    visim_bin=sprintf('%s/../bin/visim',p);
+  else
+    visim_bin=sprintf('%s/../bin/visim.exe',p);
   end
 
+  if (exist(visim_bin))==0
+    if isunix
+      % TRY TO LOCATE visim IN THE UNIX PATH
+      [s,visim_bin]=system('which visim');      
+    end
+  end
+  
+  if (exist(visim_bin))==0
+    % MANUALLU THE THE PATH TO VISIM
+    visim_bin='~/bin/visim';
+  end
+
+  
+  
+  if (exist(visim_bin))==0
+    disp(sprintf('COULD NOT FIND VISIM binary : %s',visim_bin));
+  end
+
+  if nargin==0
+    disp(sprintf('Using VISIM binary : %s',visim_bin));
+    V=[];
+    return
+  end	
   
   if isstruct(parfile);    
     write_visim(parfile);
