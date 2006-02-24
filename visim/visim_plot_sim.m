@@ -3,7 +3,7 @@
 % V=visim_plot_sim(V,nsim,cax,FS,nxsub,nysub)
 %
 function V=visim_plot_sim(V,nsim,cax,FS,nxsub,nysub)
-  
+
   if isstruct(V)~=1
     V=read_visim(V);
   end
@@ -35,13 +35,14 @@ function V=visim_plot_sim(V,nsim,cax,FS,nxsub,nysub)
   for i=1:(nxsub*nysub);
     subplot(nysub,nxsub,i)
     imagesc(V.x,V.y,V.D(:,:,i)');
-    title(sprintf('#%d',i),'FontSize',FS+2);
+    % title(sprintf('#%d',i),'FontSize',FS+2);
     caxis(cax);
     set(gca,'FontSize',FS)
+    set(gca,'XaxisL','top')
     axis image
   end
   %set(gca,'visible','off');  colorbar;  cla
   [f1,f2,f3]=fileparts(V.parfile);
   %title([f2,' Realizations'],'interpr','none')
   
-  %print_mul(sprintf('%s_sim',f2))
+  print_mul(sprintf('%s_sim',f2))

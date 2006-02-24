@@ -1,4 +1,7 @@
 % visim_plot_vol_fit : Plot Histogram of d_obs<>d_est
+%
+% [m_est,d_est,d_obs]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
+%
 function [m_est,d_est,d_obs]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
   
   if isstruct(V)~=1
@@ -9,7 +12,7 @@ function [m_est,d_est,d_obs]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
     doPrint=1;
   end
   
-  FS=5;
+  FS=12;
   
   [G,d_obs,d_var]=visim_to_G(V);
 
@@ -26,7 +29,7 @@ function [m_est,d_est,d_obs]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
       d_dif(:,i)=G*m(:)-d_obs;
     end
   end  
-  
+
   hist(d_dif(:),max([10 V.nsim]))
   
       

@@ -1,5 +1,5 @@
 % visim_plot_semivar_real(V,name,cax)
-function visim_plot_semivar_real(V,name,cax)
+function pout=visim_plot_semivar_real(V,name,cax)
 
 ang=[0 90];
 tolerance=15;
@@ -13,6 +13,7 @@ lstyle{3}=(':');
 
 for ia=1:length(ang)
     a(ia)=V.Va.ang1+ang(ia);
+    % [g{ia},hc{ia}]=visim_semivar(V,1:10,a(ia),tolerance);
     [g{ia},hc{ia}]=visim_semivar(V,1:V.nsim,a(ia),tolerance);
 end
 
@@ -40,14 +41,19 @@ for ia=1:length(ang)
   
   ptrue=plot(hc2,sv{i},'k-','linewidth',3,'linestyle',lstyle{1});
   
-  l=legend([pall,pmean,ptrue],'All Sim','Mean',vtxt{ia});
-%  set(l,'Location','SouthEast');
+  pout{ia}=[pall,pmean,ptrue];
+  try
+    l=legend([pall,pmean,ptrue],'All sim','Mean of all sim',vtxt{ia});
+  catch
+    keyboard
+  end
+  %  set(l,'Location','SouthEast');
   set(l,'Location','Best');
 
   xlabel('Distance')
   ylabel('Semivariance, \gamma')
   
-  axis([0 max(hc2) 0 V.Va.cc*1.3])
+  axis([0 max(hc2) 0 V.Va.cc*1.6])
   
 end
 hold off

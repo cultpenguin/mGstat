@@ -63,14 +63,16 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
     leg{i}=sprintf('%4.1f^o +/- %3.1f^o',ang(i),tolerance);
   end
 
-  i=i+1;
-  pmg1(i)=plot(hc0,mg0,'b-o','linewidth',1);  
-  leg{i}='All directions';
-  hold off
+%  i=i+1;
+%  pmg1(i)=plot(hc0,mg0,'b-o','linewidth',1);  
+%  leg{i}='All directions';
+
+hold off
   
   L=(num2str(ang'));
   
   [v1,v2]=visim_format_variogram(V1);
+  v1txt=v1;  v2txt=v2;
   v1=deformat_variogram(v1);
   v2=deformat_variogram(v2);
   hc2=linspace(0,max(hc),40);
@@ -83,11 +85,11 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
   hold off
 
   
-  leg{i+1}=[format_variogram(v1,1)];
-  leg{i+2}=[format_variogram(v2,1)];  
+  leg{i+1}=[v1txt];
+  leg{i+2}=[v2txt];  
   
   l=legend([pmg1 p1 p2],leg,4);
-  set(l,'FontSize',5)
+  set(l,'FontSize',8)
   
   
   xlabel('Distance')
