@@ -29,7 +29,7 @@ function visim_plot_hist(V,isim,doPrint)
   end
 
   
-  FS=5;
+  FS=9;
   
   if V.ccdf==0
     orgpdf=normpdf(xall,V.gmean,sqrt(V.gvar));    
