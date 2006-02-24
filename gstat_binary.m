@@ -11,12 +11,26 @@ gstat='/usr/local/bin/gstat';
 %  gstat='/home/tmh/bin/gstat-2.4.3/src/gstat';
 % gstat='/home/tmh/RESEARCH/PROGRAMMING/mGstat/gstat/gstat';
 %gstat='d:\thomas\Programming\mGstat\gstat.exe';
-gstat='/usr/local/bin/gstat';  
+% gstat='';
+
 % IF THE gstat VARAIABLE IS ÆEFT EMPTY(DEFAULT)
 % IT WILL BE LOCATED ON YOUR SYSTEM IF THE 
 % GSTAT EXECUTABLE IS SOMEWEHRE IN THE PATH
 
-  if isempty(gstat)  
+if isempty(gstat)
+  [p,f,s]=fileparts(which('gstat_binary'));
+  if ~isempty(p)
+    if isunix
+      gstat=sprintf('%s/../bin/gstat',p);
+    else
+      gstat=sprintf('%s/../bin/gstat.exe',p);
+    end
+  else
+    gstat='';
+  end
+end
+
+if isempty(gstat)  
     if isunix
       [s,w]=system('which gstat');
       
