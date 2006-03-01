@@ -34,6 +34,7 @@ function V=visim_plot_etype(V,info,cax1,cax2)
   
   if info>0, subplot(1,2,1); end
   imagesc(V.x, V.y, etype.mean');
+  set(gca,'XAxisLocation','top','FontSize',12)
   axis image
   if exist('cax1')==1
     caxis(cax1);
@@ -53,6 +54,7 @@ function V=visim_plot_etype(V,info,cax1,cax2)
     
     subplot(1,2,2)
     imagesc(V.x, V.y, etype.var');
+    set(gca,'XAxisLocation','top','FontSize',12)
     if exist('cax2')==1
       caxis(cax2);
     end

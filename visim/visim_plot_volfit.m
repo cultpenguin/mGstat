@@ -2,7 +2,7 @@
 %
 % [m_est,d_est,d_obs]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
 %
-function [m_est,d_est,d_obs]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
+function [d_dif,d_obs,d_var]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
   
   if isstruct(V)~=1
     V=read_visim(V);

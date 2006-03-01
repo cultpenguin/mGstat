@@ -1,3 +1,8 @@
+% visim_format_variogram
+%
+% Call : 
+%      [str1,str2]=visim_format_variogram(V,comp);
+%
 function [str1,str2]=visim_format_variogram(V,comp);
   
   if nargin<2

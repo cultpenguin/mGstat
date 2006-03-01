@@ -32,8 +32,9 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
   m{1}=('*');
   m{2}=('+');
   m{3}=('o');
-  
 
+  
+  
   [g0,hc0]=visim_semivar(V1,isim,0,180);
   
   if length(isim)>1
@@ -55,7 +56,8 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
       pmg1(i)=plot(hc,mg,'b-','linewidth',i*2/4,'Marker',m{i});
       if i==1; hold on; end
     else
-      pm1=plot(hc,g,'b-+','linewidth',i*2/4,'Marker',m{i});
+%      pm1=plot(hc,g,'k','linewidth',i*2/4,'Marker',m{i},'LineStyle',lstyle{i});
+      pm1=plot(hc,g,'k','linewidth',1,'LineStyle',lstyle{i});
       pmg1(i)=pm1(1);
       if i==1; hold on; end
     end
@@ -79,8 +81,8 @@ hold off
   [sv1]=semivar_synth(v1,hc2,0);  
   [sv2]=semivar_synth(v2,hc2,0);  
   hold on
-  p1=plot(hc2,sv1,'k-','linewidth',1);
-  p2=plot(hc2,sv2,'k--','linewidth',1);
+  p1=plot(hc2,sv1,'k-','linewidth',3);
+  p2=plot(hc2,sv2,'k--','linewidth',3);
   
   hold off
 
@@ -89,8 +91,9 @@ hold off
   leg{i+2}=[v2txt];  
   
   l=legend([pmg1 p1 p2],leg,4);
-  set(l,'FontSize',8)
+  set(l,'FontSize',10)
   
+  set(gca,'FontSize',12)
   
   xlabel('Distance')
   ylabel('\gamma')
