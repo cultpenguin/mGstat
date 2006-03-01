@@ -36,7 +36,7 @@ for ia=1:length(ang)
   pall=plot(hc{ia},g{ia},'-','color',[1 1 1].*.7,'linewidth',.1);
   pall=pall(1);
   hold on
-  pmean=plot(hc{ia},mean(g{ia}')','-','color',col{1},'linestyle',lstyle{ia});
+  pmean=plot(hc{ia},mean(g{ia}')','-','color',col{1},'linestyle',lstyle{1});
   p(i)=pall(1);
   
   ptrue=plot(hc2,sv{i},'k-','linewidth',3,'linestyle',lstyle{1});

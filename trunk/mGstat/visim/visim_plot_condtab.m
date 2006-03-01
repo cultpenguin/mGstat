@@ -1,3 +1,8 @@
+% visim_plot_condtab
+%
+% CALL :
+%   visim_plot_condtab(V,doPrint)
+%
 function visim_plot_condtab(V,doPrint)
   
   if nargin==1, 

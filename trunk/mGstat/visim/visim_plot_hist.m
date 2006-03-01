@@ -1,6 +1,6 @@
 % visim_plot_hist : plots statistics
 %
-% visim_plot_hist(V)
+% visim_plot_hist(V,isim,doPrint)
 %
 function visim_plot_hist(V,isim,doPrint)
      
@@ -16,6 +16,10 @@ function visim_plot_hist(V,isim,doPrint)
     isim=1:1:V.nsim;
   end
 
+  if isempty(isim)
+    isim=1:1:V.nsim;
+  end
+  
 
   d=V.D(:,:,isim);
   d=d(:);
@@ -29,7 +33,7 @@ function visim_plot_hist(V,isim,doPrint)
   end
 
   
-  FS=11;
+  FS=13;
   
   if V.ccdf==0
     orgpdf=normpdf(xall,V.gmean,sqrt(V.gvar));    
@@ -43,14 +47,18 @@ function visim_plot_hist(V,isim,doPrint)
   
     
   
-  l0=plot(xall,h(isim,:),'k-','linewidth',.1);
+  l0=plot(xall,h(isim,:),'-','linewidth',.1,'color',[.7 .7 .7]);
   hold on
-  l1=plot(xall,hall,'g--','linewidth',1);
-  l2=plot(xall,orgpdf,'r-+','linewidth',1);
+  l1=plot(xall,hall,'k-','linewidth',2);
+  l2=plot(xall,orgpdf,'k--','linewidth',2);
   hold off
   xlabel('Value');ylabel('# Counts')
-  l=legend([l2 l1 l0(1)],'A priori','All real','a priori',2);
-  set(l,'FontSize',5)
+  if length(isim)==1
+    l=legend([l2 l1],'A priori','Realization',2);
+  else
+    l=legend([l2 l1 l0(1)],'A priori','All real','Mean all real',2);
+  end
+  set(l,'FontSize',14)
   
   x0=0.03;
   y0=0.7; 
