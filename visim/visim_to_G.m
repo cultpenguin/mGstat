@@ -39,6 +39,21 @@ function [G,d_obs,d_var]=visim_to_G(V);
   end
   
   
+  % SETTING UP Cd
+  Cd_diag=V.fvolsum.data(:,4);
+  n=length(Cd_diag);
+  Cd=eye(n);
+  for i=1:n
+    Cd(i,i)=Cd_diag(i);
+  end
+  
+  
+  % Setup Covariance matrix
+  [xx,yy]=meshgrid(V.x,V.y);
+  nxyz=V.nx*V.ny*V.nz;
+  Cm=zeros(nxyz,nxyz);
+
+  
   %Gpoint=zeros(npoint,nxyz);
   
 
