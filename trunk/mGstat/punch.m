@@ -7,6 +7,7 @@ function t=punch(Vel,x,y,z,S)
   
 
   punch_bin='~/RESEARCH/PROGRAMMING/GSLIB/visim/visim_examples/punch';
+  punch_bin='~/RESEARCH/PROGRAMMING/mGstat/bin/punch';
   
   fvel='punch.vel';
   ftime='punch.time';
@@ -33,7 +34,7 @@ function t=punch(Vel,x,y,z,S)
   
   write_punch_par(fpunch,ftime,fvel,fxs,fys,fzs,nx,ny,nz,x0,y0,z0,dx,reverse,maxoff)
   
-  unix(sprintf('%s par=%s',punch_bin,fpunch));
+  [s,w]=unix(sprintf('%s par=%s',punch_bin,fpunch));
   
   t=read_bin(ftime,nx);
   

@@ -47,7 +47,13 @@ function cov=precal_cov(pos1,pos2,V,options);
         d(i,j)=edist(pos1(i,:),pos2(j,:),V(iV).par2,isorange);
       end
     end
-    cov = cov + semivar_synth(V(iV),d);
+
+    % SPLIT IN TWO IN CASE MATLAB CANNOT HANDLE THIS
+    nn=round(n_est1/2);
+    nn1=nn+1;
+    cov(1:nn,:) = cov(1:nn,:) + semivar_synth(V(iV),d(1:nn,:));
+    cov(nn1:n_est1,:) = cov(nn1:n_est1,:) + semivar_synth(V(iV),d(nn1:n_est1,:));
+
     end
 
     cov=gvar-cov;
