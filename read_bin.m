@@ -61,7 +61,7 @@ if nz==0,
    fclose(fid);
    app_nz=floor(ndata/nx);
    nz=app_nz; 
-  disp(['read_bin : Using nz=',num2str(nz)])
+  % disp(['read_bin : Using nz=',num2str(nz)])
 else
    [data,ndata]=fread(fid,nz*nx,'float32');
    fclose(fid);

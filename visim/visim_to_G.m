@@ -1,9 +1,9 @@
 % visim_to_G : Setup linear forward matrix (only 2D)
 %
 % CALL : 
-%  [G,d_obs,d_var]=visim_to_G(V);
+%  [G,Cd,Cm,d_obs,d_var]=visim_to_G(V);
 %
-function [G,d_obs,d_var]=visim_to_G(V);
+function [G,Cd,Cm,d_obs,d_var]=visim_to_G(V);
   
   if isstruct(V)~=1
     V=read_visim(V);
@@ -49,10 +49,15 @@ function [G,d_obs,d_var]=visim_to_G(V);
   
   
   % Setup Covariance matrix
-  [xx,yy]=meshgrid(V.x,V.y);
+  [yy,xx]=meshgrid(V.y,V.x);
   nxyz=V.nx*V.ny*V.nz;
-  Cm=zeros(nxyz,nxyz);
+  %Cm=zeros(nxyz,nxyz);
 
+  
+  Va=deformat_variogram(visim_format_variogram(V));
+  
+  Cm=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],Va);
+  
   
   %Gpoint=zeros(npoint,nxyz);
   
@@ -62,7 +67,6 @@ function [G,d_obs,d_var]=visim_to_G(V);
   
   G=Gvol;
   
-
   d_obs=d_volobs; 
   d_var=d_volobs_var;
   
