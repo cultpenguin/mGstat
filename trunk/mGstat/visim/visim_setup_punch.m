@@ -48,7 +48,7 @@ function [G,Gray]=visim_setup_punch(V,S,R,m_ref);
     
     progress_txt(i,size(S,1),'Setting up Matrix')
     
-    [K,Ray,tS,tR,raypath,raylength]=fresnel_punch(0.*m_ref'+.13,V.x,V.y,V.z,[S(i,:),0],[R(i,:),0],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz); 
+    [K,Ray,tS,tR,raypath,raylength]=fresnel_punch(m_ref',V.x,V.y,V.z,[S(i,:),0],[R(i,:),0],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz); 
     
     maxK=max(K(:));
     %  
