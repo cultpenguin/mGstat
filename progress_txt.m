@@ -19,6 +19,11 @@
 %
 function progress_txt(i,max,varargin);
   
+  if nargin==0
+    help progress_txt
+    return;
+  end
+  
   ncols=length(i);
   
   %
