@@ -57,6 +57,7 @@ function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype);
     
     [K,Ray,tS,tR,raypath,raylength]=fresnel_punch(m_ref',V.x,V.y,V.z,[S(i,:),0],[R(i,:),0],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz); 
     
+    
     K=K';
     Ray=Ray';
     
@@ -68,21 +69,27 @@ function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype);
     G(i,:)=gg;
     
     Gray(i,:)=Ray(:)./sum(Ray(:));
-    
+
     rl(i)=raylength;
+
+
+
     
   end
 
-  save T
-
-  [xx,yy,zz,]=meshgrid(V.x,V.y,V.z);
+  % MAKE SURE YOU UNDERSTAND WHY IT IS YY,XX AND NOT XX,YY
+  [yy,xx,zz,]=meshgrid(V.y,V.x,V.z);
   
   % WRITE OUTPUT
   fvolgeom=sprintf('visim_volgeom_%s.eas',name);
   fvolsum=sprintf('visim_volsum_%s.eas',name);
   fparfile=sprintf('visim_%s.par',name);
-    
-  nd=length(find(G));
+  
+  if ktype==2;
+    nd=length(find(G));
+  else
+    nd=length(find(Gray));
+  end
   VolGeom=zeros(nd,5);
   VolSum=zeros(size(S,1),4);
   
