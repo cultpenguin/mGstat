@@ -69,15 +69,18 @@ function obj=read_visim(filename)
   % OUTPUT
   line=fgetl(fid);
   [fname]=get_string(line);
-  if exist(fname)==2,
-    [data,header]=read_eas(fname);
-    obj.out.data=data;
-    obj.out.header=header;
-    obj.out.fname=fname;
-  else
-    disp(['Output file : ',fname,' does not exists'])
+  try
+    if exist(fname)==2,
+      [data,header]=read_eas(fname);
+      obj.out.data=data;
+      obj.out.header=header;
+      obj.out.fname=fname;
+    else
+      disp(['Output file : ',fname,' does not exists'])
+    end
+  catch
+    disp(sprintf('%s  : Could not read %s',mfilename,fname))
   end
-
   % N SIM
   line=fgetl(fid);
   obj.nsim=sscanf(line,'%d');
