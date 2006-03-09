@@ -37,7 +37,13 @@ function [G,Cd,Cm,d_obs,d_var]=visim_to_G(V);
     d_volobs_var(ivol,:)=V.fvolsum.data(ivol,[4]);
     
   end
+
+  G=Gvol;
+
   
+  if nargout==1
+    return
+  end
   
   % SETTING UP Cd
   Cd_diag=V.fvolsum.data(:,4);
@@ -65,7 +71,6 @@ function [G,Cd,Cm,d_obs,d_var]=visim_to_G(V);
   %G=[Gpoint;Gvol];
   
   
-  G=Gvol;
   
   d_obs=d_volobs; 
   d_var=d_volobs_var;
