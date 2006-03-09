@@ -60,7 +60,7 @@ function [K,RAY,tS,tR,raypath,raylength]=fresnel_punch(Vel,x,y,z,S,R,freq,alpha,
     RAY(iy(j),ix(j))=RAY(iy(j),ix(j))+1;
   end
   
-  doPlot=1;
+  doPlot=0;
   if doPlot==1;
     figure(1);
     subplot(2,4,1)
