@@ -27,7 +27,7 @@ function [K,RAY,tS,tR,raypath,raylength]=fresnel_punch(Vel,x,y,z,S,R,freq,alpha,
   if nargin<7, freq=7.7; end
   if nargin<8, alpha=1; end
   
-  Vpunch=Vel';
+  Vpunch=Vel;
   
   tS=punch(Vpunch(:),x,y,z,S)';
   tR=punch(Vpunch(:),x,y,z,R)';
@@ -70,7 +70,7 @@ function [K,RAY,tS,tR,raypath,raylength]=fresnel_punch(Vel,x,y,z,S,R,freq,alpha,
     subplot(2,4,3)
     imagesc(x,y,tR);axis image,
     subplot(2,4,4)
-    imagesc(x,y,K);axis image,
+    imagesc(x,y,tS+tR);axis image,
     
     subplot(2,4,5)
     imagesc(x,y,U);axis image,

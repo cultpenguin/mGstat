@@ -28,7 +28,6 @@ function obj=read_visim(filename)
     end
   end
   
-  try
   
   % COND SIM
   line=fgetl(fid);
@@ -211,6 +210,9 @@ function obj=read_visim(filename)
   tmp=sscanf(line,'%f %f');
   obj.tail.upper(1)=tmp(1);
   obj.tail.upper(2)=tmp(2);
+
+  try
+
   
   % CREATE A MARIX OF SIM DATA :
   if isfield(obj,'out')
@@ -251,7 +253,7 @@ function obj=read_visim(filename)
   end
   
   catch
-    disp('something went wrong...')
+    disp('something went wrong in read_visim ...')
   end
 
   
