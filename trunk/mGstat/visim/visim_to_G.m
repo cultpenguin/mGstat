@@ -1,9 +1,9 @@
 % visim_to_G : Setup linear forward matrix (only 2D)
 %
 % CALL : 
-%  [G,Cd,Cm,d_obs,d_var]=visim_to_G(V);
+%  [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
 %
-function [G,Cd,Cm,d_obs,d_var]=visim_to_G(V);
+function [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
   
   if isstruct(V)~=1
     V=read_visim(V);
@@ -39,9 +39,11 @@ function [G,Cd,Cm,d_obs,d_var]=visim_to_G(V);
   end
 
   G=Gvol;
+  d_obs=d_volobs; 
+  d_var=d_volobs_var;
 
   
-  if nargout==1
+  if nargout<4
     return
   end
   
@@ -70,8 +72,4 @@ function [G,Cd,Cm,d_obs,d_var]=visim_to_G(V);
 
   %G=[Gpoint;Gvol];
   
-  
-  
-  d_obs=d_volobs; 
-  d_var=d_volobs_var;
   
