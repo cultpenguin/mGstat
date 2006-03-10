@@ -1,4 +1,4 @@
-function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype);
+function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype,doPlot);
   
   if nargin==0
     V=read_visim('sgsim_cond_2.par');
@@ -12,8 +12,6 @@ function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype);
     ktype=1; % RAY
     % ktype=2; FRESNEL
   end
-
-  
   
   if nargin<2
     
@@ -43,7 +41,16 @@ function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype);
     
     %load SR
   end
- 
+
+  if isempty(t)
+    t=ones(size(S,1));
+    t_err=ones(size(S,1));
+  end
+  
+  if exist('doPlot')==0
+    doPlot=0;
+  end
+  
   
   G=zeros(size(S,1),length(m_ref(:)));
   Gray=G;
@@ -54,9 +61,9 @@ function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype);
   for i=1:size(S,1);
     
     progress_txt(i,size(S,1),'Setting up Matrix')
+
     
-    [K,Ray,tS,tR,raypath,raylength]=fresnel_punch(m_ref',V.x,V.y,V.z,[S(i,:),0],[R(i,:),0],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz); 
-    
+    [K,Ray,tS,tR,raypath,raylength]=fresnel_punch(m_ref',V.x,V.y,V.z,[S(i,:),0],[R(i,:),0],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
     
     K=K';
     Ray=Ray';
@@ -109,8 +116,9 @@ function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype);
     end
     
     % CALC VELOCITY FROM DT
-    d_t=abs( rl(iv)./t(iv) - rl(iv)./(t(iv)+t_err(iv)) );
-    VolSum(iv,:)=[iv length(id) rl(iv)./t(iv) d_t]; 
+    v=  rl(iv)./t(iv);
+    d_v=abs( v - rl(iv)./(t(iv)+t_err(iv)) )
+    VolSum(iv,:)=[iv length(id) v d_v.^2]; 
     
   end
 

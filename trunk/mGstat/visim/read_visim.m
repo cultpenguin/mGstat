@@ -36,11 +36,10 @@ function obj=read_visim(filename)
   % File with cond data 
   line=fgetl(fid);
   [fname]=get_string(line);
-  [data,header]=read_eas(fname);
-  obj.fconddata.data=data;
-  obj.fconddata.header=header;
-  obj.fconddata.fname=fname;
-  
+    [data,header]=read_eas(fname);
+    obj.fconddata.data=data;
+    obj.fconddata.header=header;
+    obj.fconddata.fname=fname;
   % Cols
   line=fgetl(fid);
   obj.cols=sscanf(line,'%d');
@@ -48,19 +47,19 @@ function obj=read_visim(filename)
   % Volume Geometry
   line=fgetl(fid);
   [fname]=get_string(line);
-  [data,header]=read_eas(fname);
-  obj.fvolgeom.data=data;
-  obj.fvolgeom.header=header;
-  obj.fvolgeom.fname=fname;
-
+    [data,header]=read_eas(fname);
+    obj.fvolgeom.data=data;
+    obj.fvolgeom.header=header;
+    obj.fvolgeom.fname=fname;
+  
   % Volume Summary
   line=fgetl(fid);
   [fname]=get_string(line);
-  [data,header]=read_eas(fname);
-  obj.fvolsum.data=data;
-  obj.fvolsum.header=header;
-  obj.fvolsum.fname=fname;
-   
+    [data,header]=read_eas(fname);
+    obj.fvolsum.data=data;
+    obj.fvolsum.header=header;
+    obj.fvolsum.fname=fname;
+  
   line=fgetl(fid);
   obj.trimlimits=sscanf(line,'%f %f');
   line=fgetl(fid);
@@ -121,9 +120,9 @@ function obj=read_visim(filename)
   line=fgetl(fid);
   tmp=sscanf(line,'%d %f %f');
   obj.nz=tmp(1);obj.zmn=tmp(2);obj.zsiz=tmp(3);
-  obj.x=[1:1:obj.nx]*obj.xsiz-obj.xmn;
-  obj.y=[1:1:obj.ny]*obj.ysiz-obj.ymn;
-  obj.z=[1:1:obj.nz]*obj.zsiz-obj.zmn;
+  obj.x=[0:1:obj.nx-1]*obj.xsiz+obj.xmn;
+  obj.y=[0:1:obj.ny-1]*obj.ysiz+obj.ymn;
+  obj.z=[0:1:obj.nz-1]*obj.zsiz+obj.zmn;
   
   
   obj.rseed=sscanf(fgetl(fid),'%d');
