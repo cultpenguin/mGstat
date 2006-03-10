@@ -22,10 +22,14 @@
 %
 % TMH/2006
 %
-function [K,RAY,tS,tR,raypath,raylength]=fresnel_punch(Vel,x,y,z,S,R,freq,alpha,x0,y0,z0,dx);
+function [K,RAY,tS,tR,raypath,raylength]=fresnel_punch(Vel,x,y,z,S,R,freq,alpha,x0,y0,z0,dx,doPlot);
 
   if nargin<7, freq=7.7; end
   if nargin<8, alpha=1; end
+  
+  if nargin<13
+    doPlot=0;
+  end
   
   Vpunch=Vel;
   
@@ -44,7 +48,13 @@ function [K,RAY,tS,tR,raypath,raylength]=fresnel_punch(Vel,x,y,z,S,R,freq,alpha,
   raypath = stream2(xx,yy,-U,-V,start_point(1),start_point(2),str_options);
   
   raypath=raypath{1};
-  raypath=[raypath;S(1:2)];
+  
+  % GET RID OF DATA CLOSE TO SOURCE (DIST<DX)
+  r2=raypath;r2(:,1)=r2(:,1)-S(1);r2(:,2)=r2(:,2)-S(2);
+  distS=sqrt(r2(:,1).^2+r2(:,2).^2);
+  igood=find(distS>dx);  
+  
+  raypath=[raypath(igood,:);S(1:2)];
 
   raylength=sum(sqrt(diff(raypath(:,1)).^2+diff(raypath(:,2)).^2));
   
@@ -60,7 +70,7 @@ function [K,RAY,tS,tR,raypath,raylength]=fresnel_punch(Vel,x,y,z,S,R,freq,alpha,
     RAY(iy(j),ix(j))=RAY(iy(j),ix(j))+1;
   end
   
-  doPlot=0;
+  %doPlot=0;
   if doPlot==1;
     figure(1);
     subplot(2,4,1)
@@ -82,14 +92,16 @@ function [K,RAY,tS,tR,raypath,raylength]=fresnel_punch(Vel,x,y,z,S,R,freq,alpha,
     hold on
     plot(S(1),S(2),'r*')
     plot(R(1),R(2),'ro')
-    plot(raypath(:,1),raypath(:,2),'r.','Markersize',.1)
+    plot(raypath(:,1),raypath(:,2),'w-','Markersize',.1)
 
-    plot(x(ix),y(iy),'ro')
+    plot(x(ix),y(iy),'gx')
     title(['l=',num2str(raylength)])
     hold off
     
     subplot(2,4,8)    
     imagesc(x,y,RAY);axis image
+    hold on
+    plot(x(ix),y(iy),'gx')
     
     hold off
     drawnow;
