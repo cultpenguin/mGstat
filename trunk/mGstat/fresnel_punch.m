@@ -71,43 +71,47 @@ function [K,RAY,tS,tR,raypath,raylength]=fresnel_punch(Vel,x,y,z,S,R,freq,alpha,
   end
   
   %doPlot=0;
-  if doPlot==1;
+  if doPlot>0;
     figure(1);
-    subplot(2,4,1)
-    imagesc(x,y,Vel);axis image,
-    subplot(2,4,2)
-    imagesc(x,y,tS);axis image,
-    subplot(2,4,3)
-    imagesc(x,y,tR);axis image,
-    subplot(2,4,4)
-    imagesc(x,y,tS+tR);axis image,
-    
-    subplot(2,4,5)
-    imagesc(x,y,U);axis image,
-    subplot(2,4,6)
-    imagesc(x,y,V);axis image,
-    drawnow
-    subplot(2,4,7)    
-    imagesc(x,y,K);axis image
+    subplot(2,5,1)
+    imagesc(x,y,Vel);axis image;title('Velocity model')
+    subplot(2,5,2)
+    imagesc(x,y,tS);axis image;title('t_{source}')
+    subplot(2,5,3)
+    imagesc(x,y,tR);axis image;title('t_{receiver}')
+
+    subplot(2,5,4)    
+    imagesc(x,y,K);axis image;title('Fresnel kernel')
     hold on
     plot(S(1),S(2),'r*')
     plot(R(1),R(2),'ro')
     plot(raypath(:,1),raypath(:,2),'w-','Markersize',.1)
 
-    plot(x(ix),y(iy),'gx')
-    title(['l=',num2str(raylength)])
+    %plot(x(ix),y(iy),'gx')
+    %title(['l=',num2str(raylength)])
     hold off
     
-    subplot(2,4,8)    
+    subplot(2,5,5)    
     imagesc(x,y,RAY);axis image
     hold on
-    plot(x(ix),y(iy),'gx')
+    %plot(x(ix),y(iy),'gx')
     
     hold off
+    title('Ray kernel')
     drawnow;
+
+    if doPlot>1
     
-    
-    
+      subplot(2,5,7)
+      imagesc(x,y,tS+tR);axis image;title('t_{s+r}')
+      
+      subplot(2,5,8)
+      imagesc(x,y,U);axis image;title('grad_U')
+      subplot(2,5,9)
+      imagesc(x,y,V);axis image;title('grad_V')
+      drawnow
+    end
+      
   end
 
   
