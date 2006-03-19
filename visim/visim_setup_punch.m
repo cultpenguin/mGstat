@@ -1,4 +1,12 @@
 function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype,doPlot);
+
+%
+%
+% CHANGE THIS FILE TO POINT TO TWO FILES :
+% visim_setup_tomo_geometry
+% visim_setup_tomo_observations
+%
+  
   
   if nargin==0
     V=read_visim('sgsim_cond_2.par');
@@ -61,7 +69,6 @@ function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype,doPlot);
   for i=1:size(S,1);
     
     progress_txt(i,size(S,1),'Setting up Matrix')
-
     
     [K,Ray,tS,tR,raypath,raylength]=fresnel_punch(m_ref',V.x,V.y,V.z,[S(i,:),0],[R(i,:),0],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
     
@@ -117,7 +124,7 @@ function [V,G,Gray,rl]=visim_setup_punch(V,S,R,m_ref,t,t_err,name,ktype,doPlot);
     
     % CALC VELOCITY FROM DT
     v=  rl(iv)./t(iv);
-    d_v=abs( v - rl(iv)./(t(iv)+t_err(iv)) )
+    d_v=abs( v - rl(iv)./(t(iv)+t_err(iv)) );
     VolSum(iv,:)=[iv length(id) v d_v.^2]; 
     
   end
