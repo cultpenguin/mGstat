@@ -8,16 +8,15 @@ function o=fast_fd_write_par(sx,sz,o);
   end
   nshots=length(sx);
   sy=sx.*0;
-  if nargin<3, sz=linspace(1,30,nshots); end;
+  if nargin<2, sz=linspace(1,30,nshots); end;
 
   
   o.iwrite=0; o.iout=1; o.itimes=-1;
   
-  o.i2d=1; o.istop=0; o.tmax=20; o.nreverse=0; o.reverse=2;
-
-  o.inear=0; o.vabove=4.0; o.vbelow=4.0;
+  o.i2d=1; o.istop=0; o.nreverse=0; o.reverse=2;
+  if ~isfield(o,'tmax'), o.tmax=200;  end
   
-  tmax=o.tmax,
+  o.inear=0; o.vabove=4.0; o.vbelow=4.0;
   
   % WRITE f.in
   f1=fopen(f_fin,'w');
@@ -48,20 +47,23 @@ function o=fast_fd_write_par(sx,sz,o);
   
   
   % WRITE for.in
-  o.xmin=0;o.xmax=80;
-  o.ymin=0;o.ymax=0;
-  o.zmin=0;o.zmax=40;
-  o.dx=0.5;
-  o.nx=161;
-  o.ny=1;
-  o.nz=81;
+  if ~isfield(o,'xmin');o.xmin=0;end
+  if ~isfield(o,'xmax');o.xmax=80;end
+  if ~isfield(o,'ymin');o.ymin=0;end
+  if ~isfield(o,'ymax');o.ymax=0;end
+  if ~isfield(o,'zmin');o.zmin=0;end
+  if ~isfield(o,'zmax');o.zmax=40;end
+  if ~isfield(o,'dx');o.dx=0.5;end
+  if ~isfield(o,'nx');o.nx=161;end
+  if ~isfield(o,'ny');o.ny=1;end
+  if ~isfield(o,'nz');o.nz=81;end
   
   f2=fopen(f_forheader,'w');
   fprintf(f2,'%10.3f%10.3f%10.3f%10.3f%10.3f%10.3f%10.3f%10d%10d%10d\n',o.xmin,o.xmax,o.ymin,o.ymax,o.zmin,o.zmax,o.dx,o.nx,o.ny,o.nz);
   fclose(f2);
   
   
-  %f3=fopen('nowrite','w');
-  %fprintf(f3,' ');
-  %fclose(f3);
+  f3=fopen('nowrite','w');
+  fprintf(f3,' ');
+  fclose(f3);
   
