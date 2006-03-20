@@ -1,6 +1,6 @@
 % read_bin : Reads a binary file to matlab
 %
-% CALL : function [dataout]=read_bin(fileid,nx,nz,fchar,b_order)
+% CALL : function [dataout]=read_bin(fileid,nx,nz,fchar,format,b_order)
 %
 % REQUIRED
 %   fileid
@@ -9,36 +9,41 @@
 % OPTIONAL
 %   nz      : Number of samples in 2nd direction
 %   fchar (scalar)  : (==1)Remove F77 chracters
+%   format (string) : 'float32' [default] or 'int16' or 'int32',...
 %   b_order : set byteorder : '0' : Little Endian 
 %                             '1' : Big endian 
 %
 %
-% /TMH FEB 09 1999
+% /TMH 2006
 %
-function [dataout]=read_bin(fileid,nx,nz,fchar,b_order)
+function [dataout]=read_bin(fileid,nx,nz,fchar,format,b_order)
 
 if nargin<1;
-  disp('This function needs a fileid')
+  disp('This function needs a filename')
   help read_bin
   return
 end
 
-if nargin==1;
+if nargin<2;
   nx=1;
   nz=0;
-  fchar=0;
 end
-if nargin==2;
+
+if nargin<3;
   nz=0;
+end
+
+if nargin<4;
   fchar=0;
 end
 
-if nargin==3;
-  fchar=0;
+
+if nargin<5;
+  format='float32';
 end
 
-if fchar==1;
-  nx=nx+2;
+if nargin<6;
+  b_order=0;
 end
 
 if exist('b_order')
@@ -47,6 +52,14 @@ if exist('b_order')
 end
 
 
+if ~isempty(strfind(format,'8')),    
+  nps=1;
+elseif ~isempty(strfind(format,'16')),
+  nps=2;
+else
+  nps=4;
+end 
+nfbyte=4./nps;
 
 
 % 
@@ -58,31 +71,27 @@ else
   fid=fopen(fileid,'r');
 end
 
-if nz==0,
-  [data,ndata]=fread(fid,'float32');
-   fclose(fid);
-   app_nz=floor(ndata/nx);
-   nz=app_nz; 
-  % disp(['read_bin : Using nz=',num2str(nz)])
-else
-   [data,ndata]=fread(fid,nz*nx,'float32');
-   fclose(fid);
+% GET NZ
+if nz==0;
+  fseek(fid,0,'eof');
+  n=ftell(fid);
+  fseek(fid,0,'bof');
+  if fchar==1,
+    nz=n/(nx+2*nfbyte)/nbps;
+  else
+    nz=n/(nx)/nps;    
+  end
 end
 
-app_nz=floor(ndata/nx);
+if fchar==1 
+  nx_fortran=(nx+2*nfbyte);
+  [dataout,ndata]=fread(fid,nz*nx_fortran,format);
+  fclose(fid);
+  dataout=reshape(dataout,nx_fortran,nz);
+  dataout=dataout([1:nx]+(nfbyte),:)';  
+else  
+  [dataout,ndata]=fread(fid,nz*nx,format);
 
-% if nz input is to big for read data
-%
-%if nz>app_nz
-%  disp(['read_bin : nz=',num2str(nz),' is too high. Using nz=',num2str(app_nz)])
-%  nz=app_nz;
-%end
-
-dataout=reshape(data(1:nx*nz),nx,nz);
-
-% Remove f77 characters
-%
-if fchar==1,
-  dataout=dataout(2:nx-1,1:nz);
+  dataout=reshape(dataout,nx,nz)';
+  fclose(fid);
 end
-
