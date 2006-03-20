@@ -7,6 +7,12 @@
 %  V   :  [m/s]
 %
 %
+% 'fd' is an efficient FD soultion of the eikonal equation, and is 
+% a part of the FAST pacjage created by Colin Zelt :
+% http://www.geophysics.rice.edu/department/faculty/zelt/fast.html
+%
+% TMH/2006
+%
 function t=fast_fd_2d(x,z,V,Sources);
 
   V_gain=1000;
