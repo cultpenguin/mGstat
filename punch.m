@@ -7,7 +7,7 @@ function t=punch(Vel,x,y,z,S)
   
 
   punch_bin='~/RESEARCH/PROGRAMMING/GSLIB/visim/visim_examples/punch';
-  punch_bin='~/RESEARCH/PROGRAMMING/mGstat/bin/punch';
+  punch_bin='/scratch/tmh/RESEARCH/PROGRAMMING/mGstat/bin/punch';
   
 if exist(punch_bin)==0
 	disp(sprintf('Could not locate PUNCH binary at %s',punch_bin));
