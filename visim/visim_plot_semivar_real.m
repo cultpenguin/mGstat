@@ -1,5 +1,16 @@
-% visim_plot_semivar_real(V,name,cax)
-function pout=visim_plot_semivar_real(V,name,cax)
+% visim_plot_smeivar_real : plot experimental semivariogram from VISIM run
+%
+% CALL : 
+%    visim_plot_semivar_real(V,name,cax)
+%
+% TMH/2006
+%
+function [pout,g,hc,sv,hc2]=visim_plot_semivar_real(V,name,cax)
+
+if isstruct(V)~=1
+  V=read_visim(V);
+end
+
 
 ang=[0 90];
 tolerance=15;
