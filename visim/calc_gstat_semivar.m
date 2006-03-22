@@ -1,6 +1,5 @@
-function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol)
-  
-    
+function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width)
+
   if nargin<3
     angle=0;
   end
@@ -9,7 +8,13 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol)
     tol=180;
   end
 
-  
+  if nargin<5
+    cutoff=5;
+  end
+
+  if nargin<6
+    width=cutoff./15;;
+  end
   
   file='tempSemi';
   
@@ -26,14 +31,15 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol)
   G.variogram{1}.file=[file,'.variogram'];
   G.set.alpha=angle;
   G.set.tol_hor=tol;
-  G.set.width=.4;
-  G.set.cutoff=6;
-  
+  G.set.width=width;
+  G.set.cutoff=cutoff;
+  G.set.format = '%12.8g';
+   
   write_gstat_par(G,[file,'.cmd']);
 
   
   gstat(G);
-  
+
   d=read_gstat_semivar('tempSemi.variogram');
   
   Cav_dist=d(:,4);
@@ -49,7 +55,7 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol)
   np=hc;
   av_dist=hc;
   gamma=hc;
-  
+
   for i=1:length(Chc)
     ii=find(abs(Chc(i)-warr)<1e-9);
     gamma(ii)=Cgamma(i);

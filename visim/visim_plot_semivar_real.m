@@ -1,20 +1,30 @@
 % visim_plot_smeivar_real : plot experimental semivariogram from VISIM run
 %
 % CALL : 
-%    visim_plot_semivar_real(V,name,cax)
+%    visim_plot_semivar_real(V)
 %
 % TMH/2006
 %
-function [pout,g,hc,sv,hc2]=visim_plot_semivar_real(V,name,cax)
+function [pout,g,hc,sv,hc2]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
 
 if isstruct(V)~=1
   V=read_visim(V);
 end
 
-
-ang=[0 90];
-tolerance=15;
-
+if nargin<2
+  ang=[0 90];
+end
+if nargin<3
+  tolerance=15;
+end
+if nargin<4
+  cutoff=sqrt((max(V.x)-V.x(1)).^2+ (max(V.y)-V.y(1)).^2 + (max(V.z)-V.z(1)).^2);
+  cutoff=str2num(sprintf('%12.2g',cutoff));
+end
+if nargin<5
+  width=cutoff/15;
+  width=str2num(sprintf('%12.2g',width));
+end
 col{1}=[0 0 0];
 col{2}=[1 0 0];
 col{3}=[0 0 1];
@@ -23,9 +33,9 @@ lstyle{2}=('--');
 lstyle{3}=(':');
 
 for ia=1:length(ang)
-    a(ia)=V.Va.ang1+ang(ia);
+  a(ia)=V.Va.ang1+ang(ia);
     % [g{ia},hc{ia}]=visim_semivar(V,1:10,a(ia),tolerance);
-    [g{ia},hc{ia}]=visim_semivar(V,1:V.nsim,a(ia),tolerance);
+    [g{ia},hc{ia}]=visim_semivar(V,1:V.nsim,a(ia),tolerance,cutoff,width);
 end
 
   
@@ -54,17 +64,19 @@ for ia=1:length(ang)
   
   pout{ia}=[pall,pmean,ptrue];
   try
-    l=legend([pall,pmean,ptrue],'All sim','Mean of all sim',vtxt{ia});
+    if ia>1
+      l=legend([pall,pmean,ptrue],'All sim','Mean of all sim',vtxt{ia});
+      set(l,'Location','Best');
+    end
   catch
     keyboard
   end
-  %  set(l,'Location','SouthEast');
-  set(l,'Location','Best');
+
 
   xlabel('Distance')
   ylabel('Semivariance, \gamma')
   
-  axis([0 max(hc2) 0 V.Va.cc*1.6])
+  axis([0 max(hc2) 0 V.Va.cc*2.0])
   
 end
 hold off

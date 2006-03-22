@@ -1,5 +1,5 @@
-% [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,etype)
-function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,etype)
+% [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol)
+function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,width)
   
   if isstruct(V)~=1
     V=read_visim(V);
@@ -18,14 +18,14 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,etype)
   end
 
   if nargin<5
-    try 
-      etype=V.etype.mean;
-    catch
-      etype=0;
-    end
+    cutoff=sqrt((max(V.x)-V.x(1)).^2+ (max(V.y)-V.y(1)).^2 + (max(V.z)-V.z(1)).^2);
+    cutoff=str2num(sprintf('%12.2g',cutoff))
   end
-  
-  
+  if nargin<6
+    width=cutoff/15;
+    width=str2num(sprintf('%12.2g',width))
+  end
+
   nsim=length(usesim);
   
   usex=[1:1:V.nx];
@@ -43,17 +43,12 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,etype)
   nxyz=V.nx*V.ny*V.nz;
   Mxyz=[xx(:) yy(:) zz(:)];
   
-  
-  
-  
-  
   for isim=1:nsim
        
     Md=V.D(usex,usey,usesim(isim));    
-    %Md=V.D(:,:,usesim(isim))-etype;    
     Md=Md(:);
 
-    [gamma(:,isim),hc,np(:,isim),av_dist(:,isim)]=calc_gstat_semivar(Mxyz,Md,angle,tol);
+    [gamma(:,isim),hc,np(:,isim),av_dist(:,isim)]=calc_gstat_semivar(Mxyz,Md,angle,tol,cutoff,width);
    
   end
   
