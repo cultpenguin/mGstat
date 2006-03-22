@@ -1,9 +1,12 @@
+function [g_pdf,g_arr,h_exp]=visim_semivar_pdf(g_exp,h_exp,g_max)
+
 % visim_semivar_pdf
 
-ng_arr=20;
-g_arr=linspace(0,2*V.gvar,ng_arr);
-g_exp=g{1};
-h_exp=hc{1};
+%g_max=2*V.gvar;
+ng_arr=40;
+g_arr=linspace(0,g_max,ng_arr);
+% g_exp=g{1};
+% h_exp=hc{1};
 nh=length(h_exp) ;        
 
 g_pdf=zeros(nh,ng_arr)';
@@ -16,34 +19,30 @@ end
 % CUMULATIVE PDF
 g_cpdf=cumsum(g_pdf);
 
-%quan=0.01;
-for i=1:nh
-  i_lower=find(g_cpdf(:,i)>quan);
-  if isempty(i_lower),
-    i_lower=1;
-  else
-    i_lower=i_lower(1);
+quan=[.1,.5,.9];
+for j=1:length(quan);
+  for i=1:nh
+    i_lower=find(g_cpdf(:,i)>quan(j));
+    if isempty(i_lower),
+      i_lower=1;
+    else
+      i_lower=i_lower(1);
+    end
+    g_lower(i)=g_arr(i_lower);
   end
-  i_upper=find(g_cpdf(:,i)<(1-quan));
-  if isempty(i_upper),
-    i_upper=1;
-  else
-    i_upper=min([i_upper(length(i_upper))+1,ng_arr]);
-  end
-
-  g_lower(i)=g_arr(i_lower);
-  g_upper(i)=g_arr(i_upper);
+  q(j,:)=g_lower;
 end
   
   
 imagesc(h_exp,g_arr,g_pdf)
 set(gca,'ydir','normal')
-caxis([0 .2])
+caxis([0 .1])
 colormap(1-gray)
 hold on
-plot(h_exp,g_lower,'r-*','LineWidth',3)
-plot(h_exp,g_upper,'r--','LineWidth',3)
+%plot(h_exp,g_lower,'r-*','LineWidth',3)
+plot(h_exp,q,'r-*','LineWidth',1)
+% plot(h_exp,g_upper,'r--','LineWidth',3)
 hold off
-l1=sprintf('q_{%4.2f} %%',100*quan);
-l2=sprintf('q_{%4.2f}',100*(1-quan));
-legend(l1,l2)
+%l1=sprintf('q_{%4.2f} %%',100*quan);
+%l2=sprintf('q_{%4.2f}',100*(1-quan));
+%legend(l1,l2)
