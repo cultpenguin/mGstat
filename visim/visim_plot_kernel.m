@@ -26,3 +26,7 @@ function visim_plot_kernel(V,ivol)
   axis image
   txt=title(sprintf('Kernel for  %s',V.parfile));
   set(txt,'interpreter','none');
+  
+  [f1,f2,f3]=fileparts(V.parfile);
+  
+  print_mul(sprintf('%s_kernel',f2))
