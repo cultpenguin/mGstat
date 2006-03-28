@@ -3,9 +3,11 @@
 % CALL : 
 %    visim_plot_semivar_real(V)
 %
+%    [g,hc,sv,hc2]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
+%
 % TMH/2006
 %
-function [pout,g,hc,sv,hc2]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
+function [g,hc,sv,hc2]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
 
 if isstruct(V)~=1
   V=read_visim(V);
@@ -19,11 +21,11 @@ if nargin<3
 end
 if nargin<4
   cutoff=sqrt((max(V.x)-V.x(1)).^2+ (max(V.y)-V.y(1)).^2 + (max(V.z)-V.z(1)).^2);
-  cutoff=str2num(sprintf('%12.2g',cutoff));
+  cutoff=str2num(sprintf('%12.1g',cutoff));
 end
 if nargin<5
   width=cutoff/15;
-  width=str2num(sprintf('%12.2g',width));
+  width=str2num(sprintf('%12.1g',width));
 end
 col{1}=[0 0 0];
 col{2}=[1 0 0];
@@ -64,9 +66,10 @@ for ia=1:length(ang)
   
   pout{ia}=[pall,pmean,ptrue];
   try
-    if ia>1
-      l=legend([pall,pmean,ptrue],'All sim','Mean of all sim',vtxt{ia});
-      set(l,'Location','Best');
+    if ia>0
+      [hLeg,hObj]=legend([pall,pmean,ptrue],'All sim','Mean of all sim',vtxt{ia});
+      set(hLeg,'box','off')
+      set(hLeg,'Location','Best');
     end
   catch
     keyboard
@@ -78,8 +81,9 @@ for ia=1:length(ang)
   
   axis([0 max(hc2) 0 V.Va.cc*2.0])
   
+  hold off
+  
 end
-hold off
 
 
 

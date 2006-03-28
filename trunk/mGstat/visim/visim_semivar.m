@@ -19,11 +19,11 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
 
   if nargin<5
     cutoff=sqrt((max(V.x)-V.x(1)).^2+ (max(V.y)-V.y(1)).^2 + (max(V.z)-V.z(1)).^2);
-    cutoff=str2num(sprintf('%12.2g',cutoff))
+    cutoff=str2num(sprintf('%12.1g',cutoff))
   end
   if nargin<6
     width=cutoff/15;
-    width=str2num(sprintf('%12.2g',width))
+    width=str2num(sprintf('%12.1g',width))
   end
 
   nsim=length(usesim);

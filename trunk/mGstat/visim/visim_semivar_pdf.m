@@ -1,5 +1,9 @@
 function [g_pdf,g_arr,h_exp]=visim_semivar_pdf(g_exp,h_exp,g_max)
 
+if nargin<3
+  g_max=max(g_exp(:));
+end
+
 % visim_semivar_pdf
 
 %g_max=2*V.gvar;

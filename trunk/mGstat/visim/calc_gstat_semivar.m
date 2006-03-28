@@ -47,7 +47,6 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width
   Chc=(d(:,1)+d(:,2))./2;
   Cnp=d(:,3);
   
-  
   dw=G.set.width./2;
   warr=[dw:2*dw:G.set.cutoff];
   nw=length(warr);
@@ -55,7 +54,7 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width
   np=hc;
   av_dist=hc;
   gamma=hc;
-
+  
   for i=1:length(Chc)
     ii=find(abs(Chc(i)-warr)<1e-9);
     gamma(ii)=Cgamma(i);

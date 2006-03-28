@@ -20,6 +20,7 @@ function t=fast_fd_2d(x,z,V,Sources);
   V=V.*V_gain;
   
   fd_bin='/scratch/tmh/RESEARCH/PROGRAMMING/mGstat/bin/nfd';
+  fd_bin='~/bin/nfd';
   if exist(fd_bin)==0,
     disp(sprintf('%s - NO VALID PATH TO nfd',mfilename));
   end
