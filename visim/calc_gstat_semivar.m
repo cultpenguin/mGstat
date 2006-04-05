@@ -26,6 +26,7 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width
   if size(pos,2)>1, G.data{1}.y=2; end
   if size(pos,2)>2, G.data{1}.z=3; end
   G.data{1}.v=size(pos,2)+1;
+  % G.data{1}.every=10;
   G.method{1}.semivariogram='';
   G.variogram{1}.data=file;
   G.variogram{1}.file=[file,'.variogram'];
