@@ -51,19 +51,28 @@ function obj=read_visim(filename)
   % Volume Geometry
   line=fgetl(fid);
   [fname]=get_string(line);
+  try 
     [data,header]=read_eas(fname);
     obj.fvolgeom.data=data;
     obj.fvolgeom.header=header;
     obj.fvolgeom.fname=fname;
-  
+  catch
+    disp(sprintf('%s : could not read %s',mfilename,fname))
+  end
+
   % Volume Summary
   line=fgetl(fid);
   [fname]=get_string(line);
+  try
     [data,header]=read_eas(fname);
     obj.fvolsum.data=data;
     obj.fvolsum.header=header;
     obj.fvolsum.fname=fname;
-  
+  catch
+    disp(sprintf('%s : could not read %s',mfilename,fname))
+  end
+
+    
   line=fgetl(fid);
   obj.trimlimits=sscanf(line,'%f %f');
   line=fgetl(fid);
@@ -187,6 +196,7 @@ function obj=read_visim(filename)
   for ist=1:obj.Va.nst
     % VARIOGRAM 1
     line=fgetl(fid);
+    format long
     tmp=sscanf(line,'%d %f %f %f %f');
     obj.Va.it(ist)=tmp(1);
     obj.Va.cc(ist)=tmp(2);

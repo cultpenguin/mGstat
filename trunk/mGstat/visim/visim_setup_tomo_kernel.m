@@ -76,17 +76,18 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
   freq=8;
   alpha=1;
   
+  [Kmat,Raymat,tS,tR,raypath,raylength]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
+
+  tic;
   for i=1:size(S,1);
     
-    progress_txt(i,size(S,1),'Setting up Matrix')
+    if ((i/10)==round(i/10))
+      tleft=((size(S,1)-i)*(toc/i))
+      progress_txt(i,size(S,1),sprintf('Setting up Matrix %6.3f',tleft))
+    end
     
-    
-    %    [K,Ray,tS,tR,raypath,raylength]=fresnel_punch(m_ref',V.x,V.y,V.z,[S(i,:),0],[R(i,:),0],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
-    
-    [K,Ray,tS,tR,raypath,raylength]=kernel(m_ref',V.x,V.y,V.z,[S(i,:),0],[R(i,:),0],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
-    
-    K=K';
-    Ray=Ray';
+    K=Kmat(:,:,i)';
+    Ray=Raymat(:,:,i)';
     
     maxK=max(K(:));
     %  
@@ -97,10 +98,7 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
     
     Gray(i,:)=Ray(:)./sum(Ray(:));
 
-    rl(i)=raylength;
-
-
-
+    rl(i)=raylength(i);
     
   end
 

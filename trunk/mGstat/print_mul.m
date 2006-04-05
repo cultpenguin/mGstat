@@ -27,7 +27,7 @@ function print_mul(fname,color,trim);
   colormap(cmap);
   print(gcf, '-depsc', [fname,'_color.eps'] )
   
-  print(gcf, '-dpng','-r100', [fname,'.png'] )
+  print(gcf, '-dpng','-r200', [fname,'.png'] )
 
   [a,mogrifybin]=unix('which mogrify');
   mogrifybin=mogrifybin(1:length(mogrifybin)-1);

@@ -36,13 +36,24 @@ function write_visim(obj,parfile)
   fprintf(fid,'START OF PARAMETERS                   \n');
 
   fprintf(fid,'%d                    # - conditional simulation (1=yes, 0=no)\n',obj.cond_sim);
+  if (~isfield(obj,'fconddata'))
+    obj.fconddata.fname='dummy';
+  end
   fprintf(fid,'%s # - file with conditioning data\n',obj.fconddata.fname);
+
   fprintf(fid,'%d %d %d %d %d %d       # -  columns1 for X,Y,Z,vr,wt,sec.var\n',obj.cols(1),obj.cols(2),obj.cols(3),obj.cols(4),obj.cols(5),obj.cols(6));
+  if (~isfield(obj,'fvolgeom'))
+    obj.fvolgeom.fname='dummy';
+  end
   fprintf(fid,'%s      # -  Geometry of volume/ray\n',obj.fvolgeom.fname);
+  if (~isfield(obj,'fvolsum'))
+    obj.fvolsum.fname='dummy';
+  end
   fprintf(fid,'%s      # -  Summary of volgeom.eas\n',obj.fvolsum.fname);
   fprintf(fid,'%8.3g %8.3g       # -  trimming limits for conditioning data\n',obj.trimlimits(1),obj.trimlimits(2));
   fprintf(fid,'%d                     # - debugging level: 0,1,2,3\n',obj.debuglevel);
   fprintf(fid,'%s                    # - file for output\n',obj.out.fname);
+  
   fprintf(fid,'%d                     # - number of realizations to generate\n',obj.nsim);
   fprintf(fid,'%d                       # - ccdf. type: 0-normal, 1-target \n',obj.ccdf);
   fprintf(fid,'%s                    # - target histogram file\n',obj.refhist.fname);
@@ -68,10 +79,10 @@ function write_visim(obj,parfile)
 
   fprintf(fid,'%9.4f %9.4f %9.4f   # - radius for search ellipsoid\n',obj.search_radius.hmax,obj.search_radius.hmin,obj.search_radius.vert);
   fprintf(fid,'%9.4f %9.4f %9.4f   # - angles for search ellipsoid\n',obj.search_angle.hmax,obj.search_angle.hmin,obj.search_angle.vert);
-  fprintf(fid,'%9.4f %9.4f             # - global mean and variance \n',obj.gmean,obj.gvar);
+  fprintf(fid,'%11.6f %11.6f             # - global mean and variance \n',obj.gmean,obj.gvar);
   fprintf(fid,'%d %19.9f             # - nst, nugget effect\n',obj.Va.nst,obj.Va.nugget);
   for in=1:obj.Va.nst;
-    fprintf(fid,'%d %19.9f %9.4f %9.4f %9.4f # - it,cc,ang1,ang2,ang3\n',obj.Va.it(in),obj.Va.cc(in),obj.Va.ang1(in),obj.Va.ang2(in),obj.Va.ang3(in));
+    fprintf(fid,'%d %19.9f %10.6f %9.4f %9.4f # - it,cc,ang1,ang2,ang3\n',obj.Va.it(in),obj.Va.cc(in),obj.Va.ang1(in),obj.Va.ang2(in),obj.Va.ang3(in));
     fprintf(fid,'%9.4f %9.4f %9.4f             # - a_hmax, a_hmin, a_vert\n',obj.Va.a_hmax(in), obj.Va.a_hmin(in), obj.Va.a_vert(in));
   end
   fprintf(fid,'%5.3f %5.3f             # - zmin,zmax (tail extrapolation for target histogram)\n',obj.tail.zmin,obj.tail.zmax);

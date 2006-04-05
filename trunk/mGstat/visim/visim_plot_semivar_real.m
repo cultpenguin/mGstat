@@ -16,9 +16,14 @@ end
 if nargin<2
   ang=[0 90];
 end
+
+if isempty(ang);  ang=[0 90];end 
+
 if nargin<3
   tolerance=15;
 end
+if isempty(tolerance);  tolerance=15;end 
+
 if nargin<4
   cutoff=sqrt((max(V.x)-V.x(1)).^2+ (max(V.y)-V.y(1)).^2 + (max(V.z)-V.z(1)).^2);
   cutoff=str2num(sprintf('%12.1g',cutoff));
@@ -38,6 +43,7 @@ for ia=1:length(ang)
   a(ia)=V.Va.ang1+ang(ia);
     % [g{ia},hc{ia}]=visim_semivar(V,1:10,a(ia),tolerance);
     [g{ia},hc{ia}]=visim_semivar(V,1:V.nsim,a(ia),tolerance,cutoff,width);
+    % [g{ia},hc{ia}]=visim_semivar(V,1:3,a(ia),tolerance,cutoff,width);
 end
 
   
