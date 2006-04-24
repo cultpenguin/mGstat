@@ -23,9 +23,12 @@
 function print_mul(fname,color,trim);
   cmap=colormap;
   colormap gray;
-  print(gcf, '-deps', [fname,'.eps'] )
+  print(gcf, '-deps2', [fname,'.eps'] )
   colormap(cmap);
-  print(gcf, '-depsc', [fname,'_color.eps'] )
+  print(gcf, '-depsc2', [fname,'_color.eps'] )
+  saveas(gcf,[fname,'.fig'],'fig');
+
+  return
   
   print(gcf, '-dpng','-r200', [fname,'.png'] )
 
