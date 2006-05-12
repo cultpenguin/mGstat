@@ -19,12 +19,15 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
 
   if nargin<5
     cutoff=sqrt((max(V.x)-V.x(1)).^2+ (max(V.y)-V.y(1)).^2 + (max(V.z)-V.z(1)).^2);
-    cutoff=str2num(sprintf('%12.1g',cutoff))
+    cutoff=str2num(sprintf('%12.1g',cutoff));
   end
   if nargin<6
     width=cutoff/15;
-    width=str2num(sprintf('%12.1g',width))
+    width=str2num(sprintf('%12.1g',width));
   end
+
+  mgstat_verbose(sprintf('%s : ang=%9.5g',mfilename,angle),-1)
+  
 
   nsim=length(usesim);
   

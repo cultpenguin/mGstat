@@ -9,7 +9,6 @@
 %
 function [sv,d]=semivar_synth(V,d,gstat,nugtype);
 
-  
   if nargin<3
     gstat=1;
   end

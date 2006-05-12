@@ -35,13 +35,12 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
 
   
   
-  [g0,hc0]=visim_semivar(V1,isim,0,180);
-  
-  if length(isim)>1
-    mg0=mean(g0')';
-  else
-    mg0=g0;
-  end
+  % [g0,hc0]=visim_semivar(V1,isim,0,180);
+  % if length(isim)>1
+  %   mg0=mean(g0')';
+  % else
+  %   mg0=g0;
+  % end
   
   for i=1:nang
     

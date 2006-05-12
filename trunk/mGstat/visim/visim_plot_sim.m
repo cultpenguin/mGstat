@@ -32,7 +32,7 @@ function V=visim_plot_sim(V,nsim,cax,FS,nxsub,nysub)
   end
   
 %  for i=1:nsim;
-  for i=1:(nxsub*nysub);
+  for i=1:min(nsim,(nxsub*nysub));
     subplot(nysub,nxsub,i)
     imagesc(V.x,V.y,V.D(:,:,i)');
     % title(sprintf('#%d',i),'FontSize',FS+2);
