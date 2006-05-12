@@ -28,9 +28,10 @@ function print_mul(fname,color,trim);
   print(gcf, '-depsc2', [fname,'_color.eps'] )
   saveas(gcf,[fname,'.fig'],'fig');
 
-  return
   
   print(gcf, '-dpng','-r200', [fname,'.png'] )
+
+  return
 
   [a,mogrifybin]=unix('which mogrify');
   mogrifybin=mogrifybin(1:length(mogrifybin)-1);

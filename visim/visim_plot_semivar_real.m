@@ -5,6 +5,9 @@
 %
 %    [g,hc,sv,hc2]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
 %
+%
+% ang : angle with respect to direction of max continutiy. 
+%       (ang=0, computes variogram along max and min continuity)
 % TMH/2006
 %
 function [g,hc,sv,hc2]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
@@ -40,13 +43,13 @@ lstyle{2}=('--');
 lstyle{3}=(':');
 
 for ia=1:length(ang)
-  a(ia)=V.Va.ang1+ang(ia);
+    a(ia)=V.Va.ang1+ang(ia);
     % [g{ia},hc{ia}]=visim_semivar(V,1:10,a(ia),tolerance);
     [g{ia},hc{ia}]=visim_semivar(V,1:V.nsim,a(ia),tolerance,cutoff,width);
     % [g{ia},hc{ia}]=visim_semivar(V,1:3,a(ia),tolerance,cutoff,width);
 end
 
-  
+
 [v1,v2]=visim_format_variogram(V);
 vtxt{1}=v1;
 vtxt{2}=v2;

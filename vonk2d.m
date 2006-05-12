@@ -130,7 +130,8 @@ newfdata=fdata.*expcorr;
 %FROM FOURIER TO SPACE DOMAIN
 %disp([' Going to spacedomain (ifft)'])
 randdata=real(ifft2(fftshift(newfdata)));
-
+rdata=randdata;
+return
 if pop==1,
   % scaling filed according to vel
   rdata=randdata.*2 *vel(1);

@@ -77,8 +77,8 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
   alpha=1;
   
   [Kmat,Raymat,tS,tR,raypath,raylength]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
-
   tic;
+
   for i=1:size(S,1);
     
     if ((i/10)==round(i/10))
