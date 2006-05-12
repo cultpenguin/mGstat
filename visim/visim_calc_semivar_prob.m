@@ -6,10 +6,13 @@ for i=1:length(hc)
   
   pdf=g_pdf(:,i)';
   
-  Pall(i)=interp1(g_arr,pdf,g(i),'nearest');
-end
-P=sum(Pall)./length(hc);
+  Pall(i)=interp1(g_arr,pdf,g(i),'nearest');  
 
+end
+
+%P=sum(Pall)./length(hc);
+Pall(find(Pall==0))=realmin;
+P=sum(log(Pall));
 
 %P=comb_cprob_nd(.1,Pall(2:length(Pall)));
 
