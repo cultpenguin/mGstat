@@ -23,8 +23,8 @@ function visim_plot_hist(V,isim,doPrint)
 
   d=V.D(:,:,isim);
   d=d(:);
-  % xall=linspace(.07,.19,40);
-  % [hall,xall]=hist(d,xall);
+  xall=linspace(.07,.19,40);
+  [hall,xall]=hist(d,xall);
   [hall,xall]=hist(d,30);
   
   for i=1:V.nsim

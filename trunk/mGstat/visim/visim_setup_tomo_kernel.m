@@ -22,11 +22,11 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
     V=read_visim('sgsim_cond_2.par');
   end
   
-  if nargin<6
+  if nargin<7
     name='';
   end
   
-  if nargin<7
+  if nargin<8
     ktype=1; % RAY
     % ktype=2; FRESNEL
   end
@@ -82,8 +82,8 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
   for i=1:size(S,1);
     
     if ((i/10)==round(i/10))
-      tleft=((size(S,1)-i)*(toc/i))
-      progress_txt(i,size(S,1),sprintf('Setting up Matrix %6.3f',tleft))
+      tleft=((size(S,1)-i)*(toc/i));
+      progress_txt(i,size(S,1),sprintf('Setting up Matrix %6.3f',tleft));
     end
     
     K=Kmat(:,:,i)';
