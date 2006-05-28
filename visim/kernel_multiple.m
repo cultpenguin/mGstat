@@ -28,7 +28,14 @@ function [K,RAY,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,f
 
   if nargin<7, freq=7.7; end
   if nargin<8, alpha=1; end
-  
+  if nargin<9, 
+    alpha=1; 
+    x0=1;
+    y0=1;
+    z0=1;
+    dx=x(2)-x(1);
+  end
+
   if nargin<13
     doPlot=0;
   end
@@ -47,7 +54,7 @@ function [K,RAY,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,f
   T=tS+tR;
   K=zeros(size(T));
   RAY=zeros(size(T));
-  str_options = [.1 1000];
+  str_options = [0.1 10000];
   [xx,yy]=meshgrid(x,y);
   for is=1:ns
     mt=min(min(T(:,:,is)));
@@ -61,12 +68,12 @@ function [K,RAY,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,f
     raypath = stream2(xx,yy,-U,-V,start_point(1),start_point(2),str_options);
     
     raypath=raypath{1};
-
       
     % GET RID OF DATA CLOSE TO SOURCE (DIST<DX)
     r2=raypath;r2(:,1)=r2(:,1)-S(is,1);r2(:,2)=r2(:,2)-S(is,2);
     distS=sqrt(r2(:,1).^2+r2(:,2).^2);  
     ClosePoints=find(distS<dx/10);
+    %ClosePoints=find(distS<dx/2);
     %igood=find(distS>dx/10);  
     if isempty(ClosePoints)    
       igood=1:1:length(distS);
