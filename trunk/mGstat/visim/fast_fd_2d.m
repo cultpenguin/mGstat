@@ -1,4 +1,4 @@
-% fast_fd_2d_new : wrapper for the 'fd' eikonal solver from FAST
+% fast_fd_2d : wrapper for the 'fd' eikonal solver from FAST
 %
 % CALL : 
 %   t=fast_fd_2d(x,z,V,Sources);
@@ -7,17 +7,55 @@
 %  V   :  [m/s]
 %
 %
+% Run fast_fd_2d with no arguments to run e demonstration.
+%
+%
 % 'fd' is an efficient FD soultion of the eikonal equation, and is 
 % a part of the FAST pacjage created by Colin Zelt :
 % http://www.geophysics.rice.edu/department/faculty/zelt/fast.html
 %
 % TMH/2006
 %
-function tmap=fast_fd_2d_new(x,z,V,Sources);
+function tmap=fast_fd_2d(x,z,V,Sources);
 
+  if nargin==0
+    nx=110;
+    nz=80;
+    x=[1:1:nx].*1;
+    z=[1:1:nz].*1;
+    V=ones(nz,nx)*2;
+    V(1:(nz/2),:)=4;
+
+    Sources=[50 10];
+
+    t=fast_fd_2d(x,z,V,Sources);
+    
+    contourf(x,z,t);
+    axis image
+  end
+  
   nx=length(x);
   nz=length(z);
   ns=size(Sources,1);  
+
+  % CHECK SIZE OF V,nx,nz
+  if (sum(size(V)==[nz nx])~=2)
+    disp('Wrong format of (x,z) or V')
+    disp('check that ')
+    disp('   size(V) == [nz,nx] ')
+    tmap=[];
+    return
+  end
+
+  
+  % CHECK SIZE OF Sources
+  if (size(Sources,2)~=2)
+    disp('ONLY 2D is supported right now')
+    disp('check that ')
+    disp('   size(S) == 2 ')
+    tmap=[];
+    return
+  end
 
   if ns>99
     tmap = fast_fd_2d_chunk(x,z,V,Sources);
@@ -28,9 +66,12 @@ function tmap=fast_fd_2d_new(x,z,V,Sources);
   V_gain=1000;
 
   V=V.*V_gain;
+
+  [p,f,s]=fileparts(which('visim'));  
+  fd_bin=sprintf('%s/../bin/nfd',p);
   
-  fd_bin='/scratch/tmh/RESEARCH/PROGRAMMING/mGstat/bin/nfd';
-  fd_bin='~/bin/nfd';
+  % fd_bin='/scratch/tmh/RESEARCH/PROGRAMMING/mGstat/bin/nfd';
+  % fd_bin='~/bin/nfd';
   if exist(fd_bin)==0,
     disp(sprintf('%s - NO VALID PATH TO nfd',mfilename));
   end
