@@ -35,28 +35,71 @@ figure(2);clf;
 
 iuse_1=find(~isnan(sum(Vu.VaExp.g{1}')));
 iuse_2=find(~isnan(sum(Vu.VaExp.g{2}')));
-%iuse=1:1:12;
+
+iuse=1:1:12;
+iuse_1=iuse;
+iuse_2=iuse;
+
 g1=Vu.VaExp.g{1}(iuse_1,:);
 g2=Vu.VaExp.g{2}(iuse_2,:);
+gcc_1=cov([g1']);
+gcc_2=cov([g2']);
 gcc_cross=cov([g1',g2']);
 
 g0_1=mean(Vu.VaExp.g{1}');
 g0_2=mean(Vu.VaExp.g{2}');
 g0=[g0_1(iuse_1),g0_2(iuse_2)];
 
+g0_1=g0_1(iuse_1);
+g0_2=g0_2(iuse_2);
+
+L=zeros(1,Vc.nsim);
 
 for is=1:Vc.nsim,
-  %g_est=Vu.VaExp.g{i}(:,is)'; % UNCOND
   g_est1=Vc.VaExp.g{1}(:,is)'; % COND
   g_est2=Vc.VaExp.g{2}(:,is)'; % COND
-  g_est=[g_est1(iuse_1),g_est2(iuse_2)];
-  
-  dg=g0-g_est;
 
+  % g_est1=Vu.VaExp.g{1}(:,is)'; % COND
+  % g_est2=Vu.VaExp.g{2}(:,is)'; % COND
+
+  
+  % JOINT PROBABILITY
+  g_est=[g_est1(iuse_1),g_est2(iuse_2)];
+  dg=g0-g_est;
   L(is)=-.5*dg*inv(gcc_cross)*dg';
+  
+  % EACH DIRECTION INDEPENEDANTLY
+  dg1=g0_1-g_est1(iuse_1);
+  dg2=g0_2-g_est2(iuse_2);
+  L1(is)=-.5*dg1*inv(gcc_1)*dg1';
+  L2(is)=-.5*dg2*inv(gcc_2)*dg2';
 
 end
+%Lmean=log(mean(exp(L)));
 Lmean=mean(L);
+
+doPlot=1;
+if doPlot==1;
+  ii=1;subplot(2,2,ii);
+  plot(Vu.VaExp.hc{ii},Vu.VaExp.g{ii},'-','color',[1 1 1].*.8)
+  hold on;
+  plot(Vc.VaExp.hc{ii},Vc.VaExp.g{ii},'k-');
+  plot(Vc.VaExp.hc{ii}(iuse_1),g0_1,'r-','LineWidth',2);
+  std0_1=sqrt(diag(gcc_1))';
+  plot(Vc.VaExp.hc{ii}(iuse_1),g0_1+std0_1,'r-','LineWidth',1);
+  plot(Vc.VaExp.hc{ii}(iuse_1),g0_1-std0_1,'r-','LineWidth',1);  
+  hold off
+
+  ii=2;subplot(2,2,ii);
+  plot(Vu.VaExp.hc{ii},Vu.VaExp.g{ii},'-','color',[1 1 1].*.8)
+  hold on;
+  plot(Vc.VaExp.hc{ii},Vc.VaExp.g{ii},'k-');
+  plot(Vc.VaExp.hc{ii}(iuse_2),g0_2,'r-','LineWidth',2);
+  std0_2=sqrt(diag(gcc_2))';
+  plot(Vc.VaExp.hc{ii}(iuse_2),g0_2+std0_2,'r-','LineWidth',1);
+  plot(Vc.VaExp.hc{ii}(iuse_2),g0_2-std0_2,'r-','LineWidth',1);  
+  hold off
+end
 
 
 
