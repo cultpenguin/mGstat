@@ -272,7 +272,7 @@ function obj=read_visim(filename)
     disp('something went wrong in read_visim ...')
   end
 
-  
+  fclose(fid);
   
 function [str_out]=get_string(str)
   
