@@ -1,7 +1,7 @@
 % kernel_multiple : computes the sensitivity kernel for a wave traveling from S to R.
 %
 % CALL : 
-%    [K,RAY,timeS,timeR,raypath]=kernel(Vel,x,y,z,S,R,freq,alpha);
+%    [K,RAY,Gk,Gray,timeS,timeR,raypath]=kernel(Vel,x,y,z,S,R,freq,alpha);
 %
 % IN : 
 %    Vel : Velocity field
@@ -24,7 +24,7 @@
 %
 % TMH/2006
 %
-function [K,RAY,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,freq,alpha,x0,y0,z0,dx,doPlot);
+function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,freq,alpha,x0,y0,z0,dx,doPlot);
 
   if nargin<7, freq=7.7; end
   if nargin<8, alpha=1; end
@@ -40,6 +40,7 @@ function [K,RAY,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,f
     doPlot=0;
   end
 
+  
   ns=size(S,1);
   
   Vpunch=Vel;
@@ -99,6 +100,20 @@ function [K,RAY,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,f
        
   end
 
+  Gray=zeros(ns,length(x)*length(y));
+  Gk=zeros(ns,length(x)*length(y));
+  for is=1:ns
+    g=RAY(:,:,is);
+    g=g./sum(g(:));
+    Gray(is,:)=g(:);
+
+    gk=K(:,:,is);
+    gk=gk./sum(gk(:));
+    Gk(is,:)=gk(:);
+
+  end
+  
+  
   if doPlot>0;    
     for i=1:ns;imagesc(T(:,:,i));axis image;drawnow;end
     for i=1:ns;imagesc(K(:,:,i));axis image;drawnow;end
