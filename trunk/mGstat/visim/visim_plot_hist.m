@@ -46,7 +46,7 @@ function visim_plot_hist(V,isim,doPrint)
   
     
   
-  l0=plot(xall,h(isim,:),'-','linewidth',.1,'color',[.7 .7 .7]);
+  l0=plot(xall,h(isim,:)','-','linewidth',.1,'color',[.7 .7 .7]);
   hold on
   l1=plot(xall,hall,'k-','linewidth',2);
   l2=plot(xall,orgpdf,'k--','linewidth',2);
