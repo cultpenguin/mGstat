@@ -44,7 +44,7 @@ function write_eas(filename,data,header,line1);
   end
   
   if size(data,2)==1
-      fprintf(fid,'%11.7g\n',d(:));
+      fprintf(fid,'%11.7g\n',data(:));
   elseif size(data,2)==2
       d=data';
       fprintf(fid,'%11.7g   %11.7g\n',d(:));
