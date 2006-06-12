@@ -33,7 +33,7 @@ function tmap=fast_fd_2d_chunk(x,z,V,Sources);
         if i2>ns, i2=ns;
     end
     
-    disp(sprintf('is=%d i2=%d ichunk=%d',i1,i2,ichunk))
+    %disp(sprintf('is=%d i2=%d ichunk=%d',i1,i2,ichunk))
     
     tmap(:,:,i1:i2)=fast_fd_2d(x,z,V,Sources(i1:i2,:));
     

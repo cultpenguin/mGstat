@@ -25,8 +25,8 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
     width=cutoff/15;
     width=str2num(sprintf('%12.1g',width));
   end
-
-  mgstat_verbose(sprintf('%s : ang=%9.5g',mfilename,angle),-1)
+  txt = sprintf('%s : ang=%9.5g',mfilename,angle);
+  mgstat_verbose(txt,-1)
   
 
   nsim=length(usesim);
@@ -45,14 +45,19 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
   
   nxyz=V.nx*V.ny*V.nz;
   Mxyz=[xx(:) yy(:) zz(:)];
-  
-  for isim=1:nsim
-       
-    Md=V.D(usex,usey,usesim(isim));    
-    Md=Md(:);
 
-    [gamma(:,isim),hc,np(:,isim),av_dist(:,isim)]=calc_gstat_semivar(Mxyz,Md,angle,tol,cutoff,width);
-   
+  nb= floor(cutoff/width);
+  
+  gamma=zeros(nb,nsim);
+
+  for isim=1:nsim
+      
+      progress_txt(isim,nsim,txt);
+      Md=V.D(usex,usey,usesim(isim));    
+      Md=Md(:);
+      
+      [gamma(:,isim),hc,np,av_dist]=calc_gstat_semivar(Mxyz,Md,angle,tol,cutoff,width);
+      
   end
   
   
