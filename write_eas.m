@@ -43,12 +43,28 @@ function write_eas(filename,data,header,line1);
     fprintf(fid,'%s\n',header{ih});
   end
   
-  for id=1:size(data,1),
-    %fprintf(fid,'%7.4g   %7.4g   %7.4g ',data(id,:));
-    fprintf(fid,'%11.7g   %11.7g   %11.7g ',data(id,:));
-    fprintf(fid,'\n');
+  if size(data,2)==1
+      fprintf(fid,'%11.7g\n',d(:));
+  elseif size(data,2)==2
+      d=data';
+      fprintf(fid,'%11.7g   %11.7g\n',d(:));
+  elseif size(data,2)==3
+      d=data';
+      fprintf(fid,'%11.7g   %11.7g   %11.7g\n',d(:));
+  elseif size(data,2)==4
+      d=data';
+      fprintf(fid,'%11.7g   %11.7g   %11.7g   %11.7g\n',d(:));
+  elseif size(data,2)==5
+      d=data';
+      fprintf(fid,'%11.7g   %11.7g   %11.7g   %11.7g   %11.7g\n',d(:));
+  else
+      
+      for id=1:size(data,1),
+          %fprintf(fid,'%7.4g   %7.4g   %7.4g ',data(id,:));
+          fprintf(fid,'%11.7g   %11.7g   %11.7g ',data(id,:));
+          fprintf(fid,'\n');
+      end
   end
-  
   fclose(fid);
   
   
