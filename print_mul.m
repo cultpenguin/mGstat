@@ -21,47 +21,49 @@
 %
 
 function print_mul(fname,color,trim);
-  cmap=colormap;
-  colormap gray;
-  print(gcf, '-deps2', [fname,'.eps'] )
-  colormap(cmap);
-  print(gcf, '-depsc2', [fname,'_color.eps'] )
-  saveas(gcf,[fname,'.fig'],'fig');
 
-  
-  print(gcf, '-dpng','-r200', [fname,'.png'] )
-
-  return
-
-  [a,mogrifybin]=unix('which mogrify');
-  mogrifybin=mogrifybin(1:length(mogrifybin)-1);
-  fname_trim=sprintf('trim_%s',fname);
-  
-  if nargin<3
-    trim=0;
-  end
-   
-  if (trim==0);
+    return 
+    
+    cmap=colormap;
+    colormap gray;
+    print(gcf, '-deps2', [fname,'.eps'] )
+    colormap(cmap);
+    print(gcf, '-depsc2', [fname,'_color.eps'] )
+    saveas(gcf,[fname,'.fig'],'fig');
+    
+    print(gcf, '-dpng','-r200', [fname,'.png'] )
+    
     return
-  end
-      
-  if exist(mogrifybin)==2,
-        
-    system(sprintf('cp %s.png %s.png',fname,fname_trim));    
-    if nargin==1
-      system(sprintf('%s -trim %s.png',mogrifybin,fname_trim));
-      
-    else
-      if isnumeric(color)
-        if color==1;
-          color='white';
-        else
-          return
-        end
-      end
-      
-      system(sprintf('%s -trim -transparent %s %s.png',mogrifybin,color,fname_trim));
+    
+    [a,mogrifybin]=unix('which mogrify');
+    mogrifybin=mogrifybin(1:length(mogrifybin)-1);
+    fname_trim=sprintf('trim_%s',fname);
+    
+    if nargin<3
+        trim=0;
     end
-  end
-  
-  
+    
+    if (trim==0);
+        return
+    end
+    
+    if exist(mogrifybin)==2,
+        
+        system(sprintf('cp %s.png %s.png',fname,fname_trim));    
+        if nargin==1
+            system(sprintf('%s -trim %s.png',mogrifybin,fname_trim));
+            
+        else
+            if isnumeric(color)
+                if color==1;
+                    color='white';
+                else
+                    return
+                end
+            end
+            
+            system(sprintf('%s -trim -transparent %s %s.png',mogrifybin,color,fname_trim));
+        end
+    end
+    
+    

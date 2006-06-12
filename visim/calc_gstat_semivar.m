@@ -19,7 +19,7 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width
   file='tempSemi';
   
   write_eas([file,'.eas'],[pos val]);
-  
+
   G.data{1}.data=file;
   G.data{1}.file=[file,'.eas'];
   G.data{1}.x=1;
@@ -35,9 +35,8 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width
   G.set.width=width;
   G.set.cutoff=cutoff;
   G.set.format = '%12.8g';
-   
-  write_gstat_par(G,[file,'.cmd']);
 
+  write_gstat_par(G,[file,'.cmd']);
   
   gstat(G);
 

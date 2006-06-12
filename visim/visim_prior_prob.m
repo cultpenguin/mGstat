@@ -78,7 +78,8 @@ end
 %Lmean=log(mean(exp(L)));
 Lmean=mean(L);
 
-doPlot=1;
+
+doPlot=0;
 if doPlot==1;
   ii=1;subplot(2,2,ii);
   plot(Vu.VaExp.hc{ii},Vu.VaExp.g{ii},'-','color',[1 1 1].*.8)
