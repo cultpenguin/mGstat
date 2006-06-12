@@ -12,7 +12,6 @@ function [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
   nxyz=V.nx*V.ny*V.nz;
   
   nvol=size(V.fvolsum.data,1);
-  npoint=size(V.fconddata.data,1);
   
   Gvol=zeros(nvol,nxyz);
  
@@ -66,10 +65,5 @@ function [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
   
   Cm=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],Va);
   
-  
-  %Gpoint=zeros(npoint,nxyz);
-  
-
-  %G=[Gpoint;Gvol];
   
   
