@@ -36,9 +36,9 @@ figure(2);clf;
 iuse_1=find(~isnan(sum(Vu.VaExp.g{1}')));
 iuse_2=find(~isnan(sum(Vu.VaExp.g{2}')));
 
-iuse=1:1:12;
-iuse_1=iuse;
-iuse_2=iuse;
+%iuse=1:1:12;
+%iuse_1=iuse;
+%iuse_2=iuse;
 
 g1=Vu.VaExp.g{1}(iuse_1,:);
 g2=Vu.VaExp.g{2}(iuse_2,:);
