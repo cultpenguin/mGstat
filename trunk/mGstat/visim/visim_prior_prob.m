@@ -3,7 +3,7 @@
 % Call : 
 %   [Lmean,L,Vc,Vu]=visim_prior_prob(V,nsim);
 %
-function [Lmean,L,Vc,Vu]=visim_prior_prob(V,nsim);
+function [Lmean,L,Vc,Vu]=visim_prior_prob(V,nsim,NoCrossC);
 
 [p,f,e]=fileparts(V.parfile);
 
@@ -11,6 +11,9 @@ if nargin==1;
   nsim=V.nsim;
 end
 
+if nargin<3
+    NoCrossC=0;
+end
 % CONDITIONAL SIMULATION
 Vc=V;
 %if isfield(Vc,'D')==0
@@ -45,6 +48,16 @@ g2=Vu.VaExp.g{2}(iuse_2,:);
 gcc_1=cov([g1']);
 gcc_2=cov([g2']);
 gcc_cross=cov([g1',g2']);
+
+%
+%NoCrossC=1;
+if NoCrossC==1
+    gcc_cross2=0.*gcc_cross;
+    for i=1:size(gcc_cross,1);
+        gcc_cross2(i,i)=gcc_cross(i,i);       
+    end
+    gcc_cross=gcc_cross2;  
+end
 
 g0_1=mean(Vu.VaExp.g{1}');
 g0_2=mean(Vu.VaExp.g{2}');
