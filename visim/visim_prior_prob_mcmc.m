@@ -13,12 +13,15 @@
 %
 % See also : visim_prior_prob;
 %
-function [L,h,d,gv]=visim_prior_prob_mcmc(V,options);
+function [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
 
     if nargin==0
-        V=read_visim('visim_20041026.par');
-        V.nsim=10;
+        V=read_visim('visim_20050322.par');
+        V.parfile='test.par';
+        V.nsim=60;
         V.volnh.max=4;
+        V.gvar=4e-4;
+        V.Va.cc=V.gvar;
     end
         
     if nargin<2, 
@@ -34,7 +37,7 @@ function [L,h,d,gv]=visim_prior_prob_mcmc(V,options);
     
     % STEP
     a_hmax.step=1;
-    a_hmin.step=1;
+    a_hmin.step=0;
     a_vert.step=0;
     ang1.step=.5;
     ang2.step=0;
@@ -54,7 +57,7 @@ function [L,h,d,gv]=visim_prior_prob_mcmc(V,options);
     i_acc=0;
 
     anneal.T0=1;
-    anneal.i_start=100;;
+    anneal.i_start=100;
     anneal.decay=1000;
     option.anneal=1;
     
@@ -62,8 +65,10 @@ function [L,h,d,gv]=visim_prior_prob_mcmc(V,options);
     while (keepon==1)
         i_all=i_all+1;
         
-        if ((option.anneal==1)&(anneal.i_start>i_all))
+        if ((option.anneal==1)&(i_all>anneal.i_start))
             T=anneal.T0*exp(-(i_all-anneal.i_start)/anneal.decay);
+        else
+            T=1; % NO ANNEALING
         end
         
         
@@ -99,21 +104,21 @@ function [L,h,d,gv]=visim_prior_prob_mcmc(V,options);
             h(i_acc,:)=[Va.old.a_hmax Va.old.a_hmin Va.old.a_vert];
             d(i_acc,:)=[Va.old.ang1 Va.old.ang2 Va.old.ang3];
             gv(i_acc,:)=Va.old.cc;
-            
+            li(i_acc)=L.old;
             
             % write info to screen
             
             txt2=sprintf('[h1,h2,h3]=[%5.3f,%5.3f,%5.3f]',Va.old.a_hmax,Va.old.a_hmax,Va.old.a_vert);
             %disp(txt2)
         end
-        txt=sprintf('i=%4d(%d) T=%4.1g Pacc=%4.3f  L=%5.1g',i_all,i_acc,T,Pacc,L.old);
+        txt=sprintf('i=%4d(%4d) T=%4.1g Pacc=%4.3f  L=%5.1g',i_all,i_acc,T,Pacc,L.old);
         fprintf(fid,'%s\n',txt);
-        
+        save TEST
         
         if i_acc==3000; keepon=0; end            
         if i_all==30000; keepon=0; end            
         if (T<.001), keepon=0; end
         
     end
-
-fclose all;
+    
+    fclose all;
