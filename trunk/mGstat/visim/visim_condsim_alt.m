@@ -53,6 +53,8 @@ subplot(2,3,2);
 imagesc(V.x,V.y,v_usim);axis image;caxis(cax)
 subplot(2,3,3);
 imagesc(V.x,V.y,v_cest_err);axis image;caxis(cax)
+subplot(2,3,6);
+imagesc(V.x,V.y,v_csim);axis image;caxis(cax)
 v_cest_err
 %
 
