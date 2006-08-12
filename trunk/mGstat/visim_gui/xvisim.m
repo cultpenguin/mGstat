@@ -100,6 +100,22 @@ function m_OpenPar_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+data=guidata(hObject);
+
+%[filename, pathname] = uigetfile( ...
+%    {'*.par;*.PAR', 'Visim parameter files (*.par)'; ...
+%     '*.*',                   'All Files (*.*)'}, ...
+%    'Pick a file');
+filename='visim.par';
+pathname='.';
+data.V=read_visim([pathname,filesep,filename]);
+try
+  plot(peaks);
+catch
+end
+guidata(hObject,data);
+
+
 
 % --------------------------------------------------------------------
 function m_DefaultPar_Callback(hObject, eventdata, handles)
