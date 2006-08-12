@@ -1,13 +1,19 @@
 % visim_condsim_alt
 %
 %
+function Valt=visim_condsim_alt(V)
 
-V=read_visim('visim_test.par');
-V.rseed=2;
-V.nsim=10;
-V.volnh.max=100;
+     
+if isstruct(V)~=1
+  V=read_visim(V);
+end
+
+
+%V.rseed=2;
+%V.nsim=10;
+%V.volnh.max=100;
 %V.debuglevel=-10;
-V=visim(V);
+%V=visim(V);
 
 
 
@@ -32,6 +38,7 @@ Vcond_est=V;
 Vcond_est.rseed=rseed;
 %Vcond_est.rseed=rseed+isim-1;
 Vcond_est.nsim=0;
+Vcond_est.densitypr=0;
 Vcond_est.parfile='Cest.par';
 Vcond_est=visim(Vcond_est);
 v_cest=Vcond_est.etype.mean';
@@ -51,22 +58,34 @@ for isim=1:nsim
   % CALCULATE ERRORS
   d_obs=Vuncond_sim.fvolsum.data(:,3);
   %v=v_cest';v=v(:);
-  v=v_usim';v=v(:);
+  vfield=v_usim';v=vfield(:);
   d_est=G*v;
   
   % KRIG ERRORS
+  % POINT DATA
+  cdata=read_eas(V.fconddata.fname);
+  cdata_err=cdata;
+  [iix,iiy]=pos2index(cdata(:,1),cdata(:,2),V.x,V.y);
+  for i=1:size(cdata,1);
+    cdata_err(i,4)=vfield(iix(i),iiy(i));
+  end
+  write_eas('cond.eas',cdata_err);
+  
   volsum=read_eas(V.fvolsum.fname);
   volsum(:,3)=d_est;
-  volsum(:,4)=volsum(:,4)./100; % SET ACTUAL ERROR TO ZERO
+  %volsum(:,4)=volsum(:,4)./100; % SET ACTUAL ERROR TO ZERO
   write_eas('err.eas',volsum);
   Vcond_est2=V;
   Vcond_est2.rseed=rseed;
 %  Vcond_est2.rseed=rseed+isim-1;
   Vcond_est2.nsim=0;
+  Vcond_est2.densitypr=0;
+  Vcond_est2.fconddata.fname='cond.eas';
   Vcond_est2.fvolsum.fname='err.eas';
   Vcond_est2.parfile='Cest2.par';
   Vcond_est2=visim(Vcond_est2);
   v_cest_err=Vcond_est2.etype.mean';
+  
   
   %% COMBINE 
   
@@ -77,29 +96,33 @@ for isim=1:nsim
   
   Valt.D(:,:,isim)=v_csim';
   
+
+  doPlot=0;
   
-  subplot(2,3,4)
-  plot(d_est,d_obs);
-  xlabel('uncond estimates');ylabel('observations')
-  axis image
-  
-  subplot(2,3,5)
-  plot(d_est_csim,d_obs);
-  xlabel('uncond estimates');ylabel('observations')
-  axis image
-  
-  
-  cax=[.11 .15];
-  subplot(2,3,1);
-  imagesc(V.x,V.y,v_cest);axis image;caxis(cax)
-  subplot(2,3,2);
-  imagesc(V.x,V.y,v_usim);axis image;caxis(cax)
-  subplot(2,3,3);
-  imagesc(V.x,V.y,v_cest_err);axis image;caxis(cax)
-  subplot(2,3,6);
-  imagesc(V.x,V.y,v_csim);axis image;caxis(cax)
-  
-  drawnow;
+  if doPlot==1;
+    subplot(2,3,4)
+    plot(d_est,d_obs,'*');
+    xlabel('uncond estimates');ylabel('observations')
+    axis image
+    
+    subplot(2,3,5)
+    plot(d_est_csim,d_obs,'*');
+    xlabel('uncond estimates');ylabel('observations')
+    axis image
+    
+    
+    cax=[.11 .15];
+    subplot(2,3,1);
+    imagesc(V.x,V.y,v_cest);axis image;caxis(cax)
+    subplot(2,3,2);
+    imagesc(V.x,V.y,v_usim);axis image;caxis(cax)
+    subplot(2,3,3);
+    imagesc(V.x,V.y,v_cest_err);axis image;caxis(cax)
+    subplot(2,3,6);
+    imagesc(V.x,V.y,v_csim);axis image;caxis(cax)
+    
+    drawnow;
+  end
   %
   
   
