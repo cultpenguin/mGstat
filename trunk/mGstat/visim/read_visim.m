@@ -76,7 +76,19 @@ function obj=read_visim(filename)
   line=fgetl(fid);
   obj.trimlimits=sscanf(line,'%f %f');
   line=fgetl(fid);
-  obj.debuglevel=sscanf(line,'%d');
+  tmp=sscanf(line,'%d %d');
+  if length(tmp)==1
+      obj.read_covtable=0;
+      obj.read_lambda=0;
+  elseif length(tmp)==2
+      obj.read_lambda=0;
+      obj.read_covtable=tmp(2);
+  else
+      obj.read_lambda=tmp(3);
+  end
+  obj.debuglevel=tmp(1);
+  %obj.debuglevel=sscanf(line,'%d %d');
+  
 
   % OUTPUT
   line=fgetl(fid);

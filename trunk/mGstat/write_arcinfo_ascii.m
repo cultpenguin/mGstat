@@ -30,7 +30,6 @@
 %
 
 function [data,x,y,dx,nanval]=write_arcinfo_ascii(filename,data,x,y,nannumber,xll,yll);
-
   mgstat_verbose(sprintf('Calling %s with %d arguments',mfilename,nargin),2);
   
   if nargin<2,

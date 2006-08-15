@@ -56,8 +56,10 @@ disp([' f77strip : nx=',num2str(nx)])
 
 info = dir(file);
 filesize = info.bytes/bsize;
+
+nz = info.bytes./(2*4+nx*8);
 % NOT CORRECT --.
-nz=filesize/(nx+2);
+%nz=filesize/(nx+2);
 disp([' f77strip : nz=',num2str(nz)])
 
 %  [mat,nxbytes]=fread(fid,inf,'int32');

@@ -119,11 +119,14 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
         for isim=1:nsim
           file=G.predictions{ip}.file;
           if nsim>1, 
-            if isim>10
-              file=sprintf('%s%d',file,isim-1);
-            else
-              file=sprintf('%s0%d',file,isim-1);
-            end
+              if nsim<100
+                  file=sprintf('%s%2d',file,isim-1);
+              elseif nsim<1000
+                  file=sprintf('%s%3d',file,isim-1);
+              else
+                  file=sprintf('%s%4d',file,isim-1);                  
+              end
+              file=regexprep(file,' ','0');
           end          
           
           if exist(file)==2;

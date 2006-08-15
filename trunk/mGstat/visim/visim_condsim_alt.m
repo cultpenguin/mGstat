@@ -40,6 +40,8 @@ Vcond_est.rseed=rseed;
 Vcond_est.nsim=0;
 Vcond_est.densitypr=0;
 Vcond_est.parfile='Cest.par';
+Vcond_est.read_covtable=0; % DO NOT READ THE COV TABLE FROM DISK THIS TIME...
+Vcond_est.read_lambda=0; % DO NOT READ LAMBDA FROM DISK (CALCULATE THEM)
 Vcond_est=visim(Vcond_est);
 v_cest=Vcond_est.etype.mean';
 
@@ -83,6 +85,9 @@ for isim=1:nsim
   Vcond_est2.fconddata.fname='cond.eas';
   Vcond_est2.fvolsum.fname='err.eas';
   Vcond_est2.parfile='Cest2.par';
+  unix('cp lambda_Cest.out lambda_Cest2.out');
+  Vcond_est2.read_covtable=1; % REUSE COVARIANCE LOOKUP TABLE
+  Vcond_est2.read_lambda=1; % READ LAMBDA FROM DISK (DO not CALCULATE THEM)
   Vcond_est2=visim(Vcond_est2);
   v_cest_err=Vcond_est2.etype.mean';
   
