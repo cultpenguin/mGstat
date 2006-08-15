@@ -22,7 +22,7 @@
 
 function print_mul(fname,color,trim);
 
-    return 
+    return;
     
     cmap=colormap;
     colormap gray;
