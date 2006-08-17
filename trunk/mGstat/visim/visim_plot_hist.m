@@ -13,7 +13,7 @@ function visim_plot_hist(V,isim,FS,doPrint)
   end
 
   if nargin<3
-    FS=1;
+    FS=12;
   end
 
 
@@ -64,7 +64,7 @@ function visim_plot_hist(V,isim,FS,doPrint)
   if length(isim)==1
     l=legend([l2 l1],'A priori','Realization',2);
   else
-    l=legend([l2 l1 l0(1)],'A priori','All real','Mean all real',2);
+    l=legend([l2 l1 l0(1)],'A priori','Mean all real','All real',2);
   end
   set(l,'FontSize',14)
   
