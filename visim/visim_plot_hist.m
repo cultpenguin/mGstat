@@ -2,15 +2,20 @@
 %
 % visim_plot_hist(V,isim,doPrint)
 %
-function visim_plot_hist(V,isim,doPrint)
+function visim_plot_hist(V,isim,FS,doPrint)
      
   if isstruct(V)~=1
     V=read_visim(V);
   end
 
-  if nargin<3
+  if nargin<4
     doPrint=1;
   end
+
+  if nargin<3
+    FS=1;
+  end
+
 
   if nargin<2
     isim=1:1:V.nsim;
@@ -20,6 +25,11 @@ function visim_plot_hist(V,isim,doPrint)
     isim=1:1:V.nsim;
   end
   
+  
+  if isempty(isim)
+    isim=1:1:V.nsim;
+  end
+
 
   d=V.D(:,:,isim);
   d=d(:);
@@ -32,7 +42,6 @@ function visim_plot_hist(V,isim,doPrint)
     [h(i,:)]=hist(d,xall);
   end
 
-  FS=5;
   
   if V.ccdf==0
     orgpdf=normpdf(xall,V.gmean,sqrt(V.gvar));    
