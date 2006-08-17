@@ -133,7 +133,11 @@ function obj=read_visim(filename)
   line=fgetl(fid);
   tmp=sscanf(line,'%d %d');
   obj.refhist.nq=tmp(1);
-  obj.refhist.nGsim=tmp(2);
+  try
+    obj.refhist.nGsim=tmp(2);
+  catch
+    obj.refhist.nGsim=1000;
+  end
   
   % DIM INFO 
   line=fgetl(fid);
@@ -246,18 +250,21 @@ function obj=read_visim(filename)
   if isfield(obj,'out')
     
     nxyz=obj.nx*obj.ny*obj.nz;
-    
     if obj.nsim>0
       if (size(obj.out.data)==nxyz*obj.nsim)
         nsim==obj.nsim;
       else
+        % THIS IS POTENTIALLY DANGEROUS WHEN RUNNING THE PAR FILE
+        % TWICE WITH NSIM SMALLLER IN RUN2 THAN in RUN1
+        % THEN NSIM2=NSIM1. ONLY A PROB WHEN obj.out EXIST
+        % 
         nsim=length(obj.out.data)./(nxyz);
         nsim=floor(nsim);
       end
     else
       nsim=obj.nsim;
     end
-    
+
     if nsim>0
       if obj.nz==1,
         obj.D=reshape(obj.out.data(1:(nsim*nxyz)),obj.nx,obj.ny,nsim);
@@ -268,7 +275,6 @@ function obj=read_visim(filename)
 
       obj.etype.mean=E;
       obj.etype.var=Ev;
-            
       obj.nsim=nsim;
       if (nsim~=obj.nsim),
         disp(sprintf('SETTING NSIM=%d TO MATCH SIM DATA',nsim));
@@ -278,6 +284,7 @@ function obj=read_visim(filename)
       obj.etype.mean=reshape(d(:,1),obj.nx,obj.ny);
       obj.etype.var=reshape(d(:,2),obj.nx,obj.ny);
     end
+    
   end
   
   catch
@@ -285,6 +292,7 @@ function obj=read_visim(filename)
   end
 
   fclose(fid);
+
   
 function [str_out]=get_string(str)
   

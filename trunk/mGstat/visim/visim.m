@@ -50,3 +50,6 @@ function V=visim(parfile);
   unix(sprintf('%s %s',visim_bin,parfile));
   V=read_visim(parfile);
   
+  fclose all;
+  
+  
