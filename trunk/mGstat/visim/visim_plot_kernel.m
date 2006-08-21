@@ -2,9 +2,9 @@
 %
 % V=visim_plot_kernel(V,ivol)
 %
-function visim_plot_kernel(V,ivol,doPlot)
+function visim_plot_kernel(V,ivol,G,doPlot)
 
-  if nargin<3
+  if nargin<4
     doPlot=0;
   end
   
@@ -16,7 +16,9 @@ function visim_plot_kernel(V,ivol,doPlot)
     ivol=1:size(V.fvolsum.data,1);
   end
   
-  G=visim_to_G(V);
+  if nargin<3
+    G=visim_to_G(V);
+  end
     
   if length(ivol)==1
     gg=G(ivol,:);

@@ -1,5 +1,6 @@
 % visim_plot_volume : plots volume coverage
 %
+% visim_plot_volume(V,ivol)
 %
 function visim_plot_volume(V,ivol)
      

@@ -46,9 +46,10 @@ function V=visim(parfile);
     write_visim(parfile);
     parfile=parfile.parfile;
   end
-    
+  tic
   unix(sprintf('%s %s',visim_bin,parfile));
   V=read_visim(parfile);
+  V.time=toc;
   
   fclose all;
   

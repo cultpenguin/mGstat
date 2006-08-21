@@ -15,7 +15,7 @@ end
 %V.debuglevel=-10;
 %V=visim(V);
 
-
+tic
 
 % GET GEOMETRY
 [G,d_obs]=visim_to_G(V);
@@ -75,7 +75,7 @@ for isim=1:nsim
   
   volsum=read_eas(V.fvolsum.fname);
   volsum(:,3)=d_est;
-  %volsum(:,4)=volsum(:,4)./100; % SET ACTUAL ERROR TO ZERO
+  %volsum(:,4)=volsum(:,4)./10000; % SET ACTUAL ERROR TO ZERO
   write_eas('err.eas',volsum);
   Vcond_est2=V;
   Vcond_est2.rseed=rseed;
@@ -86,6 +86,8 @@ for isim=1:nsim
   Vcond_est2.fvolsum.fname='err.eas';
   Vcond_est2.parfile='Cest2.par';
   unix('cp lambda_Cest.out lambda_Cest2.out');
+  unix('cp cd2v_Cest.out cd2v_Cest2.out');
+  unix('cp cv2v_Cest.out cv2v_Cest2.out');
   Vcond_est2.read_covtable=1; % REUSE COVARIANCE LOOKUP TABLE
   Vcond_est2.read_lambda=1; % READ LAMBDA FROM DISK (DO not CALCULATE THEM)
   Vcond_est2=visim(Vcond_est2);
@@ -146,3 +148,6 @@ Valt.etype.var=v;
 
 fout=sprintf('%s_alt.out',f2);
 write_eas(fout,Valt.D(:));
+
+
+Valt.time=toc;
