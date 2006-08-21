@@ -74,11 +74,16 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
   Gray=G;
   
   freq=8;
-  alpha=1;
+  alpha=1.5;
   
-  %  keyboard
   
   [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
+  
+  %% MAY BE BAD...
+  % ZERO ALL ENTRIES IN Kmat with  sensitiviy less than sens
+  
+  sens=0.001;
+  Kmat(find(Kmat<sens))=0;
   tic;
 
       %   keyboard

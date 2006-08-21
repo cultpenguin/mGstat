@@ -26,7 +26,7 @@
 %
 function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,freq,alpha,x0,y0,z0,dx,doPlot);
 
-  if nargin<7, freq=7.7; end
+  if nargin<7, freq=2.7; end
   if nargin<8, alpha=1; end
   if nargin<9, 
     alpha=1; 
@@ -100,6 +100,10 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
        
   end
 
+  % REMOVE ALL SENSITIVITY BELOW sen;
+  sens=0.001;
+  K(find(K<sens))=0;
+  
   Gray=zeros(ns,length(x)*length(y));
   Gk=zeros(ns,length(x)*length(y));
   for is=1:ns

@@ -84,6 +84,7 @@ function obj=read_visim(filename)
       obj.read_lambda=0;
       obj.read_covtable=tmp(2);
   else
+      obj.read_covtable=tmp(2);
       obj.read_lambda=tmp(3);
   end
   obj.debuglevel=tmp(1);
