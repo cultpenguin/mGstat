@@ -259,8 +259,10 @@ function obj=read_visim(filename)
         % TWICE WITH NSIM SMALLLER IN RUN2 THAN in RUN1
         % THEN NSIM2=NSIM1. ONLY A PROB WHEN obj.out EXIST
         % 
-        nsim=length(obj.out.data)./(nxyz);
-        nsim=floor(nsim);
+        %nsim=length(obj.out.data)./(nxyz);
+        %nsim=floor(nsim);
+        nsim=obj.nsim;
+        disp(sprintf('%s : Setting nsim=%d,%d',mfilename,obj.nsim,nsim))
       end
     else
       nsim=obj.nsim;

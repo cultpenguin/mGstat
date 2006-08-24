@@ -86,24 +86,6 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
   Kmat(find(Kmat<sens))=0;
   tic;
 
-      %   keyboard
-%   for i=1:size(S,1);
-%     if ((i/10)==round(i/10))
-%       tleft=((size(S,1)-i)*(toc/i));
-%       progress_txt(i,size(S,1),sprintf('Setting up Matrix %6.3f',tleft));
-%     end
-%     K=Kmat(:,:,i)';
-%     Ray=Raymat(:,:,i)';
-%     maxK=max(K(:));
-%     %  
-%     K(find(K< (.001.*maxK) ))=0;
-%     gg=K(:)';
-%     gg=gg./sum(gg(:));
-%     G(i,:)=gg;
-%     Gray(i,:)=Ray(:)./sum(Ray(:));
-%     rl(i)=raylength(i);
-%   end
-
   % MAKE SURE YOU UNDERSTAND WHY IT IS YY,XX AND NOT XX,YY
   %[yy,xx,zz,]=meshgrid(V.y,V.x,V.z);
   [xx,yy,zz,]=meshgrid(V.x,V.y,V.z);
@@ -111,7 +93,7 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
   % WRITE OUTPUT
   fvolgeom=sprintf('visim_volgeom_%s.eas',name);
   fvolsum=sprintf('visim_volsum_%s.eas',name);
-  fparfile=sprintf('visim_%s.par',name);
+  fparfile=sprintf('%s.par',name);
   
   
   if ktype==2;
@@ -156,5 +138,5 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
   V.fvolgeom.fname=fvolgeom;
 
   write_visim(V);
-  V=read_visim(fparfile);
+  V=read_visim(V.parfile);
   
