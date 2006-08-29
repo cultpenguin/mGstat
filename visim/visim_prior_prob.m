@@ -3,22 +3,25 @@
 % Call : 
 %   [Lmean,L,Vc,Vu]=visim_prior_prob(V,nsim);
 %
-function [Lmean,L,Vc,Vu]=visim_prior_prob(V,nsim,NoCrossC);
+%function [Lmean,L,Vc,Vu]=visim_prior_prob(V,nsim,NoCrossC);
+function [Lmean,L,Vc,Vu]=visim_prior_prob(V,options);
 
 [p,f,e]=fileparts(V.parfile);
 
-if nargin==1;
-  nsim=V.nsim;
+if nargin<2
+    options.null='';
 end
 
-if nargin<3
-    NoCrossC=0;
-end
+if isfield(options,'nsim')==1, nsim=options.nsim; else nsim=V.nsim; end
+if isfield(options,'nocross')==1, nocross=options.nocross; else nocross=0; end
+if isfield(options,'tolerance')==1, tolerance=options.tolerance; else tolerance=15; end
+if isfield(options,'cutoff')==1, cutoff=options.cutoff; else cutoff=8; end
+if isfield(options,'width')==1, width=options.width; else width=.5; end
+
+
 % CONDITIONAL SIMULATION
 Vc=V;
-%if isfield(Vc,'D')==0
-  Vc=visim(Vc);
-%end
+Vc=visim(Vc);
 
 % UNCONDITIONAL SIMULATION
 Vu=V;
@@ -28,11 +31,9 @@ Vu.nsim=nsim;
 Vu=visim(Vu);
 
 figure(1);clf;
-[Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0 90],15,8,.5);
+[Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0 90],tolerance,cutoff,width);
 figure(2);clf;
-%if isfield(Vc,'VaExp')==0
-  [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0 90],15,8,.5);
-%end
+[Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0 90],tolerance,cutoff,width);
 
 
 
@@ -49,9 +50,7 @@ gcc_1=cov([g1']);
 gcc_2=cov([g2']);
 gcc_cross=cov([g1',g2']);
 
-%
-%NoCrossC=1;
-if NoCrossC==1
+if nocross==1
     gcc_cross2=0.*gcc_cross;
     for i=1:size(gcc_cross,1);
         gcc_cross2(i,i)=gcc_cross(i,i);       
@@ -88,6 +87,7 @@ for is=1:Vc.nsim,
   L2(is)=-.5*dg2*inv(gcc_2)*dg2';
 
 end
+keyboard
 %Lmean=log(mean(exp(L)));
 Lmean=mean(L);
 

@@ -16,7 +16,8 @@ end
 %V=visim(V);
 
 tic
-
+start_time=clock;
+    
 % GET GEOMETRY
 [G,d_obs]=visim_to_G(V);
 
@@ -40,7 +41,7 @@ Vcond_est.rseed=rseed;
 Vcond_est.nsim=0;
 Vcond_est.densitypr=0;
 Vcond_est.parfile='Cest.par';
-Vcond_est.read_covtable=0; % DO NOT READ THE COV TABLE FROM DISK THIS TIME...
+%Vcond_est.read_covtable=0; % DO NOT READ THE COV TABLE FROM DISK THIS TIME...
 Vcond_est.read_lambda=0; % DO NOT READ LAMBDA FROM DISK (CALCULATE THEM)
 Vcond_est=visim(Vcond_est);
 v_cest=Vcond_est.etype.mean';
@@ -86,8 +87,8 @@ for isim=1:nsim
   Vcond_est2.fvolsum.fname='err.eas';
   Vcond_est2.parfile='Cest2.par';
   unix('cp lambda_Cest.out lambda_Cest2.out');
-  unix('cp cd2v_Cest.out cd2v_Cest2.out');
   unix('cp cv2v_Cest.out cv2v_Cest2.out');
+  unix('cp cd2v_Cest.out cd2v_Cest2.out');
   Vcond_est2.read_covtable=1; % REUSE COVARIANCE LOOKUP TABLE
   Vcond_est2.read_lambda=1; % READ LAMBDA FROM DISK (DO not CALCULATE THEM)
   Vcond_est2=visim(Vcond_est2);
@@ -141,7 +142,6 @@ end
 
 
 % SAVE ALT
-
 [m,v]=etype(Valt.D);
 Valt.etype.mean=m;
 Valt.etype.var=v;
@@ -149,5 +149,7 @@ Valt.etype.var=v;
 fout=sprintf('%s_alt.out',f2);
 write_eas(fout,Valt.D(:));
 
+end_time=clock;
+d_time=end_time-start_time;
 
-Valt.time=toc;
+Valt.time=d_time(6)+60*d_time(5)+60*60*d_time(4)+24*60*60*d_time(3);

@@ -73,7 +73,7 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
   G=zeros(size(S,1),length(m_ref(:)));
   Gray=G;
   
-  freq=8;
+  freq=1;
   alpha=1.5;
   
   
