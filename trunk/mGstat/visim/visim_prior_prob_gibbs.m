@@ -26,7 +26,7 @@ function [V,gibbs]=visim_prior_prob_gibbs(V,options);
     end
         
     if isfield(options,'maxit')==0
-        options.maxit=1000;        
+        options.maxit=5;        
     end
     
     if isfield(options,'a_hmax')==1
@@ -84,7 +84,7 @@ function [V,gibbs]=visim_prior_prob_gibbs(V,options);
     j=0;
     
     for i=1:options.maxit;
-        
+                
         % Primary Direction
         idir=1;
         if ((idir==1)&(a_hmax_sample==1))
@@ -174,8 +174,8 @@ function pl_gibbs(gibbs)
     figure(10)
     plot([gibbs.a_hmax],[gibbs.a_hmin],'k-')
     hold on
-    scatter([gibbs.a_hmax],[gibbs.a_hmin],400.*prob,prob,'.')
+    scatter([gibbs.a_hmax],[gibbs.a_hmin],800.*prob,prob,'.')
     hold off
     drawnow;
-    
+    save gibbs_test
     
