@@ -126,7 +126,6 @@ function [V,gibbs]=visim_prior_prob_gibbs(V,options);
                 gibbs(j).L=Lmean(ihmin);gibbs(j).L1=mean(L2);gibbs(j).L2=mean(L2);
                 pl_gibbs(gibbs)
             end            
-            keyboard
             p=exp(Lmean-max(Lmean));
             cp=cumsum(p)./sum(p);
             
