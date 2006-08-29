@@ -3,8 +3,8 @@
 % Call : 
 %   [Lmean,L,Vc,Vu]=visim_prior_prob(V,nsim);
 %
-%function [Lmean,L,Vc,Vu]=visim_prior_prob(V,nsim,NoCrossC);
-function [Lmean,L,Vc,Vu]=visim_prior_prob(V,options);
+%function [Lmean,L,Vc,Vu,L1,L2]=visim_prior_prob(V,nsim,NoCrossC);
+function [Lmean,L,Vc,Vu,L1,L2]=visim_prior_prob(V,options);
 
 [p,f,e]=fileparts(V.parfile);
 
@@ -87,7 +87,6 @@ for is=1:Vc.nsim,
   L2(is)=-.5*dg2*inv(gcc_2)*dg2';
 
 end
-keyboard
 %Lmean=log(mean(exp(L)));
 Lmean=mean(L);
 

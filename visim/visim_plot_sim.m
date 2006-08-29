@@ -7,7 +7,6 @@ function V=visim_plot_sim(V,nsim,cax,FS,nxsub,nysub)
   if isstruct(V)~=1
     V=read_visim(V);
   end
-
   if nargin<2, 
     nsim=V.nsim;
   end
