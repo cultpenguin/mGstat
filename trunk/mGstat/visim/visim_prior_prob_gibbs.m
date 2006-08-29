@@ -34,14 +34,14 @@ function [V,gibbs]=visim_prior_prob_gibbs(V,options);
     else
         a_hmax.step=4;
         a_hmax.min=1;
-        a_hmax.max=10;
+        a_hmax.max=20;
     end
     if isfield(options,'a_hmin')==1
         a_hmax=options.a_hmin;
     else
         a_hmin.step=4;
         a_hmin.min=1;
-        a_hmin.max=10;
+        a_hmin.max=20;
     end
     if isfield(options,'ang1')==1
         a_hmax=options.ang1;
@@ -173,9 +173,11 @@ function pl_gibbs(gibbs)
     prob=exp([gibbs.L]-max([gibbs.L]));
     figure(10)
     plot([gibbs.a_hmax],[gibbs.a_hmin],'k-')
+    plot([gibbs.a_hmax],[gibbs.a_hmin],'ko')
     hold on
-    scatter([gibbs.a_hmax],[gibbs.a_hmin],800.*prob,prob,'.')
+    scatter([gibbs.a_hmax],[gibbs.a_hmin],400.*prob,prob,'filled')
     hold off
+    colormap(flipud(hot))
     drawnow;
     save gibbs_test
     
