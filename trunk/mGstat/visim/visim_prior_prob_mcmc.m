@@ -8,7 +8,7 @@
 % posterior (conditional simulation) is a samples of
 % the prior pdf (unconditional simulation)
 %
-%
+% options.maxit : max number of samples
 %
 %
 % See also : visim_prior_prob;
