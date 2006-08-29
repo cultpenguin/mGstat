@@ -1,10 +1,15 @@
-% visim_slice_volume : slice selected volume aveare data from VISIM project
+% visim_slice_volume : slice selected volume average data from VISIM project
 %
 % Call : 
-%    visim_slice_volume(V,ivol,name)
+%    V=visim_slice_volume(V,ivol,name)
 %
+% V : visim structure
+% ivol : volumes to be sliced (ex ivol=[10:10:100])
+% name : name to be appended to V.parfile (default is string(length(ivol))
 %
-function visim_slice_volume(V,ivol,name)
+% TMH/2006
+% 
+function V=visim_slice_volume(V,ivol,name)
     
     if nargin<1
         help visim_slice_volume
@@ -36,15 +41,12 @@ function visim_slice_volume(V,ivol,name)
         vv=volgeom(ii,:);
         vv(:,4)=i;
         
-              
         if i==1
             volgeom_new=vv;
         else
             volgeom_new=[volgeom_new;vv];            
         end
     end
-    
-    keyboard
     
     volsum_new=volsum(ivol,:);
     volsum_new(:,1)=1:1:length(ivol);
@@ -64,6 +66,6 @@ function visim_slice_volume(V,ivol,name)
     write_visim(V);
         
     disp(sprintf('Writing %s',V.parfile))
-    
+    V=read_visim(V.parfile);
     
     
