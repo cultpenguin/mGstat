@@ -1,9 +1,8 @@
 % visim_prior_prob : Likelihood that samples form posteriori are samples from prior
 %
 % Call : 
-%   [Lmean,L,Vc,Vu]=visim_prior_prob(V,nsim);
+%   [Lmean,L,Vc,Vu,L1,L2]=visim_prior_prob(V,options);
 %
-%function [Lmean,L,Vc,Vu,L1,L2]=visim_prior_prob(V,nsim,NoCrossC);
 function [Lmean,L,Vc,Vu,L1,L2]=visim_prior_prob(V,options);
 
 [p,f,e]=fileparts(V.parfile);
@@ -17,7 +16,6 @@ if isfield(options,'nocross')==1, nocross=options.nocross; else nocross=0; end
 if isfield(options,'tolerance')==1, tolerance=options.tolerance; else tolerance=15; end
 if isfield(options,'cutoff')==1, cutoff=options.cutoff; else cutoff=8; end
 if isfield(options,'width')==1, width=options.width; else width=.5; end
-
 
 % CONDITIONAL SIMULATION
 Vc=V;
