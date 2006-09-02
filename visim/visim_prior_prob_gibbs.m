@@ -100,8 +100,12 @@ function [V,gibbs]=visim_prior_prob_gibbs(V,options);
            end            
             p=exp(Lmean-max(Lmean));
             cp=cumsum(p)./sum(p);
-            
-            h_max_select=interp1(cp,a_hmax.arr,rand(1));
+
+            try
+                h_max_select=interp1(cp,a_hmax.arr,rand(1));
+            catch
+                keyboard
+            end
             V.Va.a_hmax=h_max_select;
             [Lmean,L,Vc,Vu,L1,L2]=visim_prior_prob(V,options);
 
@@ -128,7 +132,11 @@ function [V,gibbs]=visim_prior_prob_gibbs(V,options);
             p=exp(Lmean-max(Lmean));
             cp=cumsum(p)./sum(p);
             
-            h_max_select=interp1(cp,a_hmin.arr,rand(1));
+            try
+                h_max_select=interp1(cp,a_hmin.arr,rand(1));
+            catch
+                keyboard
+            end
             V.Va.a_hmin=h_max_select;
             [Lmean,L,Vc,Vu,L1,L2]=visim_prior_prob(V,options);
             j=j+1;

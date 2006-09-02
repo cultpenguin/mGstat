@@ -36,10 +36,10 @@ function [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
     fid=fopen('optim.txt','w');
     
     % STEP
-    a_hmax.step=1;
-    a_hmin.step=0;
+    a_hmax.step=.4
+    a_hmin.step=.4
     a_vert.step=0;
-    ang1.step=.5;
+    ang1.step=0;
     ang2.step=0;
     ang3.step=0;
     gvar.step=0;
@@ -48,7 +48,7 @@ function [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
     
     
     % Initial Likelihood :
-    L.old=visim_prior_prob(V);
+    L.old=visim_prior_prob(V,options);
     %L.old=-10*rand(1);
     
 
@@ -79,6 +79,12 @@ function [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
         Va.new.a_hmin=Va.new.a_hmin+randn(size(a_hmin.step))*a_hmin.step;        
         Va.new.a_vert=Va.new.a_vert+randn(size(a_vert.step))*a_vert.step;        
 
+        options.isotropic=1;
+        if options.isotropic==1;
+            Va.new.a_hmin=Va.new.a_hmax;
+            Va.new.a_vert=Va.new.a_hmax;
+        end
+        
         Va.new.ang1=Va.new.ang1+randn(size(ang1.step))*ang1.step;        
         Va.new.ang2=Va.new.ang2+randn(size(ang2.step))*ang2.step;        
         Va.new.ang3=Va.new.ang3+randn(size(ang3.step))*ang3.step;        
@@ -87,7 +93,7 @@ function [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
         
         % Calculate LogL
         V.Va=Va.new;
-        L.new=visim_prior_prob(V);
+        L.new=visim_prior_prob(V,options);
         %L.new=-10*rand(1);
         
         % 
@@ -112,7 +118,10 @@ function [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
             %disp(txt2)
         end
         txt=sprintf('i=%4d(%4d) T=%4.1g Pacc=%4.3f  L=%5.1g',i_all,i_acc,T,Pacc,L.old);
-        fprintf(fid,'%s\n',txt);
+        try
+            fprintf(fid,'%s\n',txt);
+        catch 
+        end
         save TEST
         
         if i_acc==3000; keepon=0; end            

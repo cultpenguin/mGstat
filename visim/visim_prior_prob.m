@@ -35,8 +35,8 @@ figure(2);clf;
 
 
 
-iuse_1=find(~isnan(sum(Vu.VaExp.g{1}')));
-iuse_2=find(~isnan(sum(Vu.VaExp.g{2}')));
+iuse_1=find(~isnan(sum(Vu.VaExp.g{1}')))
+iuse_2=find(~isnan(sum(Vu.VaExp.g{2}')))
 
 %iuse=1:1:12;
 %iuse_1=iuse;
@@ -55,6 +55,7 @@ if nocross==1
     end
     gcc_cross=gcc_cross2;  
 end
+gcc_cross_diag=diag(gcc_cross);
 
 g0_1=mean(Vu.VaExp.g{1}');
 g0_2=mean(Vu.VaExp.g{2}');
@@ -87,6 +88,8 @@ for is=1:Vc.nsim,
 end
 %Lmean=log(mean(exp(L)));
 Lmean=mean(L);
+
+%[Lmean2,L2,Ldim2]=covar_prob(Vu.VaExp,Vc.VaExp,options);
 
 
 doPlot=0;
