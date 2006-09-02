@@ -47,9 +47,12 @@ for ia=1:length(ang)
     % [g{ia},hc{ia}]=visim_semivar(V,1:10,a(ia),tolerance);
     [g{ia},hc{ia}]=visim_semivar(V,1:V.nsim,a(ia),tolerance,cutoff,width);
     % [g{ia},hc{ia}]=visim_semivar(V,1:3,a(ia),tolerance,cutoff,width);
+
+    if isfield(V,'etype')
+        V.D(:,:,V.nsim+1)=V.etype.mean;
+        [g_lsq{ia},hc_lsq{ia}]=visim_semivar(V,V.nsim+1,a(ia),tolerance,cutoff,width);
+    end
 end
-
-
 [v1,v2]=visim_format_variogram(V);
 vtxt{1}=v1;
 vtxt{2}=v2;
@@ -72,6 +75,11 @@ for ia=1:length(ang)
   p(i)=pall(1);
   
   ptrue=plot(hc2,sv{i},'k-','linewidth',3,'linestyle',lstyle{1});
+
+  % PLOT GAMMA OF LEAST SQUARE RESULT !
+  if isfield(V,'etype')
+      plsq=plot(hc_lsq{1},g_lsq{1},'k--','linewidth',2);
+  end
   
   pout{ia}=[pall,pmean,ptrue];
   try
