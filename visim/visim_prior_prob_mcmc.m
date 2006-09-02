@@ -31,8 +31,10 @@ function [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
     if isfield(options,'maxit')==0
         options.maxit=1000;        
     end
+    if isfield(options,'isotropic')==0
+        options.isotropic=0;
+    end
     
-
     fid=fopen('optim.txt','w');
     
     % STEP
@@ -79,16 +81,19 @@ function [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
         Va.new.a_hmin=Va.new.a_hmin+randn(size(a_hmin.step))*a_hmin.step;        
         Va.new.a_vert=Va.new.a_vert+randn(size(a_vert.step))*a_vert.step;        
 
-        options.isotropic=1;
-        if options.isotropic==1;
-            Va.new.a_hmin=Va.new.a_hmax;
-            Va.new.a_vert=Va.new.a_hmax;
-        end
         
         Va.new.ang1=Va.new.ang1+randn(size(ang1.step))*ang1.step;        
         Va.new.ang2=Va.new.ang2+randn(size(ang2.step))*ang2.step;        
         Va.new.ang3=Va.new.ang3+randn(size(ang3.step))*ang3.step;        
         % Check Prior Bounds
+        
+        if options.isotropic==1;
+          Va.new.a_hmin=Va.new.a_hmax;
+          Va.new.a_vert=Va.new.a_hmax;
+          Va.new.ang1=0;
+          Va.new.ang2=0;
+          Va.new.ang3=0;
+        end
 
         
         % Calculate LogL
@@ -124,6 +129,7 @@ function [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
         end
         save TEST
         
+        if i_all==options.maxit; keepon=0; end        
         if i_acc==3000; keepon=0; end            
         if i_all==30000; keepon=0; end            
         if (T<.001), keepon=0; end
