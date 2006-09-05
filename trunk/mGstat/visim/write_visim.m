@@ -41,7 +41,8 @@ function write_visim(obj,parfile)
   end
   fprintf(fid,'%s # - file with conditioning data\n',obj.fconddata.fname);
 
-  fprintf(fid,'%d %d %d %d %d %d       # -  columns1 for X,Y,Z,vr,wt,sec.var\n',obj.cols(1),obj.cols(2),obj.cols(3),obj.cols(4),obj.cols(5),obj.cols(6));
+  %  fprintf(fid,'%d %d %d %d %d %d       # -  columns1 for X,Y,Z,vr,wt,sec.var\n',obj.cols(1),obj.cols(2),obj.cols(3),obj.cols(4),obj.cols(5),obj.cols(6));
+  fprintf(fid,'%d %d %d %d       # -  columns1 for X,Y,Z,vr,wt,sec.var\n',obj.cols(1),obj.cols(2),obj.cols(3),obj.cols(4));
   if (~isfield(obj,'fvolgeom'))
     obj.fvolgeom.fname='dummy';
   end
