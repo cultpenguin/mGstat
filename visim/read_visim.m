@@ -72,7 +72,7 @@ function obj=read_visim(filename)
     disp(sprintf('%s : could not read %s',mfilename,fname))
   end
 
-    
+  
   line=fgetl(fid);
   obj.trimlimits=sscanf(line,'%f %f');
   line=fgetl(fid);
@@ -110,6 +110,7 @@ function obj=read_visim(filename)
   line=fgetl(fid);
   obj.nsim=sscanf(line,'%d');
 
+  
   % CCDF into
   line=fgetl(fid);
   obj.ccdf=sscanf(line,'%d');

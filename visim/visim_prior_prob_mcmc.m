@@ -87,11 +87,12 @@ function [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
     end
     if isfield(options,'accept_only_increase')==0,  
       options.accept_only_increase=0;
-end
+    end
     
     gvar.step=0;
     
     Va.old=V.Va;
+
     
     
     % Initial Likelihood :
@@ -219,7 +220,7 @@ end
         save TEST
         
         if i_all==options.maxit; keepon=0; end        
-        if i_acc==3000; keepon=0; end            
+        if i_acc==200; keepon=0; end            
         if i_all==30000; keepon=0; end            
         if (T<.001), keepon=0; end
         
