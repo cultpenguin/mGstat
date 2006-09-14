@@ -1,10 +1,11 @@
 % visim_prior_prob : Likelihood that samples form posteriori are samples from prior
 %
 % Call : 
-%   [Lmean,L,Vc,Vu,L1,L2]=visim_prior_prob(V,options);
+%   [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
 %
-function [Lmean,L,Vc,Vu,L1,L2]=visim_prior_prob(V,options);
+function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
 
+    mfP=[];    mfPAll=[];
 [p,f,e]=fileparts(V.parfile);
 
 if nargin<2
@@ -21,6 +22,17 @@ if isfield(options,'width')==1, width=options.width; else width=.5; end
 Vc=V;
 Vc=visim(Vc);
 
+if isfield(options,'m_ref');
+    for i=1:Vc.nsim;
+         d=Vc.D(:,:,i);
+         c=corrcoef(options.m_ref(:),d(:));
+         mfPAll(i)=mean(abs(options.m_ref(:)-d(:)));
+         % mfPAll(i)=c(2);        
+    end
+     mfP=mean(mfPAll);
+    % 
+end
+
 % UNCONDITIONAL SIMULATION
 Vu=V;
 Vu.parfile=sprintf('%s_unc.par',f);
@@ -28,15 +40,33 @@ Vu.cond_sim=0;
 Vu.nsim=nsim;
 Vu=visim(Vu);
 
-figure(1);clf;
-[Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0 90],tolerance,cutoff,width);
-figure(2);clf;
-[Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0 90],tolerance,cutoff,width);
+% CHECK OF ISOTROPY !!
 
 
 
-iuse_1=find(~isnan(sum(Vu.VaExp.g{1}')))
-iuse_2=find(~isnan(sum(Vu.VaExp.g{2}')))
+if ( (V.Va.a_hmin==V.Va.a_hmax) );% &  (V.Va.a_hmin==V.Va.a_vert) )
+    % ISOTROPIC
+    disp('ISOTROPIC')
+    tolerance=180;
+    figure(1);clf;
+    [Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0],tolerance,cutoff,width);
+    figure(2);clf;
+    [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0],tolerance,cutoff,width);
+else
+    % ANISOTROPIC    
+    figure(1);clf;
+    [Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0 90],tolerance,cutoff,width);
+    figure(2);clf;
+    [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0 90],tolerance,cutoff,width);
+end
+
+
+% CHOOSE HERE TO CALL COVAR PROB
+[Lmean,L,Ldim]=covar_prob(Vu.VaExp,Vc.VaExp,options);
+return
+
+iuse_1=find(~isnan(sum(Vu.VaExp.g{1}')));
+iuse_2=find(~isnan(sum(Vu.VaExp.g{2}')));
 
 %iuse=1:1:12;
 %iuse_1=iuse;
