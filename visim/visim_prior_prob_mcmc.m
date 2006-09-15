@@ -225,7 +225,11 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,options);
             fprintf(fid,'%s\n',txt);
         catch 
         end
-        save TEST
+        if isfield(options,'name')
+          eval(sprintf('save TEST_%s',options.name));
+        else
+          save TEST
+        end
         
         if i_all==options.maxit; keepon=0; end        
         %if i_acc==200; keepon=0; end            
