@@ -3,7 +3,7 @@
 % Call : 
 %   [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
 %
-function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
+function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll,Lmean_u,L_u,Ldim_u]=visim_prior_prob(V,options);
 
     mfP=[];    mfPAll=[];
 [p,f,e]=fileparts(V.parfile);
@@ -63,6 +63,7 @@ end
 
 % CHOOSE HERE TO CALL COVAR PROB
 [Lmean,L,Ldim]=covar_prob(Vu.VaExp,Vc.VaExp,options);
+[Lmean_u,L_u,Ldim_u]=covar_prob(Vu.VaExp,Vu.VaExp,options);
 return
 
 iuse_1=find(~isnan(sum(Vu.VaExp.g{1}')));

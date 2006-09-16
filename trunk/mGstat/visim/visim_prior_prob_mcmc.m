@@ -173,15 +173,17 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,options);
         % Calculate LogL
         if outofbounds==0
           V.Va=Va.new;
-          [L.new,a,b,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
+          [L.new,a,b,Vc,Vu,mfP,mfPAll,Lmean_u]=visim_prior_prob(V,options);
         %L.new=-10*rand(1);
         else
           L.new=-1e+8;
+          Lmean_u=L.new;
           mfP=1e+9;
           mfPAll=1e+9.*ones(1,V.nsim);
           disp(sprintf('a_hmax=%5.2g',Va.new.a_hmax))
         end
         li_all(i_all)=L.new;
+        li_all_u(i_all)=Lmean_u;
         h_all(i_all,:)=[Va.new.a_hmax Va.new.a_hmin Va.new.a_vert];
         d_all(i_all,:)=[Va.new.ang1 Va.new.ang2 Va.new.ang3];
         gv_all(i_all,:)=Va.new.cc;
