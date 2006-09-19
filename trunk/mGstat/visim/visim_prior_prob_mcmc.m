@@ -178,8 +178,8 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,options);
         else
           L.new=-1e+8;
           Lmean_u=L.new;
-          mfP=1e+9;
-          mfPAll=1e+9.*ones(1,V.nsim);
+          %mfP=1e+9;
+          %mfPAll=1e+9.*ones(1,V.nsim);
           disp(sprintf('a_hmax=%5.2g',Va.new.a_hmax))
         end
         li_all(i_all)=L.new;
@@ -187,8 +187,8 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,options);
         h_all(i_all,:)=[Va.new.a_hmax Va.new.a_hmin Va.new.a_vert];
         d_all(i_all,:)=[Va.new.ang1 Va.new.ang2 Va.new.ang3];
         gv_all(i_all,:)=Va.new.cc;
-        mf_all(i_all)=mfP;
-        mf_mfAll(i_all,:)=mfPAll;
+        %mf_all(i_all)=mfP;
+        %mf_mfAll(i_all,:)=mfPAll;
 
         % 
         Pacc=min([1,exp( (L.new-L.old)./T)  ]);
@@ -215,8 +215,8 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,options);
             gv(i_acc,:)=Va.old.cc;
             li(i_acc)=L.old;
           
-            mf(i_acc)=mfP;
-            mfAll(i_acc,:)=mfPAll;
+            %mf(i_acc)=mfP;
+            %mfAll(i_acc,:)=mfPAll;
             % write info to screen
             
             txt2=sprintf('[h1,h2,h3]=[%5.3f,%5.3f,%5.3f]',Va.old.a_hmax,Va.old.a_hmax,Va.old.a_vert);

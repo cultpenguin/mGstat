@@ -5,7 +5,7 @@
 %
 function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll,Lmean_u,L_u,Ldim_u]=visim_prior_prob(V,options);
 
-    mfP=[];    mfPAll=[];
+    mfP=NaN;    mfPAll=NaN;
 [p,f,e]=fileparts(V.parfile);
 
 if nargin<2
