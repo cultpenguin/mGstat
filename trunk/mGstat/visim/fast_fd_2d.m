@@ -67,8 +67,12 @@ function tmap=fast_fd_2d(x,z,V,Sources);
 
   V=V.*V_gain;
 
-  [p,f,s]=fileparts(which('visim'));  
-  fd_bin=sprintf('%s/../bin/nfd',p);
+  [p,f,s]=fileparts(which('fast_fd_2d'));  
+  if isunix
+    fd_bin=sprintf('%s/../bin/nfd',p);
+  else
+    fd_bin=sprintf('%s\\..\\bin\\nfd.exe',p);
+  end
   
   % fd_bin='/scratch/tmh/RESEARCH/PROGRAMMING/mGstat/bin/nfd';
   % fd_bin='~/bin/nfd';
