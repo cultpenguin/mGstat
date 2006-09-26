@@ -15,7 +15,7 @@ function V=visim(parfile);
   if isunix
     visim_bin=sprintf('%s/../bin/visim',p);
   else
-    visim_bin=sprintf('%s/../bin/visim.exe',p);
+    visim_bin=sprintf('%s\\..\\bin\\visim.exe',p);
   end
 
   if (exist(visim_bin))==0
@@ -36,9 +36,8 @@ function V=visim(parfile);
     disp(sprintf('COULD NOT FIND VISIM binary : %s',visim_bin));
   end
 
-  if nargin==0
+  if ((nargin==0)&(nargout==0))
     disp(sprintf('Using VISIM binary : %s',visim_bin));
-    V=[];
     return
   end	
   

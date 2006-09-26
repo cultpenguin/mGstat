@@ -1,0 +1,38 @@
+                  Parameters for VISIM
+                  ********************
+                                      
+START OF PARAMETERS                   
+3                    # - conditional simulation (1=yes, 0=no)
+visim_sgsim_cond.eas # - file with conditioning data
+1 2 3 4       # -  columns1 for X,Y,Z,vr,wt,sec.var
+visim_sgsim_volgeom.eas      # -  Geometry of volume/ray
+visim_sgsim_volsum.eas      # -  Summary of volgeom.eas
+      -1    1e+21       # -  trimming limits for conditioning data
+-11  0 0                # - debugging level: -1,0,1,2,3, read_covtable,read_lambda
+sgsim_volnhood_m3_max50.out                    # - file for output
+100                     # - number of realizations to generate
+0                       # - ccdf. type: 0-normal, 1-target 
+target_bi.eas                    # - target histogram file
+1 0                     # - columns for variable and weights
+-3.50  3.50 100         # - min_Gmean, max_Gmean, n_Gmean
+ 0.00  2.00 100         # - min_Gvar, max_Gvar, n_Gvar
+170 1000                # - nq, nGsim
+ 21   0.1250   0.2500   # - nx,xmn,xsiz
+ 49   0.1250   0.2500   # - ny,ymn,ysiz
+  1   0.1250   0.2500   # - nz,zmn,zsiz
+69068                   # - random number seed
+0 1                     # - min and max original data for sim
+28                      # - number of simulated nodes to use
+3  50    0.001          # - volNH method(0,1,2) nusevols, covlevel 
+1                       # - Random path 
+1                       # - assign data to nodes (0=no, 1=yes)
+0                       # - maximum data per octant (0=not used)
+  13.6000   13.6000   13.6000   # - radius for search ellipsoid
+   0.0000    0.0000    0.0000   # - angles for search ellipsoid
+   0.130400    0.000200             # - global mean and variance 
+1         0.000000000             # - nst, nugget effect
+1         0.000200000  83.500000    0.0000    0.0000 # - it,cc,ang1,ang2,ang3
+   4.0000    1.0000    0.2500             # - a_hmax, a_hmin, a_vert
+4.000 1.000             # - zmin,zmax (tail extrapolation for target histogram)
+4 1.000                 # - lower tail option, parameter
+4 1.000                 # - upper tail option, parameter
