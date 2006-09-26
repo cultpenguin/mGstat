@@ -16,7 +16,7 @@ function [levels]=hpd_2d(lik,hpd_levels)
     i=0;
     for thres=hpd_levels
         i=i+1;
-        ipdf=find(cum_sr>thres*sum(sr(:,1)));
+        ipdf=find(cum_sr>=thres*sum(sr(:,1)));
         
         levels(i)=sr(min(ipdf),1);
         

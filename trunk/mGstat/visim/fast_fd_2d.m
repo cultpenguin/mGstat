@@ -1,3 +1,4 @@
+
 % fast_fd_2d : wrapper for the 'fd' eikonal solver from FAST
 %
 % CALL : 
@@ -17,22 +18,42 @@
 % TMH/2006
 %
 function tmap=fast_fd_2d(x,z,V,Sources);
-
-  if nargin==0
-    nx=110;
-    nz=80;
-    x=[1:1:nx].*1;
-    z=[1:1:nz].*1;
-    V=ones(nz,nx)*2;
-    V(1:(nz/2),:)=4;
-
-    Sources=[50 10];
-
-    t=fast_fd_2d(x,z,V,Sources);
     
-    contourf(x,z,t);
-    axis image
-  end
+    
+    [p,f,s]=fileparts(which('visim'));  
+    if isunix==1
+        fd_bin=sprintf('%s/../bin/nfd',p);
+    else
+        fd_bin=sprintf('%s\\..\\bin\\nfd.exe',p);
+    end    
+    % fd_bin='/scratch/tmh/RESEARCH/PROGRAMMING/mGstat/bin/nfd';
+    % fd_bin='~/bin/nfd';
+    if exist(fd_bin)==0,
+        disp(sprintf('%s - NO VALID PATH TO nfd',mfilename));
+        return 0;
+    end
+    
+    if ((nargin==0)&(nargout==0))
+        disp(fd_bin);
+        return
+    end
+    
+    
+    if nargin==0
+        nx=110;
+        nz=80;
+        x=[1:1:nx].*1;
+        z=[1:1:nz].*1;
+        V=ones(nz,nx)*2;
+        V(1:(nz/2),:)=4;
+        
+        Sources=[10 10];
+        
+        t=fast_fd_2d(x,z,V,Sources);
+        
+        contourf(x,z,t);
+        axis image
+    end
   
   nx=length(x);
   nz=length(z);
@@ -67,18 +88,6 @@ function tmap=fast_fd_2d(x,z,V,Sources);
 
   V=V.*V_gain;
 
-  [p,f,s]=fileparts(which('fast_fd_2d'));  
-  if isunix
-    fd_bin=sprintf('%s/../bin/nfd',p);
-  else
-    fd_bin=sprintf('%s\\..\\bin\\nfd.exe',p);
-  end
-  
-  % fd_bin='/scratch/tmh/RESEARCH/PROGRAMMING/mGstat/bin/nfd';
-  % fd_bin='~/bin/nfd';
-  if exist(fd_bin)==0,
-    disp(sprintf('%s - NO VALID PATH TO nfd',mfilename));
-  end
   
   % MAKE LOTYS OF TEST THAT V IS CORRECTLY SHAPED
   %
