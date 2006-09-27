@@ -30,7 +30,7 @@ function tmap=fast_fd_2d(x,z,V,Sources);
     % fd_bin='~/bin/nfd';
     if exist(fd_bin)==0,
         disp(sprintf('%s - NO VALID PATH TO nfd',mfilename));
-        return 0;
+        return;
     end
     
     if ((nargin==0)&(nargout==0))
