@@ -39,7 +39,7 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
   if nargin<13
     doPlot=0;
   end
-
+  
   
   ns=size(S,1);
   
