@@ -237,6 +237,7 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,options);
         %if i_acc==200; keepon=0; end            
         if i_all==30000; keepon=0; end            
         if (T<.001), keepon=0; end
+
         
     end
     
