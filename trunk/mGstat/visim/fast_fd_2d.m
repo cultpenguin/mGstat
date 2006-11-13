@@ -1,4 +1,3 @@
-
 % fast_fd_2d : wrapper for the 'fd' eikonal solver from FAST
 %
 % CALL : 

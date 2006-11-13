@@ -7,7 +7,7 @@ nr=size(R,1);
 t=ones(ns*nr,1);
 
 for ishot=1:ns
-  if ( (ns>10) & ( (ishot/5)==round(ishot/5) ) )
+  if ( (ns>20) & ( (ishot/10)==round(ishot/10) ) )
     progress_txt(ishot,ns,'Calling NFD ')
   end
   t0=fast_fd_2d(x,y,v,S(ishot,:));
