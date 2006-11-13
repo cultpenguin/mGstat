@@ -253,22 +253,21 @@ function obj=read_visim(filename)
     
     nxyz=obj.nx*obj.ny*obj.nz;
     if obj.nsim>0
-      if (size(obj.out.data)==nxyz*obj.nsim)
-        nsim==obj.nsim;
+      if (size(obj.out.data,1)==nxyz*obj.nsim)
+        nsim=obj.nsim;
       else
         % THIS IS POTENTIALLY DANGEROUS WHEN RUNNING THE PAR FILE
         % TWICE WITH NSIM SMALLLER IN RUN2 THAN in RUN1
         % THEN NSIM2=NSIM1. ONLY A PROB WHEN obj.out EXIST
         % 
-        %nsim=length(obj.out.data)./(nxyz);
-        %nsim=floor(nsim);
-        nsim=obj.nsim;
+        nsim=length(obj.out.data)./(nxyz);
+        nsim=floor(nsim);
+        %nsim=obj.nsim;
         disp(sprintf('%s : Setting nsim=%d,%d',mfilename,obj.nsim,nsim))
       end
     else
-      nsim=obj.nsim;
     end
-
+      nsim=obj.nsim;
     if nsim>0
       if obj.nz==1,
         obj.D=reshape(obj.out.data(1:(nsim*nxyz)),obj.nx,obj.ny,nsim);

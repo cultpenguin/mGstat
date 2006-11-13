@@ -1,6 +1,6 @@
 % visim_plot_vol_fit : Plot Histogram of d_obs<>d_est
 %
-% [m_est,d_est,d_obs]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
+% [d_dif,d_obs,d_var]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
 %
 function [d_dif,d_obs,d_var]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
   
@@ -29,7 +29,11 @@ function [d_dif,d_obs,d_var]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
       d_dif(:,i)=G*m(:)-d_obs;
     end
   end  
-
+  if V.nsim==0;
+    m=V.etype.mean;
+    d_dif=G*m(:)-d_obs;
+  end    
+  
   hist(d_dif(:),max([10 V.nsim]))
   
       
