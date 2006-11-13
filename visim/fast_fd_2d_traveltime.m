@@ -1,4 +1,16 @@
-function [t,time]=fast_fd_2d_traveltime(x,y,v,S,R);
+% fast_fd_2d_traveltime Compute first arrival time for a series of S and R
+%
+% Call : 
+% 
+% [t,time]=fast_fd_2d_traveltime(x,y,v,S,R,uses);
+%
+function [t,time]=fast_fd_2d_traveltime(x,y,v,S,R,uses);
+
+if nargin < 6 
+    uses=1:size(S,1);
+end
+
+S=S(uses,:);
 
 ns=size(S,1);
 nr=size(R,1);
