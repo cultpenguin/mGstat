@@ -18,15 +18,10 @@ nr=size(R,1);
 
 t=ones(ns*nr,1);
 
+t0=fast_fd_2d(x,y,v,S);
+
 for ishot=1:ns
-  if ( (ns>20) & ( (ishot/10)==round(ishot/10) ) )
-    progress_txt(ishot,ns,'Calling NFD ')
-  end
-  t0=fast_fd_2d(x,y,v,S(ishot,:));
-
-  time{ishot}=interp2(xx,yy,t0,R(:,1),R(:,2));
-  i0=(ishot-1)*nr;
-  t( i0+1:i0+nr)=time{ishot};
-
-
+    time{ishot}=interp2(xx,yy,t0(:,:,ishot),R(:,1),R(:,2));
+    i0=(ishot-1)*nr;
+    t( i0+1:i0+nr)=time{ishot};
 end
