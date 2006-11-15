@@ -4,7 +4,7 @@
 %
 function obj=read_visim(filename)
   
-  if exist('filename')==0,
+  if exist(filename,'file')~=2,
     help read_visim
     obj=[];
     return
@@ -100,7 +100,7 @@ function obj=read_visim(filename)
   line=fgetl(fid);
   [fname]=get_string(line);
   try
-    if exist(fname)==2,
+    if exist(fname,'file')==2,
       [data,header]=read_eas(fname);
       obj.out.data=data;
       obj.out.header=header;
@@ -279,8 +279,12 @@ function obj=read_visim(filename)
       else    
         obj.D=reshape(obj.out.data(1:(nsim*nxyz)),obj.nx,obj.ny,obj.nz,nsim);
       end       
-      [E,Ev]=etype(obj.D);
-
+      if nsim==1
+         E=obj.D;
+         Ev=zeros(size(obj.D));
+      else
+         [E,Ev]=etype(obj.D);
+      end
       obj.etype.mean=E;
       obj.etype.var=Ev;
       obj.nsim=nsim;
