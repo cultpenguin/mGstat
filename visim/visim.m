@@ -18,25 +18,25 @@ function V=visim(parfile);
     visim_bin=sprintf('%s\\..\\bin\\visim.exe',p);
   end
 
-  if (exist(visim_bin))==0
+  if (exist(visim_bin,'file'))==0
     if isunix
       % TRY TO LOCATE visim IN THE UNIX PATH
       [s,visim_bin]=system('which visim');      
     end
   end
   
-  if (exist(visim_bin))==0
+  if (exist(visim_bin,'file'))==0
     % MANUALLU THE THE PATH TO VISIM
     visim_bin='~/bin/visim';
   end
 
   
   
-  if (exist(visim_bin))==0
+  if (exist(visim_bin,'file'))==0
     disp(sprintf('COULD NOT FIND VISIM binary : %s',visim_bin));
   end
 
-  if ((nargin==0)&(nargout==0))
+  if ((nargin==0)&&(nargout==0))
     disp(sprintf('Using VISIM binary : %s',visim_bin));
     return
   end	
