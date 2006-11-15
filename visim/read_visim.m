@@ -36,13 +36,15 @@ function obj=read_visim(filename)
   % File with cond data 
   line=fgetl(fid);
   [fname]=get_string(line);
-  try
-    [data,header]=read_eas(fname);
-    obj.fconddata.data=data;
-    obj.fconddata.header=header;
-    obj.fconddata.fname=fname;
-  catch
-    disp(sprintf('%s : could not read %s',mfilename,fname));
+  if (~strcmp('dummy',fname))
+      try
+          [data,header]=read_eas(fname);
+          obj.fconddata.data=data;
+          obj.fconddata.header=header;
+          obj.fconddata.fname=fname;
+      catch
+          disp(sprintf('%s : could not read %s',mfilename,fname));
+      end
   end
   % Cols
   line=fgetl(fid);
@@ -51,27 +53,30 @@ function obj=read_visim(filename)
   % Volume Geometry
   line=fgetl(fid);
   [fname]=get_string(line);
-  try 
-    [data,header]=read_eas(fname);
-    obj.fvolgeom.data=data;
-    obj.fvolgeom.header=header;
-    obj.fvolgeom.fname=fname;
-  catch
-    disp(sprintf('%s : could not read %s',mfilename,fname))
+  if (~strcmp('dummy',fname))
+      try 
+          [data,header]=read_eas(fname);
+          obj.fvolgeom.data=data;
+          obj.fvolgeom.header=header;
+          obj.fvolgeom.fname=fname;
+      catch
+          disp(sprintf('%s : could not read %s',mfilename,fname))
+      end
   end
 
   % Volume Summary
   line=fgetl(fid);
   [fname]=get_string(line);
-  try
-    [data,header]=read_eas(fname);
-    obj.fvolsum.data=data;
-    obj.fvolsum.header=header;
-    obj.fvolsum.fname=fname;
-  catch
-    disp(sprintf('%s : could not read %s',mfilename,fname))
+  if (~strcmp('dummy',fname))
+      try
+          [data,header]=read_eas(fname);
+          obj.fvolsum.data=data;
+          obj.fvolsum.header=header;
+          obj.fvolsum.fname=fname;
+      catch
+          disp(sprintf('%s : could not read %s',mfilename,fname))
+      end
   end
-
   
   line=fgetl(fid);
   obj.trimlimits=sscanf(line,'%f %f');
