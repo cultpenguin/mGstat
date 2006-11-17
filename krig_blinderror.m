@@ -1,8 +1,8 @@
 % krig_blinderror : Cross validation blind error
 % CALL : 
-%   [d_est,d_var,be,d_diff,L]=krig_blinderror(pos_known,val_known,pos_est,V,options,nleaveout)
+%   [d_est,d_var,be,d_diff,L,L2]=krig_blinderror(pos_known,val_known,pos_est,V,options,nleaveout)
 %
-function [d_est,d_var,be,d_diff,L]=krig_blinderror(pos_known,val_known,pos_est,V,options,nleaveout);
+function [d_est,d_var,be,d_diff,L,L2]=krig_blinderror(pos_known,val_known,pos_est,V,options,nleaveout);
 
 options.dummy='';
 
@@ -41,7 +41,7 @@ d_diff=d_est-val_known(:,1);
 be=mean(abs(d_diff));
 
   
-if nargout==5
+if nargout>4
   % CALULATE LIKELIHOOD
   nd=size(val_known,1);
   Cd=zeros(nd,nd);
@@ -49,5 +49,34 @@ if nargout==5
     Cd(i,i)=d_var(i);
   end
   L=exp(-.5*d_diff'*inv(Cd)*d_diff);
+end
+
+
   
+if nargout>5
+  % CALULATE LIKELIHOOD
+  nd=size(val_known,1);
+  Cd=d2u./var(d_est);
+  Cd=d2u./min(d_var);
+  Cd=d2u./max(diag(d2u)./d_var);
+
+
+%  for i=1:nd
+% for j=1:nd%
+%	Cd(i,j)=(sqrt(d_var(i))*sqrt(d_var(j)))./d2u(i,j);
+%  end
+%  end
+
+
+  for i=1:nd
+    Cd(i,i)=d_var(i);
+  end
+
+  L2=exp(-.5*d_diff'*inv(Cd)*d_diff);
+  if L2>1
+	keyboard
+  end
+  if L2<0
+	keyboard
+  end
 end
