@@ -51,32 +51,31 @@ if nargout>4
   L=exp(-.5*d_diff'*inv(Cd)*d_diff);
 end
 
+%if Cd(2,2)<15,  keyboard,end
 
-  
+
+
 if nargout>5
   % CALULATE LIKELIHOOD
   nd=size(val_known,1);
-  Cd=d2u./var(d_est);
-  Cd=d2u./min(d_var);
-  Cd=d2u./max(diag(d2u)./d_var);
+  Cd2=zeros(nd,nd);
 
-
-%  for i=1:nd
-% for j=1:nd%
-%	Cd(i,j)=(sqrt(d_var(i))*sqrt(d_var(j)))./d2u(i,j);
-%  end
-%  end
-
-
-  for i=1:nd
-    Cd(i,i)=d_var(i);
-  end
-
-  L2=exp(-.5*d_diff'*inv(Cd)*d_diff);
+  sill=sum([V.par1]);
+  %  for i=1:nd;
+  %     for j=1:nd;
+  %         Cd2(i,j)=sqrt(d_var(i))*sqrt(d_var(j))*(d2u(i,j)./sill);
+  %     end
+  % end
+  [M_d_var1,M_d_var2]=meshgrid(d_var,d_var);
+  Cd2=sqrt(M_d_var1).*sqrt(M_d_var2).*d2u./sill;
+  
+  L2=exp(-.5*d_diff'*inv(Cd2)*d_diff);
   if L2>1
-	keyboard
+      disp('Bad covariance matrix : L2>1')
+      L2=NaN;
   end
   if L2<0
-	keyboard
+      disp('Bad covariance matrix : L2<1')
+      L2=NaN;
   end
 end
