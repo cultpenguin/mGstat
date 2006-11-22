@@ -52,9 +52,11 @@ if exist('b_order')
 end
 
 
-if ~isempty(findstr(format,'8')),    
+if ~isempty(strfind(format,'8')),    
+%if ~isempty(findstr(format,'8')),    
   nps=1;
-elseif ~isempty(findstr(format,'16')),
+elseif ~isempty(strfind(format,'16')),
+%elseif ~isempty(findstr(format,'16')),
   nps=2;
 else
   nps=4;

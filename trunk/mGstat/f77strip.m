@@ -51,13 +51,16 @@ else
 end 
 
 fid=fopen(file,'r');
+
 nx=fread(fid,1,'int32')/bsize;
-disp([' f77strip : nx=',num2str(nx)])  
+if nx==0;nx=1;end
+disp([' f77strip : nx=',num2str(nx)]);  
 
 info = dir(file);
 filesize = info.bytes/bsize;
 
-nz = info.bytes./(2*4+nx*8);
+
+nz = info.bytes./(2*4+nx*bsize);
 % NOT CORRECT --.
 %nz=filesize/(nx+2);
 disp([' f77strip : nz=',num2str(nz)])
