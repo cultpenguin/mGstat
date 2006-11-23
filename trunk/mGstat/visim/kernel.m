@@ -1,7 +1,7 @@
 % kernel : computes the sensitivity kernel for a wave traveling from S to R.
 %
 % CALL : 
-%    [K,RAY,timeS,timeR,raypath]=kernel(Vel,x,y,z,S,R,freq,alpha);
+%    [K,RAY,timeS,timeR,raypath,raylength]=kernel(Vel,x,y,z,S,R,T,alpha);
 %
 % IN : 
 %    Vel : Velocity field
@@ -10,7 +10,7 @@
 %    z [1:nz] :
 %    S [1,3] : Location of Source
 %    R [1,3] : Location of Receiver
-%    freq : frequency
+%    T    : Dominant period
 %    alpha: controls exponential decay away ray path
 %
 % OUT :
@@ -24,26 +24,39 @@
 %
 % TMH/2006
 %
-function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,freq,alpha,x0,y0,z0,dx,doPlot);
+function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,T,alpha,x0,y0,z0,dx,doPlot);
 
   if nargin<7, freq=7.7; end
   if nargin<8, alpha=1; end
+
+    x0=1;
+    y0=1;
+    z0=1;
   
   if nargin<13
     doPlot=0;
   end
   
-  Vpunch=Vel;
-
   tS=fast_fd_2d(x,y,Vel,S);
   tR=fast_fd_2d(x,y,Vel,R);
 
-  %tS=punch(Vpunch(:),x,y,z,S)';
-  %tR=punch(Vpunch(:),x,y,z,R)';
+  dt=tS+tR;dt=dt-min(dt(:));
 
-  T=tS+tR;T=T-min(T(:));
+  dx=x(2)-x(1);
+  dy=y(1)-y(1);
+  d1=(dx+dy)/2;
+  aS=tS;aS(find(aS==0))=d1;
+  aR=tR;aR(find(aR==0))=d1;
 
-  K=munk_fresnel_2d(freq,T,alpha,1./tS,1./tR);
+  % spread_type=0; % PLANE
+  spread_type=1; % CYLINDRICAL
+  % spread_type=2; % SPHERICAL
+
+  aR=spherical_spreading(aR,spread_type);
+  aS=spherical_spreading(aS,spread_type);
+
+  K=munk_fresnel_2d(T,dt,alpha,aS,aR);
+
 
   % NOW FIND FIRST ARRIVAL AND RAYLENGTH  
   str_options = [.1 1000];
@@ -54,7 +67,7 @@ function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,freq,alpha,x0,y0,z
   
   raypath=raypath{1};
   
-  % GET RID OF DATA CLOSE TO SOURCE (DIST<DX)
+  % GET RID OF DATA CLOSE TO SOURCE (DIST <DX)
   r2=raypath;r2(:,1)=r2(:,1)-S(1);r2(:,2)=r2(:,2)-S(2);
   distS=sqrt(r2(:,1).^2+r2(:,2).^2);  
   ClosePoints=find(distS<dx/10);
@@ -73,6 +86,7 @@ function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,freq,alpha,x0,y0,z
 
   ix(find(ix<1))=1;
   iy(find(iy<1))=1;
+
   
   
   RAY=K.*0;
@@ -80,6 +94,9 @@ function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,freq,alpha,x0,y0,z
     RAY(iy(j),ix(j))=RAY(iy(j),ix(j))+1;
   end
   
+  % NORMALIZE K
+  K=raylength.*K./sum(K(:));
+
   %doPlot=0;
   if doPlot>0;
     figure(1);
