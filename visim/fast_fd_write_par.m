@@ -1,3 +1,7 @@
+% fast_fd_write_par : write parameter file for nfd
+%
+% See also : fast_fd_2d
+%
 function o=fast_fd_write_par(sx,sz,o);
 
   f_fin='f.in';

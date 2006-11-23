@@ -1,7 +1,7 @@
 % kernel_multiple : computes the sensitivity kernel for a wave traveling from S to R.
 %
 % CALL : 
-%    [K,RAY,Gk,Gray,timeS,timeR,raypath]=kernel(Vel,x,y,z,S,R,freq,alpha);
+%    [K,RAY,Gk,Gray,timeS,timeR,raypath]=kernel_multiple(Vel,x,y,z,S,R,freq,alpha);
 %
 % IN : 
 %    Vel : Velocity field
@@ -10,7 +10,7 @@
 %    z [1:nz] :
 %    S [1,3] : Location of Source
 %    R [1,3] : Location of Receiver
-%    freq : frequency
+%    T : Donminant period
 %    alpha: controls exponential decay away ray path
 %
 % OUT :
@@ -24,9 +24,9 @@
 %
 % TMH/2006
 %
-function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,freq,alpha,x0,y0,z0,dx,doPlot);
+function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,T,alpha,x0,y0,z0,dx,doPlot);
 
-  if nargin<7, freq=2.7; end
+  if nargin<7, T=2.7; end
   if nargin<8, alpha=1; end
   if nargin<9, 
     alpha=1; 
@@ -39,29 +39,39 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
   if nargin<13
     doPlot=0;
   end
-  
+
   
   ns=size(S,1);
   
-  Vpunch=Vel;
+  dx=x(2)-x(1);
+  dy=y(1)-y(1);
+  d1=(dx+dy)/2;
 
   tS=fast_fd_2d(x,y,Vel,S);
   tR=fast_fd_2d(x,y,Vel,R);
 
-  
-  %tS=punch(Vpunch(:),x,y,z,S)';
-  %tR=punch(Vpunch(:),x,y,z,R)';
-
-  T=tS+tR;
-  K=zeros(size(T));
-  RAY=zeros(size(T));
+  dt=tS+tR;
+  K=zeros(size(dt));
+  RAY=zeros(size(dt));
   str_options = [0.1 10000];
   [xx,yy]=meshgrid(x,y);
   for is=1:ns
-    mt=min(min(T(:,:,is)));
-    T(:,:,is)=T(:,:,is)-mt;
-    K(:,:,is)=munk_fresnel_2d(freq,T(:,:,is),alpha);
-    % K(:,:,is)=munk_fresnel_2d(freq,T(:,:,is),alpha,1./tS(:,:,is),1./tR(:,:,is));
+    mt=min(min(dt(:,:,is)));
+    dt(:,:,is)=dt(:,:,is)-mt;
+
+    % GEOMETRICAL SPREADING
+    aS=tS(:,:,is);aS(find(aS==0))=d1;
+    aR=tR(:,:,is);aR(find(aR==0))=d1;
+    % spread_type=0; % PLANE
+    spread_type=1; % CYLINDRICAL
+    % spread_type=2; % SPHERICAL
+    aR=spherical_spreading(aR,spread_type);
+    aS=spherical_spreading(aS,spread_type);
+
+
+    % CALCULATE KERNEL
+    K(:,:,is)=munk_fresnel_2d(T,dt(:,:,is),alpha,aS,aR);
+    % K(:,:,is)=munk_fresnel_2d(freq,dt(:,:,is),alpha,1./tS(:,:,is),1./tR(:,:,is));
 
     % NOW FIND FIRST ARRIVAL AND RAYLENGTH  
     [U,V]=gradient(tS(:,:,is));
@@ -97,6 +107,9 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
     for j=1:length(ix)
       RAY(iy(j),ix(j),is)=RAY(iy(j),ix(j),is)+1;
     end
+    
+    sk=K(:,:,is);sk=sum(sk(:));
+    K(:,:,is)=raylength_mat(is).*K(:,:,is)./sk;
        
   end
 
@@ -112,14 +125,14 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
     Gray(is,:)=g(:);
 
     gk=K(:,:,is);
-    gk=gk./sum(gk(:));
+    %gk=gk./sum(gk(:));
     Gk(is,:)=gk(:);
 
   end
   
   
   if doPlot>0;    
-    for i=1:ns;imagesc(T(:,:,i));axis image;drawnow;end
+    for i=1:ns;imagesc(dt(:,:,i));axis image;drawnow;end
     for i=1:ns;imagesc(K(:,:,i));axis image;drawnow;end
     for i=1:ns;imagesc(RAY(:,:,i));axis image;drawnow;end
   end

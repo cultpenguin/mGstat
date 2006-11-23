@@ -8,14 +8,14 @@ function [Vout,Mout,par2_range,nugfrac_range]=krig_crossval_1d_exh(pos_known,val
 if isfield(options,'par2_range')
   par2_range=options.par2_range;
 else
-  par2_range=linspace(0,20,19);
+  par2_range=linspace(3,15,40);
 end
 if isfield(options,'nugfrac_range')
   nugfrac_range=options.nugfrac_range;
 else
   nugfrac_range=[.05:.05:.2];
   nugfrac_range=0;
-  nugfrac_range=linspace(0.001,0.6,40);
+  nugfrac_range=linspace(0.001,1.0,40);
   %nugfrac_range=linspace(0,0.2,10);
   
   %  nugfrac_range=0;
