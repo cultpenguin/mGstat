@@ -36,9 +36,9 @@ for i=1:nknown
   end
 end
 
-
 d_diff=d_est-val_known(:,1);
-be=mean(abs(d_diff));
+be=mean(abs(d_diff.^2));
+%be=mean(abs(d_diff.^2)./d_var).*length(d_var);
 
   
 if nargout>4
@@ -50,6 +50,7 @@ if nargout>4
   end
   L=exp(-.5*d_diff'*inv(Cd)*d_diff);
 end
+
 
 %if Cd(2,2)<15,  keyboard,end
 
