@@ -3,20 +3,20 @@
 %   [V_L,B_be,ML,Mbe,ML2,par2_range,nugfrac_range]=krig_crossval_1d_exh(pos_known,val_known,V,options);
 %
 %function [V_L,V_be,ML,Mbe,ML2,par2_range,nugfrac_range]=krig_crossval_1d_exh(pos_known,val_known,V,options);
-function [Vout,Mout,par2_range,nugfrac_range]=krig_crossval_1d_exh(pos_known,val_known,V,options);
+function [Vout,Mout,Nout,par2_range,nugfrac_range]=krig_crossval_1d_exh(pos_known,val_known,V,options);
 
 if isfield(options,'par2_range')
   par2_range=options.par2_range;
 else
-  par2_range=linspace(3,15,40);
+  par2_range=linspace(0.001,205,40);
 end
 if isfield(options,'nugfrac_range')
   nugfrac_range=options.nugfrac_range;
 else
   nugfrac_range=[.05:.05:.2];
-  nugfrac_range=0;
+  nugfrac_range=0.001;
   nugfrac_range=linspace(0.001,1.0,40);
-  %nugfrac_range=linspace(0,0.2,10);
+  %nugfrac_range=linspace(0.001,0.2,4);
   
   %  nugfrac_range=0;
 end
@@ -54,13 +54,14 @@ Mout{2}=ML;
 Mout{3}=Mbe;
 
 if (isfield(options,'pos_known_all'))
-  pos_est=options.pos_known_all;
-  rr=.1*abs(max(options.pos_known_all)-min(options.pos_known_all));
-  pos_est=linspace(min(options.pos_known_all)-rr,max(options.pos_known_all)+rr,100)+rand(1).*.0001;
+  pos_est=options.pos_known_all+.000000001;
+  %rr=.1*abs(max(options.pos_known_all)-min(options.pos_known_all));
+  %pos_est=linspace(min(options.pos_known_all)-rr,max(options.pos_known_all)+rr,100)+rand(1).*.0001;
 else
   rr=.1*abs(max(pos_known)-min(pos_known));
   pos_est=linspace(min(pos_known)-rr,max(pos_known)+rr,100)+rand(1).*.0001;
 end
+%pos_est=pos_known;
 xrange=[min(pos_est) max(pos_est)];
 
 if (isfield(options,'val_known_all'))
@@ -161,23 +162,26 @@ set(gca,'Ylim',yrange);
 title(sprintf('Max Likelihood 2: %s',format_variogram(V_L2,1)))
 
 save test1d
-figure(9);clf;
-plot(pos_known,val_known(:,1),'k.','MarkerSize',30)
+
+figure(9);clf;subplot(2,1,1)
+c=[.5 .5 .5];
+plot(options.pos_known_all,options.val_known_all(:,1),'k.','MarkerSize',15,'LineWidth',.1,'Color',c)
 hold on
-plot(options.pos_known_all,options.val_known_all(:,1),'k-','MarkerSize',10,'LineWidth',.1)
-plot(options.pos_known_all,options.val_known_all(:,1),'k.','MarkerSize',15,'LineWidth',.1)
+plot(pos_known,val_known(:,1),'k.','MarkerSize',30)
+%plot(options.pos_known_all,options.val_known_all(:,1),'k-','MarkerSize',10,'LineWidth',.1,'Color',c)
 plot(pos_est,[d_be],'k-','LineWidth',2) 
 plot(pos_est,[d_L],'r-','LineWidth',2) 
-plot(pos_est,[d_L2 ],'b--','LineWidth',2) 
+plot(pos_est,[d_L2 ],'b-','LineWidth',2) 
 hold off
-legend('Used data','All data','PE','WPE','ML')
-
+legend('All Data','Used data','PE','WPE','ML','Location','NorthEastOutside')
 
 hold on;
 p1=plot(pos_est,[d_be d_be+2*sqrt(v_be) d_be-2*sqrt(v_be)],'k-');
 p2=plot(pos_est,[d_L d_L+2*sqrt(v_L) d_L-2*sqrt(v_L)],'r-');
-p3=plot(pos_est,[d_L2 d_L2+2*sqrt(v_L2) d_L2-2*sqrt(v_L2)],'b--');
+p3=plot(pos_est,[d_L2 d_L2+2*sqrt(v_L2) d_L2-2*sqrt(v_L2)],'b-');
 hold off
+xlabel('Distance (m)')
+ylabel('Z(m)')
 
 
 
@@ -204,9 +208,12 @@ if (isfield(options,'val_known_all'))
 
   txt=sprintf('Percent of data outside 95%% interval : %3.2f(L2) %3.2f(L) %3.2f(be)',nL2./nd,nL./nd,nbe./nd);
   txt2=sprintf('Number  of data outside 95%% interval : %3.2f(L2) %3.2f(L) %3.2f(be)',nL2,nL,nbe);
+
+  Nout{1}=nL2;
+  Nout{2}=nL;
+  Nout{3}=nbe;
   
-  
-  watermark(txt);
+  %watermark(txt);
   disp(txt)
   disp(txt2)
 end
