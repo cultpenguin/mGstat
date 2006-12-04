@@ -39,7 +39,10 @@ function tmap=fast_fd_2d(x,z,V,Sources);
     
     if exist('log.file','file') == 2
         % THIS MAKES FAST RUN MUCH FASTER
-        delete('log.file');
+        try
+          delete('log.file');
+        catch
+        end
     end
 
     
