@@ -1,4 +1,4 @@
-% fast_fd_2d_traveltime Compute first arrival time for a series of S and R
+% fast_fd_2d_traveltime Compute first arrival time for rays between series of S and R
 %
 % Call : 
 % 

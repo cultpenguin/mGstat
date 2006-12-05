@@ -46,7 +46,7 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
   nxyz=V.nx*V.ny*V.nz;
   Mxyz=[xx(:) yy(:) zz(:)];
 
-  nb= floor(cutoff/width);
+  nb= round(cutoff/width);
   
   gamma=zeros(nb,nsim);
 
@@ -55,9 +55,14 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
       progress_txt(isim,nsim,txt);
       Md=V.D(usex,usey,usesim(isim));    
       Md=Md(:);
-      
-      [gamma(:,isim),hc,np,av_dist]=calc_gstat_semivar(Mxyz,Md,angle,tol,cutoff,width);
-      
+      try
+        [gamma(:,isim),hc,np,av_dist]=calc_gstat_semivar(Mxyz,Md,angle,tol,cutoff,width);
+      catch
+        keyboard
+        disp(sprintf('%s : Maybe gamma size is wrong (%d)',mfilename,nb))
+        disp('type ''return'' to continue...')
+        keyboard
+      end
   end
   
   

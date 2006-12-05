@@ -28,7 +28,17 @@ function V=visim(parfile);
   if (exist(visim_bin,'file'))==0
     % MANUALLU THE THE PATH TO VISIM
     visim_bin='~/bin/visim';
+    visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_10_2000';
+    visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_100_2000';
+    visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_400_400';
   end
+
+  % TO MANUALqLY SET THE PATH TO VISIM PUT IT HERE :
+  % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_10_2000';
+  % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_100_2000';
+  % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_400_400';
+
+
 
   
   
