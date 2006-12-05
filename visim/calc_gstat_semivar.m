@@ -15,7 +15,9 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width
   if nargin<6
     width=cutoff./15;;
   end
-  
+
+%  width=str2num(sprintf('%3.1g',width));
+  width=str2num(sprintf('%5.3g',width));
   file='tempSemi';
   
   write_eas([file,'.eas'],[pos val]);
@@ -41,7 +43,6 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width
   gstat(G);
 
   d=read_gstat_semivar('tempSemi.variogram');
-  
   Cav_dist=d(:,4);
   Cgamma=d(:,5);
   Chc=(d(:,1)+d(:,2))./2;

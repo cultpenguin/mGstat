@@ -14,9 +14,27 @@ end
 
 if isfield(options,'nsim')==1, nsim=options.nsim; else nsim=V.nsim; end
 if isfield(options,'nocross')==1, nocross=options.nocross; else nocross=0; end
-if isfield(options,'tolerance')==1, tolerance=options.tolerance; else tolerance=15; end
-if isfield(options,'cutoff')==1, cutoff=options.cutoff; else cutoff=8; end
-if isfield(options,'width')==1, width=options.width; else width=.5; end
+nang=2;
+if isfield(options,'tolerance')==1, 
+  tolerance=options.tolerance; 
+else 
+  tolerance=[15 15]; 
+end
+if length(tolerance)~=nang,  tolerance=ones(1,nang).*tolerance;end
+
+if isfield(options,'cutoff')==1, 
+  cutoff=options.cutoff; 
+else 
+  cutoff=[8 8]; 
+end
+if length(cutoff)~=nang,  cutoff=ones(1,nang).*cutoff;end
+
+
+if isfield(options,'width')==1, 
+  width=options.width; 
+else 
+  width=cutoff/12;
+end
 
 % CONDITIONAL SIMULATION
 Vc=V;
@@ -47,11 +65,11 @@ Vu=visim(Vu);
 if ( (V.Va.a_hmin==V.Va.a_hmax) );% &  (V.Va.a_hmin==V.Va.a_vert) )
     % ISOTROPIC
     disp('ISOTROPIC')
-    tolerance=180;
+    tolerance=180
     figure(1);clf;
-    [Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0],tolerance,cutoff,width);
+    [Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0],tolerance(1),cutoff(1),width(1));
     figure(2);clf;
-    [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0],tolerance,cutoff,width);
+    [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0],tolerance(1),cutoff(1),width(1));
 else
     % ANISOTROPIC    
     figure(1);clf;

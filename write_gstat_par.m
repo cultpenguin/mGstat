@@ -78,7 +78,7 @@ function filename=write_gstat_par(G,filename)
           if data==round(data)
             fprintf(fid,'set %s = %d;\n',cmd,data);
           else
-            fprintf(fid,'set %s = %3.1f;\n',cmd,data);
+            fprintf(fid,'set %s = %8.4f;\n',cmd,data);
           end
         else
           fprintf(fid,'set %s = ''%s'';\n',cmd,data);

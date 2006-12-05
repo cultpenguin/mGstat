@@ -73,7 +73,7 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
   G=zeros(size(S,1),length(m_ref(:)));
   Gray=G;
   
-  freq=7;
+  freq=8;
   alpha=1.5;
   
   [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
