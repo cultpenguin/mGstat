@@ -46,11 +46,14 @@ function [Lmean,L,Ldim]=covar_prob(VaExpU,VaExpC,options)
     for is=1:nsim
         for i=1:ndim
             g_est_{i}=VaExpC.g{i}(:,is)'; % COND
-            
             if i==1,
-                g_est=g_est_{i}(iuse{i});
+              g_est=g_est_{i}(iuse{i});
             else
+              try
                 g_est=[g_est g_est_{i}(iuse{i})];
+              catch
+                keyboard
+              end
             end
         end
 
