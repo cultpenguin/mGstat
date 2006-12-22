@@ -1,32 +1,65 @@
 % visim_tomograhy
-function visim_tomography(V,m0,S,R,t,dt);
+function [V,Vlsq]=visim_tomography(V,S,R,t,t_err,m0,options);
 
-[q,parname]=fileparts(V.parfile);
+Vlsq='';
 
-m_current=m0;
-it=0;
+options.dummy='';
+if nargin<6
+  m0=V.gmean.*ones(V.nx,V.ny);
+end;
 
-for it=1:9
-
-  
-  % Calculate Rays/Fresnel zones using reference velocity field.
-  %visim_tomo_setup(S,R,t,dt)
-  [fvolgeom,fvolsum]=visim_tomo_setup(m_ref,x,y,z,S,R,t,dt,name)
-  V.fvolgeom.fname=fvolgeom;
-  V.fvolsum.fname=fvolsum;
-  
-  % Write VISIM parameter file
-  % run VISIM on current parameter file
-  V.parfile=sprintf('%s_it%d.par',parname,it);
-  disp(V.parfile)
-  %write_visim(V)
-  %visim(V);
-  
-  
-  
-  %% RECOMPUTE RAY GEMOETRY
-  % A) Compute E-TYPE and recalculate ray geometry
-  % B) Get the maximum likelihood realization and compute ra
-  m_current=V.etype.mean;
-  
+if isempty(m0)
+  m0=V.gmean.*ones(V.nx,V.ny);
 end
+
+if ~isfield(options,'name'); options.name='generic'; end;
+
+if ~isfield(options,'linearize');	options.linearize=0;end;
+if ~isfield(options,'lsq');	options.lsq=0;end;
+if ~isfield(options,'nocal_kernel');	
+  options.nocal_kernel=0; % CALCULATE KERNEL FROM REFERENCE MODEL !
+  % options.nocal_kernel=1; % DO NOT CALCULATE KERNEL FROM REFERENCE MODEL !
+end;
+
+
+if ~isfield(options,'type');
+   options.type=1; % HIGH FREQUENCY
+   % options.type=2; % FINITE FREQUENCY
+end;
+
+if ~isfield(options,'doPlot');
+	options.doPlot=0;
+end;
+
+
+if ~isfield(options,'linearize');
+	options.linearize=0;
+end;
+
+
+% CREATE INITIAL KERNEL FROM REFERENCE MODEL m0
+if options.nocal_kernel==0
+  [V,G,Gray,rayl]=visim_setup_tomo_kernel(V,S,R,m0,t,t_err,options.name,options.type,options.doPlot);
+end
+
+% SHOULD WE LINEARIZE THE PROBLEM ?
+if options.linearize==1
+	disp(sprintf('%s : linearizing %.par',mfilename,options.name));
+  [V,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
+	V.parfile=sprintf('%s.par',options.name);
+end
+
+if options.lsq==1
+	disp(sprintf('%s : calculating exact least squares result (%s)',mfilename,options.name));
+	nsim=V.nsim;
+	densitypr=V.densitypr;
+	V.nsim=0;
+	V.densitypr=0;
+	V=visim(V);
+	V.nsim=nsim;
+	V.densitypr=densitypr;
+  return
+end	
+
+disp(sprintf('%s : Generating sample of the posterior PDF using : visim %s.par',mfilename,options.name));
+V=visim(V);
