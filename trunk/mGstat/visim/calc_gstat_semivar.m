@@ -1,3 +1,10 @@
+% calc_gstat_semivar
+%
+% Call : 
+%
+%    function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width)
+%
+%
 function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width)
 
   if nargin<3

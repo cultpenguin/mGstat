@@ -51,18 +51,18 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
   gamma=zeros(nb,nsim);
 
   for isim=1:nsim
-      
-      progress_txt(isim,nsim,txt);
+
+      if ((isim/5)==round(isim/5)),
+        progress_txt(isim,nsim,txt);
+      end
       Md=V.D(usex,usey,usesim(isim));    
       Md=Md(:);
       try
         [gamma(:,isim),hc,np,av_dist]=calc_gstat_semivar(Mxyz,Md,angle,tol,cutoff,width);
       catch
-        keyboard
         disp(sprintf('%s : Maybe gamma size is wrong (%d)',mfilename,nb))
         disp('type ''return'' to continue...')
         keyboard
       end
   end
-  
   
