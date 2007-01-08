@@ -1,7 +1,7 @@
 % visim_prior_prob_mcmc_tomolin
 %
 % Call : 
-%    [L,h,d,gv]=visim_prior_prob_mcmc_tomolin(V,S,R,options);
+%    [L,h,d,gv]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options);
 % 
 % Sample the probability density function 
 % describing the likelihood that a sample of the 
@@ -15,7 +15,7 @@
 %
 % See also : visim_prior_prob;
 %
-function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,S,R,options);
+function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options);
 
 
     mf=[];    mfAll=[];
@@ -101,14 +101,12 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,S,R,options);
     % Initial Likelihood :
     %L.old=visim_prior_prob(V,options);
     L.old=-1000;
-
-		% LINEARIZE AROUND THE PRIOR MODEL
-		t = V.fvolsum.data(:,3);
-		t_err = V.fvolsum.data(:,4);
+    
+    % LINEARIZE AROUND THE PRIOR MODEL
     m0=V.gmean.*ones(V.nx,V.ny);
     [V,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
     m0=V.etype.mean;
-
+    
     keepon=1;
     i_all=0;
     i_acc=0;
@@ -181,14 +179,16 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,S,R,options);
         if outofbounds==0
           V.Va=Va.new;
 
-		      % LINEARIZE
-					% 1. LINEARIZE SOME
-					% options.lsq=0;options.linearize=1;options.nocal_kernel=1;
-         	% [V,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
-					% m0 = V.etype.mean;
-
+          options_lsq=options;
+          options_lsq.maxit=2;
+          % LINEARIZE
+          % 1. LINEARIZE SOME
+          % options.lsq=0;options.linearize=1;options.nocal_kernel=1;
+          [V,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options_lsq);
+          m0 = V.etype.mean;
+          
           [L.new,a,b,Vc,Vu,mfP,mfPAll,Lmean_u]=visim_prior_prob(V,options);
-        %L.new=-10*rand(1);
+          %L.new=-10*rand(1);
         else
           L.new=-1e+8;
           Lmean_u=L.new;
@@ -203,10 +203,10 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,S,R,options);
         gv_all(i_all,:)=Va.new.cc;
         %mf_all(i_all)=mfP;
         %mf_mfAll(i_all,:)=mfPAll;
-
+        
         % 
         Pacc=min([1,exp( (L.new-L.old)./T)  ]);
-
+        
         if (options.accept_only_increase==1)
           % ACCPETH ONLY INCREASE
           if L.new>L.old
