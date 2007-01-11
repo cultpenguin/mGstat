@@ -110,7 +110,6 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,options);
     anneal.i_start=100;
     anneal.decay=1000;
     
-    
     while (keepon==1)
         i_all=i_all+1;
         

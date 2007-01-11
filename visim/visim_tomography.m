@@ -1,4 +1,7 @@
 % visim_tomograhy
+%
+% [V,Vlsq]=visim_tomography(V,S,R,t,t_err,m0,options);
+%
 function [V,Vlsq]=visim_tomography(V,S,R,t,t_err,m0,options);
 
 Vlsq='';
