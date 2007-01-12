@@ -183,7 +183,7 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opti
 
           options_lsq=options;
           options_lsq.maxit=1;
-          options.step=0.02;
+          options_lsq.step=0.02;
           % LINEARIZE
           % 1. LINEARIZE SOME
           % options.lsq=0;options.linearize=1;options.nocal_kernel=1;
