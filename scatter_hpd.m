@@ -1,3 +1,8 @@
+% scatter_hpd : calculate 2D HPD region
+%
+% [prob,levels,x_arr,y_arr,f2,c2]=scatter_hpd(x,y,p,p_levels,x_arr,y_arr)
+%
+
 function [prob,levels,x_arr,y_arr,f2,c2]=scatter_hpd(x,y,p,p_levels,x_arr,y_arr)
     
     x=x(:)';
