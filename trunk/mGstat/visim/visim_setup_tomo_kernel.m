@@ -18,6 +18,7 @@
 %
 function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,doPlot);
     
+  doPlot=0;
   if nargin==0
     V=read_visim('sgsim_cond_2.par');
   end
