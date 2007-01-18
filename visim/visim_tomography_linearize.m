@@ -10,7 +10,7 @@ function [Vout,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
   
   if ~isfield(options,'doPlot');options.doPlot = 1;end
   if ~isfield(options,'maxit');options.maxit = 10;end
-  if ~isfield(options,'step');options.step = 0.2;end
+  if ~isfield(options,'step');options.step = 0.1;end
   if ~isfield(options,'min_change');options.min_change = 0.002.*V.gmean;end
   
   nsim=V.nsim;
