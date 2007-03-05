@@ -7,12 +7,14 @@
 %
 
 % GIVE SCALES
-scale_small=0.01;
-scale_large=1;
+scale_small=0.02;
+if exist('scale_large')==0
+  scale_large=0.5;
+end
 
 
 % Give data values
-z=[0:scale_small:20]';
+z=[0:scale_small:60]';
 write_eas('ScalingLawDemo.eas',z(:),{'Z [m]'});
 
 % Read gstat structure.
@@ -44,11 +46,17 @@ end
 gbar_small=mean(gbar_small_r);
 gbar_large=mean(gbar_large_r);
 
-disp(sprintf('Gamma Bar Small = %5.3f',gbar_small));
-disp(sprintf('Gamma Bar Large = %5.3f',gbar_large));
+%gbar = gammabar(scale_large,V)
 
 %gbar_small=semivar_synth(V,scale_small)./V.par1;
 %gbar_large=semivar_synth(Vb,scale_large)./V.par1;
+gbar_small=gammabar(scale_small,V);
+gbar_large=gammabar(scale_large,V);
+
+
+disp(sprintf('Gamma Bar Small = %5.3f',gbar_small));
+disp(sprintf('Gamma Bar Large = %5.3f',gbar_large));
+
 %gbar_small=.0192;
 %gbar_large=.436;
 
@@ -74,6 +82,7 @@ xlabel('Porosity %')
 ylabel('Depth m')
 set(gca,'ydir','reverse');
 set(gca,'xlim',[15 35])
+clear l;
 l{1}=sprintf('Sim fine scale %3.2f m',scale_small);
 l{2}=sprintf('Block average %3.2f m ',scale_large);
 legend(l,'Location','SouthOutside')
@@ -86,7 +95,7 @@ plot(hx,[hsim./length(sim);hbsim./length(bsim)])
 legend(l,'Location','SouthOutside')
 
 [g_sim,d_sim]=semivar_exp_gstat(z,sim,0,180,0.2,4);
-[g_bsim,d_bsim]=semivar_exp_gstat(bz,bsim,0,180,0.2,4);
+[g_bsim,d_bsim]=semivar_exp_gstat(bz,bsim,0,180,0.2,8);
 %[g_bsim,d_bsim]=semivar_exp_gstat(bz,bsim);
 h_synth=linspace(0,4,80);
 [g_sim_synth]=semivar_synth(V,h_synth);
