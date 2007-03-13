@@ -17,8 +17,16 @@ if isfield(options,'maxit')==0
 end
 
 
+if (isfield(options,'step_range')==0)
+  options.step_range=std(pos_known)/4;
+end
+
+if (isfield(options,'step_nugfrac')==0)
+  options.step_nugfrac=.1;
+end
+
 % FIRST SAMPLE THE ATTRIBUTE SPACE
-[V,be,L,par2,nugfrac,Vall]=krig_optim_mcmc(pos_known,val_known,V,options);
+[V,be,L,par2,nugfrac,Vall,options]=krig_optim_mcmc(pos_known,val_known,V,options);
 iop=find(L==max(L));iop=iop(1);
 Vop1=Vall{iop};
 
