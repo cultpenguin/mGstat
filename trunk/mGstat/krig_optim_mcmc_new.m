@@ -4,6 +4,8 @@
 %
 function [V_new,be_acc,L_acc,par2,nugfrac_acc,V_acc,options]=krig_optim_mcmc(pos_known,val_known,V,options);
 
+be_acc=0;
+
 V_new=V;
 
 if isstr(V),
@@ -11,6 +13,21 @@ if isstr(V),
 end 
 
 options.isorange=1;
+
+%
+% CV:cross validation
+%: ML:maximum likelihood
+% infer_method [1] : CV estimation error
+%              [2] : CV estimation error, weighed by CV kriging variance
+%              [3] : CV estimation error, weighed by CV kriging Co-variance
+%              [4] : Likehood estimate
+%
+
+if isfield(options,'infer_method')
+    infer_method=options.infer_method;
+else
+    infer_method=4;
+end
 
 if isfield(options,'max_range')
   max_range=options.max_range;
@@ -77,14 +94,15 @@ end
 
 V_init=V;
 V_old=V;
-%[d_est,d_var,be_init,d_diff,L_init]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_init,options);
-[d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);
-L=krig_covar_lik(pos_known,val_known,V,options);
-
+if infer_method<4;
+    [d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);
+else
+    L_init=krig_covar_lik(pos_known,val_known,V,options);
+end
 %L_init=krig_covar_lik(pos_known,val_known,V_init,options,2);
 
 
-be_old=be_init;
+%be_old=be_init;
 L_old=1.0001*L_init;
 L_arr=[];
 L_min=L_init;
@@ -133,9 +151,11 @@ for i=1:maxit
   if compL==1
     try
       %[d1,d2,be_new,d_diff,L_new]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_new,options);
-      [d1,d2,be_new,d_diff,L_new]=krig_blinderror(pos_known,val_known,pos_known,V_new,options);
-      L=krig_covar_lik(pos_known,val_known,V_new,options);
-
+      if infer_method<4;
+          [d1,d2,be_new,d_diff,L_new]=krig_blinderror(pos_known,val_known,pos_known,V_new,options);
+      else
+          L_new=krig_covar_lik(pos_known,val_known,V_new,options);
+      end
       %L_new=krig_covar_lik(pos_known,val_known,V_new,options,2);
 
     catch
@@ -164,47 +184,42 @@ for i=1:maxit
     end
   
   if Pacc>=Prand
-%  if Pacc==1  % ONLY ACCPET IMPROVEMENTS
     
     V_old=V_new;
     L_old=L_new;
-    be_old=be_new;
+    %    be_old=be_new;
     
     nacc=nacc+1;
     
     par2(nacc,:)=V_new(2).par2;
     
     L_acc(nacc) = L_new;
-    be_acc(nacc) = be_new;
+    %be_acc(nacc) = be_new;
     V_acc{nacc} = V_new; 
     nugfrac_acc(nacc) = nugfrac; 
 
     
     doPlot=1;
-    if ((doPlot==1)&(nacc>=1));
+    if ((doPlot==1)&(nacc>=3));
       subplot(2,1,1)
-      plotyy(1:nacc,L_acc,1:nacc,-be_acc);
+      % plotyy(1:nacc,L_acc,1:nacc,-be_acc);
       
       if size(par2,2)==1
         subplot(2,3,4)
-        %plot(par2(:,1),L_acc,'k.')
-        [ax,h1,h2]=plotyy(par2(:,1),L_acc,par2(:,1),-be_acc);
+        plot(par2(:,1),L_acc,'k.')
+        h1=plot(par2(:,1),L_acc);
         set(h1,'LineStyle','none')
-        set(h2,'LineStyle','none')
         set(h1,'Marker','.')
-        set(h2,'Marker','.')
         set(h1,'color',[0 0 1])
-        set(h2,'color',[1 0 0])
-        set(get(ax(1),'Ylabel'),'String','L')
-        set(get(ax(2),'Ylabel'),'String','-be')
-
+        ylabel('L');
         xlabel('Range');ylabel('L')
+
         subplot(2,3,5)
         scatter(par2(:,1),nugfrac_acc,20,L_acc,'filled')
         xlabel('Range');ylabel('Nugget Fraction');title('L')
         subplot(2,3,6)
-        scatter(par2(:,1),nugfrac_acc,20,-be_acc,'filled')
-        xlabel('Range');ylabel('Nugget Fraction');title('BE')
+        %        scatter(par2(:,1),nugfrac_acc,20,-be_acc,'filled')
+        %xlabel('Range');ylabel('Nugget Fraction');title('BE')
         drawnow;
       elseif size(par2,2)==2
         subplot(2,3,4)
@@ -212,8 +227,8 @@ for i=1:maxit
         xlabel('Range 1');ylabel('Range 2');title('Likelihood')
         %colorbar
         subplot(2,3,5)
-        scatter(par2(:,1),par2(:,2),22,-be_acc,'filled')
-        xlabel('Range 1');ylabel('Range 2');title('-be')
+        %        scatter(par2(:,1),par2(:,2),22,-be_acc,'filled')
+        %        xlabel('Range 1');ylabel('Range 2');title('-be')
         %colorbar
         subplot(2,3,6)
         scatter3(par2(:,1),par2(:,2),nugfrac_acc,20,L_acc,'filled');

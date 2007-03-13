@@ -12,8 +12,11 @@ pos=1:1:nknown;
 d_est=zeros(nknown,1);
 d_var=zeros(nknown,1);
 
-d2u=precal_cov(pos_known,pos_known,V,options);
-
+if isfield(options,'d2u')
+    d2u=options.d2u;
+else
+    d2u=precal_cov(pos_known,pos_known,V,options);
+end
 % Make sure not to go into recirsive call loop
 if isfield(options,'xvalid');
   options=rmfield(options,'xvalid');
@@ -28,13 +31,27 @@ for i=1:nknown
   options.d2u=d2u(used,i);
   options.d2d=d2u(used,used);
   
-  [d_est(i),d_var(i)]=krig(pos_known(used,:),val_known(used,:),...
+  %[d_est(i),d_var(i)]=krig(pos_known(used,:),val_known(used,:),...
+  %                  pos_known(i,:),V,options);
+  
+  % WE NEED THE LAMBDAS TO COMPUTER THE COVARIANCE BETWEEN KRIGING ERRORS !
+  [d_est(i),d_var(i),d_lambda(:,i)]=krig(pos_known(used,:),val_known(used,:),...
                     pos_known(i,:),V,options);
+
 
   if (i/10)==round(i/10), 
     % mgstat_verbose(sprintf('%s cross validation  %d/%d',mfilename,i,nknown));
   end
 end
+
+
+%% NEW
+%sJ
+Ci=0;
+for i=1:(nknown-1)
+    %%    Ci=Ci+
+end
+%% NEW
 
 d_diff=d_est-val_known(:,1);
 be=mean(abs(d_diff.^2));

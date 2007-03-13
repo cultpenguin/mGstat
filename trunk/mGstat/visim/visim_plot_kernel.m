@@ -28,7 +28,6 @@ function visim_plot_kernel(V,ivol,G,doPlot)
       gg=sum(G(ivol,:));
     end
     
-    
     imagesc(V.x,V.y,reshape(gg,V.nx,V.ny)');
     axis image
     txt=title(sprintf('Kernel for  %s',V.parfile));
@@ -40,7 +39,8 @@ function visim_plot_kernel(V,ivol,G,doPlot)
   
   if (isfield(V,'fconddata'))
     d=V.fconddata.data;
-    scatter( d(:,V.cols(1)), d(:,V.cols(2)), 20 , d(:,V.cols(4)) )
+    %scatter( d(:,V.cols(1)), d(:,V.cols(2)), 20 , d(:,V.cols(4)) )
+    plot( d(:,V.cols(1)), d(:,V.cols(2)), 'w*')
   end
   
   hold off
