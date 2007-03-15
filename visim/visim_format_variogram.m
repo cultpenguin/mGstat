@@ -25,8 +25,8 @@ function [str1,str2]=visim_format_variogram(V,comp);
     end
     
     if comp==0,
-      str1=sprintf('%s %8.3g %s(%5.1f)',str,Va.cc(i),type,Va.a_hmax);
-      str2=sprintf('%s %8.3g %s(%5.1f)',str,Va.cc(i),type,Va.a_hmin);
+      str1=sprintf('%s %8.3f %s(%5.1f)',str,Va.cc(i),type,Va.a_hmax);
+      str2=sprintf('%s %8.3f %s(%5.1f)',str,Va.cc(i),type,Va.a_hmin);
     else
       str1=sprintf('%s %3.1g %s(%3.1f)',str,Va.cc(i),type,Va.a_hmax);
       str2=sprintf('%s %3.1g %s(%3.1f)',str,Va.cc(i),type,Va.a_hmin);
