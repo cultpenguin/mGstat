@@ -3,14 +3,14 @@
 % CALL : 
 %    visim_plot_semivar_real(V)
 %
-%    [g,hc,sv,hc2]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
+%    [g,hc,sv,hc2,g_lsq,hc_lsq]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
 %
 %
 % ang : angle with respect to direction of max continutiy. 
 %       (ang=0, computes variogram along max and min continuity)
 % TMH/2006
 %
-function [g,hc,sv,hhc]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
+function [g,hc,sv,hhc,g_lsq,hc_lsq]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
 
 if isstruct(V)~=1
   V=read_visim(V);
