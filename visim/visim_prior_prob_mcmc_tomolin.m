@@ -105,7 +105,7 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opti
     % LINEARIZE AROUND THE PRIOR MODEL
     m0=V.gmean.*ones(V.nx,V.ny);
     options_lsq=options;
-    options_lsq.maxit=15;
+    options_lsq.maxit=10;
     [V,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options_lsq);
     m0=V.etype.mean;
     
