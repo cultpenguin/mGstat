@@ -22,7 +22,7 @@ end
 if isfield(options,'step_range')
   step_range=options.step_range;
 else
-    step_range=std(pos_known)/4;
+    step_range=std(pos_known)/12;
 end
 
 if isfield(options,'step_nugfrac')
@@ -156,12 +156,13 @@ for i=1:maxit
     end
     
   else
+      i=i-1;
     %L_new=-1e-45;
   end
   
   
   Pacc=min([(L_new)/(L_old),1]);
-  
+
   if compL==0
     Pacc=0;
   end
