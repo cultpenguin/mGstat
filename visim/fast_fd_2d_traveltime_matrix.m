@@ -29,6 +29,12 @@ if nargin < 6
     uses=1:size(S,1);
 end
 
+if length(uses)==0
+    t=[];
+    time=[];
+    return
+end
+
 S=S(uses,:);
 
 ns=size(S,1);
