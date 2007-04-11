@@ -4,6 +4,7 @@
 %
 function [V_new,be_acc,L_acc,par2,nugfrac_acc,V_acc,options]=krig_optim_mcmc(pos_known,val_known,V,options);
 
+print('hej')
 V_new=V;
 
 if isstr(V),
@@ -21,7 +22,7 @@ end
 if isfield(options,'step_range')
   step_range=options.step_range;
 else
-  step_range=std(pos_known)/4;
+    step_range=std(pos_known)/4;
 end
 
 if isfield(options,'step_nugfrac')
@@ -64,7 +65,6 @@ else
   % 2: Maximum likelihood cross validation
 end
 
-
 ndim=size(pos_known,2);
 
 options.dummy='';
@@ -74,7 +74,6 @@ nugarr=linspace(0,1,nnug);nugarr(1)=.01;
 
 std_known=std(pos_known);
 mean_known=mean(pos_known);
-
 
 % A PRIORI 
 na=25;
@@ -86,21 +85,21 @@ end
 
 V_init=V;
 V_old=V;
-%[d_est,d_var,be_init,d_diff,L_init]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_init,options);
-%[d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);
-%L=krig_covar_lik(pos_known,val_known,V,options);
-%L_init=krig_covar_lik(pos_known,val_known,V_init,options,2);
 
 % NEXT LINE SHOULD GO !!!
-[d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);
+% [d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);
 if method==1
     L_init=krig_covar_lik(pos_known,val_known,V,options);
+    be_init=0;
+else
+    [d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);    
 end
-
 
 if L_init==0
-    L_init=-Inf;
+    L_init=1e-300;
 end
+
+
 
 be_old=be_init;
 L_old=1.0001*L_init;
@@ -129,8 +128,6 @@ for i=1:maxit
   nugfrac=nugfrac+randn(1).*step_nugfrac;
   V_new(1).par1=gvar.*nugfrac;
   V_new(2).par1=gvar.*(1-nugfrac);
-
-  
   
   % TEST FOR BOUNDS 
   compL=1;
@@ -140,22 +137,19 @@ for i=1:maxit
       compL=0;
     end
   end
-  %disp(format_variogram(V_new))
 
   if ((nugfrac<0)|(nugfrac>1))
     compL=0;
   end
-%  disp(compL)
-%  disp(format_variogram(V_new))
  
   if compL==1
     try
-      %[d1,d2,be_new,d_diff,L_new]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_new,options);
-      [d1,d2,be_new,d_diff,L_new]=krig_blinderror(pos_known,val_known,pos_known,V_new,options);
       if method==1,
           L_new=krig_covar_lik(pos_known,val_known,V_new,options);
+          be_new=0;
+      else
+          [d1,d2,be_new,d_diff,L_new]=krig_blinderror(pos_known,val_known,pos_known,V_new,options);
       end
-      %L_new=krig_covar_lik(pos_known,val_known,V_new,options,2);
 
     catch
       %keyboard
@@ -166,10 +160,8 @@ for i=1:maxit
   end
   
   
-  %L_min=min([L_min L_new]);  
-  %Pacc=min([(L_new-L_min)/(L_old-L_min),1]);
   Pacc=min([(L_new)/(L_old),1]);
-
+  
   if compL==0
     Pacc=0;
   end
@@ -179,10 +171,10 @@ for i=1:maxit
     Prand=1;
   else
     Prand=rand(1);
-    end
+  end
   
   if Pacc>=Prand
-%  if Pacc==1  % ONLY ACCPET IMPROVEMENTS
+    %  if Pacc==1  % ONLY ACCPET IMPROVEMENTS
     
     V_old=V_new;
     L_old=L_new;
@@ -196,7 +188,6 @@ for i=1:maxit
     be_acc(nacc) = be_new;
     V_acc{nacc} = V_new; 
     nugfrac_acc(nacc) = nugfrac; 
-
     
     doPlot=1;
     if ((doPlot==1)&(nacc>=1));
@@ -206,17 +197,18 @@ for i=1:maxit
       if size(par2,2)==1
         subplot(2,3,4)
         %plot(par2(:,1),L_acc,'k.')
-        [ax,h1,h2]=plotyy(par2(:,1),L_acc,par2(:,1),-be_acc);
+        %[ax,h1,h2]=plotyy(par2(:,1),L_acc,par2(:,1),-be_acc);
+        [ax,h1,h2]=plotyy(L_acc,par2(:,1),L_acc,nugfrac_acc);
         set(h1,'LineStyle','none')
         set(h2,'LineStyle','none')
         set(h1,'Marker','.')
         set(h2,'Marker','.')
-        set(h1,'color',[0 0 1])
-        set(h2,'color',[1 0 0])
-        set(get(ax(1),'Ylabel'),'String','L')
-        set(get(ax(2),'Ylabel'),'String','-be')
-
-        xlabel('Range');ylabel('L')
+        set(h1,'color','b')
+        set(h2,'color','g')
+        set(get(ax(1),'Ylabel'),'String','Range')
+        set(get(ax(2),'Ylabel'),'String','NuggetFraction')
+        xlabel('L');
+        
         subplot(2,3,5)
         scatter(par2(:,1),nugfrac_acc,20,L_acc,'filled')
         xlabel('Range');ylabel('Nugget Fraction');title('L')
@@ -225,6 +217,7 @@ for i=1:maxit
             scatter(par2(:,1),nugfrac_acc,20,-be_acc,'filled')
         end
         xlabel('Range');ylabel('Nugget Fraction');title('BE')
+
         drawnow;
       elseif size(par2,2)==2
         subplot(2,3,4)
@@ -249,8 +242,15 @@ for i=1:maxit
     disp(sprintf('%3d --OK-- L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
     %disp(sprintf('nugfrac=%5.4g  Accept rate = %4.2f%%',nugfrac,100.*nacc./i))
   else
-    %disp(sprintf('%3d ------ L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
+    disp(sprintf('%3d ------ L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
   end
 
   
 end
+
+% FIND BEST VARIOGRAM MODEL
+i_max_L=find(L_acc==max(L_acc));
+i_max_L=i_max_L(1);
+V_new=V_acc{i_max_L};
+
+
