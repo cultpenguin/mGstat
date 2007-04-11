@@ -56,6 +56,15 @@ else
 end
 
 
+if isfield(options,'method');
+  method=options.method;
+else
+  method=1;
+  % 1: Maximum Likelihood
+  % 2: Maximum likelihood cross validation
+end
+
+
 ndim=size(pos_known,2);
 
 options.dummy='';
@@ -78,11 +87,20 @@ end
 V_init=V;
 V_old=V;
 %[d_est,d_var,be_init,d_diff,L_init]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_init,options);
-[d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);
-L=krig_covar_lik(pos_known,val_known,V,options);
-
+%[d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);
+%L=krig_covar_lik(pos_known,val_known,V,options);
 %L_init=krig_covar_lik(pos_known,val_known,V_init,options,2);
 
+% NEXT LINE SHOULD GO !!!
+[d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);
+if method==1
+    L_init=krig_covar_lik(pos_known,val_known,V,options);
+end
+
+
+if L_init==0
+    L_init=-Inf;
+end
 
 be_old=be_init;
 L_old=1.0001*L_init;
@@ -122,7 +140,7 @@ for i=1:maxit
       compL=0;
     end
   end
-  disp(format_variogram(V_new))
+  %disp(format_variogram(V_new))
 
   if ((nugfrac<0)|(nugfrac>1))
     compL=0;
@@ -134,8 +152,9 @@ for i=1:maxit
     try
       %[d1,d2,be_new,d_diff,L_new]=gstat_krig_blinderror(pos_known,val_known,pos_known,V_new,options);
       [d1,d2,be_new,d_diff,L_new]=krig_blinderror(pos_known,val_known,pos_known,V_new,options);
-      L=krig_covar_lik(pos_known,val_known,V_new,options);
-
+      if method==1,
+          L_new=krig_covar_lik(pos_known,val_known,V_new,options);
+      end
       %L_new=krig_covar_lik(pos_known,val_known,V_new,options,2);
 
     catch
@@ -147,8 +166,7 @@ for i=1:maxit
   end
   
   
-  L_min=min([L_min L_new]);
-  
+  %L_min=min([L_min L_new]);  
   %Pacc=min([(L_new-L_min)/(L_old-L_min),1]);
   Pacc=min([(L_new)/(L_old),1]);
 
@@ -203,7 +221,9 @@ for i=1:maxit
         scatter(par2(:,1),nugfrac_acc,20,L_acc,'filled')
         xlabel('Range');ylabel('Nugget Fraction');title('L')
         subplot(2,3,6)
-        scatter(par2(:,1),nugfrac_acc,20,-be_acc,'filled')
+        if length(nugfrac_acc)>10
+            scatter(par2(:,1),nugfrac_acc,20,-be_acc,'filled')
+        end
         xlabel('Range');ylabel('Nugget Fraction');title('BE')
         drawnow;
       elseif size(par2,2)==2
@@ -227,7 +247,7 @@ for i=1:maxit
     V_old=V_new;
     L_old=L_new;
     disp(sprintf('%3d --OK-- L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
-    disp(sprintf('nugfrac=%5.4g  Accept rate = %4.2f%%',nugfrac,100.*nacc./i))
+    %disp(sprintf('nugfrac=%5.4g  Accept rate = %4.2f%%',nugfrac,100.*nacc./i))
   else
     %disp(sprintf('%3d ------ L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
   end
