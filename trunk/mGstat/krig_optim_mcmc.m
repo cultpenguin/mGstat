@@ -22,7 +22,7 @@ end
 if isfield(options,'step_range')
   step_range=options.step_range;
 else
-    step_range=std(pos_known)/12;
+    step_range=std(pos_known)/112;
 end
 
 if isfield(options,'step_nugfrac')
@@ -109,8 +109,10 @@ L_new=L_init;
 range_min=0.001;
 
 nacc=0;
-for i=1:maxit
-
+i=0;icum=0;
+while i<=maxit
+  i=i+1;
+  icum=icum+1;
   % Simulated Annealing
   if annealing==1,
     T=exp(-(i-1)/1000);
@@ -156,7 +158,7 @@ for i=1:maxit
     end
     
   else
-      i=i-1;
+      i=i-1; % THIS IS NOT A PARAMETER CHOICE TO BE CONSIDERED
     %L_new=-1e-45;
   end
   
@@ -233,9 +235,24 @@ for i=1:maxit
         scatter3(par2(:,1),par2(:,2),nugfrac_acc,20,L_acc,'filled');
         xlabel('Range 1');ylabel('Range 2');zlabel('Nugget Fraction');title('Likelihood')
         drawnow;
-      elseif size(par2,2)==3
-        subplot(2,3,4)
-        scatter3(par2(:,1),par2(:,2),par2(:,3),22,L_acc,'filled')
+      elseif size(par2,2)>2
+        subplot(2,1,2)
+        try
+            [ax,h1,h2]=plotyy(1:1:nacc,par2,1:1:nacc,nugfrac_acc);
+        catch
+            keyboard
+        end
+        set(h1,'LineStyle','-','LineWidth',1)
+        set(h2,'LineStyle','-','LineWidth',2)
+        % set(h1,'Marker','.')
+        % set(h2,'Marker','.')
+        set(ax(1),'YScale','log')
+        set(h2,'color','k')
+        set(get(ax(1),'Ylabel'),'String','Range')
+        set(get(ax(2),'Ylabel'),'String','NuggetFraction')
+        xlabel('iteration');
+        legend(num2str([1:1:size(pos_known,2)]))
+        drawnow;
       end
     end
     V_old=V_new;
@@ -243,8 +260,10 @@ for i=1:maxit
     disp(sprintf('%3d --OK-- L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
     %disp(sprintf('nugfrac=%5.4g  Accept rate = %4.2f%%',nugfrac,100.*nacc./i))
   else
-    disp(sprintf('%3d ------ L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
-  end
+      if compL==1;      
+        disp(sprintf('%3d ------ L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
+      end
+end
 
   
 end
