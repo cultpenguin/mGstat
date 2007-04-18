@@ -35,7 +35,7 @@ function [sv,d]=semivar_synth(V,d,gstat,nugtype);
   for iv=1:length(V),
     if exist('semivariance')==3
       type=V(iv).itype;
-      sill=V(iv).par1;
+      sill=V(iv).par1;    
       range=V(iv).par2;
       gamma=semivariance(d,sill,range,type);
     else
@@ -47,9 +47,9 @@ function [sv,d]=semivar_synth(V,d,gstat,nugtype);
   end
   
   % Make sure sv(0)=0;
-  if nugtype==1;
-    sv(find(d<1e-9))=0;
-  end
+  %if nugtype==1;
+  %  sv(find(d<1e-9))=0;
+  %end
   
 function [gamma,h]=synthetic_variogram(V,h,gstat)
   
@@ -64,6 +64,10 @@ function [gamma,h]=synthetic_variogram(V,h,gstat)
   if strmatch(type,'Nug')
     mgstat_verbose('Nug',12);
     gamma=h.*0+v1;
+    gamma(find(h==0))=0;
+  elseif strmatch(type,'iNug')
+    mgstat_verbose('iNug',12);
+    gamma=h.*0+v1;    
     %% SEE GSTAT MANUAL FOR TYPES....
   elseif strmatch(type,'Sph')
     mgstat_verbose('Sph',12);
