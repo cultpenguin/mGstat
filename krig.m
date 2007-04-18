@@ -105,6 +105,15 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
       return
     end
   end
+
+  
+  if isfield(options,'filter_nugget')==1
+      if options.filter_nugget==1
+          % FILTER THE NUGGET
+          pos_known=pos_known+1e-9;
+      end
+  end
+
   
 %  if any(strcmp(fieldnames(options),'pos_weight')); 
 %  	for i=1:size(pos_known,2);
@@ -167,6 +176,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   val_known=val_known(inhood,1);
   nknown=size(pos_known,1);
   
+  
   % SET GLOBAL VARIANCE
   gvar=sum([V.par1]);
   
@@ -200,11 +210,13 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     end    
     K=gvar-K;
   end
+      
+      
+  
   % APPLY GAUSSIAN DATA UNCERTAINTY
   for i=1:nknown
     K(i,i)=K(i,i)+unc_known(i);
   end
-  
   % Data to Unknown matrix
   if any(strcmp(fieldnames(options),'d2u')); 
     k=options.d2u(inhood,:);
