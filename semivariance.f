@@ -5,7 +5,7 @@ C     multiple the input argument by 2
       
 C     This is a MEX-file for MATLAB.
 C     Copyright 1984-2000 The MathWorks, Inc. 
-C     $Revision: 1.1 $
+C     $Revision: 1.2 $
       
       subroutine mexFunction(nlhs, plhs, nrhs, prhs)
 C-----------------------------------------------------------------------
@@ -113,6 +113,9 @@ c     POWER
       else if(type.eq.5) then
 c     HOLE
          gamma(i,j) = sill*(1-cos(3.144*h(i,j)/range ))
+      else if (type.eq.14) then
+         gamma(i,j) = sill
+        
       else
          gamma(i,j)=0   
          
