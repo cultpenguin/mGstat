@@ -1,6 +1,16 @@
 % visim_init : create a reference parameter file.
+%
+% Call without arguemtnt for a reference file for unconditional simulation
+%
 function V=visim_init(x,y,z,V);
-	
+
+    if nargin==0
+        [p]=fileparts(which('visim.m'))        ;
+        f=[p,filesep,'visim_default'];
+        load([p,filesep,'visim_default']);
+        return
+    end
+    
 	if nargin<2
 		y=[1];
 	end	
