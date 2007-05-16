@@ -93,4 +93,5 @@ function write_visim(obj,parfile)
   fprintf(fid,'%d %5.3f                 # - lower tail option, parameter\n',obj.tail.lower);
   fprintf(fid,'%d %5.3f                 # - upper tail option, parameter\n',obj.tail.upper);
 
-  
+  fclose(fid)
+
