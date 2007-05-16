@@ -1,41 +1,31 @@
-% G_to_visim : Setup VISIM using classical d,G,m0,
-function V=G_to_visim(x,y,z,d_obs,G,m0,Cd);
+% G_to_visim : Setup VISIM using classical d,G,m0,Cd
+%
+% use :
+%    V=G_to_visim(x,y,z,d_obs,G,m0,Cd,parfile);
+%
+%    [x,y,z] : arrays indicating the geometry
+%    [d_obs] : Number of data observations
+%    [G]     [size(d_obs),nx*ny*nz] : Sensitivity kernel
+%    [Cd]    [size(d_obs),size(d_obs)] : Data covariance table
+%    [parfiele] [string] : VISIM parameter file.
+%
+%
+function V=G_to_visim(x,y,z,d_obs,G,m0,Cd,parfile);
 
-    if nargin<5
+    if nargin<6
         m0=0;
     end
-    if nargin<6
+    if nargin<7
         Cd=eye(length(d_obs)).*1e-3;
     end
-    
-    V=visim_init;
-    
-    V.nx=length(x);
-    V.xsiz=x(2)-x(1);
-    V.xmn=x(1);
 
-    V.ny=length(y);
-    if V.ny>1
-        V.ysiz=y(2)-y(1);
-    else
-        V.ysiz=V.xsiz;
+    if nargin<8
+        parfile='lsq.par';
     end
-    V.ymn=y(1);
 
-    V.nz=length(z);
-    if V.nz>1
-        V.zsiz=z(2)-z(1);
-    else
-        V.zsiz=V.ysiz;
-    end
-    V.zmn=z(1);
-
-    nx=V.nx;ny=V.ny;
+    [p,txt,e]=fileparts(parfile);
     
-    V.x=[0:1:(V.nx-1)].*V.xsiz+V.xmn;
-    V.y=[0:1:(V.ny-1)].*V.ysiz+V.ymn;
-    V.z=[0:1:(V.nz-1)].*V.zsiz+V.zmn;
-
+    V=visim_init(x,y,z);
     
     nx=V.nx;ny=V.ny;
     nobs=length(d_obs);
@@ -74,19 +64,30 @@ function V=G_to_visim(x,y,z,d_obs,G,m0,Cd);
         volsum(i,3)=d_obs(i);
         volsum(i,4)=Cd(i,i);
     end
+
     
-    write_eas('knud_volgeom.eas',volgeom);
-    write_eas('knud_volsum.eas',volsum);
-    
-    write_eas('visim_datacov_corr.eas',Cd(:));
-    
-    V.fvolgeom.fname='knud_volgeom.eas';
-    V.fvolsum.fname='knud_volsum.eas';
-    
+    V.fvolgeom.fname=sprintf('%s_volgeom.eas',txt);
+    V.fvolsum.fname=sprintf('%s_volsum.eas',txt);
+
+    write_eas(V.fvolgeom.fname,volgeom);
+    write_eas(V.fvolsum.fname,volsum);
+
+    % Write Cd
+    write_eas('visim_datacov.eas',Cd(:));
+
     
     V.Va.a_hmax=.01;
     V.Va.a_hmin=.01;
     
     V.gmean=m0;
     V.gvar=1;
+    
+    V.cond_sim=3;
+    
+    V.parfile=parfile;
+    V=visim_init(V);
+    write_visim(V);
+    %
+    V=read_visim(parfile);
+    
     

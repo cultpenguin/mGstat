@@ -35,9 +35,9 @@ function write_visim(obj,parfile)
   fprintf(fid,'                                      \n');
   fprintf(fid,'START OF PARAMETERS                   \n');
 
-  fprintf(fid,'%d                    # - conditional simulation (1=yes, 0=no)\n',obj.cond_sim);
+  fprintf(fid,'%d                    # - conditional simulation (3=Vol,2=point,1=Vol+Point, 0=Uncon)\n',obj.cond_sim);
   if (~isfield(obj,'fconddata'))
-    obj.fconddata.fname='dummy';
+      obj.fconddata.fname='nodata';
   end
   fprintf(fid,'%s # - file with conditioning data\n',obj.fconddata.fname);
 
