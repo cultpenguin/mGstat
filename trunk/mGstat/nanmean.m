@@ -14,7 +14,8 @@ if isempty(data),
     return
 end
 
-npos=find(isnan(data)==0);
+npos=find( (isnan(data)==0) & (isinf(data)==0) );
+
 if length(npos)==0,
   nmean=NaN;
 else

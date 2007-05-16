@@ -22,11 +22,18 @@
 %
 % TMH/2005
 %
+%
 function [hc,garr,h,gamma,hangc,z_head,z_tail,dp]=semivar_exp(pos,val,nbin,nbinang)
   
   
 ndata=size(pos,1);
 ndims=size(pos,2);
+
+if ndims==1;
+  % THIS SHOULD BE CHECKED FOR BUGS
+  pos=[pos 0.*pos];
+  ndims=2;
+end
 
 ndata_types=size(val,2);
 
