@@ -1,0 +1,35 @@
+From http://www.gstat.org/index.html :
+-------------
+Gstat is an open source (GPL) computer code for multivariable geostatistical modelling, prediction and simulation, andhttp://www.gstat.org has been around from 1997.
+
+References
+Two gstat references in Computers and Geosciences:
+
+    * Edzer J. Pebesma and Cees G. Wesseling, 1998, Gstat: a program for geostatistical modelling, prediction and simulation. Computers & Geosciences Vol. 24, No. 1, pp. 17-31 (a paper full with typos).
+    * Pebesma, E.J., 2004. Multivariable geostatistics in S: the gstat package. Computers & Geosciences, 30: 683-691. 
+
+Source code can be obtained from http://www.gstat.org/download.html
+---------------
+
+LICENSE :
+gstat 2.3.3 (May 29, 2001)
+Copyright c 1992, 1999 Edzer J. Pebesma
+Gstat software: Copyright c 1992, 1999 Edzer J. Pebesma and others
+Gstat is free software; you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version. Gstat is distributed in the hope that it will be useful, but without
+any warranty; without even the implied warranty of merchantability or fitness
+for a particular purpose. See the GNU General Public License for more
+details. You should have received a copy of the GNU General Public License
+along with the program (see the file COPYING); if not, write to the Free
+Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+Meschach matrix library: Copyright c 1993 David E. Stewart and Zbigniew
+Leyk
+Gnuplot: Copyright c 1986-1993, 1998 Thomas Williams and Colin Kelley
+and many others
+Relevant Internet locations:
+Gstat: http://www.geog.uu.nl/gstat/
+Meschach: ftp://ftpmaths.anu.edu.au/pub/meschach/meschach.html
+Gnuplot 3.7: ftp://cmpc1.phys.soton.ac.uk/
+
