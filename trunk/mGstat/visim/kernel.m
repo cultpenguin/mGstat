@@ -24,17 +24,21 @@
 %
 % TMH/2006
 %
-function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,T,alpha,x0,y0,z0,dx,doPlot);
+function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,T,alpha,doPlot);
 
-  if nargin<7, freq=7.7; end
+  if nargin<7, T=7.7; end
   if nargin<8, alpha=1; end
 
-    x0=1;
-    y0=1;
-    z0=1;
+  x0=x(1);
+  y0=y(1);
+  z0=z(1);
   
-  if nargin<13
+  if nargin<9
     doPlot=0;
+  end
+  
+  if size(Vel)==1
+      Vel=ones(length(y),length(x)).*Vel;
   end
   
   tS=fast_fd_2d(x,y,Vel,S);
@@ -42,6 +46,7 @@ function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,T,alpha,x0,y0,z0,d
 
   dt=tS+tR;dt=dt-min(dt(:));
 
+  
   dx=x(2)-x(1);
   dy=y(1)-y(1);
   d1=(dx+dy)/2;
@@ -56,6 +61,7 @@ function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,T,alpha,x0,y0,z0,d
   aS=spherical_spreading(aS,spread_type);
 
   K=munk_fresnel_2d(T,dt,alpha,aS,aR);
+  %  K=munk_fresnel_2d(T,dt,alpha);
 
 
   % NOW FIND FIRST ARRIVAL AND RAYLENGTH  
@@ -80,6 +86,7 @@ function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,T,alpha,x0,y0,z0,d
   raypath=[raypath(igood,:);S(1:2)];
 
   raylength=sum(sqrt(diff(raypath(:,1)).^2+diff(raypath(:,2)).^2));
+
   
   ix=ceil((raypath(:,1)-(x0-dx/2))./dx);
   iy=ceil((raypath(:,2)-(y0-dx/2))./dx);
@@ -87,8 +94,7 @@ function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,T,alpha,x0,y0,z0,d
   ix(find(ix<1))=1;
   iy(find(iy<1))=1;
 
-  
-  
+    
   RAY=K.*0;
   for j=1:length(ix)
     RAY(iy(j),ix(j))=RAY(iy(j),ix(j))+1;
@@ -97,7 +103,6 @@ function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,T,alpha,x0,y0,z0,d
   % NORMALIZE K
   K=raylength.*K./sum(K(:));
 
-  %doPlot=0;
   if doPlot>0;
     figure(1);
     subplot(2,5,1)

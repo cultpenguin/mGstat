@@ -1,41 +1,59 @@
 % G_to_visim : Setup VISIM using classical d,G,m0,Cd
 %
 % use :
-%    V=G_to_visim(x,y,z,d_obs,G,m0,Cd,parfile);
+%    V=G_to_visim(x,y,z,d_obs,G,Cd,m0,parfile);
 %
 %    [x,y,z] : arrays indicating the geometry
 %    [d_obs] : Number of data observations
 %    [G]     [size(d_obs),nx*ny*nz] : Sensitivity kernel
 %    [Cd]    [size(d_obs),size(d_obs)] : Data covariance table
-%    [parfiele] [string] : VISIM parameter file.
+%      or 
+%    [Cd]    [size(d_obs),1] : uncorrelated data uncertainty
+%    [m0]    [float] : Reference/background model parameter
+%    [parfile] [string] : VISIM parameter file.
 %
 %
-function V=G_to_visim(x,y,z,d_obs,G,m0,Cd,parfile);
+function V=G_to_visim(x,y,z,d_obs,G,Cd,m0,parfile);
 
     if nargin<6
-        m0=0;
-    end
-    if nargin<7
         Cd=eye(length(d_obs)).*1e-3;
     end
-
-    if nargin<8
-        parfile='lsq.par';
+    if nargin<7
+        m0=0;
+        sG=sum(G'); 
+        m0=mean(d_obs(:)./sG(:));
     end
 
-    [p,txt,e]=fileparts(parfile);
-    
+
+        
     V=visim_init(x,y,z);
+    if nargin>7
+        V.parfile=parfile;
+    end
+    [p,txt,e]=fileparts(V.parfile);
+        
     
     nx=V.nx;ny=V.ny;
     nobs=length(d_obs);
+    
+    if  prod(size(Cd))==nobs
+        Cd_diag=Cd;
+        Cd=zeros(nobs,nobs);
+        for i=1:nvol
+            Cd(i,i)=Cd_diag(i);
+        end
+    end
+    
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % WRITE VISIM PARAMETER FILES
     %V=read_visim('knud.par');
     [xx,yy]=meshgrid(V.x,V.y);
     for i=1:nobs;
-        Gg=reshape(G(i,:),ny,nx);
+        % NEXT LINE SHOULD BE CONSISTENT WITH VISIM PARAMETER FILE
+        % G MATRIX NEEDS TO BE WRITTEN IN A SPEICIFIC MANNER ..
+        Gg=reshape(G(i,:),nx,ny)';
+        %Gg=reshape(G(i,:),ny,nx);
         
         ig=find(Gg>0);    
         Gg_sparse{i}.x=xx(ig);
@@ -73,7 +91,13 @@ function V=G_to_visim(x,y,z,d_obs,G,m0,Cd,parfile);
     write_eas(V.fvolsum.fname,volsum);
 
     % Write Cd
-    write_eas('visim_datacov.eas',Cd(:));
+    if isfield(V,'fout')
+        fCd=['datacov_',V.fout.fname];
+    else
+        [p,fCd]=fileparts(V.parfile);
+        fCd=['datacov_',fCd,'.out'];        
+    end
+    write_eas(fCd,Cd(:));
 
     
     V.Va.a_hmax=.01;
@@ -84,10 +108,10 @@ function V=G_to_visim(x,y,z,d_obs,G,m0,Cd,parfile);
     
     V.cond_sim=3;
     
-    V.parfile=parfile;
+    %V.parfile=parfile;
     V=visim_init(V);
     write_visim(V);
     %
-    V=read_visim(parfile);
+    V=read_visim(V.parfile);
     
     

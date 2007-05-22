@@ -2,6 +2,9 @@
 %
 % Call without arguemtnt for a reference file for unconditional simulation
 %
+% Call :
+%    V=visim_init(x,y,z,V);
+%
 function V=visim_init(x,y,z,V);
 
     if nargin==1
