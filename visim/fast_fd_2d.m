@@ -18,6 +18,9 @@
 %
 function tmap=fast_fd_2d(x,z,V,Sources);
     
+    if length(V)==1
+        V=ones(length(z),length(x)).*V;
+    end
     
     [p,f,s]=fileparts(which('visim'));  
     if isunix==1

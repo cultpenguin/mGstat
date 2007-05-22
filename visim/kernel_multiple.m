@@ -30,9 +30,9 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
   if nargin<8, alpha=1; end
   if nargin<9, 
     alpha=1; 
-    x0=1;
-    y0=1;
-    z0=1;
+    x0=x(1);
+    y0=y(1);
+    z0=z(1);
     dx=x(2)-x(1);
   end
 
@@ -140,7 +140,6 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
 
   
   % OLD CODE
-  %doPlot=0;
   if doPlot>0;
     figure(1);
     subplot(2,5,1)
