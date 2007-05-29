@@ -30,6 +30,10 @@ if ~isfield(options,'type');
    % options.type=2; % FINITE FREQUENCY
 end;
 
+if ~isfield(options,'T');
+	options.T=1; % PERIOD
+end;
+
 if ~isfield(options,'doPlot');
 	options.doPlot=0;
 end;
@@ -42,7 +46,7 @@ end;
 
 % CREATE INITIAL KERNEL FROM REFERENCE MODEL m0
 if options.nocal_kernel==0
-  [V,G,Gray,rayl]=visim_setup_tomo_kernel(V,S,R,m0,t,t_err,options.name,options.type,options.doPlot);
+  [V,G,Gray,rayl]=visim_setup_tomo_kernel(V,S,R,m0,t,t_err,options.name,options.type,options.T,options.doPlot);
 end
 
 % SHOULD WE LINEARIZE THE PROBLEM ?
