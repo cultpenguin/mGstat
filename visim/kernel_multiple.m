@@ -1,7 +1,7 @@
 % kernel_multiple : computes the sensitivity kernel for a wave traveling from S to R.
 %
 % CALL : 
-%    [K,RAY,Gk,Gray,timeS,timeR,raypath]=kernel_multiple(Vel,x,y,z,S,R,freq,alpha);
+%    [K,RAY,Gk,Gray,timeS,timeR,raypath]=kernel_multiple(Vel,x,y,z,S,R,T,alpha);
 %
 % IN : 
 %    Vel : Velocity field
@@ -24,22 +24,18 @@
 %
 % TMH/2006
 %
-function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,T,alpha,x0,y0,z0,dx,doPlot);
+function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,T,alpha,doPlot);
 
   if nargin<7, T=2.7; end
   if nargin<8, alpha=1; end
   if nargin<9, 
-    alpha=1; 
-    x0=x(1);
-    y0=y(1);
-    z0=z(1);
-    dx=x(2)-x(1);
+      doPlot=0;
   end
-
-  if nargin<13
-    doPlot=0;
-  end
-
+  x0=x(1);
+  y0=y(1);
+  z0=z(1);
+  dx=x(2)-x(1);
+  
   
   ns=size(S,1);
   
@@ -70,7 +66,8 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
 
 
     % CALCULATE KERNEL
-    K(:,:,is)=munk_fresnel_2d(T,dt(:,:,is),alpha,aS,aR);
+    %K(:,:,is)=munk_fresnel_2d(T,dt(:,:,is),alpha,aS,aR);
+    K(:,:,is)=munk_fresnel_2d(T,dt(:,:,is),alpha);
     % K(:,:,is)=munk_fresnel_2d(freq,dt(:,:,is),alpha,1./tS(:,:,is),1./tR(:,:,is));
 
     % NOW FIND FIRST ARRIVAL AND RAYLENGTH  
@@ -113,10 +110,30 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
        
   end
 
-  % REMOVE ALL SENSITIVITY BELOW sen;
-  sens=0.001;
+  
+  
+  % REMOVE ALL SENSITIVITY BELOW sen; 
+  sens=0.0001;
   K(find(K<sens))=0;
   
+  % Horisontally normalization of Fresenel Kernel
+
+  for is=1:ns
+      single_ray=RAY(:,:,is);
+      single_ray=single_ray./sum(single_ray(:));
+      sRAY=sum(single_ray);
+
+      
+      for i=1:size(single_ray,2);
+          sk=sum(K(:,i,is));
+          if sk>0
+              K(:,i,is)=sRAY(i).*K(:,i,is)./sk;
+          end
+      end
+  end
+
+  
+  % REPORT 
   Gray=zeros(ns,length(x)*length(y));
   Gk=zeros(ns,length(x)*length(y));
   for is=1:ns
@@ -125,9 +142,8 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
     Gray(is,:)=g(:);
 
     gk=K(:,:,is);
-    %gk=gk./sum(gk(:));
+    gk=gk./sum(gk(:));
     Gk(is,:)=gk(:);
-
   end
   
   

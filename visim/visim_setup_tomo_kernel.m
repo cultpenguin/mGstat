@@ -16,7 +16,7 @@
 %
 % TMH/2006
 %
-function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,doPlot);
+function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,T,doPlot);
     
   doPlot=0;
   if nargin==0
@@ -61,6 +61,14 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
     %load SR
   end
 
+  if nargin<9
+      T=8;
+  end
+  if nargin<10
+      doPlot=0;
+  end
+
+  
   if isempty(t)
     t=ones(size(S,1));
     t_err=ones(size(S,1));
@@ -75,10 +83,10 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,do
   G=zeros(size(S,1),length(m_ref(:)));
   Gray=G;
   
-  freq=8;
-  alpha=1.5;
+  alpha=1.0;
   
-  [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
+  [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],T,alpha,doPlot); 
+  %  [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
   
   %% MAY BE BAD...
   % ZERO ALL ENTRIES IN Kmat with  sensitiviy less than sens

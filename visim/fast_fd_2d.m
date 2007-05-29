@@ -18,9 +18,6 @@
 %
 function tmap=fast_fd_2d(x,z,V,Sources);
     
-    if length(V)==1
-        V=ones(length(z),length(x)).*V;
-    end
     
     [p,f,s]=fileparts(which('visim'));  
     if isunix==1
@@ -38,6 +35,9 @@ function tmap=fast_fd_2d(x,z,V,Sources);
     if ((nargin==0)&(nargout==0))
         disp(fd_bin);
         return
+    end
+    if length(V)==1
+        V=ones(length(z),length(x)).*V;
     end
     
     if exist('log.file','file') == 2

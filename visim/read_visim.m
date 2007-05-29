@@ -36,14 +36,16 @@ function obj=read_visim(filename)
   % File with cond data 
   line=fgetl(fid);
   [fname]=get_string(line);
-  if (~strcmp('dummy',fname))
-      try
-          [data,header]=read_eas(fname);
-          obj.fconddata.data=data;
-          obj.fconddata.header=header;
-          obj.fconddata.fname=fname;
-      catch
-          disp(sprintf('%s : could not read %s',mfilename,fname));
+  if ((obj.cond_sim==1)|(obj.cond_sim==2))
+      if (~strcmp('dummy',fname))
+          try
+              [data,header]=read_eas(fname);
+              obj.fconddata.data=data;
+              obj.fconddata.header=header;
+              obj.fconddata.fname=fname;
+          catch
+              disp(sprintf('%s : could not read %s',mfilename,fname));
+          end
       end
   end
   % Cols
