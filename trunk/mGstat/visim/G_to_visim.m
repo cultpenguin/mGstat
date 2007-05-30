@@ -68,7 +68,9 @@ function V=G_to_visim(x,y,z,d_obs,G,Cd,m0,parfile);
     k=0;
     
     for i=1:nobs;
-        progress_txt(i,nobs,'setting up kernel')
+        if (((i/50)==round(i/50))|(i==nobs))
+          progress_txt(i,nobs,'setting up kernel')
+        end 
         for j=1:n(i);
             k=k+1;
             volgeom(k,1)=Gg_sparse{i}.x(j);
