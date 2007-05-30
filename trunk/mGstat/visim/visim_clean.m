@@ -14,6 +14,7 @@ function visim_clean(V,del_out)
         del_out=1;
     end
 
+    
     if nargin==0
         files=dir('*.par');
         
