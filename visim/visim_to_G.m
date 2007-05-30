@@ -16,7 +16,9 @@ function [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
   Gvol=zeros(nvol,nxyz);
  
   for ivol=1:nvol;
-    progress_txt(ivol,nvol,'Setting up G')
+    if (((ivol/50)==round(ivol/50))|(ivol==nvol))
+      progress_txt(ivol,nvol,'Setting up G')
+    end
     idata=find(V.fvolgeom.data(:,4)==ivol);
     POS=V.fvolgeom.data(idata,[1 2 3]);
     SENS=V.fvolgeom.data(idata,[5]);
