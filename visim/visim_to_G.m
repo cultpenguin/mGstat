@@ -56,27 +56,23 @@ function [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
       [p,f_Cd]=fileparts(V.parfile);
       f_Cd=['datacov_',f_Cd,'.out'];        
   end
-  f_Cd=dir('visim_datacov.eas');
-  if length(f_Cd)==1
-      try
-          Cd=read_eas(f_Cd(1).name);
-          try
-              Cd=reshape(Cd,nvol,nvol);
-          catch
-              disp(sprintf('%s : Size of %s is not consistent data',mfilename,f_Cd(1).name))
-          end
-      catch
-          disp(sprintf('%s : Could not read %s ',mfilename,f_Cd(1).name))
-      end
-  else
-      Cd_diag=V.fvolsum.data(:,4);
-      n=length(Cd_diag);
-      Cd=eye(n);
-      for i=1:n
-          Cd(i,i)=Cd_diag(i);
-      end      
+  try
+    Cd=read_eas(f_Cd);
+    try
+      Cd=reshape(Cd,nvol,nvol);
+    catch
+      disp(sprintf('%s : Size of %s is not consistent data',mfilename,f_Cd(1).name))
+    end
+  catch
+    disp(sprintf('%s : Could not read %s ',mfilename,f_Cd(1).name))
+    Cd_diag=V.fvolsum.data(:,4);
+    n=length(Cd_diag);
+    Cd=eye(n);
+    for i=1:n
+      Cd(i,i)=Cd_diag(i);
+    end
   end
-  
+
 
   if nargout>4
       % Setup Covariance matrix

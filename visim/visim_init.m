@@ -15,16 +15,6 @@ function V=visim_init(x,y,z,V);
         end
     end
     
-    if ((nargin==0)|(nargin<4))
-        [p]=fileparts(which('visim.m'))        ;
-        f=[p,filesep,'visim_default'];
-        load([p,filesep,'visim_default']);
-        if nargin==0
-            return
-        end
-    end
-     
-    
     if nargin<2
         y=[1];
     end	
@@ -33,11 +23,17 @@ function V=visim_init(x,y,z,V);
         z=[1];
     end	
 
-    
-    V.Va.a_hmax=(max(x)-min(x))/2;
-    V.Va.a_hmin=(max(y)-min(y))/2;
-    V.Va.a_vert=(max(z)-min(z))/2;
-
+    if ((nargin==0)|(nargin<4))
+        [p]=fileparts(which('visim.m'))        ;
+        f=[p,filesep,'visim_default'];
+        load([p,filesep,'visim_default']);
+        if nargin==0
+            return
+        end
+        V.Va.a_hmax=(max(x)-min(x))/2;
+        V.Va.a_hmin=(max(y)-min(y))/2;
+        V.Va.a_vert=(max(z)-min(z))/2;
+    end
     
     V.xmn=x(1);
     V.nx=length(x);

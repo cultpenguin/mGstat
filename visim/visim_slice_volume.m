@@ -29,11 +29,31 @@ function V=visim_slice_volume(V,ivol,name)
         name=sprintf('%d',length(ivol));
     end
 
+    
     volsum=read_eas(V.fvolsum.fname);
     volgeom=read_eas(V.fvolgeom.fname);
     
     nvol=size(volsum,1);
+
+        
+    % SLICE data covariance if it exists
+    sliceCd=0;
+    try
+          % Write Cd
+          if isfield(V,'fout')
+            fCd=['datacov_',V.fout.fname];
+          else
+            [p,fCd]=fileparts(V.parfile);
+            fCd=['datacov_',fCd,'.out'];
+          end
+          Cd=reshape(read_eas(fCd),nvol,nvol);
+          Cd=Cd(ivol,ivol);
+          sliceCd=1;
+    catch
+    end
     
+    
+
     volgeom_new=[];
     for i=1:length(ivol);
         ii=find(volgeom(:,4)==ivol(i));
@@ -52,16 +72,25 @@ function V=visim_slice_volume(V,ivol,name)
     volsum_new(:,1)=1:1:length(ivol);
         
     [p,f]=fileparts(V.parfile);
+    V.parfile=sprintf('%s_%s.par',f,name);
+    [p,f]=fileparts(V.parfile);
     
     fvolsum=sprintf('%s_volsum.eas',f);
-    fvolgeom=sprintf('%s_volgeom.eas',f);
-    
     write_eas(fvolsum,volsum_new);
+
+    fvolgeom=sprintf('%s_volgeom.eas',f);
     write_eas(fvolgeom,volgeom_new);
     
-    V.parfile=sprintf('%s_%d.par',f,length(ivol));
+    if sliceCd==1 
+      fCd_slice=sprintf('datacov_%s.out',f);
+      write_eas(fCd_slice,Cd(:));
+    end
+    
     V.fvolgeom.fname=fvolgeom;
     V.fvolsum.fname=fvolsum;
+    
+    % SLICE DATA COVARIANCE IF IT EXISTS
+    
     
     write_visim(V);
         
