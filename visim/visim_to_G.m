@@ -64,7 +64,7 @@ function [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
       disp(sprintf('%s : Size of %s is not consistent data',mfilename,f_Cd(1).name))
     end
   catch
-    disp(sprintf('%s : Could not read %s ',mfilename,f_Cd(1).name))
+    disp(sprintf('%s : Could not read %s ',mfilename,f_Cd))
     Cd_diag=V.fvolsum.data(:,4);
     n=length(Cd_diag);
     Cd=eye(n);
