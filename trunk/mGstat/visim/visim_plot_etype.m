@@ -71,6 +71,6 @@ function V=visim_plot_etype(V,info,cax1,cax2)
   [f1,f2,f3]=fileparts(V.parfile);
   % title([f2],'interpr','none')
 
-  if info>-1
+  if info>1
     print_mul(sprintf('%s_etype',f2))
   end
