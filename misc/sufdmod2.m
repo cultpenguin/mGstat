@@ -53,7 +53,7 @@ function [vs,hs,ss,mov]=sufdmod2(v,supar);
     cmd=sprintf('%s > %s',cmd,supar.f_out);    
 
        
-    disp(cmd);
+    % disp(cmd);
     
     unix(cmd);
     
