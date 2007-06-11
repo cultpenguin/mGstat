@@ -22,16 +22,16 @@
 
 function print_mul(fname,color,trim);
 
-    return;
+    print(gcf, '-dpng','-r200', [fname,'.png'] )
+
     
-    cmap=colormap;
-    colormap gray;
+    %cmap=colormap;
+    %colormap gray;
     print(gcf, '-deps2', [fname,'.eps'] )
-    colormap(cmap);
-    print(gcf, '-depsc2', [fname,'_color.eps'] )
+    %colormap(cmap);
+    %print(gcf, '-depsc2', [fname,'_color.eps'] )
     saveas(gcf,[fname,'.fig'],'fig');
     
-    print(gcf, '-dpng','-r200', [fname,'.png'] )
     
     return
     
