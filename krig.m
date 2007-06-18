@@ -110,7 +110,14 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   if isfield(options,'filter_nugget')==1
       if options.filter_nugget==1
           % FILTER THE NUGGET
-          pos_known=pos_known+1e-9;
+          d_nug=1e-9;
+          for iv=1:length(V);
+              if size(pos_known,2)==size(V(iv).par2,2)
+                  d_nug=.0001.*V(iv).par2;
+                  d_nug=repmat(d_nug,size(pos_known,1),1);
+              end
+          end
+          pos_known=pos_known+d_nug;
       end
   end
 
