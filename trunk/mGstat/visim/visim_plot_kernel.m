@@ -40,7 +40,7 @@ function visim_plot_kernel(V,ivol,G,doPlot)
   if (isfield(V,'fconddata'))
     d=V.fconddata.data;
     %scatter( d(:,V.cols(1)), d(:,V.cols(2)), 20 , d(:,V.cols(4)) )
-    plot( d(:,V.cols(1)), d(:,V.cols(2)), 'w*')
+    plot( d(:,V.cols(1)), d(:,V.cols(2)), 'r*')
   end
   
   hold off

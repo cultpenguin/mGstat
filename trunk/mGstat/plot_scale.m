@@ -1,7 +1,7 @@
 % plot_scale : plot scale to figure
 %
 % Call:
-%    plot_scale(ax,len,pos)
+%    plot_scale(ax,len,pos,FontSize)
 %
 %    ax: axis (gca)
 %    len [1,2]: length of scale length in each direction
@@ -18,12 +18,14 @@
 %
 %
 
-function plot_scale(ax,len,pos)
+function plot_scale(ax,len,pos,FS)
 
     if nargin==1
     end
-    
-    FS=6;
+
+    if nargin<4
+        FS=6;
+    end
     
     if nargin<3
         pos=3;

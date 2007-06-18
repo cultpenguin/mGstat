@@ -2,7 +2,7 @@
 %
 % [d_dif,d_obs,d_var]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
 %
-function [d_dif,d_obs,d_var]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
+function [d_dif,d_est,d_obs,d_var]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
   
   if isstruct(V)~=1
     V=read_visim(V);
@@ -31,7 +31,8 @@ function [d_dif,d_obs,d_var]=visim_plot_volfit(V,Xlim,doPrint,rayl,rayt);
   end  
   if V.nsim==0;
     m=V.etype.mean;
-    d_dif=G*m(:)-d_obs;
+    d_est=G*m(:);
+    d_dif=d_est-d_obs;
   end    
   
   hist(d_dif(:),max([10 V.nsim]))
