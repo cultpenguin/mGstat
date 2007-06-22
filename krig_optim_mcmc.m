@@ -257,11 +257,11 @@ while i<=maxit
     end
     V_old=V_new;
     L_old=L_new;
-    disp(sprintf('%3d --OK-- L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
+    disp(sprintf('%3d/%4d --OK-- L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,maxit,L_new,Pacc,Prand,format_variogram(V_new)))
     %disp(sprintf('nugfrac=%5.4g  Accept rate = %4.2f%%',nugfrac,100.*nacc./i))
   else
       if compL==1;      
-        disp(sprintf('%3d ------ L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,L_new,Pacc,Prand,format_variogram(V_new)))
+        disp(sprintf('%3d/%4d ------ L = %6.3g  , PA=%4.2g Prand=%4.2g : %s',i,maxit,L_new,Pacc,Prand,format_variogram(V_new)))
       end
 end
 
