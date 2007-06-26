@@ -5,7 +5,8 @@
 %
 function gstat=gstat_binary;
   
-gstat='/usr/local/bin/gstat';    
+%gstat='/usr/local/bin/gstat';    
+gstat='';    
 % YOU CAN EITHER SPECIFY THE PATH TO GSTAT HERE BELOW
 %  gstat='/home/tmh/bin/gstat-2.4.0';
 %  gstat='/home/tmh/bin/gstat-2.4.3/src/gstat';
