@@ -87,29 +87,30 @@ for ia=1:length(ang)
   subplot(2,2,i)
   pall=plot(hc{ia},g{ia},'-','color',[1 1 1].*.7,'linewidth',.1);
   pall=pall(1);
+	   
   hold on
-  pmean=plot(hc{ia},mean(g{ia}')','-','color',col{1},'linestyle',lstyle{1});
+	
   p(i)=pall(1);
   
   ptrue=plot(hhc{i},sv{i},'k-','linewidth',3,'linestyle',lstyle{1});
 
   % PLOT GAMMA OF LEAST SQUARE RESULT !
-  if isfield(V,'etype')
-      plsq=plot(hc_lsq{1},g_lsq{1},'k--','linewidth',2);
-  end
-  
-  pout{ia}=[pall,pmean,ptrue];
-  try
+  %if isfield(V,'etype')
+  %    plsq=plot(hc_lsq{1},g_lsq{1},'k--','linewidth',2);
+  %end
+%  keyboard
+  if V.nsim>0
+    pmean=plot(hc{ia},mean(g{ia}')','-','color',col{1},'linestyle',lstyle{1});
+    pout{ia}=[pall,pmean,ptrue];
     if ia>0
-      [hLeg,hObj]=legend([pall,pmean,ptrue],'All sim','Mean of all sim',vtxt{ia});
-      set(hLeg,'box','off')
-      set(hLeg,'Location','Best');
+ 	[hLeg,hObj]=legend([pall,pmean,ptrue],'All sim','Mean of all sim',vtxt{ia});
     end
-  catch
-    disp('BOX')
-    keyboard
+ else
+    pout{ia}=[pall,ptrue];
+    if ia>0
+ 	[hLeg,hObj]=legend([pall,ptrue],'E-type',vtxt{ia});
+    end
   end
-
 
   xlabel('Distance')
   ylabel('Semivariance, \gamma')

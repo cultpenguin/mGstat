@@ -6,7 +6,7 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
   end
       
   if nargin<2
-    usesim=1;
+    usesim=min([1 V.nsim]);
   end
   
   if nargin<3
@@ -29,8 +29,17 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
   mgstat_verbose(txt,-1)
   
 
+  if isempty(usesim);
+	usesim=0;
+  end	
   nsim=length(usesim);
-  
+  if usesim(1)==0;
+        do_est=1;
+  else
+        do_est=0;
+  end	  
+
+
   usex=[1:1:V.nx];
   usey=[1:1:V.ny];
   %usey=[1:1:40];
@@ -54,9 +63,14 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
 
       if ((isim/5)==round(isim/5)),
         progress_txt(isim,nsim,txt);
+      end	
+      if do_est==1
+        Md=V.etype.mean;
+	Md=Md(:);	
+     else
+        Md=V.D(usex,usey,usesim(isim));    
+        Md=Md(:);
       end
-      Md=V.D(usex,usey,usesim(isim));    
-      Md=Md(:);
       try
         [gamma(:,isim),hc,np,av_dist]=calc_gstat_semivar(Mxyz,Md,angle,tol,cutoff,width);
       catch

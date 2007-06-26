@@ -6,7 +6,7 @@
 function [str1,str2]=visim_format_variogram(V,comp);
   
   if nargin<2
-    comp=0;
+    comp=1;
   end
   
   Va=V.Va;
