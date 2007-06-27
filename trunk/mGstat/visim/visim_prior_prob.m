@@ -4,7 +4,11 @@
 %   [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
 %
 function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll,Lmean_u,L_u,Ldim_u,out]=visim_prior_prob(V,options);
-
+    
+    if (V.nsim==0)
+        disp(sprintf('%s You have specified V.nsim=0. This is no good.',mfilename))
+        return
+    end
     mfP=NaN;    mfPAll=NaN;
 [p,f,e]=fileparts(V.parfile);
 
