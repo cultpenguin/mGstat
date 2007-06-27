@@ -65,7 +65,7 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
         progress_txt(isim,nsim,txt);
       end	
       if do_est==1
-        Md=V.etype.mean;
+        Md=V.etype.mean
 	Md=Md(:);	
      else
         Md=V.D(usex,usey,usesim(isim));    

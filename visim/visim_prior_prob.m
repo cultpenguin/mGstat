@@ -3,7 +3,7 @@
 % Call : 
 %   [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
 %
-function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll,Lmean_u,L_u,Ldim_u]=visim_prior_prob(V,options);
+function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll,Lmean_u,L_u,Ldim_u,out]=visim_prior_prob(V,options);
 
     mfP=NaN;    mfPAll=NaN;
 [p,f,e]=fileparts(V.parfile);
@@ -36,6 +36,15 @@ else
   width=cutoff/12;
 end
 
+if isfield(options,'use_mean')==0
+    options.use_mean=0;
+end
+
+if isfield(options,'pure_nugget')==0
+    options.pure_nugget=0;
+end
+
+
 % CONDITIONAL SIMULATION
 Vc=V;
 Vc=visim(Vc);
@@ -58,10 +67,50 @@ Vu.cond_sim=0;
 Vu.nsim=nsim;
 Vu=visim(Vu);
 
+
+%% MEAN PROB START
+%% MEAN PROB END
+for i=1:nsim
+    du=Vu.D(:,:,i);
+    m_u(i)=mean(du(:));
+    v_u(i)=var(du(:));
+end
+mean_mean=mean(m_u);
+mean_var=var(m_u);
+mean_var=mean(v_u);
+var_var=var(v_u);
+for i=1:nsim
+    dc=Vc.D(:,:,i);
+    m_c(i)=mean(dc(:));
+    v_c(i)=var(dc(:));    
+    Lm(i)=-.5*(m_c(i)-mean_mean).^2./mean_var;
+    Lv(i)=-.5*(v_c(i)-mean_var).^2./var_var;
+end
+
+out.Lm=Lm;
+out.Lv=Lv;
+out.m_c=m_c;
+out.v_c=v_c;
+out.m_u=m_u;
+out.v_u=v_u;
+
+
+if (options.pure_nugget==1)
+    if (options.use_mean)==1
+        L=Lv+Lm;
+    else
+        L=Lv;
+    end
+    Lmean=log(mean(exp(L)));
+    return
+end
+
+
+save TEST_TMH
+keyboard
+
+
 % CHECK OF ISOTROPY !!
-
-
-
 if ( (V.Va.a_hmin==V.Va.a_hmax) );% &  (V.Va.a_hmin==V.Va.a_vert) )
     % ISOTROPIC
     disp('ISOTROPIC')
@@ -82,6 +131,14 @@ end
 % CHOOSE HERE TO CALL COVAR PROB
 [Lmean,L,Ldim]=covar_prob(Vu.VaExp,Vc.VaExp,options);
 [Lmean_u,L_u,Ldim_u]=covar_prob(Vu.VaExp,Vu.VaExp,options);
+ 
+if (options.use_mean)==1
+    % COMBINE THE LIKELIHOOD OF THE MEAN AND THE COVARIANCE
+    Lcombine=L+Lm;
+    Lmean=log(mean(exp(L+Lm)));
+end
+
+
 return
 
 iuse_1=find(~isnan(sum(Vu.VaExp.g{1}')));
