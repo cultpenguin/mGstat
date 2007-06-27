@@ -49,6 +49,7 @@ function [gamma,hc,np,av_dist]=calc_gstat_semivar(pos,val,angle,tol,cutoff,width
   
   gstat(G);
 
+  
   d=read_gstat_semivar('tempSemi.variogram');
   Cav_dist=d(:,4);
   Cgamma=d(:,5);
