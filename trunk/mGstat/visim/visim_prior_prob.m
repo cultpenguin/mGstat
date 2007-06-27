@@ -110,9 +110,6 @@ if (options.pure_nugget==1)
 end
 
 
-save TEST_TMH
-keyboard
-
 
 % CHECK OF ISOTROPY !!
 if ( (V.Va.a_hmin==V.Va.a_hmax) );% &  (V.Va.a_hmin==V.Va.a_vert) )
