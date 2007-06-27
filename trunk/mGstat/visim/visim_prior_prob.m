@@ -43,6 +43,9 @@ end
 if isfield(options,'use_mean')==0
     options.use_mean=0;
 end
+if isfield(options,'only_mean')==0
+    options.only_mean=0;
+end
 
 if isfield(options,'pure_nugget')==0
     options.pure_nugget=0;
@@ -97,6 +100,12 @@ out.m_c=m_c;
 out.v_c=v_c;
 out.m_u=m_u;
 out.v_u=v_u;
+
+if (options.only_mean==1)
+    L=Lm;
+    Lmean=log(mean(exp(L)));
+    return
+end
 
 
 if (options.pure_nugget==1)
