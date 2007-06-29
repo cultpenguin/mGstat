@@ -104,6 +104,7 @@ out.v_u=v_u;
 if (options.only_mean==1)
     L=Lm;
     Lmean=log(mean(exp(L)));
+    %Lmean=mean(L);
     return
 end
 
@@ -115,6 +116,7 @@ if (options.pure_nugget==1)
         L=Lv;
     end
     Lmean=log(mean(exp(L)));
+    %Lmean=mean(L);
     return
 end
 
