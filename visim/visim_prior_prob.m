@@ -47,8 +47,8 @@ if isfield(options,'only_mean')==0
     options.only_mean=0;
 end
 
-if isfield(options,'pure_nugget')==0
-    options.pure_nugget=0;
+if isfield(options,'pure_sill')==0
+    options.pure_sill=0;
 end
 
 
@@ -109,7 +109,7 @@ if (options.only_mean==1)
 end
 
 
-if (options.pure_nugget==1)
+if (options.pure_sill==1)
     if (options.use_mean)==1
         L=Lv+Lm;
     else
