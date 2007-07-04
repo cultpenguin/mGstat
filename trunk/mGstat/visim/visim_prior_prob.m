@@ -3,8 +3,10 @@
 % Call : 
 %   [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
 %
-function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll,Lmean_u,L_u,Ldim_u,out]=visim_prior_prob(V,options);
+%function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll,Lmean_u,L_u,Ldim_u,out]=visim_prior_prob(V,options);
+function [Lmean,Vu,Vc,out]=visim_prior_prob(V,options);
     
+    Lmeam=[];L=[];Ldim=[];
     if (V.nsim==0)
         disp(sprintf('%s You have specified V.nsim=0. This is no good.',mfilename))
         return
@@ -53,8 +55,12 @@ end
 
 
 % CONDITIONAL SIMULATION
-Vc=V;
-Vc=visim(Vc);
+if isfield(options,'Vc')==1
+    Vc=options.Vc;
+else
+    Vc=V;
+    Vc=visim(Vc);
+end
 
 if isfield(options,'m_ref');
     for i=1:Vc.nsim;
@@ -66,18 +72,23 @@ if isfield(options,'m_ref');
      mfP=mean(mfPAll);
     % 
 end
+out.mfP=mfP;
+out.mfPAll=mfPAll;
 
 % UNCONDITIONAL SIMULATION
-Vu=V;
-Vu.parfile=sprintf('%s_unc.par',f);
-Vu.cond_sim=0;
-Vu.nsim=nsim;
-Vu=visim(Vu);
-
+if isfield(options,'Vu')==1
+    Vu=options.Vu;
+else
+    Vu=V;
+    Vu.parfile=sprintf('%s_unc.par',f);
+    Vu.cond_sim=0;
+    Vu.nsim=nsim;
+    Vu=visim(Vu);
+end
 
 %% MEAN PROB START
 %% MEAN PROB END
-for i=1:nsim
+for i=1:Vu.nsim
     du=Vu.D(:,:,i);
     m_u(i)=mean(du(:));
     v_u(i)=var(du(:));
@@ -86,7 +97,7 @@ mean_mean=mean(m_u);
 mean_var=var(m_u);
 mean_var=mean(v_u);
 var_var=var(v_u);
-for i=1:nsim
+for i=1:Vc.nsim
     dc=Vc.D(:,:,i);
     m_c(i)=mean(dc(:));
     v_c(i)=var(dc(:));    
@@ -105,6 +116,7 @@ if (options.only_mean==1)
     L=Lm;
     Lmean=log(mean(exp(L)));
     %Lmean=mean(L);
+    out.L=L;
     return
 end
 
@@ -117,6 +129,7 @@ if (options.pure_sill==1)
     end
     Lmean=log(mean(exp(L)));
     %Lmean=mean(L);
+    out.L=L;
     return
 end
 
@@ -126,17 +139,25 @@ end
 if ( (V.Va.a_hmin==V.Va.a_hmax) );% &  (V.Va.a_hmin==V.Va.a_vert) )
     % ISOTROPIC
     disp('ISOTROPIC')
-    tolerance=180
-    figure(1);clf;
-    [Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0],tolerance(1),cutoff(1),width(1));
-    figure(2);clf;
-    [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0],tolerance(1),cutoff(1),width(1));
+    tolerance=180;
+    if isfield(Vu,'VaExp')==0;
+        figure(1);clf;
+        [Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0],tolerance(1),cutoff(1),width(1));
+    end
+    if isfield(Vc,'VaExp')==0;
+        figure(2);clf;
+        [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0],tolerance(1),cutoff(1),width(1));
+    end
 else
     % ANISOTROPIC    
-    figure(1);clf;
-    [Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0 90],tolerance,cutoff,width);
-    figure(2);clf;
-    [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0 90],tolerance,cutoff,width);
+    if isfield(Vu,'VaExp')==0;
+        figure(1);clf;
+        [Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0 90],tolerance,cutoff,width);
+    end
+    if isfield(Vc,'VaExp')==0;
+        figure(2);clf;
+        [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0 90],tolerance,cutoff,width);
+    end
 end
 
 
@@ -149,6 +170,8 @@ if (options.use_mean)==1
     Lcombine=L+Lm;
     Lmean=log(mean(exp(L+Lm)));
 end
+
+out.L=L;
 
 
 return
