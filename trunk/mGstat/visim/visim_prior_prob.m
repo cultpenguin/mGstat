@@ -1,8 +1,10 @@
 % visim_prior_prob : Likelihood that samples form posteriori are samples from prior
 %
 % Call : 
-%   [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
+%   [Lmean,Vu,Vc,out]=visim_prior_prob(V,options);
 %
+
+%   [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
 %function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll,Lmean_u,L_u,Ldim_u,out]=visim_prior_prob(V,options);
 function [Lmean,Vu,Vc,out]=visim_prior_prob(V,options);
     
@@ -51,6 +53,14 @@ end
 
 if isfield(options,'pure_sill')==0
     options.pure_sill=0;
+end
+
+if isfield(options,'isotropic')==0	
+    if (V.Va.a_hmin==V.Va.a_hmax)	
+        options.isotropic=1;	
+    else		
+        options.isotropic=0;	
+    end	
 end
 
 
@@ -136,7 +146,8 @@ end
 
 
 % CHECK OF ISOTROPY !!
-if ( (V.Va.a_hmin==V.Va.a_hmax) );% &  (V.Va.a_hmin==V.Va.a_vert) )
+if (options.isotropic==1)
+%if ( (V.Va.a_hmin==V.Va.a_hmax) );% &  (V.Va.a_hmin==V.Va.a_vert) )
     % ISOTROPIC
     disp('ISOTROPIC')
     tolerance=180;
