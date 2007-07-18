@@ -24,7 +24,12 @@ function V=visim(parfile);
       [s,visim_bin]=system('which visim');      
     end
   end
-  
+
+ % TO MANUALqLY SET THE PATH TO VISIM PUT IT HERE :
+  % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_10_2000';
+  % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_100_2000';
+  % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_400_400';
+
   if (exist(visim_bin,'file'))==0
     % MANUALLU THE THE PATH TO VISIM
     visim_bin='~/bin/visim';
@@ -33,12 +38,7 @@ function V=visim(parfile);
     visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_400_400';
   end
 
-  % TO MANUALqLY SET THE PATH TO VISIM PUT IT HERE :
-  % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_10_2000';
-  % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_100_2000';
-  % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_400_400';
-
-
+ 
 
   
   
@@ -56,7 +56,13 @@ function V=visim(parfile);
     parfile=parfile.parfile;
   end
   tic
-  unix(sprintf('%s %s',visim_bin,parfile));
+    
+  %unix(space2char(sprintf('%s %s',visim_bin,parfile),'\\ '));
+  if isunix==1
+      unix(sprintf('%s %s',visim_bin,parfile));
+  else
+      dos(sprintf('"%s" %s',visim_bin,parfile));
+  end
   V=read_visim(parfile);
   V.time=toc;
   
