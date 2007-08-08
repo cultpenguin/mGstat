@@ -11,11 +11,17 @@ function [str1,str2]=visim_format_variogram(V,comp);
   
   Va=V.Va;
   
-  str='';  
+  str1='';  
+  str2='';  
   
   for i=1:Va.nst
 
-    
+    if (i>1)
+        str1=[str1,' + '];
+        str2=[str2,' + '];
+    end        
+      
+    disp(i)
     if Va.it(i)==1
       type='Sph';
     elseif Va.it(i)==2
@@ -25,11 +31,11 @@ function [str1,str2]=visim_format_variogram(V,comp);
     end
     
     if comp==0,
-      str1=sprintf('%s %8.3f %s(%5.1f)',str,Va.cc(i),type,Va.a_hmax);
-      str2=sprintf('%s %8.3f %s(%5.1f)',str,Va.cc(i),type,Va.a_hmin);
+      str1=sprintf('%s %8.3f %s(%5.1f)',str1,Va.cc(i),type,Va.a_hmax(i));
+      str2=sprintf('%s %8.3f %s(%5.1f)',str2,Va.cc(i),type,Va.a_hmin(i));
     else
-      str1=sprintf('%s %6.4g %s(%5.3f)',str,Va.cc(i),type,Va.a_hmax);
-      str2=sprintf('%s %6.4g %s(%5.3f)',str,Va.cc(i),type,Va.a_hmin);
+      str1=sprintf('%s %6.4g %s(%5.3f)',str1,Va.cc(i),type,Va.a_hmax(i));
+      str2=sprintf('%s %6.4g %s(%5.3f)',str2,Va.cc(i),type,Va.a_hmin(i));
     end
     
   end
