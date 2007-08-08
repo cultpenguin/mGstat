@@ -21,7 +21,6 @@ function [str1,str2]=visim_format_variogram(V,comp);
         str2=[str2,' + '];
     end        
       
-    disp(i)
     if Va.it(i)==1
       type='Sph';
     elseif Va.it(i)==2
