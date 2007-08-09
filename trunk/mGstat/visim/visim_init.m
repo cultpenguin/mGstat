@@ -24,9 +24,23 @@ function V=visim_init(x,y,z,V);
     end	
 
     if ((nargin==0)|(nargin<4))
-        [p]=fileparts(which('visim.m'))        ;
-        f=[p,filesep,'visim_default'];
-        load([p,filesep,'visim_default']);
+        [p]=fileparts(which('visim.m')) ;
+        f=[p,filesep,'visim_default.mat'];
+        if exist(f)==0
+            f2=which('visim_default.mat')
+            disp(sprintf('%s : Could not locate %s\n -->trying %s',mfilename,f,f2));
+        
+            if exist(f2)==0
+                disp(sprintf('%s : Could not locate any useful visim_default.mat',mfilename));
+                V='';
+                return
+            else f=f2;
+                disp(sprintf('%s : Good, found and using %s',mfilename,f2));            
+            end
+        end
+        % CHECK THAT 'f' exists!!!!
+        %        load([p,filesep,'visim_default']);
+        load(f);
         if nargin==0
             return
         end
