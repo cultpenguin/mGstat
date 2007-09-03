@@ -20,6 +20,9 @@
 %    timeR : travel computed form Receiver
 %    raypath [nraydata,ndim] : the center of the raypath 
 %
+% The sensitivity is the length travelled in each cell.
+% 
+%
 % See also : fast_fd_2d
 %
 % TMH/2006
@@ -110,20 +113,29 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
        
   end
 
-  
-  
+  % NORMALIZE RAY
+  for is=1:ns
+       r=RAY(:,:,is);
+       RAY(:,:,is)=r.*raylength_mat(is)./sum(r(:));
+  end 
+ 
   % REMOVE ALL SENSITIVITY BELOW sen; 
   sens=0.0001;
   K(find(K<sens))=0;
-  
+ 
+  % NORMALIZE K
+  for is=1:ns
+       r=K(:,:,is);
+       K(:,:,is)=r.*raylength_mat(is)./sum(r(:));
+  end 
+ 
   % Horisontally normalization of Fresenel Kernel
-
+  % SIMPLE normalization in case of cross borehole
+  % inversion between two vertical borehole
+  % i.e. when wave travel horizontally.
   for is=1:ns
       single_ray=RAY(:,:,is);
-      single_ray=single_ray./sum(single_ray(:));
-      sRAY=sum(single_ray);
-
-      
+      sRAY=sum(single_ray);      
       for i=1:size(single_ray,2);
           sk=sum(K(:,i,is));
           if sk>0
@@ -138,65 +150,48 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
   Gk=zeros(ns,length(x)*length(y));
   for is=1:ns
     g=RAY(:,:,is);
-    g=g./sum(g(:));
+    %g=g./sum(g(:));
     Gray(is,:)=g(:);
 
     gk=K(:,:,is);
-    gk=gk./sum(gk(:));
+    %    gk=gk./sum(gk(:));
     Gk(is,:)=gk(:);
   end
+
+  if doPlot>0;
+    figure;
+    ip=size(K,3);
+    subplot(2,3,1)
+    imagesc(x,y,Vel);axis image;title('Velocity model')
+    subplot(2,3,2)
+    imagesc(x,y,tS(:,:,ip));axis image;title('t_{source}')
+    subplot(2,3,3)
+    imagesc(x,y,tR(:,:,ip));axis image;title('t_{receiver}')
+
+    subplot(2,3,4)    
+    imagesc(x,y,K(:,:,ip));axis image;title('Fresnel kernel')
+    hold on
+    plot(S(ip,1),S(ip,2),'r*')
+    plot(R(ip,1),R(ip,2),'ro')
+    plot(raypath(:,1),raypath(:,2),'w*','Markersize',2)
+    colorbar
+    hold off
+    
+    subplot(2,3,5)    
+    imagesc(x,y,RAY(:,:,ip));axis image
+    hold on
+    plot(S(ip,1),S(ip,2),'r*')
+    plot(R(ip,1),R(ip,2),'ro')
+    hold off
+    colorbar
+    title('Ray kernel')
+    drawnow;
+  end
   
-  
-  if doPlot>0;    
+  if doPlot>1;    
     for i=1:ns;imagesc(dt(:,:,i));axis image;drawnow;end
     for i=1:ns;imagesc(K(:,:,i));axis image;drawnow;end
     for i=1:ns;imagesc(RAY(:,:,i));axis image;drawnow;end
-  end
-  return
-
-  
-  % OLD CODE
-  if doPlot>0;
-    figure(1);
-    subplot(2,5,1)
-    imagesc(x,y,Vel);axis image;title('Velocity model')
-    subplot(2,5,2)
-    imagesc(x,y,tS);axis image;title('t_{source}')
-    subplot(2,5,3)
-    imagesc(x,y,tR);axis image;title('t_{receiver}')
-
-    subplot(2,5,4)    
-    imagesc(x,y,K);axis image;title('Fresnel kernel')
-    hold on
-    plot(S(1),S(2),'r*')
-    plot(R(1),R(2),'ro')
-    plot(raypath(:,1),raypath(:,2),'w*','Markersize',2)
-
-    %plot(x(ix),y(iy),'gx')
-    %title(['l=',num2str(raylength)])
-    hold off
-    
-    subplot(2,5,5)    
-    imagesc(x,y,RAY);axis image
-    hold on
-    plot(S(1),S(2),'r*')
-    plot(R(1),R(2),'ro')
-    hold off
-    title('Ray kernel')
-    drawnow;
-
-    if doPlot>1
-    
-      subplot(2,5,7)
-      imagesc(x,y,tS+tR);axis image;title('t_{s+r}')
-      
-      subplot(2,5,8)
-      imagesc(x,y,U);axis image;title('grad_U')
-      subplot(2,5,9)
-      imagesc(x,y,V);axis image;title('grad_V')
-      drawnow
-    end
-      
   end
 
   
