@@ -35,7 +35,7 @@ function [V,G,Gray,rl]=visim_setup_tomo_tkernel(V,S,R,m_ref,t,t_err,name,options
   
   if isfield(options,'ktype')==0
       ktype=1; % RAY/HIGH FREQ
-      ktype=2; % FINITE FREQ
+      %ktype=2; % FINITE FREQ
   else
       ktype=options.ktype;
   end
@@ -54,12 +54,12 @@ function [V,G,Gray,rl]=visim_setup_tomo_tkernel(V,S,R,m_ref,t,t_err,name,options
 
     if isfield(options,'parameterization')==0
       parameterization=2; % VELOCITY
-      parameterization=1; % SLOWNESS
+      % parameterization=1; % SLOWNESS
   else
       parameterization=options.parameterization;
   end
 
-  
+
   if isfield(options,'doPlot')==0
       doPlot=0;
   else
