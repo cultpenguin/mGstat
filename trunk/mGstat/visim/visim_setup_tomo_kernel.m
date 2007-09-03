@@ -78,11 +78,6 @@ function [V,G,Gray,rl]=visim_setup_tomo_tkernel(V,S,R,m_ref,t,t_err,name,options
     name='';
   end
   
-  if nargin<8
-    ktype=1; % RAY
-    % ktype=2; FRESNEL
-  end
-  
   if nargin<2
     
     r=load('radar.txt');

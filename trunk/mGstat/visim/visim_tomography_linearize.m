@@ -8,7 +8,7 @@ function [Vout,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
     options='';
   end
   
-  if ~isfield(options,'T');options.T = 1;end
+  if ~isfield(options,'freq');options.freq = 1;end
   if ~isfield(options,'doPlot');options.doPlot = 1;end
   if ~isfield(options,'maxit');options.maxit = 10;end
   if ~isfield(options,'step');options.step = 0.1;end
@@ -33,7 +33,7 @@ function [Vout,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
       Vlsq{it}=Vlsq{it-1};
       Vlsq{it}.parfile=sprintf('%s_lin_%d',options.name,it);
       name = sprintf('%s_lin_%d',options.name,it);
-      [Vlsq{it},G,Gray,rayl]=visim_setup_tomo_kernel(Vlsq{it},S,R,m_new,t,t_err,name,options.type,options.T,options.doPlot);
+      [Vlsq{it},G,Gray,rayl]=visim_setup_tomo_kernel(Vlsq{it},S,R,m_new,t,t_err,name,options);
     end	
     
     Vlsq{it}.nsim=0;
