@@ -2,6 +2,11 @@
 %
 % [V,Vlsq]=visim_tomography(V,S,R,t,t_err,m0,options);
 %
+%
+% if ~isfield(options,'linearize');	options.linearize=0;end;
+% if ~isfield(options,'lsq');	options.lsq=0;end;
+% if ~isfield(options,'nocal_kernel');	
+%
 function [V,Vlsq]=visim_tomography(V,S,R,t,t_err,m0,options);
 
 Vlsq='';

@@ -1,24 +1,75 @@
 % visim_setup_tomo_kernel : Setup sensitivity kernel for VISIM tomography
 % 
 % CALL :
-%    visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,doPlot);
+%    visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options);
 %
 % V: VISIM matlab structure
 % S: [Nvol,2] list of sources for each volume
 % R: [Nvol,2] list of Receivers for each volume
 % t: [Nvol,1] List of observed travel times for each volume
 % t_err: [Nvol,1] List of observed travel times measurement errors
-% name: [string] name to append to VISIM geomtery files
-% ktype [int]  [1] High Freq Approx (rays) [2] Fresnel zone sensitivity 
-% doPlot : [0] No plotting [1] some plotting [2] most plotting.
+% optional
+% options : matlab structure with optional options:
+%   options.name: [string] name to append to VISIM geomtery files
+%
+%    options.parameterization: [integer]
+%       options.parameterization=1, SLOWNESS PARAMETERIZATION
+%       options.parameterization=2, VELOCITY PARAMETERIZATION (default)
+%
+%   options.ktype [int]  [1] High Freq Approx (rays) [2] Fresnel zone sensitivity 
+%   options.freq: [float], def=10; for ktype=2; See also munk_fresenl_2d
+%   options.alpha: [float], def= 1; for ktype=2; See also munk_fresenl_2d
+%
+%
+%   options.doPlot : [0] No plotting [1] some plotting [2] most plotting.
 %
 % See also : kernel, fast_fd_2d, munk_fresnel_2d
 %
 % TMH/2006
 %
-function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,T,doPlot);
-    
-  doPlot=0;
+function [V,G,Gray,rl]=visim_setup_tomo_tkernel(V,S,R,m_ref,t,t_err,name,options);
+
+  if exist('options','var')==0
+      options.null=[],
+  end
+  
+  if isfield(options,'ktype')==0
+      ktype=1; % RAY/HIGH FREQ
+      ktype=2; % FINITE FREQ
+  else
+      ktype=options.ktype;
+  end
+
+  if isfield(options,'freq')==0
+      freq=10;
+  else
+      freq=options.freq;
+  end
+
+  if isfield(options,'alpha')==0
+      alpha=1.0;
+  else
+      alpha=options.alpha;
+  end
+
+    if isfield(options,'parameterization')==0
+      parameterization=2; % VELOCITY
+      parameterization=1; % SLOWNESS
+  else
+      parameterization=options.parameterization;
+  end
+
+  
+  if isfield(options,'doPlot')==0
+      doPlot=0;
+  else
+      doPlot=options.doPlot;
+  end
+
+  
+  
+
+  %doPlot=0;
   if nargin==0
     V=read_visim('sgsim_cond_2.par');
   end
@@ -53,12 +104,7 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,T,
     m_ref=m_ref(:,3);
     
     m=mean(m_ref);
-    
-    %m_ref=reshape(m_ref,49,21)';
     m_ref=reshape(m_ref,49,21)';
-    %m_ref=m_ref.*0+.13,
-    
-    %load SR
   end
 
   if nargin<9
@@ -83,13 +129,34 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,T,
   G=zeros(size(S,1),length(m_ref(:)));
   Gray=G;
   
-  alpha=1.0;
+  [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,doPlot); 
   
-  [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],T,alpha,doPlot); 
-  %  [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,V.xmn,V.ymn,V.zmn,V.xsiz,doPlot); 
   
-  %% MAY BE BAD...
-  % ZERO ALL ENTRIES IN Kmat with  sensitiviy less than sens
+ 
+  if parameterization==1
+      mgstat_verbose(sprintf('%s : USE SLOWNESS PARAMETERIZATION',mfilename))
+      % USE SLOWNESS PARAMETERIZATION
+      d_obs=t(:);
+      d_std=t_err(:);
+      
+  elseif parameterization==2
+      mgstat_verbose(sprintf('%s : USE VELOCITY PARAMETERIZATION',mfilename))
+      % USE VELOCITY PARAMETERIZATION
+      %convert to velocity
+      d_obs = rl(:)./t(:);
+      d_std =  abs((rl(:)./(t(:)+t_err(:))-rl(:)./(t(:)-t_err(:)))./2);
+
+      %normalize kernel for velocity parameterization
+      for iv=1:size(S,1);
+          G(iv,:)=G(iv,:)./(rl(iv));
+          Gray(iv,:)=Gray(iv,:)./(rl(iv));
+          Kmat(:,:,iv)=Kmat(:,:,iv)./rl(iv);
+          Raymat(:,:,iv)=Raymat(:,:,iv)./rl(iv);
+      end
+  end
+     
+  
+  % WRITE KERNEL TO DISK
   
   sens=0.001;
   Kmat(find(Kmat<sens))=0;
@@ -104,7 +171,7 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,T,
   fvolsum=sprintf('visim_volsum_%s.eas',name);
   fparfile=sprintf('%s.par',name);
   
-  
+
   if ktype==2;
     nd=length(find(G));
   else
@@ -127,12 +194,8 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,ktype,T,
       i=i+1;
       VolGeom(i,:)=Garr;    
     end
-    
-    % CALC VELOCITY FROM DT
-    v=  rl(iv)./t(iv);
-    d_v=abs( v - rl(iv)./(t(iv)+t_err(iv)) );
-    VolSum(iv,:)=[iv length(id) v d_v.^2]; 
-    
+   VolSum(iv,:)=[iv length(id) d_obs(iv) d_std(iv).*d_std(iv)]; 
+   
   end
 
   % 
