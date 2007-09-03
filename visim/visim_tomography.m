@@ -30,9 +30,9 @@ if ~isfield(options,'nocal_kernel');
 end;
 
 
-if ~isfield(options,'type');
-   options.type=1; % HIGH FREQUENCY
-   % options.type=2; % FINITE FREQUENCY
+if ~isfield(options,'ktype');
+   options.ktype=1; % HIGH FREQUENCY
+   % options.ktype=2; % FINITE FREQUENCY
 end;
 
 if ~isfield(options,'T');
@@ -51,7 +51,8 @@ end;
 
 % CREATE INITIAL KERNEL FROM REFERENCE MODEL m0
 if options.nocal_kernel==0
-  [V,G,Gray,rayl]=visim_setup_tomo_kernel(V,S,R,m0,t,t_err,options.name,options.type,options.T,options.doPlot);
+    options.ktype=options.type
+  [V,G,Gray,rayl]=visim_setup_tomo_kernel(V,S,R,m0,t,t_err,options.name,options);
 end
 
 % SHOULD WE LINEARIZE THE PROBLEM ?
