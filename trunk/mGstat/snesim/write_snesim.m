@@ -27,8 +27,8 @@ function write_snesim(obj,parfile)
   fid = fopen(parfile,'w');
 
   % MAKE OUT FILE NAME THE SAME AS THE PARAMETER FILE + .OUT
-  [p,f]=fileparts(obj.parfile);
-  obj.out.fname=sprintf('%s.out',f);
+  % [p,f]=fileparts(obj.parfile);
+  % obj.out.fname=sprintf('%s.out',f);
   
   fprintf(fid,'                  Parameters for snesim\n');
   fprintf(fid,'                  ********************\n');
