@@ -75,6 +75,7 @@ nugarr=linspace(0,1,nnug);nugarr(1)=.01;
 std_known=std(pos_known);
 mean_known=mean(pos_known);
 
+
 % A PRIORI 
 na=25;
 for idim=1:ndim
@@ -94,6 +95,10 @@ if method==1
 else
     [d_est,d_var,be_init,d_diff,L_init]=krig_blinderror(pos_known,val_known,pos_known,V_init,options);    
 end
+
+if (isinf(L_init))
+  L_init=1e-300;
+end	
 
 if L_init==0
     L_init=1e-300;
