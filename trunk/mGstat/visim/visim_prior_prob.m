@@ -64,6 +64,7 @@ if isfield(options,'isotropic')==0
 end
 
 
+
 % CONDITIONAL SIMULATION
 if isfield(options,'Vc')==1
     Vc=options.Vc;

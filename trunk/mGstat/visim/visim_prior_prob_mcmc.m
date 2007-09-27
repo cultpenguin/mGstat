@@ -67,20 +67,23 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,options);
     end
 
     % angles
-    if isfield(options.ang1,'min')==0,  options.ang1.min=-10; end
-    if isfield(options.ang1,'max')==0,  options.ang1.max=+10; end
-    if isfield(options.ang2,'min')==0,  options.ang2.min=-10; end
-    if isfield(options.ang2,'max')==0,  options.ang2.max=+10; end
-    if isfield(options.ang3,'min')==0,  options.ang3.min=-10; end
-    if isfield(options.ang3,'max')==0,  options.ang3.max=+10; end
+    if isfield(options.ang1,'min')==0,  options.ang1.min=90-10; end
+    if isfield(options.ang1,'max')==0,  options.ang1.max=90+10; end
+    if isfield(options.ang2,'min')==0,  options.ang2.min=90-10; end
+    if isfield(options.ang2,'max')==0,  options.ang2.max=90+10; end
+    if isfield(options.ang3,'min')==0,  options.ang3.min=90-10; end
+    if isfield(options.ang3,'max')==0,  options.ang3.max=90+10; end
     if isfield(options.ang1,'step')==0,  
       options.ang1.step= (options.ang1.max-options.ang1.min)/d_int;    
+      options.ang1.step=0;
     end
     if isfield(options.ang2,'step')==0,  
       options.ang2.step= (options.ang2.max-options.ang2.min)/d_int;    
+      options.ang2.step=0;
     end
     if isfield(options.ang3,'step')==0,  
       options.ang3.step= (options.ang3.max-options.ang3.min)/d_int;    
+      options.ang3.step=0;
     end
 
     if isfield(options,'anneal')==0,  
@@ -156,23 +159,24 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,options);
           if Va.new.a_vert>options.a_vert.max; outofbounds=1; end
         end
         if ((options.ang1.step)~=0)
-          if Va.new.ang1<options.ang1.min; outofbounds=1; end
-          if Va.new.ang1>options.ang1.max; outofbounds=1; end
+          if Va.new.ang1<options.ang1.min; outofbounds=1, end
+          if Va.new.ang1>options.ang1.max; outofbounds=1, end
         end
         if ((options.ang2.step)~=0)
-          if Va.new.ang2<options.ang2.min; outofbounds=1; end
-          if Va.new.ang2>options.ang2.max; outofbounds=1; end
+          if Va.new.ang2<options.ang2.min; outofbounds=1, end
+          if Va.new.ang2>options.ang2.max; outofbounds=1, end
         end
         if ((options.ang3.step)~=0)
-          if Va.new.ang3<options.ang3.min; outofbounds=1; end
-          if Va.new.ang3>options.ang3.max; outofbounds=1; end
+          if Va.new.ang3<options.ang3.min; outofbounds=1, end
+          if Va.new.ang3>options.ang3.max; outofbounds=1, end
         end
-     
+        
         
         % Calculate LogL
         if outofbounds==0
           V.Va=Va.new;
-          [L.new,a,b,Vc,Vu,mfP,mfPAll,Lmean_u]=visim_prior_prob(V,options);
+          % [L.new,a,b,Vc,Vu,mfP,mfPAll,Lmean_u]=visim_prior_prob(V,options);
+          [L.new,Vc,Vu,out]=visim_prior_prob(V,options);
         %L.new=-10*rand(1);
         else
           L.new=-1e+8;
@@ -182,7 +186,7 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc(V,options);
           disp(sprintf('a_hmax=%5.2g',Va.new.a_hmax))
         end
         li_all(i_all)=L.new;
-        li_all_u(i_all)=Lmean_u;
+        %li_all_u(i_all)=Lmean_u;
         h_all(i_all,:)=[Va.new.a_hmax Va.new.a_hmin Va.new.a_vert];
         d_all(i_all,:)=[Va.new.ang1 Va.new.ang2 Va.new.ang3];
         gv_all(i_all,:)=Va.new.cc;
