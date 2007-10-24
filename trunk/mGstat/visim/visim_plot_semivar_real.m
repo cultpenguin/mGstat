@@ -3,7 +3,7 @@
 % CALL : 
 %    visim_plot_semivar_real(V)
 %
-%    [g,hc,sv,hc2,g_lsq,hc_lsq]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
+%    [g,hc,sv,hhc,g_lsq,hc_lsq]=visim_plot_semivar_real(V,ang,tolerance,cutoff,width)
 %
 %
 % ang : angle with respect to direction of max continutiy. 

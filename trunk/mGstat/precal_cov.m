@@ -20,6 +20,10 @@ function cov=precal_cov(pos1,pos2,V,options);
     isorange=0;
   end
 
+  if ~isstruct(V);
+      V=deformat_variogram(V);
+  end
+  
   n_est1=size(pos1,1);
   n_est2=size(pos2,1);
   
@@ -34,26 +38,55 @@ function cov=precal_cov(pos1,pos2,V,options);
     for i=1:n_est1;
       t=toc;
       % progress bar
-      if t>1
-        try 
+      if t>0
+          di=100;
           if (i/di)==round(i/di)
-            progress_txt(i,n_est1,sprintf('%s : ',mfilename));
+
+              progress_txt([i iV],[n_est1 length(V)],sprintf('%s : ',mfilename),'Nested struture');
           end
-        catch
-          di=i;
-        end
       end
-      for j=1:n_est2;
-        d(i,j)=edist(pos1(i,:),pos2(j,:),V(iV).par2,isorange);
-      end
+      
+      % NEW VECTORIZED APPROACH
+      jj=1:n_est2;;
+      p1=repmat(pos1(i,:),length(jj),1)';
+      p2=pos2(jj,:)';
+      dd=edist(p1,p2,V(iV).par2,isorange);
+      d(i,:)=dd;
+      
+      %% OLD METHOD
+      %for j=1:n_est2;
+      %   d(i,j)=edist(pos1(i,:),pos2(j,:),V(iV).par2,isorange);
+      %    
+      %end
+
     end
 
-    % SPLIT IN TWO IN CASE MATLAB CANNOT HANDLE THIS
-    nn=round(n_est1/2);
-    nn1=nn+1;
-    cov(1:nn,:) = cov(1:nn,:) + semivar_synth(V(iV),d(1:nn,:));
-    cov(nn1:n_est1,:) = cov(nn1:n_est1,:) + semivar_synth(V(iV),d(nn1:n_est1,:));
+    
+    % SPLIT IN SMALLER SIZES FOR MATLAB
+    
+    maxsize=1000000;
+    nparts=ceil(prod(size(d))/maxsize);
+    nn=floor(n_est1/nparts);
 
+    % ALLOCATE COV
+    cov=zeros(size(d));
+    for k=1:nparts
+        progress_txt(k,nparts,'Calculating variance')
+        k1=(k-1)*nn+1;
+        k2=min([k*nn n_est1]);
+        try
+            cov(k1:k2,:) = cov(k1:k2,:) + semivar_synth(V(iV),d(k1:k2,:));
+        catch
+            keyboard
+        end
+    end
+        
+    %nn=round(n_est1/2);
+    %nn1=nn+1;
+    %cov(1:nn,:) = cov(1:nn,:) + semivar_synth(V(iV),d(1:nn,:));
+    %cov(nn1:n_est1,:) = cov(nn1:n_est1,:) + semivar_synth(V(iV),d(nn1:n_est1,:));
+
+    
     end
 
     cov=gvar-cov;
