@@ -78,4 +78,10 @@ function D=edist(p1,p2,transform,isorange)
   end
 
 
-  D=sqrt(dp'*dp);
+  if size(p1,1)==2
+      D=sqrt(dp(1,:).^2+dp(2,:).^2);
+      %  elseif size(p1,1)==3
+      % D=sqrt(dp(1,:).^2+dp(2,:).^2+dp(3,:).^2);
+  else
+      D=sqrt(dp'*dp);
+  end
