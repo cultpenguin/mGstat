@@ -80,9 +80,14 @@ function [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
           d_dataobs(idata,:)=V.fconddata.data(idata,V.cols(4));
           d_dataobs_var(idata,:)=0;
       end
-  
+      
+  else
+      Gdata=[];
+      d_dataobs=[];
+      d_dataobs_var=[];
+      
   end
-  
+
   G=[Gvol;Gdata];
   d_obs=[d_volobs;d_dataobs]; 
   d_var=[d_volobs_var;d_dataobs_var];

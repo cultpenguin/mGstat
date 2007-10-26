@@ -15,8 +15,7 @@
 %
 % See also : visim_prior_prob;
 %
-function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options);
-
+function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options);
 
     mf=[];    mfAll=[];
     if nargin==0
@@ -37,6 +36,9 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opti
     end
     if isfield(options,'isotropic')==0
         options.isotropic=0;
+    end
+    if isfield(options,'gridsearch')==0
+        options.gridsearch=0;
     end
     
     fid=fopen('optim.txt','w');
@@ -67,21 +69,60 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opti
       options.a_vert.step= (options.a_vert.max-options.a_vert.min)/d_int;    
     end
 
+    if isfield(options.a_hmax,'n')==0,  
+        options.a_hmax.n=ceil((options.a_hmax.max-options.a_hmax.min)./options.a_hmax.step);
+        if isnan(options.a_hmax.n), options.a_hmax.n=1; end
+    end
+    if (options.a_hmax.n==1)
+        hmax_range=(options.a_hmax.min+options.a_hmax.max)/2;
+    else
+        hmax_range=linspace(options.a_hmax.min,options.a_hmax.max,options.a_hmax.n);
+    end
+
+    if isfield(options.a_hmin,'n')==0,  
+        options.a_hmin.n=ceil((options.a_hmin.max-options.a_hmin.min)./options.a_hmin.step);
+        if isnan(options.a_hmin.n), options.a_hmin.n=1; end
+    end
+    if (options.a_hmin.n==1)
+        hmin_range=(options.a_hmin.min+options.a_hmin.max)/2;
+    else        
+        hmin_range=linspace(options.a_hmin.min,options.a_hmin.max,options.a_hmin.n);
+    end
+
+    if isfield(options.a_vert,'n')==0,  
+        options.a_vert.n=ceil((options.a_vert.max-options.a_vert.min)./options.a_vert.step);
+        if isnan(options.a_vert.n), options.a_vert.n=1; end
+    end
+    if (options.a_vert.n==1)
+        vert_range=(options.a_vert.min+options.a_vert.max)/2;
+    else        
+        vert_range=linspace(options.a_vert.min,options.a_vert.max,options.a_vert.n);
+    end
+    [grid.hmax,grid.hmin,grid.vert]=meshgrid(hmax_range,hmin_range,vert_range);
+    grid.np=prod(size(grid.hmax));
+       
+    if options.gridsearch==1;
+        options.maxit=max([options.maxit grid.np]);
+    end
+   
     % angles
-    if isfield(options.ang1,'min')==0,  options.ang1.min=-10; end
-    if isfield(options.ang1,'max')==0,  options.ang1.max=+10; end
-    if isfield(options.ang2,'min')==0,  options.ang2.min=-10; end
-    if isfield(options.ang2,'max')==0,  options.ang2.max=+10; end
-    if isfield(options.ang3,'min')==0,  options.ang3.min=-10; end
-    if isfield(options.ang3,'max')==0,  options.ang3.max=+10; end
+    if isfield(options.ang1,'min')==0,  options.ang1.min=90-10; end
+    if isfield(options.ang1,'max')==0,  options.ang1.max=90+10; end
+    if isfield(options.ang2,'min')==0,  options.ang2.min=90-10; end
+    if isfield(options.ang2,'max')==0,  options.ang2.max=90+10; end
+    if isfield(options.ang3,'min')==0,  options.ang3.min=90-10; end
+    if isfield(options.ang3,'max')==0,  options.ang3.max=90+10; end
     if isfield(options.ang1,'step')==0,  
       options.ang1.step= (options.ang1.max-options.ang1.min)/d_int;    
+      options.ang1.step=0;
     end
     if isfield(options.ang2,'step')==0,  
       options.ang2.step= (options.ang2.max-options.ang2.min)/d_int;    
+      options.ang2.step=0;
     end
     if isfield(options.ang3,'step')==0,  
       options.ang3.step= (options.ang3.max-options.ang3.min)/d_int;    
+      options.ang3.step=0;
     end
 
     if isfield(options,'anneal')==0,  
@@ -94,9 +135,6 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opti
     gvar.step=0;
     
     Va.old=V.Va;
-
-    
-    
     
     % Initial Likelihood :
     %L.old=visim_prior_prob(V,options);
@@ -130,22 +168,37 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opti
         
         % Pertub Prior
         Va.new=Va.old;
-        
-        Va.new.a_hmax=Va.new.a_hmax+randn(1)*options.a_hmax.step;        
-        Va.new.a_hmin=Va.new.a_hmin+randn(1)*options.a_hmin.step;        
-        Va.new.a_vert=Va.new.a_vert+randn(1)*options.a_vert.step;        
-
-        Va.new.ang1=Va.new.ang1+randn(1)*options.ang1.step;        
-        Va.new.ang2=Va.new.ang2+randn(1)*options.ang2.step;        
-        Va.new.ang3=Va.new.ang3+randn(1)*options.ang3.step;        
+        if ((options.gridsearch==1)&(i_all<=grid.np))
+            Va.new.a_hmax=grid.hmax(i_all);
+            Va.new.a_hmin=grid.hmin(i_all);
+            Va.new.a_vert=grid.vert(i_all);
+        else
+            if (i_all==(grid.np+1));
+                % LOCATE BEST MODEL
+                try
+                    iop=find(li_all==max(li_all));iop=iop(1);
+                catch
+                    iop=grid.np;
+                end
+                Va.new.a_hmax=grid.hmax(iop);
+                Va.new.a_hmin=grid.hmin(iop);
+                Va.new.a_vert=grid.vert(iop);
+            end
+            if i_all>1
+                Va.new.a_hmax=Va.new.a_hmax+randn(1)*options.a_hmax.step;        
+                Va.new.a_hmin=Va.new.a_hmin+randn(1)*options.a_hmin.step;        
+                Va.new.a_vert=Va.new.a_vert+randn(1)*options.a_vert.step;        
+                
+                Va.new.ang1=Va.new.ang1+randn(1)*options.ang1.step;        
+                Va.new.ang2=Va.new.ang2+randn(1)*options.ang2.step;        
+                Va.new.ang3=Va.new.ang3+randn(1)*options.ang3.step;        
+            end
+        end
 
         % CHECK FOR ISOTROPIC
         if options.isotropic==1;
           Va.new.a_hmin=Va.new.a_hmax;
           Va.new.a_vert=Va.new.a_hmax;
-          %Va.new.ang1=0;
-          %Va.new.ang2=0;
-          %Va.new.ang3=0;
         end
 
                 
@@ -190,22 +243,19 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opti
           [V,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options_lsq);
           m0 = V.etype.mean;
           
-          [L.new,a,b,Vc,Vu,mfP,mfPAll,Lmean_u]=visim_prior_prob(V,options);
-          %L.new=-10*rand(1);
+          [L.new,Vc,Vu,out]=visim_prior_prob(V,options);
+          li_all(i_all)=L.new;
+          li_all_u(i_all)=Lmean_u;
+          h_all(i_all,:)=[Va.new.a_hmax Va.new.a_hmin Va.new.a_vert];
+          d_all(i_all,:)=[Va.new.ang1 Va.new.ang2 Va.new.ang3];
+          gv_all(i_all,:)=Va.new.cc;
+
         else
           L.new=-1e+8;
           Lmean_u=L.new;
-          %mfP=1e+9;
-          %mfPAll=1e+9.*ones(1,V.nsim);
           disp(sprintf('a_hmax=%5.2g',Va.new.a_hmax))
+          i_all=i_all-1;
         end
-        li_all(i_all)=L.new;
-        li_all_u(i_all)=Lmean_u;
-        h_all(i_all,:)=[Va.new.a_hmax Va.new.a_hmin Va.new.a_vert];
-        d_all(i_all,:)=[Va.new.ang1 Va.new.ang2 Va.new.ang3];
-        gv_all(i_all,:)=Va.new.cc;
-        %mf_all(i_all)=mfP;
-        %mf_mfAll(i_all,:)=mfPAll;
         
         % 
         Pacc=min([1,exp( (L.new-L.old)./T)  ]);
@@ -232,10 +282,6 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opti
             gv(i_acc,:)=Va.old.cc;
             li(i_acc)=L.old;
           
-            %mf(i_acc)=mfP;
-            %mfAll(i_acc,:)=mfPAll;
-            % write info to screen
-            
             txt2=sprintf('[h1,h2,h3]=[%5.3f,%5.3f,%5.3f]',Va.old.a_hmax,Va.old.a_hmax,Va.old.a_vert);
             %disp(txt2)
         end
@@ -257,5 +303,11 @@ function [L,li,h,d,gv,mf,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opti
 
         
     end
+        
+    mfAll.li=li_all;
+    mfAll.h=h_all;
+    mfAll.f=d_all;
+    mfAll.g=gv_all;
+
     
     fclose all;
