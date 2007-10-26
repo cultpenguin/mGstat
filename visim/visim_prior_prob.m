@@ -33,7 +33,10 @@ if length(tolerance)~=nang,  tolerance=ones(1,nang).*tolerance;end
 if isfield(options,'cutoff')==1, 
   cutoff=options.cutoff; 
 else 
-  cutoff=[8 8]; 
+    
+   maxdist=  sqrt((max(V.x)-min(V.x)).^2+(max(V.y)-min(V.y)).^2+(max(V.z)-min(V.z)).^2);
+  cutoff=[1 1]*.3*maxdist;
+  disp(['Cutoff=[',num2str(cutoff),']']);
 end
 if length(cutoff)~=nang,  cutoff=ones(1,nang).*cutoff;end
 
