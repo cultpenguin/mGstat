@@ -30,6 +30,7 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
     % SET PRECISION IF NOT ALLREADY SET
     if ~isfield(G.set,'precision');
       G.set.precision='%16.8f';
+      G.set.precision='%20.10f';
     end
   end
   
@@ -79,18 +80,18 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
           inode=find( (d(:,1)==loc(i,ix)) & (d(:,2)==loc(i,iy))  & (d(:,3)==loc(i,iz)) );          
         end
 
-        if length(inode)>1,
-          mgstat_verbose(sprintf('%s : Number of unique locations : %d',mfilename,length(inode)),-20)
-          inode=inode(1);
-        end
-        if length(inode)==0,
-          mgstat_verbose(sprintf('%s : Number of unique locations : %d',mfilename,length(inode)),-20)
-          mgstat_verbose(sprintf('%s : maybe PRECISION IS TOO LOW ',mfilename),-20)
-          mgstat_verbose(sprintf('%s : try : G.set.precision = ''20.10f'' ',mfilename),-20)
-          inode=1;
-        end
-        
-        pred(i)=d(inode,ndim+1);
+	    %if length(inode)>1,
+        %  mgstat_verbose(sprintf('%s : Number of unique locations : %d',mfilename,length(inode)),-20)
+        %  inode=inode(1);
+        %end
+        %if length(inode)==0,
+        %  mgstat_verbose(sprintf('%s : Number of unique locations : %d',mfilename,length(inode)),-20)
+        %  mgstat_verbose(sprintf('%s : maybe PRECISION IS TOO LOW ',mfilename),-20)
+        %  mgstat_verbose(sprintf('%s : try : G.set.precision = ''20.10f'' ',mfilename),-20)
+        %  inode=1;
+        %end
+        % 
+        %pred(i)=d(inode,ndim+1);
       end
       
       return
