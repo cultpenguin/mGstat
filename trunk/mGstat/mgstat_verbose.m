@@ -9,7 +9,7 @@ function mgstat_verbose(txt,verbose)
     verbose=0;
   end
   
-  vlevel=-1; % SHOW ALL VERBOSE INFO ABOVE 1
+  vlevel=0; % SHOW ALL VERBOSE INFO ABOVE 1
   
   if (verbose<=vlevel),
     disp(sprintf('%s : %s',mfilename,txt));

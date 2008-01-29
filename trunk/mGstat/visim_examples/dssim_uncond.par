@@ -2,13 +2,13 @@
                   ********************
                                       
 START OF PARAMETERS                   
-0                    # - conditional simulation (1=yes, 0=no)
-visim_dssim_cond.eas # - file with conditioning data
+0                    # - conditional simulation (3=Vol,2=point,1=Vol+Point, 0=Uncon)
+nodata # - file with conditioning data
 1 2 3 4       # -  columns1 for X,Y,Z,vr,wt,sec.var
 visim_dssim_volgeom.eas      # -  Geometry of volume/ray
 visim_dssim_volsum.eas      # -  Summary of volgeom.eas
-      -1    1e+21       # -  trimming limits for conditioning data
--11  0 0                # - debugging level: -1,0,1,2,3, read_covtable,read_lambda
+      -1   1e+021       # -  trimming limits for conditioning data
+0  0 0                # - debugging level: -1,0,1,2,3, read_covtable,read_lambda
 dssim_uncond.out                    # - file for output
 100                     # - number of realizations to generate
 1                       # - ccdf. type: 0-normal, 1-target 
