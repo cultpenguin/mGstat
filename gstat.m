@@ -34,9 +34,10 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
     end
   end
   
-  mgstat_verbose(sprintf('Trying to run GSTAT on %s',gstat_filename),0)
+  mgstat_verbose(sprintf('Trying to run GSTAT on %s',gstat_filename))
   [s,w]=system([gstat_bin,' ',gstat_filename]);
-
+  mgstat_verbose(sprintf('Finished running GSTAT on %s',gstat_filename))
+  
   mgstat_verbose(w,1)
   
   if ~isempty(regexp(w,'fail'))
@@ -49,6 +50,8 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
   % If estimating/simulating using a location file (NO MASK)
   if isfield(G,'set')
     if isfield(G.set,'output')
+    mgstat_verbose(sprintf('%s : reading output data from %s',mfilename,gstat_filename))
+  
       % get Dimensions
       for id=1:length(G.data)
         if isfield(G.data{id},'x'), ndim=1; ix=G.data{id}.x; end
@@ -68,31 +71,33 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
       pred_covar=[];
       mask=[];
 
-      % SORT OUTPUT DATA
-      for i=1:size(d,1)
-        if ndim==1
-          inode=find( d(:,1)==loc(i,ix) );
-        end
-        if ndim==2
-          inode=find( (d(:,1)==loc(i,ix)) & (d(:,2)==loc(i,iy)) );          
-        end
-        if ndim==3
-          inode=find( (d(:,1)==loc(i,ix)) & (d(:,2)==loc(i,iy))  & (d(:,3)==loc(i,iz)) );          
-        end
-
-	    %if length(inode)>1,
-        %  mgstat_verbose(sprintf('%s : Number of unique locations : %d',mfilename,length(inode)),-20)
-        %  inode=inode(1);
-        %end
-        %if length(inode)==0,
-        %  mgstat_verbose(sprintf('%s : Number of unique locations : %d',mfilename,length(inode)),-20)
-        %  mgstat_verbose(sprintf('%s : maybe PRECISION IS TOO LOW ',mfilename),-20)
-        %  mgstat_verbose(sprintf('%s : try : G.set.precision = ''20.10f'' ',mfilename),-20)
-        %  inode=1;
-        %end
-        % 
-        %pred(i)=d(inode,ndim+1);
-      end
+%       % SORT OUTPUT DATA
+%       for i=1:size(d,1)
+% 	mgstat_verbose(sprintf('%s : Sorting output data (%3d) from %s',mfilename,i,gstat_filename))
+% 
+%         if ndim==1
+%           %inode=find( d(:,1)==loc(i,ix) );
+%         %end
+%         if ndim==2
+%           inode=find( (d(:,1)==loc(i,ix)) & (d(:,2)==loc(i,iy)) );          
+%         end
+%         if ndim==3
+%           inode=find( (d(:,1)==loc(i,ix)) & (d(:,2)==loc(i,iy))  & (d(:,3)==loc(i,iz)) );          
+%         end
+% 
+% 	    %if length(inode)>1,
+%         %  mgstat_verbose(sprintf('%s : Number of unique locations : %d',mfilename,length(inode)),-20)
+%         %  inode=inode(1);
+%         %end
+%         %if length(inode)==0,
+%         %  mgstat_verbose(sprintf('%s : Number of unique locations : %d',mfilename,length(inode)),-20)
+%         %  mgstat_verbose(sprintf('%s : maybe PRECISION IS TOO LOW ',mfilename),-20)
+%         %  mgstat_verbose(sprintf('%s : try : G.set.precision = ''20.10f'' ',mfilename),-20)
+%         %  inode=1;
+%         %end
+%         % 
+%         %pred(i)=d(inode,ndim+1);
+%       end
       
       return
     end
@@ -102,6 +107,7 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
   % RETURN PREDICTIONS OF SET
   if nargout>0
     if isfield(G,'predictions')
+      mgstat_verbose(sprintf('%s : reading predictions from %s',mfilename,gstat_filename))
       
       nsim=1; % DEFAULT ONLY ONE SIM/ESTIMATION
       % FIND NUMBER OF SIMULATIONS
@@ -146,6 +152,8 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
   % RETURN VARIANCES
   if nargout>1
     if isfield(G,'variances')
+    mgstat_verbose(sprintf('%s : reading variances data from %s',mfilename,gstat_filename))
+  
       for ip=1:length(G.variances)
         %gstat_convert(G.variances{ip}.file);
         
@@ -164,6 +172,8 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
   % RETURN COVARIANCES
   if nargout>2
     if isfield(G,'covariances')
+      mgstat_verbose(sprintf('%s : reading covariances data from %s',mfilename,gstat_filename))
+  
       for ip=1:length(G.covariances)
         %gstat_convert(G.covariances{ip}.file);
         

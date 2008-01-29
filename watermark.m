@@ -1,12 +1,34 @@
-% watermark : add watermark to figure : watermark(txt);
-function ax=watermark(txt);
+% watermark : add watermark to figure : watermark(txt,FontSize);
+%
+% Call
+%  watermark(txt);
+%  watermark(txt,FontSize);
+%  ax=watermark(txt,FontSize,position);
+%
+function ax=watermark(txt,FontSize,position);
+
+if nargin<2
+    FontSize=6;
+end
 
 if nargin==0
-  txt='mGstat';
+  txt='SkyTEM';
+end
+
+if nargin<3
+    position=[.6 .01 .39 .05];
 end
 
 ax=axes;
 h=0.1;
-set(ax,'position',[.01 .01 .5 .1]);
+
+if position(1)>.5;
+    HorizontalAlignment='right';
+else
+    HorizontalAlignment='left';
+end
+
+set(ax,'position',position);
 set(ax,'visible','off')
-text(h/2,.5,txt)
+box on
+text(.99,.5,txt,'FontSize',FontSize,'HorizontalAlignment',HorizontalAlignment);

@@ -96,8 +96,12 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
   end
   
   % WRITE DATA TO EAS FILES
-  delete('obs.eas'); 
-  delete('est.eas'); 
+  if exist('obs.eas')==2
+    delete('obs.eas'); 
+  end
+  if exist('est.eas')==2
+    delete('est.eas'); 
+  end 
   write_eas('obs.eas',[pos_known val_known]);
   write_eas('est.eas',pos_est);
   
@@ -118,6 +122,18 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
     
 
   % PARSE mGstat options to GSTAT
+  if isfield(options,'omax'),
+    G.data{1}.omax=options.omax;
+  end
+  if isfield(options,'radius'),
+    G.data{1}.radius=options.radius;
+  end
+  if isfield(options,'average'),
+    G.data{1}.average='';
+  end
+  if isfield(options,'every'),
+    G.data{1}.every=options.every;
+  end
   if isfield(options,'sk_mean'),
     G.data{1}.sk_mean=options.sk_mean;
   end
@@ -179,5 +195,7 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
     d_est=d(:,ndim+1);
     d_var=d(:,ndim+2);
   end
+  
+  
   
   

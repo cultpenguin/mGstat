@@ -31,7 +31,6 @@ function write_eas(filename,data,header,line1);
   if nargin<4,
     line1=sprintf('Data written by mGstat %s',date);
   end
-
   
   nd=size(data,2);
   
@@ -44,24 +43,24 @@ function write_eas(filename,data,header,line1);
   end
   
   if size(data,2)==1
-      fprintf(fid,'%11.7g\n',data(:));
+      fprintf(fid,'%18.12g\n',data(:));
   elseif size(data,2)==2
       d=data';
-      fprintf(fid,'%11.7g   %11.7g\n',d(:));
+      fprintf(fid,'%18.12g   %18.12g\n',d(:));
   elseif size(data,2)==3
       d=data';
-      fprintf(fid,'%11.7g   %11.7g   %11.7g\n',d(:));
+      fprintf(fid,'%18.12g   %18.12g   %18.12g\n',d(:));
   elseif size(data,2)==4
       d=data';
-      fprintf(fid,'%11.7g   %11.7g   %11.7g   %11.7g\n',d(:));
+      fprintf(fid,'%18.12g   %18.12g   %18.12g   %18.12g\n',d(:));
   elseif size(data,2)==5
       d=data';
-      fprintf(fid,'%11.7g   %11.7g   %11.7g   %11.7g   %11.7g\n',d(:));
+      fprintf(fid,'%18.12g   %18.12g   %18.12g   %18.12g   %18.12g\n',d(:));
   else
       
       for id=1:size(data,1),
           %fprintf(fid,'%7.4g   %7.4g   %7.4g ',data(id,:));
-          fprintf(fid,'%11.7g   %11.7g   %11.7g ',data(id,:));
+          fprintf(fid,'%18.12g   %18.12g   %18.12g ',data(id,:));
           fprintf(fid,'\n');
       end
   end
