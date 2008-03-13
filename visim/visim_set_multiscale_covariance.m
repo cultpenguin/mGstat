@@ -74,4 +74,8 @@ for i=1:V.Va.nst
     V.search_radius.hvert=2*max(range);
     
 end
-V.gvar=sum(V.Va.cc);
+
+% Next two lines until VISIM is checked for how it uses V.gvar...
+maxr=sqrt((V.nx*V.xsiz).^2+(V.ny*V.ysiz).^2);
+V.gvar=semivar_synth(deformat_variogram(visim_format_variogram(V)),maxr);
+%V.gvar=sum(V.Va.cc);
