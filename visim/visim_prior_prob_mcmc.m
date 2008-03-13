@@ -72,6 +72,7 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc(V,options);
     if isfield(options.a_hmax,'n')==0,  
         options.a_hmax.n=ceil((options.a_hmax.max-options.a_hmax.min)./options.a_hmax.step);
         if isnan(options.a_hmax.n), options.a_hmax.n=1; end
+        if isinf(options.a_hmax.n), options.a_hmax.n=1; end
     end
     if (options.a_hmax.n==1)
         hmax_range=(options.a_hmax.min+options.a_hmax.max)/2;
@@ -82,15 +83,21 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc(V,options);
     if isfield(options.a_hmin,'n')==0,  
         options.a_hmin.n=ceil((options.a_hmin.max-options.a_hmin.min)./options.a_hmin.step);
         if isnan(options.a_hmin.n), options.a_hmin.n=1; end
+        if isinf(options.a_hmin.n), options.a_hmin.n=1; end
     end
     if (options.a_hmin.n==1)
         hmin_range=(options.a_hmin.min+options.a_hmin.max)/2;
     else        
         hmin_range=linspace(options.a_hmin.min,options.a_hmin.max,options.a_hmin.n);
     end
-
+	
     if isfield(options.a_vert,'n')==0,  
-        options.a_vert.n=ceil((options.a_vert.max-options.a_vert.min)./options.a_vert.step);
+	%if (options.a_vert.step>0)
+	        options.a_vert.n=ceil((options.a_vert.max-options.a_vert.min)./options.a_vert.step);
+	%else
+	%	options.a_vert.n=1;
+	%end
+        if isinf(options.a_vert.n), options.a_vert.n=1; end
         if isnan(options.a_vert.n), options.a_vert.n=1; end
     end
     if (options.a_vert.n==1)
@@ -98,6 +105,8 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc(V,options);
     else        
         vert_range=linspace(options.a_vert.min,options.a_vert.max,options.a_vert.n);
     end
+	
+
     [grid.hmax,grid.hmin,grid.vert]=meshgrid(hmax_range,hmin_range,vert_range);
     grid.np=prod(size(grid.hmax));
        

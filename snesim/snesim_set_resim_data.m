@@ -25,6 +25,7 @@ used=xx.*0+1;
 
 used(find( (abs(xx-pos(1))<lim(1)) & (abs(yy-pos(2))<lim(2)) ))=0;
 ih=find(used);
+
 d_cond=[xx(ih) yy(ih) yy(ih).*0+S.y(1) D(ih)];
 write_eas(S.fconddata.fname,d_cond);
     
