@@ -122,6 +122,9 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
     
 
   % PARSE mGstat options to GSTAT
+  if isfield(options,'mv'), % MISSING VALUE
+    G.set.mv=options.mv;
+  end
   if isfield(options,'omax'),
     G.data{1}.omax=options.omax;
   end
