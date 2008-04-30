@@ -26,7 +26,12 @@ function [vs,hs,ss,mov]=sufdmod2(v,supar);
     supar.ssfile='sseis.out' ;
     supar.hsfile='hseis.out';
     if ~isfield(supar,'tmax'), supar.tmax=.5 ; end
+
+    % MOVIE SNAP SHOTS FOR EVERY mt
     supar.mt=1000;
+    if (supar.mt<20)
+        disp(sprintf('%s : Writing out many snapshots, mt=%d',mfilename,supar.mt));
+    end
     supar.abs=[1 1 1 1] ;
     
     supar.pml=0 ;

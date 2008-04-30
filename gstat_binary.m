@@ -30,12 +30,14 @@ if isempty(gstat)
     gstat='';
   end
 end
+if exist(gstat)==0, 
+    gstat='';
+end
 
 if isempty(gstat)  
     if isunix
       [s,w]=system('which gstat');
-      
-      
+            
       if isempty(w),
         [p,f,s]=fileparts(which('gstat'));
         gstat=fullfile(p,'gstat');            

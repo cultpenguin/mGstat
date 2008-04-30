@@ -2,15 +2,15 @@
                   ********************
                                       
 START OF PARAMETERS                   
-2                    # - conditional simulation (1=yes, 0=no)
+2                    # - conditional simulation (3=Vol,2=point,1=Vol+Point, 0=Uncon)
 visim_sgsim_cond.eas # - file with conditioning data
 1 2 3 4       # -  columns1 for X,Y,Z,vr,wt,sec.var
 visim_sgsim_volgeom.eas      # -  Geometry of volume/ray
 visim_sgsim_volsum.eas      # -  Summary of volgeom.eas
       -1    1e+21       # -  trimming limits for conditioning data
--11  0 0                # - debugging level: -1,0,1,2,3, read_covtable,read_lambda
+0  0 0                # - debugging level: -1,0,1,2,3, read_covtable,read_lambda
 sgsim_cond_2.out                    # - file for output
-100                     # - number of realizations to generate
+30                     # - number of realizations to generate
 0                       # - ccdf. type: 0-normal, 1-target 
 target_bi.eas                    # - target histogram file
 1 0                     # - columns for variable and weights
@@ -32,7 +32,7 @@ target_bi.eas                    # - target histogram file
    0.130400    0.000200             # - global mean and variance 
 1         0.000000000             # - nst, nugget effect
 1         0.000200000  83.500000    0.0000    0.0000 # - it,cc,ang1,ang2,ang3
-   4.0000    1.0000    0.2500             # - a_hmax, a_hmin, a_vert
+   4.2743    2.9772    0.2500             # - a_hmax, a_hmin, a_vert
 4.000 1.000             # - zmin,zmax (tail extrapolation for target histogram)
 4 1.000                 # - lower tail option, parameter
 4 1.000                 # - upper tail option, parameter
