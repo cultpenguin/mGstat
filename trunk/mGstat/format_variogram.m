@@ -19,16 +19,25 @@ function txt=format_variogram(V,short);
       % disp('anisotropy')
       % make sure to add extra space around negative values (MINUS
       % signs), but NOT for example on '1e-6'
+      %%range=regexprep( strip_space(sprintf('%4.2f',V(i).par2)) , ' -','  -' );
       range=regexprep( strip_space(num2str(V(i).par2)) , ' -','  -' );
       range=regexprep( range, ' ',',' );
     else
-      range=num2str(V(i).par2);
+      if short==1
+          range=sprintf('%5.2g',V(i).par2);
+      elseif short==2
+          range=sprintf('%3.2f',V(i).par2);
+      else
+          range=num2str(V(i).par2);          
+      end
     end
 
     if short==0 
       txt=[txt,sprintf('%11.8f %s(%s)',V(i).par1,V(i).type,range)];
-    else
+    elseif short==1 
       txt=[txt,sprintf('%4.1f %s(%s)',V(i).par1,V(i).type,range)];
+    else
+      txt=[txt,sprintf('%4.2f %s(%s)',V(i).par1,V(i).type,range)];
     end
 
 %    OLD CODE BEFORE ANISOTROPY HANDLING
