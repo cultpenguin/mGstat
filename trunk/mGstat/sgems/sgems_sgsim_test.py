@@ -7,7 +7,7 @@ sgems.execute('DeleteObjects SIM')
 sgems.execute('DeleteObjects finished')
 sgems.execute('NewCartesianGrid  SIM::100::100::1::1.0::1.0::1.0::0::0::0')
 
-for maxcd in range(1,2,1):
+for maxcd in range(1,10,1):
 
   property_name='SIM'+str(maxcd)
 
