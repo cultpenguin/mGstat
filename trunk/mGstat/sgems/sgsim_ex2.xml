@@ -1,0 +1,24 @@
+<parameters>  <algorithm name="sgsim" /> 
+  <Grid_Name  value="SIM"  /> 
+  <Property_Name  value="SIM" /> 
+  <Nb_Realizations  value="1" /> 
+  <Seed  value="14071789" /> 
+  <Kriging_Type  value="Simple Kriging (SK)"  /> 
+  <Assign_Hard_Data  value="1"  /> 
+  <Hard_Data  grid=""   property=""  /> 
+  <Max_Conditioning_Data  value="0" /> 
+  <Search_Ellipsoid  value="80 80 80
+0 0 0" />
+  <Use_Target_Histogram  value="0"  /> 
+  <nonParamCdf  ref_on_file ="0"  ref_on_grid ="1"
+break_ties ="0" filename =""   grid =""  property ="">
+<LTI_type  function ="Power"  extreme ="0"  omega ="3" />
+<UTI_type  function ="Power"  extreme ="0"  omega ="0.333" />
+</nonParamCdf>
+  <Variogram  nugget="0.001" structures_count="1"  >
+  <structure_1  contribution="0.999"  type="Gaussian"   >
+    <ranges max="100"  medium="50"  min="10"   />
+    <angles x="10"  y="10"  z="10"   />
+  </structure_1>
+</Variogram>
+</parameters> 
