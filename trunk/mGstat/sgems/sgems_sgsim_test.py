@@ -16,7 +16,7 @@ for maxcd in range(1,2,1):
   sgems.execute(cmd)
   sgems.execute('DisplayObject SIM::'+property_name+'__real0')
 
-  sgems.execute('SaveGeostatGrid  SIM::c:/Users/tmh/PROGRAMMING/Austin/SGeMS/'+property_name+'.out::gslib::0::'+property_name+'__real0');
+  sgems.execute('SaveGeostatGrid  SIM::'+property_name+'.out::gslib::0::'+property_name+'__real0');
 
 
 sgems.execute('NewCartesianGrid  finished::1::1::1::1.0::1.0::1.0::0::0::0')
@@ -24,5 +24,6 @@ data=[]
 data.append(1)
 sgems.set_property('finished','dummy',data)
 sgems.execute('SaveGeostatGrid  finished::c:/Users/tmh/PROGRAMMING/Austin/SGeMS/finished::gslib::0::dummy');
+sgems.execute('SaveGeostatGrid  finished::finished::gslib::0::dummy');
 
 
