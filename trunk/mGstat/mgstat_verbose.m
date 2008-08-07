@@ -8,9 +8,9 @@ function mgstat_verbose(txt,verbose)
   if nargin==1,
     verbose=0;
   end
+ 
+  vlevel=10; % SHOW ALL VERBOSE INFO ABOVE 1
   
-  vlevel=0; % SHOW ALL VERBOSE INFO ABOVE 1
-  
-  if (verbose<=vlevel),
+  if (verbose>=vlevel),
     disp(sprintf('%s : %s',mfilename,txt));
   end
