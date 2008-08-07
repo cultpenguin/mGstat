@@ -10,7 +10,7 @@ function V1=visim_plot_semivar(V1,isim,doPlot)
   end
 
   if nargin<2
-    isim=1:V.nsim;
+    isim=1:V1.nsim;
   end
   
   method=1;
