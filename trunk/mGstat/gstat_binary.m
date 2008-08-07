@@ -22,9 +22,9 @@ if isempty(gstat)
   [p,f,s]=fileparts(which('gstat_binary'));
   if ~isempty(p)
     if isunix
-      gstat=sprintf('%s/bin/gstat',p);
+      gstat=sprintf('%s%sbin%sgstat',p,filesep,filesep);
     else
-      gstat=sprintf('%s/bin/gstat.exe',p);
+      gstat=sprintf('%s%sbin%sgstat.exe',p,filesep,filesep);
     end
   else
     gstat='';

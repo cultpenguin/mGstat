@@ -25,9 +25,12 @@ function V=visim_plot_etype(V,info,cax1,cax2)
     
   
   if V.nsim==0
-    [d]=read_eas(['visim_estimation_',V.out.fname]);
-    etype.mean=reshape(d(:,1),V.nx,V.ny);
-    etype.var=reshape(d(:,2),V.nx,V.ny);
+    %  if ~isfield(V,'etype')
+    %      [d]=read_eas(['visim_estimation_',V.out.fname]);
+    %      etype.mean=reshape(d(:,1),V.nx,V.ny);
+    %      etype.var=reshape(d(:,2),V.nx,V.ny);
+    %  end
+    etype=V.etype;
   else
     etype=V.etype;
   end
