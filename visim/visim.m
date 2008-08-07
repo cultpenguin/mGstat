@@ -57,7 +57,6 @@ function V=visim(parfile);
   end
   tic
     
-  %unix(space2char(sprintf('%s %s',visim_bin,parfile),'\\ '));
   if isunix==1
       unix(sprintf('%s %s',visim_bin,parfile));
   else

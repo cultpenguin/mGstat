@@ -8,7 +8,7 @@
 %function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll,Lmean_u,L_u,Ldim_u,out]=visim_prior_prob(V,options);
 function [Lmean,Vu,Vc,out]=visim_prior_prob(V,options);
     
-    Lmeam=[];L=[];Ldim=[];
+    Lmean=[];L=[];Ldim=[];
     if (V.nsim==0)
         disp(sprintf('%s You have specified V.nsim=0. This is no good.',mfilename))
         return
@@ -126,6 +126,7 @@ out.v_c=v_c;
 out.m_u=m_u;
 out.v_u=v_u;
 
+
 if (options.only_mean==1)
     L=Lm;
     Lmean=log(mean(exp(L)));
@@ -175,15 +176,37 @@ else
     end
 end
 
+%out.Vc=Vc;
+%out.Vu=Vu;
 
+out.options=options;
 % CHOOSE HERE TO CALL COVAR PROB
+
+
+%% COVAR PRIOR PROB FOR ALL DIRECTIONS
+for ic=1:length(Vc.VaExp.g)
+    VaExp_U.g{1}=Vu.VaExp.g{ic};
+    VaExp_U.hc{1}=Vu.VaExp.hc{ic};
+    VaExp_U.hc2{1}=Vu.VaExp.hc2{ic};
+    
+    VaExp_C.g{1}=Vc.VaExp.g{ic};
+    VaExp_C.hc{1}=Vc.VaExp.hc{ic};
+    VaExp_C.hc2{1}=Vc.VaExp.hc2{ic};
+    
+    [Lmean_h{ic}]=covar_prob(VaExp_U,VaExp_C,options);
+    
+    
+end
+out.Lmean_h=Lmean_h;
+
+%COVAR PROB FOR BOTH DIRS
 [Lmean,L,Ldim]=covar_prob(Vu.VaExp,Vc.VaExp,options);
 [Lmean_u,L_u,Ldim_u]=covar_prob(Vu.VaExp,Vu.VaExp,options);
- 
+
 if (options.use_mean)==1
     % COMBINE THE LIKELIHOOD OF THE MEAN AND THE COVARIANCE
     Lcombine=L+Lm;
-    Lmean=log(mean(exp(L+Lm)));
+    Lmean=log(mean(exp(Lcombine)));
 end
 
 out.L=L;

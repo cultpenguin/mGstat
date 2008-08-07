@@ -1,5 +1,10 @@
 % sgenms_sgsim_test : an m-file test of the SGeMS interface
 
+[XML,xml_entry,S]=sgems_read_xml('sgsim_ex3.xml');
+sgems_write_xml(XML,'sgsim_test.xml');
+return;
+%
+%
 py_file='sgems_sgsim_test.py';
 
 disp('running SGeMS');
