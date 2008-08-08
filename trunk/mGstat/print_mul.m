@@ -22,7 +22,7 @@
 
 function print_mul(fname,color,trim);
 
-    print(gcf, '-dpng','-r200', [fname,'.png'] )
+    print(gcf, '-dpng','-r300', [fname,'.png'] )
 
     
     %cmap=colormap;
