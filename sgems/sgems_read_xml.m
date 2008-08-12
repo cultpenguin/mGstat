@@ -47,48 +47,64 @@ for ientry=1:n_entries;
 end
 
 % FIND LEVEL OF EACH ENTRY
-lev=0;
+lev=1;
 for i=1:n_entries
     S{i}=parse_xml_entry(xml_entry{i});
-    if (S{i}.end_tag==0)&(S{i}.closed_tag==0)
-        lev=lev+1;
-        struct_level{lev}=S{i}.struct_name;
-        mgstat_verbose(sprintf('%s : XML level = %d (%s)',mfilename,lev,struct_level{lev}),1);
-        if lev==1;
-            XML.(S{i}.struct_name)=[];
-        end
-    elseif S{i}.end_tag==1;
+
+
+    
+    if S{i}.end_tag==1;
         lev=lev-1;
         try
             mgstat_verbose(sprintf('%s : XML level = %d (%s)',mfilename,lev,struct_level{lev}),1);
         end
     else
 
+        
+        
+        if (S{i}.end_tag==0)&(S{i}.closed_tag==0)
+            try
+            struct_level{lev}=S{i}.struct_name;
+            mgstat_verbose(sprintf('%s : XML level = %d (%s)',mfilename,lev,struct_level{lev}),1);
+            catch
+                keyboard
+            end
+        end
+
+
         try
+            
             struct_name=S{i}.struct_name;
             if lev==1;           
-                XML.(struct_level{1}).(struct_name)=S{i}.(struct_name);
+                XML.(struct_level{1})=S{i}.(struct_name);
             elseif lev==2;
-                XML.(struct_level{1}).(struct_level{2}).(struct_name)=S{i}.(struct_name);
+                XML.(struct_level{1}).(struct_name)=S{i}.(struct_name);
             elseif lev==3;
+                XML.(struct_level{1}).(struct_level{2}).(struct_name)=S{i}.(struct_name);
+            elseif lev==4;
                 XML.(struct_level{1}).(struct_level{2}).(struct_level{3}).(struct_name)=S{i}.(struct_name);
+            elseif lev==5;
+                XML.(struct_level{1}).(struct_level{2}).(struct_level{3}).(struct_level{4}).(struct_name)=S{i}.(struct_name);
             else
-                mgstat_verbose(sprintf('%s : Only 3 nested levels are supported'))
+                mgstat_verbose(sprintf('%s : Only 5 nested levels are supported',mfilename),10)
             end
         catch
             keyboard
+        end
+        
+        if (S{i}.end_tag==0)&(S{i}.closed_tag==0)
+            lev=lev+1;
         end
     end
     
     
 end
 
-XML=XML.(struct_level{1});
+%XML=XML.(struct_level{1});
 
 
 %%
 function S=parse_xml_entry(xml_string)
-
 
 % FIND LEADING TAG
 ispace=findstr(xml_string,' ');
