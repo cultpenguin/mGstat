@@ -1,7 +1,7 @@
 % sgems : Executes SGeMS on python script
 %
 % To run an python script through SGeMS run 
-%   sgems('name_of_pythin_script.py')
+%   sgems('name_of_python_script.py')
 %
 % To run SGeMS using a GUI run 
 %   sgems 
@@ -22,7 +22,7 @@ function sgems(py_script);
 sgems_bin='c:\Program Files\SGeMS\sgems.exe';
 
 if nargin==0;
-    system(sgems_bin);
+    system(sprintf('%s &',sgems_bin));
     return
 end
 if (exist(py_script,'file')~=2)
