@@ -1,7 +1,7 @@
 % visim_prior_prob_mcmc
 %
 % Call : 
-%    [L,li,h,d,gv]=visim_prior_prob_mcmc(V,options);
+%    [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc(V,options);
 % 
 % Sample the probability density function 
 % describing the likelihood that a sample of the 
@@ -15,7 +15,7 @@
 %
 % See also : visim_prior_prob;
 %
-function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc(V,options);
+function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc(V,options);
 
     mf=[];    mfAll=[];
     if nargin==0
@@ -234,11 +234,37 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc(V,options);
         % Calculate LogL
         if outofbounds==0
             V.Va=Va.new;
-            [L.new,Vc,Vu,out]=visim_prior_prob(V,options);
+            [L.new,Vc,Vu,out_pp]=visim_prior_prob(V,options);
             li_all(i_all)=L.new;
             h_all(i_all,:)=[Va.new.a_hmax Va.new.a_hmin Va.new.a_vert];
             d_all(i_all,:)=[Va.new.ang1 Va.new.ang2 Va.new.ang3];
             gv_all(i_all,:)=Va.new.cc;
+            
+            try
+            %out{i_all}.semi_mean_u=out.semi_mean_u;
+            %out{i_all}.semi_mean_c=out.semi_mean_c;
+            out{i_all}=out_pp;
+            % MEAN SEMIVARIOGRAM MEASURE
+            ds_sum=0;
+            for l=1:length(out_pp.semi_mean_u)
+ 
+                
+                ds=out_pp.semi_mean_u{l}-out_pp.semi_mean_c{l};
+
+                ds=sqrt(sum(abs(ds(find(~isnan(ds))))));
+
+                ds=ds(:).^ 2;
+                ds=sqrt(sum(ds(find(~isnan(ds)))));
+               
+                ds_sum=ds_sum+ds_sum;
+                
+                semi_mean_dir(i_all,l)=ds;
+            end
+            out{i_all}.semi_mean_dir=semi_mean_dir;   
+            out{i_all}.semi_mean(i_all)=ds_sum;   
+            catch
+                keyboard
+            end
         else
           L.new=-1e+8;
           Lmean_u=L.new;
