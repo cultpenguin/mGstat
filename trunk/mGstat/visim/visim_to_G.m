@@ -3,7 +3,7 @@
 % CALL : 
 %  [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
 %
-function [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
+function [G,d_obs,d_var,Cd,Cm,m0]=visim_to_G(V);
   
   if isstruct(V)~=1
     V=read_visim(V);
@@ -24,7 +24,8 @@ function [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
   end
   mgstat_verbose(sprintf('%s : %s, ndata=%d novl=%d',mfilename,V.parfile,ndata,nvol),-1);
   
-
+  m0=ones(nxyz,1).*V.gmean;
+  
   if nvol>0
       Gvol=zeros(nvol,nxyz);
       for ivol=1:nvol;
