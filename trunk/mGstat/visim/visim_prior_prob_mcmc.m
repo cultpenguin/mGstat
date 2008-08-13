@@ -256,12 +256,11 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc(V,options);
                 ds=ds(:).^ 2;
                 ds=sqrt(sum(ds(find(~isnan(ds)))));
                
-                ds_sum=ds_sum+ds_sum;
+                ds_sum=ds_sum+ds;
                 
                 semi_mean_dir(i_all,l)=ds;
             end
-            out{i_all}.semi_mean_dir=semi_mean_dir;   
-            out{i_all}.semi_mean(i_all)=ds_sum;   
+            semi_mean(i_all)=ds_sum;   
             catch
                 keyboard
             end
@@ -324,5 +323,9 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc(V,options);
     mfAll.f=d_all;
     mfAll.g=gv_all;
 
+    out.semi_mean_dir=semi_mean_dir;   
+    out.semi_mean=semi_mean;;   
+
+    
     
     fclose all;
