@@ -4,8 +4,6 @@
 %   [Lmean,Vu,Vc,out]=visim_prior_prob(V,options);
 %
 
-%   [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll]=visim_prior_prob(V,options);
-%function [Lmean,L,Ldim,Vc,Vu,mfP,mfPAll,Lmean_u,L_u,Ldim_u,out]=visim_prior_prob(V,options);
 function [Lmean,Vu,Vc,out]=visim_prior_prob(V,options);
     
     Lmean=[];L=[];Ldim=[];
@@ -36,7 +34,7 @@ else
     
    maxdist=  sqrt((max(V.x)-min(V.x)).^2+(max(V.y)-min(V.y)).^2+(max(V.z)-min(V.z)).^2);
   cutoff=[1 1]*.3*maxdist;
-  disp(['Cutoff=[',num2str(cutoff),']']);
+  mgstat_verbose([mfilename,' : Cutoff=',num2str(cutoff)],0);
 end
 if length(cutoff)~=nang,  cutoff=ones(1,nang).*cutoff;end
 
@@ -184,7 +182,18 @@ for i=1:length(Vc.VaExp.g)
     out.semi_mean_u{i}=mean(Vu.VaExp.g{i}');
     out.semi_mean_c{i}=mean(Vc.VaExp.g{i}');
 end
-
+ds_sum=0;
+for l=1:length(out.semi_mean_u)
+    
+    ds=out.semi_mean_u{l}-out.semi_mean_c{l};
+    ds=sqrt(sum(abs(ds(find(~isnan(ds))))));
+    ds=ds(:).^ 2;
+    ds=sqrt(sum(ds(find(~isnan(ds)))));
+    ds_sum=ds_sum+ds;
+    
+    out.semi_mean_dir(l)=ds;
+end
+out.semi_mean=ds_sum;
 
 out.options=options;
 % CHOOSE HERE TO CALL COVAR PROB
@@ -215,5 +224,10 @@ if (options.use_mean)==1
     Lmean=log(mean(exp(Lcombine)));
 end
 
+out.Lmean=Lmean;
+out.Lmean_u=Lmean_u;
+out.L_u=L_u;
 out.L=L;
+out.L_rel=Lmean-Lmean_u;
+
 
