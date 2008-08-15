@@ -301,16 +301,15 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc(V,options);
         subplot(2,1,1);
         s=exp(li_all);s=s_max.*s./max(s);s(find(s<s_thres))=s_thres;;
         scatter(h_all(:,1),h_all(:,2),s,exp(li_all),'filled');axis image
-        axis([.9 5 .9 5])
+        ax=axis;
         title('li_{all}')
         xlabel('h_{max}');ylabel('h_{min}')
         subplot(2,1,2);
         s=exp(li_all-li_all_u);s=s_max.*s./max(s);s(find(s<s_thres))=s_thres;;
         scatter(h_all(:,1),h_all(:,2),s,exp(li_all-li_all_u),'filled');axis image
-        axis([.9 5 .9 5])
         title('li_{all}-li_{all-unconditional}')
         xlabel('h_{max}');ylabel('h_{min}')
-        drawnow;
+        axis(ax);
         
     end
     
