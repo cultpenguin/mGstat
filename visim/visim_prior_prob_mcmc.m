@@ -240,30 +240,10 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc(V,options);
             d_all(i_all,:)=[Va.new.ang1 Va.new.ang2 Va.new.ang3];
             gv_all(i_all,:)=Va.new.cc;
             
-            try
-            %out{i_all}.semi_mean_u=out.semi_mean_u;
-            %out{i_all}.semi_mean_c=out.semi_mean_c;
-            out{i_all}=out_pp;
-            % MEAN SEMIVARIOGRAM MEASURE
-            ds_sum=0;
-            for l=1:length(out_pp.semi_mean_u)
- 
-                
-                ds=out_pp.semi_mean_u{l}-out_pp.semi_mean_c{l};
-
-                ds=sqrt(sum(abs(ds(find(~isnan(ds))))));
-
-                ds=ds(:).^ 2;
-                ds=sqrt(sum(ds(find(~isnan(ds)))));
-               
-                ds_sum=ds_sum+ds;
-                
-                semi_mean_dir(i_all,l)=ds;
-            end
-            semi_mean(i_all)=ds_sum;   
-            catch
-                keyboard
-            end
+            li_all_u(i_all)=out_pp.Lmean_u;
+           
+            semi_mean_dir(i_all,:)=out_pp.semi_mean_dir;
+            semi_mean(i_all)=out_pp.semi_mean;   
         else
           L.new=-1e+8;
           Lmean_u=L.new;
@@ -315,9 +295,26 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc(V,options);
         if i_all==30000; keepon=0; end            
         if (T<.001), keepon=0; end
 
+        figure(10);clf
+        s_thres=5;
+        s_max=60;
+        subplot(2,1,1);
+        s=exp(li_all);s=s_max.*s./max(s);s(find(s<s_thres))=s_thres;;
+        scatter(h_all(:,1),h_all(:,2),s,exp(li_all),'filled');axis image
+        axis([.9 5 .9 5])
+        title('li_{all}')
+        xlabel('h_{max}');ylabel('h_{min}')
+        subplot(2,1,2);
+        s=exp(li_all-li_all_u);s=s_max.*s./max(s);s(find(s<s_thres))=s_thres;;
+        scatter(h_all(:,1),h_all(:,2),s,exp(li_all-li_all_u),'filled');axis image
+        axis([.9 5 .9 5])
+        title('li_{all}-li_{all-unconditional}')
+        xlabel('h_{max}');ylabel('h_{min}')
+        drawnow;
         
     end
     
+    mfAll.li_u=li_all_u;
     mfAll.li=li_all;
     mfAll.h=h_all;
     mfAll.f=d_all;

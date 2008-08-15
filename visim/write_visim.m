@@ -83,7 +83,7 @@ function write_visim(obj,parfile)
 
   fprintf(fid,'%9.4f %9.4f %9.4f   # - radius for search ellipsoid\n',obj.search_radius.hmax,obj.search_radius.hmin,obj.search_radius.vert);
   fprintf(fid,'%9.4f %9.4f %9.4f   # - angles for search ellipsoid\n',obj.search_angle.hmax,obj.search_angle.hmin,obj.search_angle.vert);
-  fprintf(fid,'%11.6f %11.6f             # - global mean and variance \n',obj.gmean,obj.gvar);
+  fprintf(fid,'%16.10f %16.10f             # - global mean and variance \n',obj.gmean,obj.gvar);
   fprintf(fid,'%d %19.9f             # - nst, nugget effect\n',obj.Va.nst,obj.Va.nugget);
   for in=1:obj.Va.nst;
     fprintf(fid,'%d %19.9f %10.6f %9.4f %9.4f # - it,cc,ang1,ang2,ang3\n',obj.Va.it(in),obj.Va.cc(in),obj.Va.ang1(in),obj.Va.ang2(in),obj.Va.ang3(in));
