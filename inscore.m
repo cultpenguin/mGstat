@@ -10,10 +10,9 @@
 % See also nscore.m
 %
 function d_out=inscore(d_normal,o_nscore)
-
   if nargin<3
-    %style='nearest';%  - nearest neighbor interpolation
-    style='linear';%   - linear interpolation
+    style='nearest';%  - nearest neighbor interpolation
+    %style='linear';%   - linear interpolation
     %style='spline';%   - piecewise cubic spline interpolation (SPLINE)
     %style='pchip';%    - shape-preserving piecewise cubic interpolation
     %style='cubic';%    - same as 'pchip'

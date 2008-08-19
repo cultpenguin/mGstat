@@ -123,6 +123,11 @@ function obj=read_visim(filename)
   obj.ccdf=sscanf(line,'%d');
   line=fgetl(fid);
   obj.refhist.fname=get_string(line);
+  if exist([pwd,filesep,obj.refhist.fname])
+      try
+         obj.refhist.data=read_eas(obj.refhist.fname);    
+      end
+  end
   line=fgetl(fid);
   tmp=sscanf(line,'%d %d');
   obj.refhist.colvar=tmp(1);
@@ -143,11 +148,11 @@ function obj=read_visim(filename)
   tmp=sscanf(line,'%d %d');
   obj.refhist.nq=tmp(1);
   try
-    obj.refhist.nGsim=tmp(2);
+    obj.refhist.do_discrete=tmp(2);
   catch
-    obj.refhist.nGsim=1000;
+    obj.refhist.do_discrete=0;
   end
-  
+  obj.refhist.nGsim=1000;
   % DIM INFO 
   line=fgetl(fid);
   tmp=sscanf(line,'%d %f %f');
