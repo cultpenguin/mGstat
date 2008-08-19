@@ -10,6 +10,7 @@ function V=visim_init(x,y,z,V);
     if nargin==1
         if isstruct(x);
             V=x;
+            V=write_visim(V);            
             V=visim_init(V.x,V.y,V.z,V);
             return;
         end
@@ -83,9 +84,9 @@ function V=visim_init(x,y,z,V);
             V.tail.zmax=max(d(:,1));
             
             nugget=V.Va.nugget;
-            % SET MEAN AND VAR)IANCE
+            % SET MEAN AND VARIIANCE
             V.gmean=mean(d(:,1));
-            V.gvar=mean(d(:,1));
+            V.gvar=var(d(:,1));
             V.Va.cc=(1-nugget)*V.gvar;
             V.Va.nugget=nugget;
                         

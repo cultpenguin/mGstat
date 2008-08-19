@@ -2,7 +2,7 @@
 %
 % write visim parameter file 
 %
-function write_visim(obj,parfile)
+function V=write_visim(obj,parfile)
   
   if nargin==0
     help write_visim
@@ -21,7 +21,9 @@ function write_visim(obj,parfile)
     end
   end
 
-  
+  if ~isfield(obj.refhist,'do_discrete')
+      obj.refhist.do_discrete=0;
+  end
   parfile=obj.parfile;
   
   fid = fopen(parfile,'w');
@@ -65,7 +67,7 @@ function write_visim(obj,parfile)
   fprintf(fid,'%d %d                     # - columns for variable and weights\n',obj.refhist.colvar,obj.refhist.colweight);
   fprintf(fid,'%5.2f %5.2f %d         # - min_Gmean, max_Gmean, n_Gmean\n',obj.refhist.min_Gmean,obj.refhist.max_Gmean,obj.refhist.n_Gmean);
   fprintf(fid,'%5.2f %5.2f %d         # - min_Gvar, max_Gvar, n_Gvar\n',obj.refhist.min_Gvar,obj.refhist.max_Gvar,obj.refhist.n_Gvar);
-  fprintf(fid,'%d %d                # - nq, nGsim\n',obj.refhist.nq,obj.refhist.nGsim);
+  fprintf(fid,'%d %d               # - nq, do_discrete \n',obj.refhist.nq,obj.refhist.do_discrete);
   fprintf(fid,'%3d %8.4f %8.4f   # - nx,xmn,xsiz\n',obj.nx,obj.xmn,obj.xsiz);
   fprintf(fid,'%3d %8.4f %8.4f   # - ny,ymn,ysiz\n',obj.ny,obj.ymn,obj.ysiz);
   fprintf(fid,'%3d %8.4f %8.4f   # - nz,zmn,zsiz\n',obj.nz,obj.zmn,obj.zsiz);
@@ -95,4 +97,6 @@ function write_visim(obj,parfile)
 
   fclose(fid);
 
-
+if nargout==1;
+    V=read_visim(parfile);
+end
