@@ -8,13 +8,14 @@ if isfield(S,'xml_file')==0
     S.xml_file=sgems_write_xml(S);
 end
 
+
 if isfield(S,'XML')
-    S.xml_file=sgems_write_xml(S.XML);
+    S.xml_file=sgems_write_xml(S.XML,S.xml_file);
 end
 
 if ~isfield(S,'dim'), S.dim.null=0;end
-if ~isfield(S.dim,'nx');S.dim.nx=100;end
-if ~isfield(S.dim,'ny');S.dim.ny=100;end
+if ~isfield(S.dim,'nx');S.dim.nx=30;end
+if ~isfield(S.dim,'ny');S.dim.ny=30;end
 if ~isfield(S.dim,'nz');S.dim.nz=1;end
 
 if ~isfield(S.dim,'dx');S.dim.dx=1;end
@@ -25,9 +26,14 @@ if ~isfield(S.dim,'x0');S.dim.x0=0;end
 if ~isfield(S.dim,'y0');S.dim.y0=0;end
 if ~isfield(S.dim,'z0');S.dim.z0=0;end
 
+alg=S.XML.parameters.algorithm.name;
 
 if nargin<2;
-   py_script='sgems.py';
+    try    
+        py_script=[alg,'.py'];
+    catch
+        py_script='sgems.py';
+    end
 end
 
 % HARD DATA ?
@@ -37,8 +43,8 @@ if isfield(S,'d_obs');
 end
 
 if isfield(S,'f_obs');
-    [d_obs,h_obs]=read_eas(S.f_obs);
-    keyboard
+    %[d_obs,h_obs]=read_eas(S.f_obs);
+    %keyboard
     %
     %
 end
@@ -58,8 +64,23 @@ fclose(fid);
 
 fid=fopen(py_script,'w');
 
-grid_name=XML.parameters.Grid_Name.value;
-property_name=XML.parameters.Property_Name.value;
+try
+    % sgsim, dssim, LU_sim
+    grid_name=XML.parameters.Grid_Name.value;
+catch
+    % snesim_std
+    grid_name=XML.parameters.GridSelector_Sim.value;
+end
+
+
+try
+    % sgsim, dssim, LU_sim
+    property_name=XML.parameters.Property_Name.value;
+catch
+    % snesim_std
+    property_name=XML.parameters.Property_Name_Sim.value;
+end
+
 nsim=XML.parameters.Nb_Realizations.value;
 
 
@@ -68,10 +89,19 @@ i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''DeleteObjects %s'')',grid_name);
 i=i+1;sgems_cmd{i}='sgems.execute(''DeleteObjects finished'')';
 i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''NewCartesianGrid  %s::%d::%d::%d::%g::%g::%g::%g::%g::%g'')',grid_name,S.dim.nx,S.dim.ny,S.dim.nz,S.dim.dx,S.dim.dy,S.dim.dz,S.dim.x0,S.dim.y0,S.dim.z0);
 if isfield(S,'f_obs')
-    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile  %s::All'')',S.f_obs);
+    % LOAD SGEMS OBJECT
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile  %s::s-gems'')',S.f_obs);
+end
+
+if isfield(S,'ti_file')
+    if exist(S.ti_file,'file')==2;
+        i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile  F:/RESEARCH/LOOMS/SGEMS/%s::s-gems'')',S.ti_file);
+    else
+        mgstat_verbose(sprintf('%s : Could not load %s',mfilename,S.ti_file))
+    end
 end
 i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''DeleteObjects finished'')');
-i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''RunGeostatAlgorithm  sgsim::/GeostatParamUtils/XML::%s'')',xml_string);
+i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''RunGeostatAlgorithm  %s::/GeostatParamUtils/XML::%s'')',alg,xml_string);
 %i=i+1;sgems_cmd{i}=sprintf('SaveGeostatGrid  SIM::%s.out::gslib::0::%s__real0',property_name,property_name)
 
 i=i+1;sgems_cmd{i}=sprintf('\n');

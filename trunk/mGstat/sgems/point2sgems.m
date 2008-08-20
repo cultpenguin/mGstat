@@ -1,5 +1,14 @@
 % point2sgems : convert pointset data to SGeMS format
 %
+% Call : 
+%   file_sgems=point2sgems(filename,data,header,name)
+%
+% Ex
+%   [data,header,title]=read_eas(filename);
+%   [file_sgems,file_eas]=point2sgems(filename,data,header,title);
+%
+% file_sgems : output SGeMS filename [filename,'.sgems'];
+% 
 % Uses g2s.exe (from Stanford)
 %
 % See also : geoeas2sgems
@@ -7,13 +16,13 @@
 function file_sgems=point2sgems(filename,data,header,name)
 
   if nargin<1,
-    help write_eas;
+    help(mfilename);
     return;
   end
   
   if nargin==1,
     data=filename;
-    filename='dummy.eas';;
+    filename='dummy.sgems';;
     mgstat_verbose(sprintf('%s : Filename not set, using ''%s''.',mfilename,filename),0)
   end
  
@@ -27,10 +36,14 @@ function file_sgems=point2sgems(filename,data,header,name)
       name=space2char(sprintf('Data written by mGstat %s',date));
   end
   
-  write_eas(filename,data,header,name);
+  [p,f]=fileparts(filename);
+  file_eas=[p,f,'.eas'];
+  
+  write_eas(file_eas,data,header,name);
 
-  object_name=name;
-  object_type=0;
-  object_dim=0;
-  file_sgems=geoeas2sgems(filename,object_name,object_type,object_dim);
+  object.name=name;
+  object.type=0;
+  object.dim=0;
+  object.keep_eas=1; % Delete EAS file when succesfully converted to SGeMS format
+  file_sgems=geoeas2sgems(file_eas,object);
   
