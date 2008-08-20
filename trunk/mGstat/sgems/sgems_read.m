@@ -3,7 +3,7 @@
 MN=1.561792946e+9; %c30=c
 fclose all;
 file='test3_3.sgems';
-%file='grid_30_30.sgems';
+file='grid_30_30.sgems';
 fid=fopen(file,'r');
 
 

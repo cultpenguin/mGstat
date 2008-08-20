@@ -1,10 +1,10 @@
 % read_eas : reads an GEO EAS formatted file into Matlab.
 %
-% Call [data,header]=read_eas(filename);
+% Call [data,header,title]=read_eas(filename);
 %
 % TMH (tmh@gfy.ku.dk)
 %
-function [data,header,dim,txtdata,txtheader]=read_eas(filename);
+function [data,header,txt_title,dim,txtdata,txtheader]=read_eas(filename);
    fid=fopen(filename,'r');
    txt_title=fgetl(fid);
    try
@@ -16,7 +16,9 @@ function [data,header,dim,txtdata,txtheader]=read_eas(filename);
        dim.nx=str2num(dims(1:(j(1)-1)));
        dim.ny=str2num(dims((j(1)+1):(j(2)-1)));
        dim.nz=str2num(dims((j(2)+1):length(dims)));
-   end   
+   catch
+       dim=[];
+   end
    
    %disp(txt_title);
    l=fgetl(fid);
