@@ -1,57 +1,58 @@
+function sgems_test(alg);
+ 
+if nargin==0;
+    alg=sgsim;
+end
+
+mgstat_verbose(sprintf('%s : Testing SGeMS algorithm ''%s''',mfilename,alg),10)
+
 % sgenms_sgsim_test : an m-file test of the SGeMS interface
-% 
-% [XML,xml_entry,S]=sgems_read_xml('sgsim_ex3.xml');
-% sgems_write_xml(XML,'sgsim_test.par');
-% 
-% return;
-% %
-% %
-% py_file='sgems_sgsim_test.py';
-% 
-% disp('running SGeMS');
-% sgems(py_file)
-% 
-% disp('cleaning up SGeMS');
-% sgems_clean;
-% 
-% disp('Reading SGeMS results');
-% 
-% [d1,h1,dims1]=read_eas('SIM1.out');
-% 
-% imagesc(reshape(d1(:,1),dims1.nx,dims1.ny)')
-% 
-% 
-% 
-% d=sgems_grid('sgsim.par');
-% 
-% sgems.xml_file=XML;sgems=sgems_grid(XML);
-% 
-% S.xml_file='sgsim.par';S=sgems_grid(S)
-% 
-% 
-% S.XML=sgems_read_xml('sgsim.par');
-% sgems(sgems_grid_py(S));
-% 
-% S.XML=sgems_read_xml('sgsim.par');
-% S=sgems_grid(S);
-% 
 
-%
+alg='lusim';
 
-S.XML=sgems_read_xml('sgsim.par');
-S.XML.parameters.Nb_Realizations.value=20;
-S.XML.parameters.algorithm.name='sgsim';
+sgems_get_par(alg);
+par_file=[alg,'.par'];
 
-S.dim.nx=1*35;
-S.dim.ny=1*53;
+if ~(exist(par_file,'file')==2)
+    mgstat_verbose(sprintf('%s : Could not locate %s for %s-type SGeMS',mfilename,par_file,alg),10)
+    return
+end
 
-S.XML.parameters.Variogram.structure_1.ranges.max=5;
-S.XML.parameters.Variogram.structure_1.ranges.medium=3;
-S.XML.parameters.Variogram.structure_1.ranges.min=1;
+S.XML=sgems_read_xml(par_file);
+%S.XML.parameters.Nb_Realizations.value=120;
+S.XML.parameters.algorithm.name=alg;
 
-S.XML.parameters.Property_Name.value='SGSIM';
+%S.dim.nx=1*35;
+%S.dim.ny=1*53;
+
+%S.XML.parameters.Variogram.structure_1.ranges.max=35;
+%S.XML.parameters.Variogram.structure_1.ranges.medium=35;
+%S.XML.parameters.Variogram.structure_1.ranges.min=1;
+%S.XML.parameters.Variogram.nugget=0.0001;
+
+S.XML.parameters.Property_Name.value=alg;
 
 S=sgems_grid(S);
+
+return
+
+
+Scond=S;
+x=[6 30 27 10];header{1}='x';
+y=[30 27 10 6];header{2}='y';
+z=[0 1 2 1];header{3}='z';
+name='COND';
+filename='cond.sgems';
+point2sgems(filename,[x(:) y(:) z(:)],header,name);
+Scond.XML.parameters.Hard_Data.grid=name;
+Scond.XML.parameters.Hard_Data.property=header{3};
+Scond.f_obs=filename;
+Scond=sgems_grid(Scond);
+
+[em,ev]=etype(Scond.D);
+subplot(2,1,1);imagesc(em);colorbar;axis image
+subplot(2,1,2);imagesc(ev);colorbar;axis image
+return
 
 U=S;
 U.XML.parameters.algorithm.name='LU_sim';

@@ -1,0 +1,31 @@
+<parameters>  <algorithm name="dssim" /> 
+  <Grid_Name  value="SIM"  /> 
+  <Property_Name  value="DSSIM" /> 
+  <Nb_Realizations  value="10" /> 
+  <Seed  value="14071789" /> 
+  <Kriging_Type  value="Simple Kriging (SK)"  /> 
+  <Trend  value="0 0 0 0 0 0 0 0 0 " />
+  <Local_Mean_Property  value=""  /> 
+  <SK_mean  value="0" /> 
+  <Hard_Data  grid=""   property=""  /> 
+  <Assign_Hard_Data  value="1"  /> 
+  <Max_Conditioning_Data  value="12" /> 
+  <Search_Ellipsoid  value="80 80 80 0 0 0" />
+  <cdf_type  value="LogNormal"  /> 
+  <LN_mean  value="1" /> 
+  <LN_variance  value="1" /> 
+  <U_min  value="0" /> 
+  <U_max  value="1" /> 
+  <nonParamCdf  ref_on_file ="0"  ref_on_grid ="1"
+break_ties ="0" filename =""   grid =""  property ="">
+<LTI_type  function ="Power"  extreme ="0"  omega ="3" />
+<UTI_type  function ="Power"  extreme ="0"  omega ="0.333" />
+</nonParamCdf>
+  <is_local_correction  value="1"  /> 
+  <Variogram  nugget="0.001" structures_count="1"  >
+  <structure_1  contribution="0.999"  type="Gaussian"   >
+    <ranges max="30"  medium="30"  min="30"   />
+    <angles x="0"  y="0"  z="0"   />
+  </structure_1>
+</Variogram>
+</parameters> 

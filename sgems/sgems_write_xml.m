@@ -1,4 +1,8 @@
 % sgems_write_xml
+%
+% Call : 
+%   filename=sgems_write_xml(XML,filename);
+%  
 function filename=sgems_write_xml(XML,filename);
 
 if nargin==0
@@ -87,6 +91,7 @@ end
         end
         
         ii=find(istruct_sub==0);
+        clear tag_name;
         for k=ii;
             tag_name{k}=fn_sub{k};
             tag_value{k}=xml_struc.(fname).(fn_sub{k});
