@@ -12,5 +12,6 @@ function mgstat_verbose(txt,verbose)
   vlevel=10; % SHOW ALL VERBOSE INFO ABOVE 1
   
   if (verbose>=vlevel),
-    disp(sprintf('%s : %s',mfilename,txt));
+    txt1=mfilename;
+    disp(sprintf('%s',txt));
   end
