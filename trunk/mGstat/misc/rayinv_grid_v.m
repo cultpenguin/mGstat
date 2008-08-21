@@ -44,28 +44,30 @@ for ix=1:length(xx)
     x_est=xx(ix);
     for il=1:nl
         x_layer(il,ix)=x_est;
-        y_u(il)=interp1(v.x(il,:),v.y(il,:),x_est);
-        y_l(il)=interp1(v.x(il,:),v.y(il+1,:),x_est)-0.00001;;
-        %y_l(il)=interp1(v.x(il,:),v.y(il,:),x_est);
-        v_u(il)=interp1(v.x(il,:),v.v_u(il,:),x_est);
-        v_l(il)=interp1(v.x(il,:),v.v_l(il,:),x_est);
+        y_u(il)=interp1(v.x(il,:),v.y(il,:),x_est,'spline');
+        y_l(il)=interp1(v.x(il,:),v.y(il+1,:),x_est,'spline')-0.00001;;
+        v_u(il)=interp1(v.x(il,:),v.v_u(il,:),x_est,'spline');
+        v_l(il)=interp1(v.x(il,:),v.v_l(il,:),x_est,'spline');
                    
-    end
-    
+    end    
     v_u_layer(:,ix)=v_u;
     v_l_layer(:,ix)=v_l;
     
     M=sortrows([[v_l';v_u'],[y_l';y_u']],2);
     v_arr=M(:,1);
     y_arr=M(:,2);
+   
     
+    try
     vvv(:,ix)=interp1(y_arr,v_arr,yy,'linear');
-    
+    catch
+        keyboard
+    end
     
 end
 
 figure
-imagesc(xx,yy,vvv);
+contourf(xx,yy,vvv,[0:.5:7]);
 set(gca,'Ydir','revers')
 axis image
 colorbar
