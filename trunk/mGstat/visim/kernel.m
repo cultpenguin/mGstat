@@ -43,7 +43,7 @@ function [K,RAY,tS,tR,raypath,raylength]=kernel(Vel,x,y,z,S,R,T,alpha,doPlot);
   
   tS=fast_fd_2d(x,y,Vel,S);
   tR=fast_fd_2d(x,y,Vel,R);
-
+  
   dt=tS+tR;dt=dt-min(dt(:));
 
   
