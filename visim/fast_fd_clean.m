@@ -1,5 +1,5 @@
 % fast_fd_clean : deletes in/output files from fast_fd_2d
-
+function fast_fd_clean;
 
 i=0;
 i=i+1;F{i}='fd*.time*';

@@ -14,13 +14,15 @@ function S=snesim_set_resim_data(S,D,lim,pos)
 
 
 if nargin<2
-D=S.D(:,:,1)';
+    D=S.D(:,:,1)';
 end
-
-
+if isempty(D)
+    D=S.D(:,:,1)';
+end
+    
 if nargin<3
-lim(1)=3;
-lim(2)=3;
+    lim(1)=3;
+    lim(2)=3;
 end
 
 if nargin<4

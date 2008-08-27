@@ -89,6 +89,9 @@ function V=visim_init(x,y,z,V);
             V.gvar=var(d(:,1));
             V.Va.cc=(1-nugget)*V.gvar;
             V.Va.nugget=nugget;
+            
+            % set tails
+
                         
         catch
         end

@@ -35,8 +35,8 @@ for i=1:size(tx,1);
                 j=j+1;
                 D(is).recx(j)=xcoor(i);
 %                D(is).recx(j)=D(is).shotx+D(is).isign.*xcoor(i);
-                D(is).data(j)=xcoor(i);
-                D(is).unc(j)=xcoor(i);
+                D(is).data(j)=data(i);
+                D(is).unc(j)=unc(i);
                 D(is).itype(j)=itype(i);
             end
         end

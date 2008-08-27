@@ -9,6 +9,12 @@
 %
 % cov [ndata1,ndata1] : Covariance matrix
 %
+% Ex:
+% x=[1:1:10];
+% y=[1:1:20];
+% [xx,yy]=meshgrid(x,y);
+% cov=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(5,.1,0)');
+%
 
 function cov=precal_cov(pos1,pos2,V,options);
   
@@ -33,6 +39,26 @@ function cov=precal_cov(pos1,pos2,V,options);
 
   gvar=sum([V.par1]);
 
+  for iv=1:length(V)
+      par2=V(iv).par2;
+      if length(par2)>1
+          y_scale=par2(2);
+          V(iv).par2=par2(1);
+          try 
+              if par2(3)~=0
+                  mgstat_verbose(sprintf('Rotation not supported, setting rot=0'),mfilename,10)
+              end
+          end
+      else
+          y_scale=1;
+      end
+  end
+  
+  try
+      pos1(:,2)=pos1(:,2)./y_scale;
+      pos2(:,2)=pos2(:,2)./y_scale;
+  end
+  
   tic
     for iV=1:length(V)
     for i=1:n_est1;
