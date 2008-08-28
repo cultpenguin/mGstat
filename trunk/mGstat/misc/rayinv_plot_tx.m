@@ -10,6 +10,13 @@
 %
 %   rayinv_plot_tx(ishot,'tx.in');
 %
+%
+%   D=rayinv_load_tx('tx.in',[10 1 2 3 6 ]);;
+%   for i=1:length(D);
+%     clf;rayinv_plot_tx(i,D);
+%     drawnow;pause;
+%   end
+%
 function rayinv_plot_tx(ishot,D);
 if nargin<1
     D=rayinv_load_tx('tx.in');
@@ -60,8 +67,12 @@ for is=ishot
         hold on
         L{j}=num2str(itypes(j));
     end
+    xlabel('Offset (km)')
+    ylabel('Traveltime (s)')
+
     title(sprintf('Shot #%02d',is))
     legend(L,'Location','NorthEastOutside')
+    grid on
     %legend(L)
 hold off
 end
