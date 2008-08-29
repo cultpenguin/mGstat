@@ -6,20 +6,36 @@
 % To run SGeMS using a GUI run 
 %   sgems 
 %
+% The installation directory of SGeMS is set to c:\Program Files\SGeMS
+% If it is located otherwise edit this m-file or set the windows environment variable
+% GSTLAPPLIHOME to point to the SGeMS installation directory, as e.g. :
+% 
+% 
+%
 %
 % In windows you need to have an environemnt variable set that point to the
 % SGeMS installation directory :
 % GSTLAPPLIHOME=c:\Program Files\SGeMS
 % In addition you may have to add a link to the location of the sgems.exe
 % executable below in the source code for sgems.m
-%
+% setenv('GSTLAPPLIHOME','c:\Program Files\SGeMS');
+
 %
 %
 % TMH/08/2008
 %
 function sgems(py_script);
 
-sgems_bin='c:\Program Files\SGeMS\sgems.exe';
+
+if isempty(getenv('GSTLAPPLIHOME'))
+    sgems_bin_install='c:\Program Files\SGeMS';
+    setenv('GSTLAPPLIHOME',sgems_bin_install);
+else
+    sgems_bin_install=getenv('GSTLAPPLIHOME');
+end
+sgems_bin=[sgems_bin_install,filesep,'sgems.exe'];
+
+
 
 if nargin==0;
     system(sprintf('%s &',sgems_bin));
