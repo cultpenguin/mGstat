@@ -13,9 +13,9 @@ function V=snesim(parfile);
   % FIRST TRY TO FIND THE snesim BINARY IN THE mGstat/bin/ DIRECTORY
   [p,f,s]=fileparts(which('snesim'));
   if isunix
-    snesim_bin=sprintf('%s/../bin/snesim',p);
+    snesim_bin=[mgstat_dir,filesep,'bin',filesep,'snesim'];
   else
-    snesim_bin=sprintf('%s\\..\\bin\\snesim.exe',p);
+    snesim_bin=[mgstat_dir,filesep,'bin',filesep,'snesim.exe'];
   end
 
   if (exist(snesim_bin,'file'))==0
@@ -30,8 +30,6 @@ function V=snesim(parfile);
 
   if (exist(snesim_bin,'file'))==0
     % MANUALLU THE THE PATH TO snesim
-    snesim_bin='~/bin/snesim';
-    snesim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/snesim/snesim';
   end
 
  
