@@ -35,4 +35,19 @@ for i=1:min([S.XML.parameters.Nb_Realizations.value 12])
 end
 suptitle(alg);
 
+% MAKE A TEST WITH CONDITIONAL SIMULATION!!!
+
+d_obs=[10 10 0 0; 1 1 0 3];
+S.f_obs='obs.sgems';
+header{1}='X';header{2}='Y';header{3}='Z';
+header{4}='DATA';
+O=sgems_write_pointset(S.f_obs,d_obs,header,'OBS');
+
+S.XML.parameters.Hard_Data.grid='OBS';
+S.XML.parameters.Hard_Data.property='DATA';
+S.XML.parameters.Assign_Hard_Data.value=0;
+S2=sgems_grid(S);
+
+
 return
+

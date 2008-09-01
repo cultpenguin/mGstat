@@ -38,16 +38,20 @@ end
 
 % HARD DATA ?
 if isfield(S,'d_obs');
-    write_eas('obs.eas',S.d_obs);
-    S.f_obs='obs.eas';
+    header{1}='X';
+    header{2}='Y';
+    header{3}='Z';
+    header{4}='DATA';
+    sgems_write_pointset('obs.sgems',S.d_obs,header,'OBS');
+    S.f_obs='obs.sgems';
 end
 
 if isfield(S,'f_obs');
-    %[d_obs,h_obs]=read_eas(S.f_obs);
-    %keyboard
-    %
-    %
+    %S.XML.parameters.Hard_Data.grid='OBS';
+    %S.XML.parameters.Hard_Data.property='DATA';
+    %S.xml_file=sgems_write_xml(S.XML,S.xml_file);
 end
+
 
 
 
@@ -59,7 +63,6 @@ xml_string=char(fread(fid,'char')');
 xml_string=regexprep(xml_string,char(10),''); % remove line change
 xml_string=regexprep(xml_string,char(13),''); % remove line change
 fclose(fid);
-
 
 
 fid=fopen(py_script,'w');
@@ -90,7 +93,8 @@ i=i+1;sgems_cmd{i}='sgems.execute(''DeleteObjects finished'')';
 i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''NewCartesianGrid  %s::%d::%d::%d::%g::%g::%g::%g::%g::%g'')',grid_name,S.dim.nx,S.dim.ny,S.dim.nz,S.dim.dx,S.dim.dy,S.dim.dz,S.dim.x0,S.dim.y0,S.dim.z0);
 if isfield(S,'f_obs')
     % LOAD SGEMS OBJECT
-    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile  %s::s-gems'')',S.f_obs);
+    % HERE IS SOME PROBLEM.....
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile  %s::All'')',S.f_obs);
 end
 
 if isfield(S,'ti_file')
