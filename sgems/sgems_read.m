@@ -16,7 +16,7 @@ O.magic_number = fread(fid,1,'uint32');
 if (O.magic_number==MN)
     mgstat_verbose(sprintf('%s : OK S-GeMS format for %s',mfilename,filename))
 else
-    mgstat_verbose(sprintf('%s : WRONG S-GeMS format for %s',mfilename,filename))
+    mgstat_verbose(sprintf('%s : WRONG S-GeMS format for %s',mfilename,filename),10)
     return
 end
 
