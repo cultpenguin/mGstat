@@ -1,75 +1,81 @@
-%function sgems_read(file)
+function O=sgems_read(filename)
 
-MN=1.561792946e+9; %c30=c
-fclose all;
-file='test3_3.sgems';
-file='grid_30_30.sgems';
-fid=fopen(file,'r');
+if nargin<1
+    help mfilename
+    O=[];
+    return
+end
 
+MN=1.561792946e+9; 
 
+fid=fopen(filename,'r');
+
+% READ MAGIC NUMBER
 O.magic_number = fread(fid,1,'uint32');
 
 if (O.magic_number==MN)
-    mgstat_verbose(sprintf('%s : OK S-GeMS format for %s',mfilename,file))
+    mgstat_verbose(sprintf('%s : OK S-GeMS format for %s',mfilename,filename))
 else
-    mgstat_verbose(sprintf('%s : WRONG S-GeMS format for %s',mfilename,file))
+    mgstat_verbose(sprintf('%s : WRONG S-GeMS format for %s',mfilename,filename))
     return
 end
 
 pos1=ftell(fid);
 
 
-nc=60;
-c = fread(fid,nc,'char')';
+% TYPE DEFINITION
+O.type_def = fread(fid,1,'uint32','b');
+
+% TYPE DEFINITION STRING
+type_def_string = fread(fid,10,'char');
+O.type_def_string = char(type_def_string(1:9)');
+
+% IF POINT SET
+if O.type_def==10
+    disp(sprintf('%s : Reading POINTSET data from %s',mfilename,filename))
+
+    % POINT NAME
+    O.point_set_name_size = fread(fid,1,'uint32','b');
+    point_set_name = fread(fid,O.point_set_name_size,'char');
+    O.point_set_name=char(point_set_name');
+
+    % VERSION 
+    O.version = fread(fid,1,'int32','b');
+
+    if (O.version<100)
+        mgstat_verbose(sprintf('%s : file too old (%s)',mfilename,file))
+        return
+    end
+    
+    % SIZE
+    O.n_data = fread(fid,1,'uint32','b');
+    O.n_prop = fread(fid,1,'uint32','b');
+    
+    for i=1:O.n_prop
+        O.P{i}.property_name_size = fread(fid,1,'uint32','b');
+        property_name = fread(fid,O.P{i}.property_name_size,'char');
+        O.P{i}.property_name=char(property_name');       
+    end
 
 
-ichar=find(c>32);
-ichar_sep=find(diff(ichar)>1);
+    xyz=zeros(O.n_data,3);
+    for j=1:O.n_data
+        xyz(j,:)=fread(fid,3,'float32','b')';
+    end
 
-O.name=char(c(ichar(1:ichar_sep(1))));
-i1=ichar(ichar_sep+1);
-try
-    i2=ichar(ichar_sep(2));
-catch
-    i2=length(ichar)
+    data=zeros(O.n_data,O.n_prop);
+    for k=1:O.n_prop
+        for j=1:O.n_data
+            data(j,k)=fread(fid,1,'float32','b')';
+        end
+    end
+        
+    O.data=data;
+    O.xyz=xyz;
+    
+    
+elseif O.type_def==6
+    mgstat_verbose(sprintf('%s : Reading GRID data from %s',mfilename,filename),10);
 end
-O.tag=char(c(i1:i2));
 
-
-% GO TO THE PROPER LOCATION
-nspace=4; % 4 spaces after name;
-fseek(fid,pos1+i2+4,'bof');
-%c2 = fread(fid,9,'char')'
-
-%% VERSION
-
-O.version = fread(fid,1,'int32')';
-
-if (O.version<100)
-    mgstat_verbose(sprintf('%s : file too old (%s)',mfilename,file))
-    return
-end
-
-O.size = fread(fid,1,'uint32')';
-
-
-pos2=ftell(fid);
-c = fread(fid,nc,'char')';
-ichar=find(c>32);
-ichar_sep=find(diff(ichar)>1);
-i1=ichar(1);
-i2=ichar(ichar_sep(2));
-O.tagname=char(c(i1:i2));
-fseek(fid,pos2+i2-2,'bof');
-fseek(fid,-9*4-3,'eof');
-fseek(fid,2,'bof');
-
-
-%c = fread(fid,4,'uint32')'
-
-f = fread(fid,Inf,'float')'
-
-%% CLOSE FILE HANDLES
-O
-
-%fclose(fid);
+fclose(fid);
