@@ -1,4 +1,4 @@
-function [data,header,title]=sgems_read_pointset(filename);
+function [data,header,title,O]=sgems_read_pointset(filename);
 %
 %
 % Example
