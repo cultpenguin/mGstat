@@ -47,9 +47,15 @@ if isfield(S,'d_obs');
 end
 
 if isfield(S,'f_obs');
-    %S.XML.parameters.Hard_Data.grid='OBS';
-    %S.XML.parameters.Hard_Data.property='DATA';
-    %S.xml_file=sgems_write_xml(S.XML,S.xml_file);
+    O=sgems_read(S.f_obs,0);    
+    if isempty(S.XML.parameters.Hard_Data.grid)
+        S.XML.parameters.Hard_Data.grid=O.point_set;
+    end
+    if isempty(S.XML.parameters.Hard_Data.property)
+        S.XML.parameters.Hard_Data.property=O.property_name{1};
+    end
+    S.XML.parameters.Assign_Hard_Data.value=1;
+    sgems_write_xml(S);
 end
 
 
@@ -57,6 +63,7 @@ end
 
 % read XML struc
 [XML]=sgems_read_xml(S.xml_file);
+
 % read XML as character array
 fid=fopen(S.xml_file,'r');
 xml_string=char(fread(fid,'char')');
@@ -113,6 +120,7 @@ i=i+1;sgems_cmd{i}=sprintf('\n');
 p='';
 for j=1:nsim; p=sprintf('%s::%s__real%d',p,property_name,j-1);end
 i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  SIM::%s.out::gslib::0%s'')',property_name,p);
+i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  SIM::%s.sgems::s-gems::0%s'')',property_name,p);
 
 i=i+1;sgems_cmd{i}=sprintf('\n');
 

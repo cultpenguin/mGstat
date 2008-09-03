@@ -11,7 +11,7 @@ function [data,header,title,O]=sgems_read_pointset(filename);
 O=sgems_read(filename);
 
 data=[O.xyz O.data];
-title=O.point_set_name;
+title=O.point_set;
 ndim=size(O.xyz,2);
 for i=1:ndim
     if i==1,header{i}='X'; end
@@ -20,6 +20,6 @@ for i=1:ndim
 end
 
 for i=1:O.n_prop
-    header{i+ndim}=O.P{i}.property_name;
+    header{i+ndim}=O.property_name{i};
 end
    

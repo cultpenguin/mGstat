@@ -17,11 +17,11 @@ if nargin<3
     header=[];
 end
 
-O.type_def=10; % POINT SET
+O.type_def='Point_set'; % POINT SET
 O.data=data(:,(ndim+1):(size(data,2)));
 O.xyz=data(:,1:ndim);
 
-O.point_set_name=title;
+O.point_set=title;
 
 O.n_prop=1;
 
@@ -32,7 +32,7 @@ if isempty(header)
     header=h;
 end
 for i=1:O.n_prop
-    O.P{i}.property_name=header{i+ndim};
+    O.property_name{i}=header{i+ndim};
 end
 
 

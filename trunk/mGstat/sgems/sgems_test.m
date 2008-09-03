@@ -36,17 +36,32 @@ end
 suptitle(alg);
 
 % MAKE A TEST WITH CONDITIONAL SIMULATION!!!
+S2=S;
 
 d_obs=[10 10 0 0; 1 1 0 3];
-S.f_obs='obs.sgems';
 header{1}='X';header{2}='Y';header{3}='Z';
 header{4}='DATA';
-O=sgems_write_pointset(S.f_obs,d_obs,header,'OBS');
+S2.f_obs='obs.sgems';
+O=sgems_write_pointset(S2.f_obs,d_obs,header,'OBS');
 
-S.XML.parameters.Hard_Data.grid='OBS';
-S.XML.parameters.Hard_Data.property='DATA';
-S.XML.parameters.Assign_Hard_Data.value=0;
-S2=sgems_grid(S);
+% conditional simulation
+
+%O=sgems_read(S.f_obs,0);
+%S.XML.parameters.Hard_Data.grid=O.point_set;
+%S.XML.parameters.Hard_Data.property=O.property_name{1};
+%S.XML.parameters.Assign_Hard_Data.value=0;
+%S2=S;
+S2.XML.parameters.Nb_Realizations.value=100;
+S2=sgems_grid(S2);
+
+figure;
+subplot(1,2,1);
+imagesc(reshape(mean(S2.data'),S.dim.nx,S.dim.ny));axis image;colorbar
+title('E-type mean')
+subplot(1,2,2);
+imagesc(reshape(var(S2.data'),S.dim.nx,S.dim.ny));axis image;colorbar
+title('E-type variance')
+
 
 
 return

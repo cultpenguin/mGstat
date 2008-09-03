@@ -1,3 +1,13 @@
+% sgems_write : write sgems binary data structure
+%
+% Call:
+%   O=sgems_write(filename,O)
+%
+%   O: sgems data structure
+%   filename : filename
+%
+% See also: sgems_read, sgems_read_pointset, sgems_write_pointset
+%
 function O=sgems_write(filename,O)
 
 if nargin<2
@@ -23,33 +33,26 @@ if ~isfield(O,'magic_number');O.magic_number=1.561792946e+9;end
 fwrite(fid,O.magic_number,'uint32');
 
 % TYPE DEFINITION
-if ~isfield(O,'type_def');O.type_def=10;end
-if ~isfield(O,'type_def_string');
-    if O.type_def==10;
-        O.type_def_string='Point_set';
-    elseif O.type_def==6
-        O.type_def_string='Grid_set'; %% CHECK SGEMS SOURCE CODE
-        
-        mgstat_verbos(sprintf('%s : unsupported type definition (%d)',mfilename,O.type_def))
-    else
-        mgstat_verbos(sprintf('%s : unsupported type definition (%d)',mfilename,O.type_def))
-    end
+if ~isfield(O,'type_def');
+    O.type_def='Point_set';
+end
+if strcmp(O.type_def,'Point_set');
+elseif strcmp(O.type_def,'Grid_set');
+    mgstat_verbose(sprintf('%s : unsupported type definition (%d)',mfilename,O.type_def))
+else
+    mgstat_verbose(sprintf('%s : unsupported type definition (%d)',mfilename,O.type_def))
 end
     
-fwrite(fid,O.type_def,'uint32',0,'b');
-fwrite(fid,[O.type_def_string],'char');
-fwrite(fid,0,'char');
+
+% TYPE DEF
+fwrite_charstar(fid,O.type_def)
 
 % IF POINT SET
-if O.type_def==10
+if strcmp(O.type_def,'Point_set');
     disp(sprintf('%s : Writing POINTSET data to %s',mfilename,filename))
 
-    % POINT NAME
-    if ~isfield(O,'point_set_name_size');
-        O.point_set_name_size=length(O.point_set_name);
-    end
-    fwrite(fid,O.point_set_name_size,'uint32',0,'b');
-    fwrite(fid,O.point_set_name,'char');
+    % POINT SET NAME
+    fwrite_charstar(fid,O.point_set)
 
     % VERSION
     if ~isfield(O,'version')
@@ -75,32 +78,26 @@ if O.type_def==10
         mgstat_verbose(sprintf('%s : adjusting n_prop=%d',mfilename,n_prop),10);
     end
 
-
     fwrite(fid,O.n_data,'uint32','b');
     fwrite(fid,O.n_prop,'uint32','b');
 
-
     for i=1:O.n_prop
-
+                
+        
+        if isstr(O.property_name)
+            str=O.property_name;
+            O=rmfield(O,'property_name');
+            O.property_name{i}=str;
+        end
+        
         try
-            O.P{i};
+            property_name=O.property_name{i};
         catch
-            O.P{i}.null='';
+            property_name=sprintf('D%d',i);
+            try;O.property_name{i}=property_name;end
         end
-
-        if ~isfield(O.P{i},'property_name')
-            O.P{i}.property_name=sprintf('D%d',i);
-        end
-        if ~isfield(O.P{i},'property_name_size')
-            O.P{i}.property_name_size=length(O.P{i}.property_name);
-        end
-
-        if    (O.P{i}.property_name_size)~=(length(O.P{i}.property_name))
-            mgstat_verbose(sprintf('%s : adjusting property name length',mfilename),10);
-            O.P{i}.property_name_size=length(O.P{i}.property_name);
-        end
-        fwrite(fid,O.P{i}.property_name_size,'uint32','b');
-        fwrite(fid,O.P{i}.property_name,'char');
+        fwrite_charstar(fid,property_name);
+        
     end
 
     for j=1:O.n_data
@@ -116,3 +113,12 @@ if O.type_def==10
 end
 
 fclose(fid);
+
+
+
+function fwrite_charstar(fid,str);
+    str_len=length(str)+1;
+    str_len = fwrite(fid,str_len,'uint32','b');
+    fwrite(fid,str,'char');
+    fwrite(fid,0,'char');
+
