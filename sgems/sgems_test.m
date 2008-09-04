@@ -3,8 +3,10 @@
 % Call : 
 %   S=sgems_test('sgsim');
 %   S=sgems_test('lusim');
+%   S=sgems_test('dssim');
+%   S=sgems_test('snesim_std');
 %
-function S=sgems_test(alg,dim);
+function [S,Sc]=sgems_test(alg,dim);
  
 if nargin==0;
     alg='sgsim';
@@ -22,8 +24,12 @@ mgstat_verbose(sprintf('%s : Testing SGeMS algorithm ''%s''',mfilename,alg),10)
 
 S=sgems_get_par(alg);
 
+S.XML.parameters.Nb_Realizations.value=2;
+
 S.dim=dim;
 
+%%
+% UNCONDITIONAL SIMULATION!!!
 S=sgems_grid(S);
 
 
@@ -33,34 +39,37 @@ for i=1:min([S.XML.parameters.Nb_Realizations.value 12])
     pcolor(S.x,S.y,S.D(:,:,1,i)');shading interp;
     axis image
 end
-suptitle(alg);
+[axh,th]=watermark(sprintf('%s : unconditional simulation',alg));
+set(th,'interpreter','none')
+%%
+% CONDITIONAL SIMULATION!!!
+Sc=S;
 
-% MAKE A TEST WITH CONDITIONAL SIMULATION!!!
-S2=S;
-
-d_obs=[10 10 0 0; 1 1 0 3];
+% conditional data
+d_obs=[30 10 0 0; 5 5 0 1];
 header{1}='X';header{2}='Y';header{3}='Z';
 header{4}='DATA';
-S2.f_obs='obs.sgems';
-O=sgems_write_pointset(S2.f_obs,d_obs,header,'OBS');
+Sc.f_obs='obs.sgems';
+O=sgems_write_pointset(Sc.f_obs,d_obs,header,'OBS');
 
 % conditional simulation
+%Sc.XML.parameters.Hard_Data.grid=O.point_set;
+%Sc.XML.parameters.Hard_Data.property=O.property_name{1};
+%Sc.XML.parameters.Assign_Hard_Data.value=1;
+%Sc.XML.parameters.Nb_Realizations.value=100;
 
-%O=sgems_read(S.f_obs,0);
-%S.XML.parameters.Hard_Data.grid=O.point_set;
-%S.XML.parameters.Hard_Data.property=O.property_name{1};
-%S.XML.parameters.Assign_Hard_Data.value=0;
-%S2=S;
-S2.XML.parameters.Nb_Realizations.value=100;
-S2=sgems_grid(S2);
+% conditional simulation
+Sc=sgems_grid(Sc);
 
 figure;
 subplot(1,2,1);
-imagesc(reshape(mean(S2.data'),S.dim.nx,S.dim.ny));axis image;colorbar
+imagesc(reshape(mean(Sc.data'),S.dim.nx,S.dim.ny));colorbar;axis image
 title('E-type mean')
 subplot(1,2,2);
-imagesc(reshape(var(S2.data'),S.dim.nx,S.dim.ny));axis image;colorbar
+imagesc(reshape(var(Sc.data'),S.dim.nx,S.dim.ny));colorbar;axis image
 title('E-type variance')
+[axh,th]=watermark(sprintf('%s : conditional simulation',alg));
+set(th,'interpreter','none')
 
 
 

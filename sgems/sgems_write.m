@@ -110,6 +110,33 @@ if strcmp(O.type_def,'Point_set');
         %
         %   end
     end
+elseif strcmp(O.type_def,'Cgrid');
+    disp(sprintf('%s : Writing CARTESIAN GRID (Cgrid) to %s',mfilename,filename))
+    
+    % POINT SET NAME
+    fwrite_charstar(fid,O.grid_name);
+    
+    % VERSION
+    fwrite(fid,O.version,'int32','b');
+
+    % SIZE
+    fwrite(fid,[O.nx O.ny O.nz],'uint32','b');
+    fwrite(fid,[O.xsize O.ysize O.zsize],'float32','b');
+    fwrite(fid,[O.x0 O.y0 O.z0],'float32','b');
+
+    % Properties
+    fwrite(fid,O.n_prop,'uint32','b');
+
+    for i=1:O.n_prop
+        fwrite_charstar(fid,O.property{i});
+    end
+
+    % Data
+    for i=1:O.n_prop
+        O.data(i,:)=fwrite(fid,O.data(i,:),'float32','b');
+    end
+
+    
 end
 
 fclose(fid);

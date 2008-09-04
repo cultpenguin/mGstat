@@ -32,8 +32,8 @@ if isfield(S.dim,'z');
     end
 end
 
-if ~isfield(S.dim,'nx');S.dim.nx=30;end
-if ~isfield(S.dim,'ny');S.dim.ny=30;end
+if ~isfield(S.dim,'nx');S.dim.nx=70;end
+if ~isfield(S.dim,'ny');S.dim.ny=60;end
 if ~isfield(S.dim,'nz');S.dim.nz=1;end
 
 if ~isfield(S.dim,'dx');S.dim.dx=1;end
@@ -46,23 +46,18 @@ if ~isfield(S.dim,'z0');S.dim.z0=0;end
 
 
 % Generate default python script
-[py_script,S,XML]=sgems_grid_py(S);
+[py_script,S]=sgems_grid_py(S);
 
 % delete output eas file
-
-
-
 try
     % sgsim, dssim, LU_sim
-    property_name=XML.parameters.Property_Name.value;
+    property_name=S.XML.parameters.Property_Name.value;
 catch
     % snesim_std
-    property_name=XML.parameters.Property_Name_Sim.value;
+    property_name=S.XML.parameters.Property_Name_Sim.value;
 end
+
 eas_out=sprintf('%s.out',property_name);
-
-
-%eas_out=sprintf('%s.out',XML.parameters.Property_Name.value);
 if exist([pwd,filesep,eas_out])
     delete([pwd,filesep,eas_out]);
 end
@@ -79,6 +74,10 @@ sgems(py_script);
 
 
 S.data=read_eas(eas_out);
+sgems_out=sprintf('%s.sgems',property_name);
+if exist(sgems_out)
+    S.O=sgems_read(sgems_out);
+end
 
 S.x=[0:1:(S.dim.nx-1)]*S.dim.dx+S.dim.x0;
 S.y=[0:1:(S.dim.ny-1)]*S.dim.dy+S.dim.y0;
