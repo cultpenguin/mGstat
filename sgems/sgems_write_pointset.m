@@ -26,11 +26,15 @@ O.point_set=title;
 O.n_prop=1;
 
 if isempty(header)
+    h{1}='X';
+    h{2}='Y';
+    if ndim>2, h{3}='Z';end
     for j=1:O.n_prop;
-        h{j}=sprintf('D%03d',j);
+        h{j+ndim}=sprintf('D%03d',j);
     end
     header=h;
 end
+
 for i=1:O.n_prop
     O.property_name{i}=header{i+ndim};
 end
