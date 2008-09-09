@@ -1,3 +1,12 @@
+% sgems_grid : run sgems on GRID
+% 
+% Ex :
+% S=sgems_get_par('snesim_std');
+% S.dim.x=[0:.25:5];
+% S.dim.y=[0:.25:12];
+% S.dim.z=[0];
+% S=sgems_grid(S);
+%
 function S=sgems_grid(S,obs);
 
 if ~isfield(S,'dim'), S.dim.null=0;end

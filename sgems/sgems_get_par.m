@@ -1,3 +1,13 @@
+% sgems_get_par : get default sgems parameter files
+% 
+% Ex:
+%   S=sgems_get_par('snesim_std');
+%   S=sgems_grid(sgems_get_par('snesim_std'));
+%
+%   S=sgems_grid(sgems_get_par('sgsim'));
+%
+% Call with no arguments for a list of supported algoritm types
+%
 function [S,par_type]=sgems_get_par(par_type);
 
 S.null='';
