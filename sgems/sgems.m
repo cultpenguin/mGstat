@@ -3,7 +3,7 @@
 % To run an python script through SGeMS run 
 %   sgems('name_of_python_script.py')
 %
-% To run SGeMS using a GUI run 
+% To run SGeMS form the current working directory, using a GUI run 
 %   sgems 
 %
 % The installation directory of SGeMS is set to c:\Program Files\SGeMS
@@ -26,7 +26,6 @@
 %
 function sgems(py_script);
 
-
 if isempty(getenv('GSTLAPPLIHOME'))
     sgems_bin_install='c:\Program Files\SGeMS';
     setenv('GSTLAPPLIHOME',sgems_bin_install);
@@ -38,7 +37,7 @@ sgems_bin=[sgems_bin_install,filesep,'sgems.exe'];
 
 
 if nargin==0;
-    system(sprintf('%s &',sgems_bin));
+    system(sprintf('"%s" &',sgems_bin));
     return
 end
 if (exist(py_script,'file')~=2)
