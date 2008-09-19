@@ -1,4 +1,8 @@
-% rayinv_load_tx
+% rayinv_load_tx : load travel time formatted rayinv2 file
+%
+% CALL : 
+%   rayinv_load_tx(filename,use_type,xmin,xmax)
+%
 function D = rayinv_load_tx(filename,use_type,xmin,xmax)
 if nargin==0, filename='tx.in'; end
 if nargin<2, use_type=[1:1:100];end
