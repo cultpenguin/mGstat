@@ -14,6 +14,10 @@ end
 
 set(0,'DefaultFigurePaperType',paper_type);
 set(0,'DefaultFigurePaperOrientation',paper_orientation);
+
+set(gcf,'PaperType',paper_type);
+set(gcf,'PaperOrientation',paper_orientation);
+
 set(gcf,'PaperPositionMode','Manual');
 PS=get(gcf,'PaperSize');
 b=.1;

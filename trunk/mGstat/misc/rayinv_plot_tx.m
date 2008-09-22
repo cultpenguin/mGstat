@@ -1,4 +1,4 @@
-% rayinv_plot_tx:plot travel time data from tx.in file
+% rayinv_plot_tx : plot travel time data from tx.in file
 %  
 % Ex:
 %   D=rayinv_load_tx('tx.in');
@@ -17,7 +17,7 @@
 %     drawnow;pause;
 %   end
 %
-function rayinv_plot_tx(ishot,D);
+function L=rayinv_plot_tx(ishot,D);
 if nargin<1
     D=rayinv_load_tx('tx.in');
     ishot=1;
@@ -51,7 +51,9 @@ k=0;
 for is=ishot
     
     k=k+1;
-    subplot(nsub,nsub,k)
+    if nsub>1
+        subplot(nsub,nsub,k)
+    end
     
     itypes=unique(D(is).itype);
     j=0;

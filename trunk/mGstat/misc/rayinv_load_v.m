@@ -1,7 +1,7 @@
 % rayinv_load_v : reads a RAYINVR model file into a matlab structure
 %
 % CALL : 
-%    v=rayinv_load_v('v.in')'
+%    v=rayinv_load_v('v.in')
 %    [vvv,xx,yy,v]=rayinv_grid_v(v,xx,yy);
 %
 %    [vvv,xx,yy,v]=rayinv_grid_v
