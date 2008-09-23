@@ -36,10 +36,7 @@ function tmap=fast_fd_2d(x,z,V,Sources);
         disp(fd_bin);
         return
     end
-    if length(V)==1
-        V=ones(length(z),length(x)).*V;
-    end
-    
+
     if exist('log.file','file') == 2
         % THIS MAKES FAST RUN MUCH FASTER
         try
@@ -52,8 +49,8 @@ function tmap=fast_fd_2d(x,z,V,Sources);
     if nargin==0
         nx=110;
         nz=80;
-        x=[1:1:nx].*1;
-        z=[1:1:nz].*1;
+        x=[1:1:nx].*1-40;
+        z=[1:1:nz].*1-40;
         V=ones(nz,nx)*2;
         V(1:(nz/2),:)=4;
         
@@ -61,10 +58,13 @@ function tmap=fast_fd_2d(x,z,V,Sources);
         
         t=fast_fd_2d(x,z,V,Sources);
         
-        contourf(x,z,t);
+        contour(x,z,t,80);
+        hold on;plot(Sources(1),Sources(2),'k*');hold off
         axis image
     end
-  
+    if length(V)==1
+        V=ones(length(z),length(x)).*V;
+    end  
   nx=length(x);
   nz=length(z);
   ns=size(Sources,1);  

@@ -16,6 +16,6 @@ i=i+1;F{i}='fort.51';
 for i=1:length(F);
     d=dir(F{i});
     if length(d)>0
-        delete(F{i});
+        delete(F{i})
     end
 end
