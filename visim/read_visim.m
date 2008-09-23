@@ -3,7 +3,11 @@
 % read visim parameter file (and input/output files of they exists)
 %
 function obj=read_visim(filename)
-  
+
+  if nargin==0;
+      filename='visim.par';
+  end
+
   if exist(filename,'file')~=2,
     help read_visim
     obj=[];

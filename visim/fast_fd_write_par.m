@@ -62,8 +62,11 @@ function o=fast_fd_write_par(sx,sz,o);
   if ~isfield(o,'ny');o.ny=1;end
   if ~isfield(o,'nz');o.nz=81;end
   
+  % NOTE THAT FAST IS HARDCODED TO %10.3F below
+  % but i have trie to use %10.5f fro DX, and it seems to work.
+  
   f2=fopen(f_forheader,'w');
-  fprintf(f2,'%10.3f%10.3f%10.3f%10.3f%10.3f%10.3f%10.3f%10d%10d%10d\n',o.xmin,o.xmax,o.ymin,o.ymax,o.zmin,o.zmax,o.dx,o.nx,o.ny,o.nz);
+  fprintf(f2,'%10.3f%10.3f%10.3f%10.3f%10.3f%10.3f%10.5f%10d%10d%10d\n',o.xmin,o.xmax,o.ymin,o.ymax,o.zmin,o.zmax,o.dx,o.nx,o.ny,o.nz);
   fclose(f2);
   
   
