@@ -43,7 +43,7 @@ alg=S.XML.parameters.algorithm.name;
 
 if nargin<2;
     try    
-        py_script=[alg,'.py'];
+        py_sccript=[alg,'.py'];
     catch
         py_script='sgems.py';
     end
