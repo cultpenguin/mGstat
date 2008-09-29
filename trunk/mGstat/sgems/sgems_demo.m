@@ -9,6 +9,10 @@
 % To run the test on all available algorithms use :
 %   sgems_test;
 %
+% A calculation time of -1 indicates that the demo could
+%   not be run
+% 
+%
 function [S,Sc,t]=sgems_demo(alg,dim);
  
 if nargin==0;
