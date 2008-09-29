@@ -18,7 +18,7 @@ if nargin==0;
     j=0;
     for i=1:length(d);
         if (d(i).isdir)
-            if (~strcmp(d(i).name,'.')&(~strcmp(d(i).name,'..')))
+            if ( (~strcmp(d(i).name,'.')) & (~strcmp(d(i).name,'..')) & (~strcmp(d(i).name,'CVS')) )
                 j=j+1;
                 par_type{j}=d(i).name;
                 mgstat_verbose(sprintf('%s : available SGeMS type %s ',mfilename,par_type{j}),10)
@@ -26,6 +26,7 @@ if nargin==0;
             end
         end
     end
+    S=par_type;
     return
 end
 
