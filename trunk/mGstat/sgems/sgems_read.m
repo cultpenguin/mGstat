@@ -1,3 +1,11 @@
+% sgems_read : read an SGeMS binary formmated file
+%              both PointSets and CartesianGrids are supported
+%
+% Call :
+%    O=sgems_read('data.sgems');
+%
+%    O is a matlab structure containing all read information
+% 
 function O=sgems_read(filename,readdata)
 
 if nargin<1
@@ -110,11 +118,14 @@ elseif strcmp(O.type_def,'Cgrid')
         return
     end
     
-    O.data=zeros(O.n_prop,O.nx*O.ny*O.nz);
+    %O.data=zeros(O.n_prop,O.nx*O.ny*O.nz);
+    O.data=zeros(O.nx*O.ny*O.nz,O.n_prop);
     O.D=zeros(O.nx,O.ny,O.nz,O.n_prop);
     for i=1:O.n_prop
-        O.data(i,:)=fread(fid,O.nx*O.ny*O.nz,'float32','b');
-        O.D(:,:,:,i)=reshape(O.data(i,:),O.nx,O.ny,O.nz);
+%        O.data(i,:)=fread(fid,O.nx*O.ny*O.nz,'float32','b');
+%        O.D(:,:,:,i)=reshape(O.data(i,:),O.nx,O.ny,O.nz);
+        O.data(:,i)=fread(fid,O.nx*O.ny*O.nz,'float32','b');
+        O.D(:,:,:,i)=reshape(O.data(:,i),O.nx,O.ny,O.nz);
     end
     
     

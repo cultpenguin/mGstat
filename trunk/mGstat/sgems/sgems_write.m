@@ -42,7 +42,21 @@ elseif strcmp(O.type_def,'Grid_set');
 else
     mgstat_verbose(sprintf('%s : unsupported type definition (%d)',mfilename,O.type_def))
 end
-    
+
+
+if ~isfield(O,'version')
+    O.version=100;
+end
+
+n_prop=size(O.data,2);
+if ~isfield(O,'n_prop')
+    O.n_prop=size(O.data,2);
+end
+if (n_prop)~=(O.n_prop),
+    O.n_prop=n_prop;
+    mgstat_verbose(sprintf('%s : adjusting n_prop=%d',mfilename,n_prop),10);
+end
+
 
 % TYPE DEF
 fwrite_charstar(fid,O.type_def)
@@ -55,9 +69,6 @@ if strcmp(O.type_def,'Point_set');
     fwrite_charstar(fid,O.point_set)
 
     % VERSION
-    if ~isfield(O,'version')
-        O.version=100;
-    end
     fwrite(fid,O.version,'int32','b');
     if (O.version<100)
         mgstat_verbose(sprintf('%s : file too old (%s)',mfilename,file))
@@ -70,12 +81,6 @@ if strcmp(O.type_def,'Point_set');
     if (n_data)~=(O.n_data),
         O.n_data=n_data;
         mgstat_verbose(sprintf('%s : adjusting n_data=%d',mfilename,n_data),10);
-    end
-
-    n_prop=size(O.data,2);
-    if (n_prop)~=(O.n_prop),
-        O.n_prop=n_prop;
-        mgstat_verbose(sprintf('%s : adjusting n_prop=%d',mfilename,n_prop),10);
     end
 
     fwrite(fid,O.n_data,'uint32','b');
@@ -133,7 +138,7 @@ elseif strcmp(O.type_def,'Cgrid');
 
     % Data
     for i=1:O.n_prop
-        O.data(i,:)=fwrite(fid,O.data(i,:),'float32','b');
+        fwrite(fid,O.data(:,i),'float32','b');
     end
 
     
