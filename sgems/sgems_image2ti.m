@@ -13,7 +13,9 @@
 %   sgems_image2ti;
 %
 %
-function sgems_image2ti(filename_img);
+function file_out=sgems_image2ti(filename_img);
+
+file_out=[];
 
 if nargin==0
     sgems_image2ti('*.png');
@@ -71,8 +73,8 @@ for i=1:length(d_img)
             
         end
     end
-    
-    sgems_write_grid(x,y,z,data,[filename,'.sgems'],'TI',property);
+    file_out=[filename,'.sgems'];
+    sgems_write_grid(x,y,z,data,file_out,'TI',property);
 
 
 end
