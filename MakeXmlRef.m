@@ -1,22 +1,32 @@
-f{1}=dir('*.m')
-f{2}=dir('visim/*.m')
+i=0;
+i=i+1;f{i}='*.m';
+i=i+1;f{i}='visim/*.m';
+i=i+1;f{i}='sgems/*.m';
+i=i+1;f{i}='snesim/*.m';
+i=i+1;f{i}='misc/*.m';
 
-fid=fopen('mgstat_function.xml','w');
 
 for ff=1:length(f)
+    
+    fid=fopen(sprintf('mgstat_function_%s.xml',fileparts(f{ff})),'w');
 
-    for i=1:length(f{ff})
-      [p,name,ext]=fileparts(f{ff}(i).name);
+    
+    FILES=dir(f{ff});
+    
+    for i=1:length(FILES)
+      [p,name,ext]=fileparts(FILES(i).name);
       disp(name)
       h=help(name);
       
-      fprintf(fid,'<sect1 id=\"%s\"><title>%s</title>\n',name,name);
+      fprintf(fid,'<sect2 id=\"%s\"><title>%s</title>\n',name,name);
       fprintf(fid,'<para><programlisting><![CDATA[%s]]></programlisting></para>\n',h);
-      fprintf(fid,'</sect1>\n\n');
+      fprintf(fid,'</sect2>\n\n');
       
     end
-    
-  end
 
-fclose(fid);
+
+    fclose(fid);
+
+    
+end
   
