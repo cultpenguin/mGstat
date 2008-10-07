@@ -1,10 +1,10 @@
 % sgems_demo : testing various SGeMS algorithms available from mGstat 
 %
 % Call : 
-%   S=sgems_test('sgsim');
-%   S=sgems_test('lusim');
-%   S=sgems_test('dssim');
-%   S=sgems_test('snesim_std');
+%   S=sgems_demo('sgsim');
+%   S=sgems_demo('lusim');
+%   S=sgems_demo('dssim');
+%   S=sgems_demo('snesim_std');
 %
 % To run the test on all available algorithms use :
 %   sgems_test;
@@ -13,7 +13,7 @@
 %   not be run
 % 
 %
-function [S,Sc,t]=sgems_demo(alg,dim);
+function [S,Sc,t]=sgems_demo(alg,dim,nsim);
  
 if nargin==0;
     alg=sgems_get_par;
@@ -43,11 +43,14 @@ if nargin<2
     dim.ny=30;
     dim.nz=1;
 end
+if nargin<3
+    nsim=9;
+end
 
 mgstat_verbose(sprintf('%s : Testing SGeMS algorithm ''%s''',mfilename,alg),10);
 
 S=sgems_get_par(alg);
-S.XML.parameters.Nb_Realizations.value=1;
+S.XML.parameters.Nb_Realizations.value=nsim;
 S.dim=dim;
 
 %%
@@ -91,7 +94,8 @@ for i=1:S.XML.parameters.Nb_Realizations.value
 end
 [axh,th]=watermark(sprintf('%s : unconditional simulation',alg));
 set(th,'interpreter','none');
-print('-dpdf',sprintf('sgems_demo_%s_uncond',alg))
+colormap(1-gray)
+print('-dpng',sprintf('sgems_demo_%s_uncond',alg))
 
 figure;set_paper('landscape')
 for i=1:S.XML.parameters.Nb_Realizations.value
@@ -108,7 +112,8 @@ for i=1:S.XML.parameters.Nb_Realizations.value
 end
 [axh,th]=watermark(sprintf('%s : conditional simulation',alg));
 set(th,'interpreter','none');
-print('-dpdf',sprintf('sgems_demo_%s_cond',alg))
+colormap(1-gray)
+print('-dpng',sprintf('sgems_demo_%s_cond',alg))
 
 
 figure;set_paper('landscape')
@@ -132,6 +137,6 @@ title('E-type variance (conditional)')
 
 [axh,th]=watermark(sprintf('%s : etype',alg));
 set(th,'interpreter','none')
-print('-dpdf',sprintf('sgems_demo_%s_etype',alg))
+print('-dpng',sprintf('sgems_demo_%s_etype',alg))
 
 

@@ -1,3 +1,13 @@
+% plot_mh_loglikelihood % plot loglikelihood time series
+%                         plots accept ratio
+%
+% Call : 
+%    plot_mh_loglikelihood(L_acc,i_acc,N)
+%
+%
+%
+
+
 function plot_mh_loglikelihood(L_acc,i_acc,N)
 
 cla;
