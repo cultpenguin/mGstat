@@ -54,10 +54,12 @@ function V=write_visim(obj,parfile)
   end
   fprintf(fid,'%s      # -  Summary of volgeom.eas\n',obj.fvolsum.fname);
   fprintf(fid,'%8.3g %8.3g       # -  trimming limits for conditioning data\n',obj.trimlimits(1),obj.trimlimits(2));
-  if isfield(obj,'read_covtable')==0, obj.read_covtable=0; end
-  if isfield(obj,'read_lambda')==0, obj.read_lambda=1; end
-  fprintf(fid,['%d  %d %d                # - debugging level: -1,0,1,2,3, ' ...
-               'read_covtable,read_lambda\n'],obj.debuglevel,obj.read_covtable,obj.read_lambda);
+  if isfield(obj,'read_covtable')==0, obj.read_covtable=-1; end
+  if isfield(obj,'read_lambda')==0, obj.read_lambda=-1; end
+  if isfield(obj,'read_volnh')==0, obj.read_volnh=-1; end
+  if isfield(obj,'read_randpath')==0, obj.read_randpath=-1; end
+  fprintf(fid,['%d  %d %d %d %d              # - debugging level: -1,0,1,2,3, ' ...
+               'read_covtable,read_lambda,read_volnh\n'],obj.debuglevel,obj.read_covtable,obj.read_lambda,obj.read_volnh,obj.read_randpath);
   fprintf(fid,'%s                    # - file for output\n',obj.out.fname);
   
   fprintf(fid,'%d                     # - number of realizations to generate\n',obj.nsim);
