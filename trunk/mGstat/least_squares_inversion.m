@@ -3,7 +3,12 @@
 % CALL : [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d0);
 function [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d0,type);
   
-  if nargin<6, type=2;end
+if length(m0)==1
+    m0=ones(size(G,2),1).*m0;
+end
+    
+
+if nargin<6, type=2;end
 
   if type==2,
     S = Cd + G*Cm*G';    

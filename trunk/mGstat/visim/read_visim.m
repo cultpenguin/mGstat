@@ -105,7 +105,7 @@ function obj=read_visim(filename)
       obj.read_volnh=-1;
   end
   try 
-      obj.read_randpath=tmp(4);
+      obj.read_randpath=tmp(5);
   catch
       obj.read_randpath=-1;
   end
