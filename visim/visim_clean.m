@@ -43,8 +43,7 @@ function visim_clean(V,del_out)
         end
     end
     
-    %delete('fort.59');
-    %delete('fort.1');
+    delete('fort.*');
     
     if nargin==2
         if ((del_out==1)&(isfield(V,'out'))),
