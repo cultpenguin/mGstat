@@ -288,7 +288,6 @@ function obj=read_visim(filename)
   
   % CREATE A MARIX OF SIM DATA :
   if isfield(obj,'out')
-    
     nxyz=obj.nx*obj.ny*obj.nz;
     if obj.nsim>0
       if (size(obj.out.data,1)==nxyz*obj.nsim)
@@ -325,9 +324,16 @@ function obj=read_visim(filename)
         disp(sprintf('SETTING NSIM=%d TO MATCH SIM DATA',nsim));
       end
     else
-      [d]=read_eas(['visim_estimation_',obj.out.fname]);
-      obj.etype.mean=reshape(d(:,1),obj.nx,obj.ny);
-      obj.etype.var=reshape(d(:,2),obj.nx,obj.ny);
+        fname=['visim_estimation_',obj.out.fname];
+        if exist([pwd,filesep,fname],'file');
+            [d]=read_eas(fname);
+            try
+                obj.etype.mean=reshape(d(:,1),obj.nx,obj.ny);
+                obj.etype.var=reshape(d(:,2),obj.nx,obj.ny);
+            catch
+                mgstat_verbose(sprintf('%s : Failed to load estimations results from %s',mfilename,fname),8)
+            end
+        end
     end
     
   end
