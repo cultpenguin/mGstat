@@ -116,6 +116,7 @@ c-----------------------------------------------------------------------
       real sim_mean(MXYZ), sim_std(MXYZ)
       real sumderr,sumerr,temp
       real meantmh,stdtmh
+      real gvar_org, gmean_org, cbb_org
 
       character tmpfl*80
 c      integer lout_krig
@@ -250,9 +251,8 @@ c     SETUP THE RANDOM PATH - NEW STYLE
 
 c      sequential 1,2,3,4.... path
 c      do i=1,nxyz
-c         order(i)=i
+c        order(i)=i
 c      enddo
-
 871    format(A,'_',A)
 
 c      READ/WRITE RANDOM PATH FROM/TO DISK? 
@@ -373,7 +373,7 @@ c     end do
 c     write(*,*) 'sim(1)=',sim(1)
       
       do in=1,nxyz
-         if((in/500*500 .eq.in).AND.(idbg.ge.0)) write(*,103)in
+        if((in/500*500 .eq.in).AND.(idbg.ge.0)) write(*,103)in
 c     if(in/1*1 .eq.in) write(*,103)in
 c     write(*,103)in
  103     format('************   currently on node 
@@ -519,15 +519,15 @@ c     double check for not enough data with search radius.
             WRITE(ldbg,*) ' __WARNING: neighboring data points and',
      +                    ' grid node have not been found.', 
      +                    ' Global mean and variance is assigned.'
-c            WRITE(*,*) ' __WARNING: neighboring data points and',
-c     +                    ' grid node have not been found.', 
-c     +                    ' Global mean and variance is assigned.'
-c            WRITE(*,*)    'index,nusev=',index,nusev
+            WRITE(*,*) ' __WARNING: neighboring data points and',
+     +                    ' grid node have not been found.', 
+     +                    ' Global mean and variance is assigned.'
+            WRITE(*,*)    'index,nusev=',index,nusev
 		     endif 
                      cmean  = gmean 
                      cstdev = sqrt(gvar)
                   else
-                     
+                  
                      if (idbg.ge.3) then
                         WRITE(ldbg,*) 'cmean=', cmean, 'cstdev=', cstdev   
                      end if
@@ -540,15 +540,54 @@ c     that the variance of the realization does not become artificially
 c     inflated:
 c     
                      
-c                     write(*,*) 'in=',in
+c                     write(*,*) 'in=',in,' index=',index
                      lktype = ktype
                      if(ktype.eq.1.and.(nclose+ncnode).lt.4)lktype=0
 
-                     call krige_volume(ix,iy,iz,xx,yy,zz,lktype,
-     +                    gmean,cmean,cstdev,index)
-                                         
-c                     stop
+                     do_partition=0
+                        
+                     if (do_partition.eq.1) then 
+
+
+                        gvar_org=gvar
+                        gmean_org=gmean
+                        cbb_org=cbb
+
+
+                        write(*,*) 'gmean=',gmean
+     1                      ,' sqrt(gvar)=',sqrt(gvar)
+                        
+                        do j=1,2
+                           nusev=1
+                           usev(1)=j
+c     write(*,*) 'gmean=',gmean,' sqrt(gvar)=',sqrt(gvar)
+                           call krige_volume(ix,iy,iz,xx,yy,zz,lktype,
+     +                          gmean,cmean,cstdev,index)
+                           
+                           write(*,*) 'cmean=',cmean,' cstdev=',cstdev
+                           gmean=cmean
+                           gvar=cstdev*cstdev
+                           cbb=gvar
+c     write(*,*) '--'
+                        enddo
+                     
+                        gmean=gmean_org
+                        gvar=gvar_org
+                        cbb=cbb_org
+                        
+
+                     else
+                        call krige_volume(ix,iy,iz,xx,yy,zz,lktype,
+     +                       gmean,cmean,cstdev,index)
+                     
+c                        write(*,*) 'cmean=',cmean,' cstdev=',cstdev
+
+                     endif
+
+
                   endif
+                  
+
 
 
 
