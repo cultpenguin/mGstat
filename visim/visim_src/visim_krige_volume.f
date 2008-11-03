@@ -343,7 +343,7 @@ c
       
 C     ccb is the the unknown data variance
       cmean  = 0.0
-c      write(*,*) 'cbb=',cbb
+c      write(*,*) 'cbb=',cbb,sqrt(cbb)
       cstdev = cbb
       sumwts = 0.0
       do i=1,na

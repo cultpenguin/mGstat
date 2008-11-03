@@ -1,7 +1,7 @@
 % visim_to_G : Setup linear forward matrix (only 2D)
 %
 % CALL : 
-%  [G,d_obs,d_var,Cd,Cm]=visim_to_G(V);
+%  [G,d_obs,d_var,Cd,Cm,m0]=visim_to_G(V);
 %
 function [G,d_obs,d_var,Cd,Cm,m0]=visim_to_G(V);
   
