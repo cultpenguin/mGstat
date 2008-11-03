@@ -36,6 +36,9 @@ function [sv,d]=semivar_synth(V,d,gstat,nugtype);
     end
     sv=sv+gamma;
   end
+
+  sv(find(d==0))=0;
+  
   % Make sure sv(0)=0;
   %if nugtype==1;
   %  sv(find(d<1e-9))=0;

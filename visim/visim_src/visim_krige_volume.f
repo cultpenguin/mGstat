@@ -113,12 +113,10 @@ c      write(*,*) 'nusev=',nusev,MAXVOLS,' na=',na
 
 C     NUMBER OF EQUATIONS
       neq = na + nusev
-      if(idbg.ge.3) then
-         write(*,*)
-         write(*,*) 'Using na=',na,' nusev=',nusev
+      if(idbg.ge.1) then
+         write(*,*) 'Using na=',na,' nusev=',nusev,
+     +        ' nclose, ncnode= ',nclose,ncnode
       endif
-      write(*,*) 'Using na=',na,' nusev=',nusev,
-     + ' nclose, ncnode= ',nclose,ncnode
 
 ccc      write(*,*) na,'  ',nusev
 c     

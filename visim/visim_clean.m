@@ -10,6 +10,8 @@
 %
 function visim_clean(V,del_out)
     
+    fclose all;
+
     if nargin<2
         del_out=1;
     end

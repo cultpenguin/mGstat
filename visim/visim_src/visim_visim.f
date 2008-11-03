@@ -258,13 +258,12 @@ c      enddo
 c      READ/WRITE RANDOM PATH FROM/TO DISK? 
       if(read_randpath.eq.0) then      
 	  write(98) (order(i),i=1,nxyz)          
-	  write(98) (sim(i),i=1,nxyz)          
-	  write(98) (i,i=1,nxyz)          
+c	  write(98) (sim(i),i=1,nxyz)          
       endif	
 c	write(*,*) 'read_randpath=',read_randpath
       if(read_randpath.eq.1) then      
 	  read(98) (order(i),i=1,nxyz)
-	  read(98) (sim(i),i=1,nxyz)
+c	  read(98) (sim(i),i=1,nxyz)
       endif	
 
 
@@ -374,7 +373,7 @@ c     end do
 c     write(*,*) 'sim(1)=',sim(1)
       
       do in=1,nxyz
-         if((in/1000*1000 .eq.in).AND.(idbg.gt.0)) write(*,103)in
+         if((in/500*500 .eq.in).AND.(idbg.ge.0)) write(*,103)in
 c     if(in/1*1 .eq.in) write(*,103)in
 c     write(*,103)in
  103     format('************   currently on node 

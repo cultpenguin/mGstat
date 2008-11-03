@@ -99,9 +99,13 @@ function cov=precal_cov(pos1,pos2,V,options);
     for k=1:nparts
         progress_txt(k,nparts,'Calculating variance')
         k1=(k-1)*nn+1;
-        k2=min([k*nn n_est1]);
+        if k==nparts
+            k2=n_est1;
+        else
+            k2=min([k*nn n_est1]);
+        end
         try
-            cov(k1:k2,:) = cov(k1:k2,:) + semivar_synth(V(iV),d(k1:k2,:));
+            cov(k1:k2,:) = cov(k1:k2,:) + semivar_synth(V(iV),d(k1:k2,:),0);
         catch
             keyboard
         end
@@ -114,7 +118,6 @@ function cov=precal_cov(pos1,pos2,V,options);
 
     
     end
-
     cov=gvar-cov;
 
     
