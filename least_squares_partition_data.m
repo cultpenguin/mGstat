@@ -8,7 +8,7 @@
 % large, and large compared to the number of model parameters.
 % 
 %
-% CALL : [m_est,Cm_est]=least_squares_partition_data(G,Cm,Cd,m0,d0,nsubsets,use_eq);
+% CALL : [m_est,Cm_est]=least_squares_partition_data(G,Cm,Cd,m0,d_obs,nsubsets,use_eq);
 function [m_new,C_new]=least_squares_partition_data(G,Cm,Cd,m0,d0,nsubsets,use_eq);
 
 if nargin<6
@@ -16,6 +16,7 @@ if nargin<6
 end
 if nargin<7
     use_eq=6211;
+    use_eq=337;
 end    
 n=size(Cd,1);
 ipart=round(linspace(0,n,nsubsets+1));
@@ -24,6 +25,7 @@ C_old=Cm;
 m_old=m0;
 
 
+t1=now;
 for i=1:nsubsets
     i1=ipart(i)+1;
     i2=ipart(i+1);
@@ -42,9 +44,7 @@ for i=1:nsubsets
         C_old=sparse(C_old);
         S=C_old*(G_small')*inv(Cd_small+G_small*C_old*G_small');
         m_new = m_old + S*(d_small - G_small*m_old);
-        toc
         C_new = C_old - S*G_small*C_old;
-        toc;
     else
         % Tarantola (2005) eqn. 6.212
         S = inv( G_small'*inv(Cd_small)*G_small + inv(C_old));
@@ -55,3 +55,6 @@ for i=1:nsubsets
     C_old = C_new;    
     
 end
+t2=now;
+mgstat_verbose(sprintf('%s : Elapsed time : %6.1fs',mfilename,(t2-t1).*(24*3600)),10);
+  

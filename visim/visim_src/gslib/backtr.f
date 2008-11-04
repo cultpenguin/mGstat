@@ -39,6 +39,7 @@ c   utail            option to handle values greater than vrg(nt):
 c   utpar            parameter required for option utail
 c
 c
+c   MODIFIED by TMH 10/2008, to allow discrete target distribution
 c
 c-----------------------------------------------------------------------
       parameter(EPSLON=1.0e-20)
@@ -83,8 +84,7 @@ c         write(*,*) 'upper tail'
                   backtr = (lambda/(1.0-gcum(vrgs)))**(1.0/utpar)
             endif
       else
-c
-c Value within the transformation table:
+cc Value within the transformation table:
 c
 c         write(*,*) 'IN table',discrete
 c         stop

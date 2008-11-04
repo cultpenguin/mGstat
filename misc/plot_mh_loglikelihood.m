@@ -10,7 +10,7 @@
 
 function plot_mh_loglikelihood(L_acc,i_acc,N)
 
-cla;
+%cla;
 
 if nargin<2
     i_acc=1:1:length(L_acc);

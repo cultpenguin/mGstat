@@ -544,55 +544,12 @@ c                     write(*,*) 'in=',in,' index=',index
                      lktype = ktype
                      if(ktype.eq.1.and.(nclose+ncnode).lt.4)lktype=0
 
-                     do_partition=0
-                        
-                     if (do_partition.eq.1) then 
-
-
-                        gvar_org=gvar
-                        gmean_org=gmean
-                        cbb_org=cbb
-
-
-                        write(*,*) 'gmean=',gmean
-     1                      ,' sqrt(gvar)=',sqrt(gvar)
-                        
-                        do j=1,2
-                           nusev=1
-                           usev(1)=j
-c     write(*,*) 'gmean=',gmean,' sqrt(gvar)=',sqrt(gvar)
-                           call krige_volume(ix,iy,iz,xx,yy,zz,lktype,
-     +                          gmean,cmean,cstdev,index)
-                           
-                           write(*,*) 'cmean=',cmean,' cstdev=',cstdev
-                           gmean=cmean
-                           gvar=cstdev*cstdev
-                           cbb=gvar
-c     write(*,*) '--'
-                        enddo
-                     
-                        gmean=gmean_org
-                        gvar=gvar_org
-                        cbb=cbb_org
-                        
-
-                     else
-                        call krige_volume(ix,iy,iz,xx,yy,zz,lktype,
+                     call krige_volume(ix,iy,iz,xx,yy,zz,lktype,
      +                       gmean,cmean,cstdev,index)
                      
-c                        write(*,*) 'cmean=',cmean,' cstdev=',cstdev
-
-                     endif
-
-
+c                     write(*,*) 'cmean=',cmean,' cstdev=',cstdev
                   endif
                   
-
-
-
-
-
-
 c
 c TO CHECK THAT THE KRIGED MEAN SURFACE IS COORECT SET THE STANDARD DEV=0 
 c      cstdev=0
@@ -618,41 +575,27 @@ c DRAW A RANDOM SAMPLE FROM THE CHOSEN DISTRBUTION
 
 
 c                  write(*,*)'',cmean,cstdev
-                  p = acorni(idum)   	
+                  p = acorni(idum)   
+c                  write(*,*)'p=',p,' pkr=',pkr
+
                   if (p .ge. pkr) then 
                      if (doestimation.eq.0) then
-cc                        if (cmean.lt.0) then
-c HERE WE HAVE A BUG :::::                           
-cc                           sim(index) = -1*simu(-1*cmean,cstdev)
-cc                           write(*,*) 'neg ',cmean,sim(index)
-cc                        else
-                       sim(index) = simu(cmean,cstdev)                           write(*,*) 'pos ',cmean,sim(index)
-cc                   endif
-
-                   endif
-
-      	           if(sim(index).lt.zmin) then
-c	           	write(*,*) 'ZMIN VIOLATION',zmin,sim(index)
-	           endif
-	           if(sim(index).gt.zmax) then
-c	           	write(*,*) 'ZMAX VIOLATION',zmax,sim(index)
-	           endif
- 
+                        sim(index) = simu(cmean,cstdev)                           write(*,*) 'pos ',cmean,sim(index)
+                     endif
                      
-                     
+                     if(sim(index).lt.zmin) then
+	           	write(*,*) 'ZMIN VIOLATION',zmin,sim(index)
+                     endif
+                     if(sim(index).gt.zmax) then
+	           	write(*,*) 'ZMAX VIOLATION',zmax,sim(index)
+                     endif
+                      
                      sim_mean(index) = cmean
                      sim_std(index) = cstdev                         
                   else
                      write(*,*) 'PKR PKR',pkr
                      sim(index) = cmean
                   end if
-c                  write(*,*)'',in,sim_mean(index),
-c     1                 sim_std(index),sim(index),p
-c                  write(*,*)''
-                  
-                  if ((idbg.ge.14).AND.(in.eq.2)) then
-                     stop
-                  endif 
                   
                   
  111              format(1x, 6(f10.5, 1x))
