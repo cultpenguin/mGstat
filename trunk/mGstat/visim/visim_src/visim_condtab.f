@@ -24,7 +24,7 @@ c     INPUT VARIABLES:
 c     
 c     OUTPUT VARIABLES:
 c     
-c     condtab : conditoinal prob llokup table 
+c     condtab : conditoinal prob lookup table 
 c     
 c     ORIGINAL : Thomas Mejer Hansen                       DATE: August 2005
 c
@@ -96,7 +96,7 @@ c     WRITING NSCORE TABLE TO FILE
 
 
       if (idbg.gt.0) then 
-         write(*,*) ' Nscore MEAN range = ',min_Gmean, max_Gmean, n_Gmean
+         write(*,*) ' Nscore MEAN range=',min_Gmean,max_Gmean,n_Gmean
          write(*,*) ' Nscore VAR range = ',min_Gvar, max_Gvar, n_Gvar
          write(*,*) ' Number of quantiles = ',n_q
          write(*,*) ' Number of samples drawn in nscore space = ',n_monte
@@ -163,56 +163,18 @@ c		write(*,*) 'xcpdf(i)=',i,x_cpdf(i)
             mean_sim=dummy1
             var_sim=dummy2
 
-C
-C c    MONTE CARLO SAMPLING OF GAUSSIAN PDF
-C             sum_sim=0
-C             sum_sim2=0
-C             do imonte=1,n_monte
-C                p = acorni2(idum)         
-C                do i=1,10
-C                   p = acorni2(idum) 
-C                   if ((p.gt.x_quan(1)).AND.(p.lt.x_quan(n_q))) then
-C                      exit
-C                   else
-C                      if (i.gt.20) then
-C                         write(*,*) 'QUANTILE OUTSIDE RANGE',
-C      1                       i,p,x_quan(1),x_quan(n_q)
-C                      endif
-C                   endif
-C                enddo
-C c     Just in case quantile still out of range
-C                if (p .le. x_quan(1)) then
-C                   index_cdf = 1
-C                else if (p .gt. x_quan(n_q)) then
-C                   index_cdf = n_q
-C c                  write(*,*) 'x_cpdf(index_cdf)',x_cpdf(index_cdf),n_q
-C                endif
-C                call locate(x_quan,n_q,1,n_q,p,index_cdf)
-C                sum_sim =  sum_sim + x_cpdf(index_cdf)
-C                sum_sim2 = sum_sim2 + x_cpdf(index_cdf)*x_cpdf(index_cdf)
-C             enddo               
-C             sum_sim=sum_sim/n_monte
-C             sum_sim2=sum_sim2/n_monte
-C             mean_sim = sum_sim
-C             var_sim = sum_sim2 - sum_sim*sum_sim
-
-            
             if (var_sim.lt.0) var_sim=0
 
-c           write(*,*) 'mean_sim=',mean_sim
-c		    stop
             condlookup_mean(im,iv)=mean_sim
             condlookup_var(im,iv)=var_sim
             do i=1,n_q
                condlookup_cpdf( im,iv,i) = x_cpdf(i)
             enddo
 
-         if (idbg.gt.2) write(*,*) 'Gmean, gGvar, SimMean, SimVar= ',
-     1        Gmean,gGvar,mean_sim
-
+         if (idbg.gt.2) write(*,*) 'gm,gv,mean_sim,mean_var',
+     1        Gmean,gGvar,mean_sim,var_sim
             
          enddo
-
          
       enddo
 
@@ -224,10 +186,8 @@ c     wirte lookup tables to disk
          open(30, file=tmpfl, status = 'unknown')
          write(tmpfl,771) 'cond_var',outfl
          open(31, file=tmpfl, status = 'unknown')
-         if (idbg.ge.6) then
-            write(tmpfl,771) 'cond_cpdf',outfl
-            open(32, file=tmpfl, status = 'unknown')
-         endif
+         write(tmpfl,771) 'cond_cpdf',outfl
+         open(32, file=tmpfl, status = 'unknown')
  771     format(A,'_',A)
          do im=1,n_Gmean
             do iv=1,n_Gvar
@@ -388,10 +348,8 @@ c      if (idbg.gt.14) then
          write(*,*) 'Kmean,Kstd -->',Kmean,Kstd
          write(*,*) 'Fmean,Fstd -->',Fmean,Fstd
          write(*,*) 'Fmean,Fstd -->',drawfrom_condtab,draw
-            	stop
 	endif
       
-c      endif
 
 
 

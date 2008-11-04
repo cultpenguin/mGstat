@@ -7,6 +7,8 @@ if length(m0)==1
     m0=ones(size(G,2),1).*m0;
 end
     
+t1=now;
+  
 
 if nargin<6, type=2;end
 
@@ -21,7 +23,6 @@ if nargin<6, type=2;end
     end
    
   else
-  
     
     if size(G,1)==1,
       goodG=find(G~=0);
@@ -41,3 +42,6 @@ if nargin<6, type=2;end
       Cm_est = Cm -PP(:,goodG)*Cm(goodG,:);
     end
   end
+  t2=now;
+  
+  mgstat_verbose(sprintf('%s : Elapsed time : %6.1fs',mfilename,(t2-t1).*(24*3600)),10);
