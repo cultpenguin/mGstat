@@ -26,14 +26,15 @@
 %
 function sgems(py_script);
 
-if isempty(getenv('GSTLAPPLIHOME'))
-    sgems_bin_install='c:\Program Files\SGeMS';
-    setenv('GSTLAPPLIHOME',sgems_bin_install);
-else
-    sgems_bin_install=getenv('GSTLAPPLIHOME');
+sgems_bin_install='c:\Program Files\SGeMS';
+if (exist('getfield','file')==2)
+    if ~isempty(getenv('GSTLAPPLIHOME'))
+        sgems_bin_install=getenv('GSTLAPPLIHOME');
+    else
+        setenv('GSTLAPPLIHOME', sgems_bin_install);
+    end
 end
 sgems_bin=[sgems_bin_install,filesep,'sgems.exe'];
-
 
 
 if nargin==0;
