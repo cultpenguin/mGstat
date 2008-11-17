@@ -2,11 +2,11 @@
 # Makefile for generating "libgs.a"
 #
 
-#COMP = ifort
-#FFLAGS = -c -O
+COMP = ifort
+FFLAGS = -c -O
 #COMP = gfortran
-COMP = g77
-FFLAGS =  -march=i386 -c -O2 
+#COMP = g77
+#FFLAGS =  -march=i386 -c -O2 
 
 LIBGS = ../libgs.a
 SRCS = acorni.f acorni2.f backtr.f beyond.f blue.f chknam.f chktitle.f cova3.f \

@@ -583,12 +583,12 @@ c                  write(*,*)'p=',p,' pkr=',pkr
                         sim(index) = simu(cmean,cstdev)                           write(*,*) 'pos ',cmean,sim(index)
                      endif
                      
-                     if(sim(index).lt.zmin) then
-	           	write(*,*) 'ZMIN VIOLATION',zmin,sim(index)
-                     endif
-                     if(sim(index).gt.zmax) then
-	           	write(*,*) 'ZMAX VIOLATION',zmax,sim(index)
-                     endif
+c                     if(sim(index).lt.zmin) then
+c	           	write(*,*) 'ZMIN VIOLATION',zmin,sim(index)
+c                     endif
+c                     if(sim(index).gt.zmax) then
+c	           	write(*,*) 'ZMAX VIOLATION',zmax,sim(index)
+c                     endif
                       
                      sim_mean(index) = cmean
                      sim_std(index) = cstdev                         
