@@ -619,10 +619,10 @@ ccccc
             volobs(i)=cumsum
             volvar(i)=vvtmp
             nvol = nvol + 1            
-            if (i.ge.MAXVOLS) then
+            if (i.gt.MAXVOLS) then
                if (idbg.gt.-1) 
      +              write(*,*) 'You specify more volumes, than assigned
-     +              by fortran, please change MAXVOLX=',MAXVOLS
+     +              by fortran, please change MAXVOLS=',MAXVOLS
                stop
             end if
             
