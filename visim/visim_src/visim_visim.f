@@ -515,7 +515,7 @@ c
 c     double check for not enough data with search radius. 
                   
                   if((nclose+ncnode+nusev).lt.1) then
-    	             if (idbg.gt.-2) then
+    	             if (idbg.gt.1) then
             WRITE(ldbg,*) ' __WARNING: neighboring data points and',
      +                    ' grid node have not been found.', 
      +                    ' Global mean and variance is assigned.'
