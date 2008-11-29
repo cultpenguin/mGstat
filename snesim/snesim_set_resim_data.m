@@ -10,7 +10,7 @@
 %
 %    pos : center point pos=[x,y] for pertubation
 %
-function S=snesim_set_resim_data(S,D,lim,pos)
+function [S pos]=snesim_set_resim_data(S,D,lim,pos)
 
 
 if nargin<2
@@ -35,7 +35,7 @@ end
 [xx,yy]=meshgrid(S.x,S.y);
 used=xx.*0+1;
 
-used(find( (abs(xx-pos(1))<lim(1)) & (abs(yy-pos(2))<lim(2)) ))=0;
+used(abs(xx-pos(1)<lim(1)) & abs(yy-pos(2))<lim(2))=0;
 ih=find(used);
 
 d_cond=[xx(ih) yy(ih) yy(ih).*0+S.y(1) D(ih)];
