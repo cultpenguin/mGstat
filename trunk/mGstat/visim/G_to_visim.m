@@ -52,15 +52,16 @@ function V=G_to_visim(x,y,z,d_obs,G,Cd,m0,parfile);
     for i=1:nobs;
         % NEXT LINE SHOULD BE CONSISTENT WITH VISIM PARAMETER FILE
         % G MATRIX NEEDS TO BE WRITTEN IN A SPEICIFIC MANNER ..
-        Gg=reshape(G(i,:),nx,ny)';
-        %Gg=reshape(G(i,:),ny,nx);
-        
+        %Gg=reshape(G(i,:),nx,ny)';
+        Gg=reshape(G(i,:),ny,nx);
+
         ig=find(Gg>0);    
         Gg_sparse{i}.x=xx(ig);
         Gg_sparse{i}.y=yy(ig);
         Gg_sparse{i}.g=Gg(ig);        
         n(i)=length(ig);       
     end
+    
     % SETUP VOLSUM AND VOLGEOM
     %nobs=1;
     volgeom=zeros(sum(n(1:nobs)),5);

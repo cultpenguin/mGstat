@@ -47,8 +47,7 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
 
   tS=fast_fd_2d(x,y,Vel,S);
   tR=fast_fd_2d(x,y,Vel,R);
-
-  if (size(tS,3)==1)*(size(tR,3)>1)
+  if (size(tS,3)==1)&(size(tR,3)>1)
       ttS=tR.*0;
       for i=1:size(tR,3)
           ttS(:,:,i)=tS;
