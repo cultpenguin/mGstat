@@ -40,12 +40,12 @@ c
       integer MAXSBX, MAXSBY, MAXSBZ, MAXDAT, MAXNOD, MAXSAM
       integer MAXNST, MAXREF, MAXCAT, MV, MAXVOLS, MAXDINVOL
 
-      parameter(MAXX   =   201, MAXY   = 201, MAXZ   = 1,
+      parameter(MAXX   =   101, MAXY   = 121, MAXZ   = 1,
      +          MAXCTX =  MAXX, MAXCTY =MAXY, MAXCTZ =MAXZ,
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
      +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,
      +          MAXNST =     4, MAXREF=10000,MAXCAT=24, 
-     +          MV=20         , MAXVOLS=1 , MAXDINVOL=199)
+     +          MV=20         , MAXVOLS=800 , MAXDINVOL=199)
 c
 c Fixed Parameters:
 c
