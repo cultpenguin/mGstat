@@ -1,7 +1,7 @@
 % kernel_multiple : computes the sensitivity kernel for a wave traveling from S to R.
 %
 % CALL : 
-%    [K,RAY,Gk,Gray,timeS,timeR,raypath]=kernel_multiple(Vel,x,y,z,S,R,T,alpha);
+%    [K,RAY,Gk,Gray,timeS,timeR,raypath]=kernel_multiple(Vel,x,y,z,S,R,T,alpha,Knorm);
 %
 % IN : 
 %    Vel : Velocity field
@@ -12,6 +12,7 @@
 %    R [1,3] : Location of Receiver
 %    T : Donminant period
 %    alpha: controls exponential decay away ray path
+%    Knorm [1] : normaliztion of K [0]:none, K:[1]:vertical
 %
 % OUT :
 %    K : Sensitivity kernel
@@ -27,11 +28,14 @@
 %
 % TMH/2006
 %
-function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,T,alpha,doPlot);
+function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,T,alpha,Knorm,doPlot);
 
   if nargin<7, T=2.7; end
   if nargin<8, alpha=1; end
   if nargin<9, 
+      Knorm=0;
+  end
+  if nargin<10, 
       doPlot=0;
   end
   x0=x(1);
@@ -47,7 +51,8 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
 
   tS=fast_fd_2d(x,y,Vel,S);
   tR=fast_fd_2d(x,y,Vel,R);
-  if (size(tS,3)==1)&(size(tR,3)>1)
+
+  if (size(tS,3)==1)*(size(tR,3)>1)
       ttS=tR.*0;
       for i=1:size(tR,3)
           ttS(:,:,i)=tS;
@@ -85,7 +90,6 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
     [U,V]=gradient(tS(:,:,is));
     start_point=R(is,:);
     raypath = stream2(xx,yy,-U,-V,start_point(1),start_point(2),str_options);
-    
     raypath=raypath{1};
       
     % GET RID OF DATA CLOSE TO SOURCE (DIST<DX)
@@ -126,32 +130,35 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
        r=RAY(:,:,is);
        RAY(:,:,is)=r.*raylength_mat(is)./sum(r(:));
   end 
- 
   % REMOVE ALL SENSITIVITY BELOW sen; 
-  sens=0.0001;
-  K(find(K<sens))=0;
+  %sens=0.00000000001;
+  %K(find(K<sens))=0;
  
+  % SOMETIMES THIS IS BAD !!!!
   % NORMALIZE K
-  for is=1:ns
-       r=K(:,:,is);
-       K(:,:,is)=r.*raylength_mat(is)./sum(r(:));
-  end 
+  %for is=1:ns
+  %     r=K(:,:,is);
+  %     K(:,:,is)=r.*raylength_mat(is)./sum(r(:));
+  %end 
  
-  % Horisontally normalization of Fresenel Kernel
-  % SIMPLE normalization in case of cross borehole
-  % inversion between two vertical borehole
-  % i.e. when wave travel horizontally.
-  for is=1:ns
-      single_ray=RAY(:,:,is);
-      sRAY=sum(single_ray);      
-      for i=1:size(single_ray,2);
-          sk=sum(K(:,i,is));
-          if sk>0
-              K(:,i,is)=sRAY(i).*K(:,i,is)./sk;
+  
+  
+  if Knorm==1
+      % Vertical normalization of Fresenel Kernel
+      % SIMPLE normalization in case of cross borehole
+      % inversion between two vertical borehole
+      % i.e. when wave travel horizontally.
+      for is=1:ns
+          single_ray=RAY(:,:,is);
+          sRAY=sum(single_ray);
+          for i=1:size(single_ray,2);
+              sk=sum(K(:,i,is));
+              if sk>0
+                  K(:,i,is)=sRAY(i).*K(:,i,is)./sk;
+              end
           end
       end
   end
-
   
   % REPORT 
   Gray=zeros(ns,length(x)*length(y));
