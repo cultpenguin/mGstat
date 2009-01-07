@@ -34,13 +34,17 @@ fwrite(fid,O.magic_number,'uint32');
 
 % TYPE DEFINITION
 if ~isfield(O,'type_def');
-    O.type_def='Point_set';
+    if isfield(O,'nx');
+        O.type_def='Cgrid';
+    else
+        O.type_def='Point_set';
+    end
 end
-if strcmp(O.type_def,'Point_set');
-elseif strcmp(O.type_def,'Grid_set');
-    mgstat_verbose(sprintf('%s : unsupported type definition (%d)',mfilename,O.type_def))
+if (strcmp(O.type_def,'Point_set')|strcmp(O.type_def,'Cgrid'));
+    mgstat_verbose(sprintf('%s : Using type definition %d',mfilename,O.type_def))
 else
-    mgstat_verbose(sprintf('%s : unsupported type definition (%d)',mfilename,O.type_def))
+    mgstat_verbose(sprintf('%s : unsupported type definition (%d)',mfilename,O.type_def),10)
+    return
 end
 
 
