@@ -68,6 +68,7 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
   str_options = [0.1 10000];
   [xx,yy]=meshgrid(x,y);
   for is=1:ns
+      progress_txt(is,ns);
     mt=min(min(dt(:,:,is)));
     dt(:,:,is)=dt(:,:,is)-mt;
 
