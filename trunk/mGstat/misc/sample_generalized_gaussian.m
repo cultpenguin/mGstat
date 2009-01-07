@@ -43,12 +43,14 @@ end
 acc=0;
 while acc==0
 
-    %d_test = d + randn(1)*step;
-    d_test = d + (rand(1)-.5)*(step);
+    d_test = d + randn(1)*step;
+    %d_test = d + (rand(1)-.5)*(step);
     
     L_test = generalized_gaussian(d_test,d0,sigma,p);
 
-%    P_acc = L_test/L_init;
+    % meth1
+    %   P_acc = L_test/L_init;
+    % meth2
     P_acc = exp(log(L_test)-log(L_init));
     if P_acc>rand(1)
         % ACCEPT
