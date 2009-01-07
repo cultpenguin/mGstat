@@ -4,7 +4,7 @@ if nargin<5, p=2; end
 
 if nargin==0;
     p=100;
-    step=4;
+    step=.1;
     d0=10;sigma=4;
     N=300000;
     d=zeros(N,1);d(1)=d0;
