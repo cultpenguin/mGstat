@@ -10,7 +10,6 @@
 %
 function [S,par_type]=sgems_get_par(par_type);
 
-S.null='';
 par_dir=[mgstat_dir,filesep,'sgems',filesep,'def_par'];
 
 if nargin==0;
@@ -26,10 +25,13 @@ if nargin==0;
             end
         end
     end
-    S=par_type;
+    if nargout>0;
+        S=par_type;
+    end
     return
 end
 
+%S.null='';
 def_dir=[par_dir,filesep,par_type];
 if exist(def_dir,'dir')~=7
     mgstat_verbose(sprintf('%s : Could not locate dir %s',mfilename,def_dir),10);
