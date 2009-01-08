@@ -1,4 +1,4 @@
-% sgems_write_xml
+% sgems_write_xml : write XML formatted SGEMS parameter files
 %
 % Call : 
 %   filename=sgems_write_xml(XML,filename);

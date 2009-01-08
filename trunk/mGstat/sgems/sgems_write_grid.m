@@ -1,3 +1,9 @@
+% sgems_write_grid : write binary formatted SGEMS grid
+%
+% CALL :
+%   sgems_write_grid(x,y,z,data,filename,grid_name,property);
+%
+% See also: sgems_write, sgems_write_pointset, sgems_read, sgems2eas, eas2sgems
 %
 function sgems_write_grid(x,y,z,data,filename,grid_name,property);
 

@@ -1,10 +1,18 @@
-function O=sgems_write_pointset(filename,data,header,title,ndim);
+% sgems_write_pointset : write binary formatted SGEMS point data set
+%
+% Call :
+%
+%   O=sgems_write_pointset(filename,data,header,title,ndim);
+%
 %
 % Example : read EAS file, and save it as an SGEMS POINTSET file
 %
 % [data,header,title]=read_eas('pointset.gslib');
 % sgems_write_pointset('test_write.sgems',data,header,title);
 %
+% See also: sgems_write, sgems_write_grid, sgems_read, sgems2eas, eas2sgems
+%
+function O=sgems_write_pointset(filename,data,header,title,ndim);
 
 if nargin<4
     title='DATA';

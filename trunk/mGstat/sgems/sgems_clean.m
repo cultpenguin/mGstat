@@ -1,3 +1,7 @@
+% sgems_clean : removes verbose output from SGEMS;
+% Deletes the files sgems_history.log and sgems_staus.log
+% from the currect directory
+% 
 function sgems_clean(cwd)
 
 if nargin==0
