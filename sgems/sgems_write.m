@@ -6,7 +6,7 @@
 %   O: sgems data structure
 %   filename : filename
 %
-% See also: sgems_read, sgems_read_pointset, sgems_write_pointset
+% See also: sgems_read, sgems_write_pointset, sgems_write_grid
 %
 function O=sgems_write(filename,O)
 
