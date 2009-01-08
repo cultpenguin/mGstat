@@ -1,11 +1,44 @@
+% sgems_grid_py : Generates default python script for simulation on a grid
+%
+% Call :
+%    [py_script,S,XML]=sgems_grid_py(S,py_script);
+%
+% S: sgems Matlab structure
+% py_script : filename of python script
+%
+% Examples:
+%   
+% --Simple example performing sequenatial Gaussian simulation
+% --in a 40x30 grid using default SGSIM parameter file
+%   S=sgems_get_par('sgsim')
+%   S.dim.nx=40; S.dim.ny=30; S.dim.nz=1;
+%   S.dim.dx=1; S.dim.dy=1; S.dim.dz=1;
+%   S.dim.x0=0; S.dim.y0=0; S.dim.z0=0;
+%   pyflie=sgems_grid_py(S)
+%   % This will generate a python script called sgsim.py
+%   % that can be run in SGeMS or from the commandline using
+%   % sgems -s sgsim.par
+%  
+% --Another example using the XML parameter file 'myPar.xml', creating 
+% --the python script 'myPythonScript:
+%   S.xml_file='myPar.xml';
+%   S.dim.nx=40; S.dim.ny=30; S.dim.nz=1;
+%   pyflie=sgems_grid_py(S,'myPythonScript.py')
+%
+
 function [py_script,S,XML]=sgems_grid_py(S,py_script);
 
 if nargin<1
     S.xml_file='sgsim.par'; % GET DEF PAR FILE
 end
 
+
 if isfield(S,'xml_file')==0
     S.xml_file=sgems_write_xml(S);
+end
+
+if ~isfield(S,'XML')
+    S.XML=sgems_read_xml(S.xml_file);
 end
 
 alg=S.XML.parameters.algorithm.name;

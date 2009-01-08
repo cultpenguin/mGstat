@@ -1,6 +1,8 @@
 % dssim : Direct Sequential SIMulation 
 %         using histogram reproduction (Deutsch 2000, Oz et. al. 2003)
 %
+% Call :
+% [simdata,options]=dssim(pos_known,val_known,pos_est,V,options);
 %
 
 function [simdata,options]=dssim(pos_known,val_known,pos_est,V,options);

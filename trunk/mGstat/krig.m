@@ -154,13 +154,18 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   % DETERMINE TYPE OF KRIGING
   if  any(strcmp(fieldnames(options),'polytrend'))
     ktype=2; % Ktrend
-    mgstat_verbose('Kriging with a trend',20);
+    mgstat_verbose('Kriging with a trend',-1);
   elseif  (any(strcmp(fieldnames(options),'mean')) | any(strcmp(fieldnames(options),'sk_mean')))
     ktype=0; % SK
-    mgstat_verbose('Simple Kriging',20);
+    mgstat_verbose('Simple Kriging',-1);
   else 
-    ktype=1; % OK
-    mgstat_verbose('Ordinary Kriging',20);
+    if size(val_known,1)==1
+        ktype=0;
+        mgstat_verbose('Forcing simple kriging (only one data point)',20);
+    else
+        ktype=1; % OK
+        mgstat_verbose('Ordinary Kriging',-1);
+    end
   end
 
   nknown=size(pos_known,1);
@@ -280,12 +285,8 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     % to zero
     k(1:nknown)=0;
   end
-
-  
-  
   
   % SOLVE THE LINEAR SYSTEM
-  
   lambda = inv(K)*k;
 
   if ktype==0
