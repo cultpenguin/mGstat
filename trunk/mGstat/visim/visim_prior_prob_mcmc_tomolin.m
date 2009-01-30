@@ -15,7 +15,7 @@
 %
 % See also : visim_prior_prob;
 %
-function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options);
+function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options);
 
     mf=[];    mfAll=[];
     if nargin==0
@@ -31,6 +31,8 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options
         options.null='';
     end
         
+    if ~isfield(options,'lsq_maxit'); options.lsq_maxit=5;end
+    
     if isfield(options,'maxit')==0
         options.maxit=1000;        
     end
@@ -40,7 +42,7 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options
     if isfield(options,'gridsearch')==0
         options.gridsearch=0;
     end
-    
+        
     fid=fopen('optim.txt','w');
 
     if isfield(options,'a_hmax')==0, options.a_hmax.null=0;end
@@ -72,6 +74,7 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options
     if isfield(options.a_hmax,'n')==0,  
         options.a_hmax.n=ceil((options.a_hmax.max-options.a_hmax.min)./options.a_hmax.step);
         if isnan(options.a_hmax.n), options.a_hmax.n=1; end
+        if isinf(options.a_hmax.n), options.a_hmax.n=1; end
     end
     if (options.a_hmax.n==1)
         hmax_range=(options.a_hmax.min+options.a_hmax.max)/2;
@@ -82,6 +85,7 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options
     if isfield(options.a_hmin,'n')==0,  
         options.a_hmin.n=ceil((options.a_hmin.max-options.a_hmin.min)./options.a_hmin.step);
         if isnan(options.a_hmin.n), options.a_hmin.n=1; end
+        if isinf(options.a_hmin.n), options.a_hmin.n=1; end
     end
     if (options.a_hmin.n==1)
         hmin_range=(options.a_hmin.min+options.a_hmin.max)/2;
@@ -90,7 +94,12 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options
     end
 
     if isfield(options.a_vert,'n')==0,  
-        options.a_vert.n=ceil((options.a_vert.max-options.a_vert.min)./options.a_vert.step);
+	%if (options.a_vert.step>0)
+	        options.a_vert.n=ceil((options.a_vert.max-options.a_vert.min)./options.a_vert.step);
+	%else
+	%	options.a_vert.n=1;
+	%end
+        if isinf(options.a_vert.n), options.a_vert.n=1; end
         if isnan(options.a_vert.n), options.a_vert.n=1; end
     end
     if (options.a_vert.n==1)
@@ -98,6 +107,8 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options
     else        
         vert_range=linspace(options.a_vert.min,options.a_vert.max,options.a_vert.n);
     end
+
+    
     [grid.hmax,grid.hmin,grid.vert]=meshgrid(hmax_range,hmin_range,vert_range);
     grid.np=prod(size(grid.hmax));
        
@@ -141,10 +152,18 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options
     L.old=-1000;
     
     % LINEARIZE AROUND THE PRIOR MODEL
-    m0=V.gmean.*ones(V.nx,V.ny);
+    if isfield(options,'m0');
+        m0=options.m0;
+    else
+        m0=V.gmean.*ones(V.nx,V.ny);
+    end
     options_lsq=options;
-    options_lsq.maxit=10;
+    if isfield(options,'lsq_maxit'); options_lsq.maxit=options.lsq_maxit; else  options_lsq.maxit=3; end
+    if isfield(options,'lsq_step'); options_lsq.step=options.lsq_step; else  options_lsq.step=.02; end
+    lsq_op=options_lsq; % USER FINER OPTIM FOR STARTER
+    options_lsq.maxit=options_lsq.maxit*4;
     [V,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options_lsq);
+    options_lsq=lsq_op; % GO BACK TO REQUESTES SETTINSG
     m0=V.etype.mean;
     
     keepon=1;
@@ -235,21 +254,25 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options
           V.Va=Va.new;
 
           options_lsq=options;
-          options_lsq.maxit=2;
-          options_lsq.step=0.02;
+          if isfield(options,'lsq_maxit'); options_lsq.maxit=options.lsq_maxit; else  options_lsq.maxit=3; end
+          if isfield(options,'lsq_step'); options_lsq.step=options.lsq_step; else  options_lsq.step=.02; end
           % LINEARIZE
           % 1. LINEARIZE SOME
           % options.lsq=0;options.linearize=1;options.nocal_kernel=1;
           [V,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options_lsq);
           m0 = V.etype.mean;
           
-          [L.new,Vc,Vu,out]=visim_prior_prob(V,options);
+          [L.new,Vc,Vu,out_pp]=visim_prior_prob(V,options);
           li_all(i_all)=L.new;
-          li_all_u(i_all)=Lmean_u;
           h_all(i_all,:)=[Va.new.a_hmax Va.new.a_hmin Va.new.a_vert];
           d_all(i_all,:)=[Va.new.ang1 Va.new.ang2 Va.new.ang3];
           gv_all(i_all,:)=Va.new.cc;
-
+          
+          li_all_u(i_all)=out_pp.Lmean_u;
+          
+          semi_mean_dir(i_all,:)=out_pp.semi_mean_dir;
+          semi_mean(i_all)=out_pp.semi_mean;
+                    
         else
           L.new=-1e+8;
           Lmean_u=L.new;
@@ -291,7 +314,7 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options
         catch 
         end
         if isfield(options,'name')
-          eval(sprintf('save TEST_%s',options.name));
+          eval(sprintf('save TEST_LINEARIZE_%s',options.name));
         else
           save TEST
         end
@@ -308,6 +331,8 @@ function [L,li,h,d,gv,mfAll]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,options
     mfAll.h=h_all;
     mfAll.f=d_all;
     mfAll.g=gv_all;
-
+    
+    out.semi_mean_dir=semi_mean_dir;   
+    out.semi_mean=semi_mean;;   
     
     fclose all;

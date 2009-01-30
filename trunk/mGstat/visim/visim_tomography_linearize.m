@@ -44,7 +44,7 @@ function [Vout,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
 
     md = m_curr - m_new;
     mean_change(it) = mean(abs(md(:)));
-    
+
     m_new = m_new + options.step.*(m_curr-m_new);
     
     disp(sprintf('%s : linearizing iteration %d/%d',mfilename,it,options.maxit))
