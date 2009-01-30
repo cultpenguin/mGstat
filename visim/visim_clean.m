@@ -27,6 +27,7 @@ function visim_clean(V,del_out)
         end
         
     else
+        try;mgstat_verbose(sprintf('Deleting ''%s''',V),10);end
         try
             if ~isstruct(V)
                 V=read_visim(V);
