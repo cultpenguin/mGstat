@@ -19,6 +19,8 @@
 function cov=precal_cov(pos1,pos2,V,options);
   
   options.dummy='';
+  if ~isfield(options,'verbose'), options.verbose=0;end
+  
   % DETERMINE ISORANGE
   if  any(strcmp(fieldnames(options),'isorange'))
     isorange=options.isorange;
@@ -64,10 +66,9 @@ function cov=precal_cov(pos1,pos2,V,options);
     for i=1:n_est1;
       t=toc;
       % progress bar
-      if t>0
+      if ((t>0)&(options.verbose>0))
           di=100;
-          if (i/di)==round(i/di)
-
+          if (i/di)==round(i/di)                           
               progress_txt([i iV],[n_est1 length(V)],sprintf('%s : ',mfilename),'Nested struture');
           end
       end
@@ -97,7 +98,9 @@ function cov=precal_cov(pos1,pos2,V,options);
     % ALLOCATE COV
     cov=zeros(size(d));
     for k=1:nparts
-        progress_txt(k,nparts,'Calculating variance')
+        if (options.verbose>0)
+            progress_txt(k,nparts,'Calculating variance')
+        end
         k1=(k-1)*nn+1;
         if k==nparts
             k2=n_est1;
