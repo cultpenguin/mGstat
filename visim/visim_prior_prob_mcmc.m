@@ -243,7 +243,12 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc(V,options);
             li_all_u(i_all)=out_pp.Lmean_u;
            
             semi_mean_dir(i_all,:)=out_pp.semi_mean_dir;
-            semi_mean(i_all)=out_pp.semi_mean;   
+            semi_mean(i_all)=out_pp.semi_mean;
+            
+            try
+            L_mean_h(i_all,1)=out_pp.Lmean_h{1};
+            L_mean_h(i_all,2)=out_pp.Lmean_h{2};
+            end
         else
           L.new=-1e+8;
           Lmean_u=L.new;
@@ -321,7 +326,7 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc(V,options);
 
     out.semi_mean_dir=semi_mean_dir;   
     out.semi_mean=semi_mean;;   
-
+    try;out.L_mean_h=L_mean_h;end;
     
     
     fclose all;
