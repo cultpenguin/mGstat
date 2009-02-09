@@ -9,7 +9,7 @@
 %  kml_line('line.kml',[55 55.1],[12 12.1],'A TEST','ffffff','4');
 %
 function kml_line(kml_file,lat,lon,name,descr,color,width);
-ele=lat.*0+5;
+ele=lat.*0+50;
 if nargin<1
     kml_file='data.kml';
 end
@@ -26,7 +26,7 @@ try
 catch
     options.width=4;
 end
-options.extrude=1;
+options.extrude=0;
 options.tessellate=1;
 
 fid = fopen(kml_file,'w');
@@ -34,15 +34,15 @@ fprintf(fid,'<?xml version="1.0" encoding="UTF-8"?>\n');
 fprintf(fid,'<kml xmlns="http://www.opengis.net/kml/2.2">\n');
 
 fprintf(fid,'  <Placemark>\n');
-fprintf(fid,'    <Style id="LocalStyle">');
-fprintf(fid,'      <LineStyle>');
-fprintf(fid,'        <color>%s</color>',options.color);
-fprintf(fid,'        <width>%d</width>',options.width);
-fprintf(fid,'      </LineStyle>');
-fprintf(fid,'      <PolyStyle>');
-fprintf(fid,'        <color>7f00ff00</color>');
-fprintf(fid,'      </PolyStyle>');
-fprintf(fid,'    </Style>');
+fprintf(fid,'    <Style id="LocalStyle">\n');
+fprintf(fid,'      <LineStyle>\n');
+fprintf(fid,'        <color>%s</color>\n',options.color);
+fprintf(fid,'        <width>%d</width>\n',options.width);
+fprintf(fid,'      </LineStyle>\n');
+fprintf(fid,'      <PolyStyle>\n');
+fprintf(fid,'        <color>7f00ff00</color>\n');
+fprintf(fid,'      </PolyStyle>\n');
+fprintf(fid,'    </Style>\n');
 fprintf(fid,'    <name>%s</name>\n',name);
 fprintf(fid,'    <description>%s\n',descr);
 fprintf(fid,'    </description>\n');
@@ -53,6 +53,7 @@ fprintf(fid,'          <tessellate>%d</tessellate>\n',options.tessellate);
 fprintf(fid,'          <altitudeMode>absolute</altitudeMode>\n');
 fprintf(fid,'          <coordinates>\n');
 for i=1:length(lat)
+    %fprintf(fid,'            %16.6f,%16.6f\n',lon(i),lat(i));
     fprintf(fid,'            %16.6f,%16.6f,%g\n',lon(i),lat(i),ele(i));
 end
 fprintf(fid,'          </coordinates>\n');
