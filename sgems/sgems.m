@@ -27,7 +27,7 @@
 function sgems(py_script);
 
 sgems_bin_install='c:\Program Files\SGeMS';
-if (exist('getfield','file')==2)
+if (exist('getenv','file')==5)
     if ~isempty(getenv('GSTLAPPLIHOME'))
         sgems_bin_install=getenv('GSTLAPPLIHOME');
     else
