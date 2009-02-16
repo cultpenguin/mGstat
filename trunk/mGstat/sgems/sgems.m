@@ -24,21 +24,48 @@
 %
 % TMH/08/2008
 %
+
+% 
+
 function sgems(py_script);
 
-sgems_bin_install='c:\Program Files\SGeMS';
-if (exist('getenv','file')==5)
-    if ~isempty(getenv('GSTLAPPLIHOME'))
-        sgems_bin_install=getenv('GSTLAPPLIHOME');
+use_wine_on_unix=0;
+
+
+if (isunix==1)
+    if (use_wine_on_unix==1);    
+        sgems_bin_install='~/.wine/drive_c/Program\ Files/SGeMS/';
+        sgems_bin=sprintf('/usr/bin/wine %s/sgems.exe',sgems_bin_install);
     else
-        setenv('GSTLAPPLIHOME', sgems_bin_install);
+        sgems_bin_install='/usr/local/SGeMS';
+        sgems_bin=sprintf('%s/sgems.exe',sgems_bin_install);    
     end
+    setenv('GSTLAPPLIHOME',sgems_bin_install);
+else
+
+    sgems_bin_install='c:\Program Files\SGeMS';
+    if (exist('getenv','file')==5)
+        if ~isempty(getenv('GSTLAPPLIHOME'))
+            sgems_bin_install=getenv('GSTLAPPLIHOME');
+        else
+            setenv('GSTLAPPLIHOME', sgems_bin_install);
+        end
+    end
+    sgems_bin=[sgems_bin_install,filesep,'sgems.exe'];
+    
 end
-sgems_bin=[sgems_bin_install,filesep,'sgems.exe'];
+
+if (exist(sgems_bin,'file')~=2)
+    mgstat_verbose(sprintf(['%s : SGEMS BINARY "%s" does not exist.\n' ...
+                        'UPDATE %s%ssgems.exe'],mfilename,sgems_bin,mgstat_dir,filesep),10);
+    return 
+end
 
 
 if nargin==0;
-    system(sprintf('"%s" &',sgems_bin));
+    mgstat_verbose(sprintf('%s : Running %s',mfilename,sgems_bin),10);
+    system(sprintf('"%s" ',sgems_bin));
+    keyboard
     return
 end
 if (exist(py_script,'file')~=2)
@@ -46,7 +73,8 @@ if (exist(py_script,'file')~=2)
     return 
 end
 cmd=sprintf('"%s" -s %s',sgems_bin,py_script);
-system(cmd);
+mgstat_verbose(sprintf('%s : %s',mfilename,cmd));
+%system(cmd);
 
 
 
