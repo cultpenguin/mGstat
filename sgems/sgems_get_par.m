@@ -11,7 +11,6 @@
 function [S,par_type]=sgems_get_par(par_type);
 
 par_dir=[mgstat_dir,filesep,'sgems',filesep,'def_par'];
-
 if nargin==0;
     d=dir(par_dir);
     j=0;
@@ -33,14 +32,13 @@ end
 
 %S.null='';
 def_dir=[par_dir,filesep,par_type];
+
+
 if exist(def_dir,'dir')~=7
     mgstat_verbose(sprintf('%s : Could not locate dir %s',mfilename,def_dir),10);
     sgems_get_par;
     return;
 end
-
-
-
 
 
 d=dir(def_dir);
@@ -69,7 +67,7 @@ if ~(exist(par_file,'file')==2)
     mgstat_verbose(sprintf('%s : Could not locate %s for %s-type SGeMS',mfilename,par_file,alg),10)
     return
 end
-
+keyboard
 % LOAD TI IF IT EXIST
 ti_file=[par_type,'.ti'];
 if (exist(ti_file,'file')==2)
