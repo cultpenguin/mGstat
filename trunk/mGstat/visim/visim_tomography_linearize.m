@@ -1,6 +1,6 @@
 % visim_tomograhy_linearize
 %
-%  [Vout,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
+%  [Vout,Vlsq,m_new]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
 % 
 function [Vout,Vlsq,m_new]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
 
