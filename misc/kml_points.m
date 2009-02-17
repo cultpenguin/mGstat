@@ -24,10 +24,10 @@ fid = fopen(kml_file,'w');
 fprintf(fid,'<?xml version="1.0" encoding="UTF-8"?>\n');
 fprintf(fid,'<kml xmlns="http://www.opengis.net/kml/2.2">\n');
 if (length(lat)>1)
-    fprintf(fid,'<Folder>');
+    fprintf(fid,'<Folder>\n');
     try
-        fprintf(fid,'      <name>%s</name>',name);
-        fprintf(fid,'      <description>%s</description>',descr);
+        fprintf(fid,'      <name>%s</name>\n',name);
+        fprintf(fid,'      <description>%s</description>\n',descr);
     end
 end    
 fprintf(fid,'<Style id="triangle"><IconStyle><Icon><Scale>0.1</Scale><href>http://maps.google.com/mapfiles/kml/pal4/icon52.png</href></Icon></IconStyle></Style>\n');
@@ -37,6 +37,14 @@ fprintf(fid,'<Style id="globe"><IconStyle><Icon><href>http://maps.google.com/map
 if isnumeric(icon)
     for i=1:length(icon)
     fprintf(fid,'<Style id="%d"><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/pal3/icon%d.png</href></Icon></IconStyle></Style>\n',icon(i),icon(i));
+    end
+end
+
+try
+    if (strcmp(icon(1:4),'http'))
+        % WEB ADDRESS FOR ICCON
+        fprintf(fid,'<Style id="web"><IconStyle><Icon><href>%s</href></Icon></IconStyle></Style>\n',icon);
+        icon='web';
     end
 end
 

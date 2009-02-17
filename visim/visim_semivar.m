@@ -74,9 +74,14 @@ function [gamma,hc,np,av_dist,Mxyz,Md]=visim_semivar(V,usesim,angle,tol,cutoff,w
       try
         [gamma(:,isim),hc,np,av_dist]=calc_gstat_semivar(Mxyz,Md,angle,tol,cutoff,width);
       catch
-        disp(sprintf('%s : Maybe gamma size is wrong (%d)',mfilename,nb))
-        disp('type ''return'' to continue...')
-        keyboard
-      end
+          pause(1);
+          try
+              [gamma(:,isim),hc,np,av_dist]=calc_gstat_semivar(Mxyz,Md,angle,tol,cutoff,width);
+          catch
+              disp(sprintf('%s : Maybe gamma size is wrong (%d)',mfilename,nb))
+              disp('type ''return'' to continue...')
+              keyboard
+          end
+          end
   end
   
