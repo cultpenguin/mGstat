@@ -50,7 +50,7 @@ for i=1:length(d);
             cmd='copy';
         end
 %        cmd2=[cmd,' ''',def_dir,filesep,d(i).name,''' ''',pwd,filesep,filesep,d(i).name,''''];
-        cmd2=[cmd,' "',def_dir,filesep,d(i).name,'" "',pwd,filesep,filesep,d(i).name,'"'];
+        cmd2=[cmd,' "',def_dir,filesep,d(i).name,'" "',pwd,filesep,filesep,d(i).name,'"']
         [status,result] = system(cmd2);
         if strfind(result,'1 fil')
             mgstat_verbose(sprintf('%s : %s',mfilename,result),1)
@@ -67,7 +67,7 @@ if ~(exist(par_file,'file')==2)
     mgstat_verbose(sprintf('%s : Could not locate %s for %s-type SGeMS',mfilename,par_file,alg),10)
     return
 end
-keyboard
+
 % LOAD TI IF IT EXIST
 ti_file=[par_type,'.ti'];
 if (exist(ti_file,'file')==2)

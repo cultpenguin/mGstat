@@ -1,4 +1,4 @@
-% visim_condsim_alt
+% visim_condsim_alt : conditional simuation through error simulation
 %
 %
 function Valt=visim_condsim_alt(V)
@@ -41,10 +41,17 @@ Vcond_est.rseed=rseed;
 Vcond_est.nsim=0;
 Vcond_est.densitypr=0;
 Vcond_est.parfile='Cest.par';
-%Vcond_est.read_covtable=0; % DO NOT READ THE COV TABLE FROM DISK THIS TIME...
+Vcond_est.read_covtable=0; % DO NOT READ THE COV TABLE FROM DISK THIS TIME...
 Vcond_est.read_lambda=0; % DO NOT READ LAMBDA FROM DISK (CALCULATE THEM)
+mgstat_verbose(sprintf('%s : Conditional estimation',mfilename),-1)
 Vcond_est=visim(Vcond_est);
 v_cest=Vcond_est.etype.mean';
+
+if (isunix), cp_command='cp'; else; cp_command='copy';end
+system(sprintf('%s lambda_Cest.out lambda_Cest2.out',cp_command));
+system(sprintf('%s cv2v_Cest.out cv2v_Cest2.out',cp_command));
+system(sprintf('%s cd2v_Cest.out cd2v_Cest2.out',cp_command));
+
 
 for isim=1:nsim
   progress_txt(isim,nsim,V.parfile);
@@ -66,14 +73,15 @@ for isim=1:nsim
   
   % KRIG ERRORS
   % POINT DATA
-  cdata=read_eas(V.fconddata.fname);
-  cdata_err=cdata;
-  [iix,iiy]=pos2index(cdata(:,1),cdata(:,2),V.x,V.y);
-  for i=1:size(cdata,1);
-    cdata_err(i,4)=vfield(iix(i),iiy(i));
+  try
+      cdata=read_eas(V.fconddata.fname);
+      cdata_err=cdata;
+      [iix,iiy]=pos2index(cdata(:,1),cdata(:,2),V.x,V.y);
+      for i=1:size(cdata,1);
+          cdata_err(i,4)=vfield(iix(i),iiy(i));
+      end
+      write_eas('cond.eas',cdata_err);
   end
-  write_eas('cond.eas',cdata_err);
-  
   volsum=read_eas(V.fvolsum.fname);
   volsum(:,3)=d_est;
   %volsum(:,4)=volsum(:,4)./10000; % SET ACTUAL ERROR TO ZERO
@@ -86,9 +94,12 @@ for isim=1:nsim
   Vcond_est2.fconddata.fname='cond.eas';
   Vcond_est2.fvolsum.fname='err.eas';
   Vcond_est2.parfile='Cest2.par';
-  unix('cp lambda_Cest.out lambda_Cest2.out');
-  unix('cp cv2v_Cest.out cv2v_Cest2.out');
-  unix('cp cd2v_Cest.out cd2v_Cest2.out');
+    
+%  if (isunix), cp_command='cp'; else; cp_command='copy';end 
+%  system(sprintf('%s lambda_Cest.out lambda_Cest2.out',cp_command));
+%  system(sprintf('%s cv2v_Cest.out cv2v_Cest2.out',cp_command));
+%  system(sprintf('%s cd2v_Cest.out cd2v_Cest2.out',cp_command));
+  
   Vcond_est2.read_covtable=1; % REUSE COVARIANCE LOOKUP TABLE
   Vcond_est2.read_lambda=1; % READ LAMBDA FROM DISK (DO not CALCULATE THEM)
   Vcond_est2=visim(Vcond_est2);
@@ -105,7 +116,7 @@ for isim=1:nsim
   Valt.D(:,:,isim)=v_csim';
   
 
-  doPlot=0;
+  doPlot=1;
   
   if doPlot==1;
     subplot(2,3,4)
@@ -115,7 +126,7 @@ for isim=1:nsim
     
     subplot(2,3,5)
     plot(d_est_csim,d_obs,'*');
-    xlabel('uncond estimates');ylabel('observations')
+    xlabel('cond estimates');ylabel('observations')
     axis image
     
     
