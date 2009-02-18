@@ -44,7 +44,7 @@ if (isunix==1)
 else
 
     sgems_bin_install='c:\Program Files\SGeMS';
-    if (exist('getenv','file')==5)
+    if (exist('getenv')==5)
         if ~isempty(getenv('GSTLAPPLIHOME'))
             sgems_bin_install=getenv('GSTLAPPLIHOME');
         else
@@ -64,8 +64,7 @@ end
 
 if nargin==0;
     mgstat_verbose(sprintf('%s : Running %s',mfilename,sgems_bin),10);
-    system(sprintf('"%s" ',sgems_bin));
-    keyboard
+    system(sprintf('"%s" &',sgems_bin));
     return
 end
 if (exist(py_script,'file')~=2)
@@ -74,7 +73,7 @@ if (exist(py_script,'file')~=2)
 end
 cmd=sprintf('"%s" -s %s',sgems_bin,py_script);
 mgstat_verbose(sprintf('%s : %s',mfilename,cmd));
-%system(cmd);
+system(cmd);
 
 
 
