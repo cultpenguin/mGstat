@@ -30,8 +30,7 @@ O.data=data(:,(ndim+1):(size(data,2)));
 O.xyz=data(:,1:ndim);
 
 O.point_set=title;
-
-O.n_prop=1;
+O.n_prop=size(data,2)-ndim;
 
 if isempty(header)
     h{1}='X';
@@ -46,6 +45,5 @@ end
 for i=1:O.n_prop
     O.property_name{i}=header{i+ndim};
 end
-
 
 O=sgems_write(filename,O);

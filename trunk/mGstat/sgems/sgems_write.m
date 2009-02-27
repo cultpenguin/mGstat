@@ -109,16 +109,23 @@ if strcmp(O.type_def,'Point_set');
         
     end
 
-    for j=1:O.n_data
-        fwrite(fid,O.xyz(j,:),'float32','b');
-    end
-
-    for k=1:O.n_prop
-        fwrite(fid,O.data(:,k),'float32','b');
-        %   for j=1:O.n_data
-        %
-        %   end
-    end
+  
+    % PADD ZEROS FOR MISSING DIMS
+    if size(O.xyz,2)==1; O.xyz(:,2:3)=0;end
+    if size(O.xyz,2)==2; O.xyz(:,3)=0;end
+    %d=O.xyz';
+    fwrite(fid,transpose(O.xyz),'float32','b');
+    %% old and slower:
+    %for j=1:O.n_data
+    %    fwrite(fid,O.xyz(j,:),'float32','b');
+    %end
+  
+    fwrite(fid,O.data(:),'float32','b');
+    %% old and slower
+    %for k=1:O.n_prop
+    %    fwrite(fid,O.data(:,k),'float32','b');
+    %end
+    
 elseif strcmp(O.type_def,'Cgrid');
     disp(sprintf('%s : Writing CARTESIAN GRID (Cgrid) to %s',mfilename,filename))
     

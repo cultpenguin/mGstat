@@ -141,8 +141,6 @@ catch
     property_name=S.XML.parameters.Property_Name_Sim.value;
 end
 
-nsim=S.XML.parameters.Nb_Realizations.value;
-
 
 
 %% Write XML file to disk
@@ -192,10 +190,20 @@ i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''RunGeostatAlgorithm  %s::/GeostatPar
 i=i+1;sgems_cmd{i}=sprintf('\n');
 
 p='';
-for j=1:nsim; p=sprintf('%s::%s__real%d',p,property_name,j-1);end
-i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0%s'')',grid_name,property_name,p);
-i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.sgems::s-gems::0%s'')',grid_name,property_name,p);
 
+%%% MAKE THE DEFAULT OUTPUT FORMAT SGEMS and NOT GSLIB! MUCH FASTER
+try
+    nsim=S.XML.parameters.Nb_Realizations.value;
+    for j=1:nsim; p=sprintf('%s::%s__real%d',p,property_name,j-1);end
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0%s'')',grid_name,property_name,p);
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.sgems::s-gems::0%s'')',grid_name,property_name,p);
+catch
+%    keyboard
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0::%s'')',grid_name,property_name,property_name)
+    property_name_unc=[property_name,'_krig_var'];
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0::%s'')',grid_name,property_name_unc,property_name_unc)
+    mgstat_verbose(sprintf('%s : no Nb_Realizations.value in XML -> estimation algorithm',mfilename),10)
+end
 i=i+1;sgems_cmd{i}=sprintf('\n');
 
 
