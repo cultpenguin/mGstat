@@ -30,8 +30,6 @@ if nargin<4
 	pos(2)=min(S.y)+rand(1)*(max(S.y)-min(S.y));
 end
 
-
-
 [xx,yy]=meshgrid(S.x,S.y);
 
 used=xx.*0+1;used(find(abs(xx-pos(1))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
