@@ -42,7 +42,7 @@ if nargin==2
 end
 
 if visim_bin_ok==1
-    mgstat_verbose(sprintf('%s : using VISIM exe : %s',mfilename,visim_bin),10)
+    mgstat_verbose(sprintf('%s : using VISIM exe : %s',mfilename,visim_bin),0)
 else
 
 
@@ -102,5 +102,5 @@ end
 V=read_visim(parfile);
 V.time=toc;
 
-fclose all;
+%fclose all;
 

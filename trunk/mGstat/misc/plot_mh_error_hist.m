@@ -1,3 +1,8 @@
+% plot_mh_error_hist
+%
+% Call : 
+%   plot_mh_error_hist(d_obs,d_est,Cd)
+%
 function plot_mh_error_hist(d_obs,d_est,Cd)
 
 Cd=Cd(1);
