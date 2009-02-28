@@ -104,7 +104,7 @@ c	             backtr = nearint(vrg(j),vrg(j+1),vr(j),vr(j+1),vrgs)
 c	             write(*,*) '2',backtr
 	    
 	     else
-	             backtr = powint(vrg(j),vrg(j+1),vr(j),vr(j+1),vrgs,1.0)
+                 backtr = powint(vrg(j),vrg(j+1),vr(j),vr(j+1),vrgs,1.0)
 	     endif
 c 	write(*,*) 'backtr=',backtr
 c	stop	
