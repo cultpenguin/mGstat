@@ -14,8 +14,8 @@ COMP = ifort
 FFLAGS = -O
 
 #COMP = gfortran
-COMP = g77
-FFLAGS = -march=i386 -O2 
+COMP = gfortran
+#FFLAGS = -march=i386 -O2 
 ## FFLAGS = -g
 
 SRCS   =  $(progname).f visim_krige.f visim_krige_volume.f \
