@@ -37,6 +37,15 @@ function tmap=fast_fd_2d(x,z,V,Sources);
         return
     end
 
+    dx=x(2)-x(1);
+    dz=z(2)-z(1);
+    if (dx~=dz);
+        mgstat_verbose(sprintf('%s : 2D grid MUST be unuform DX=DZ. you requested(dx=%g,dz=%g)',mfilename,dx,dz),10);
+        tmap=[];        
+        return
+    end
+    
+    
     if exist([pwd,filesep,'log.file'],'file') == 2
         % THIS MAKES FAST RUN MUCH FASTER
         try
