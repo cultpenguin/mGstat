@@ -13,8 +13,8 @@ PROG = visim
 COMP = ifort
 FFLAGS = -O
 
+COMP = g77
 #COMP = gfortran
-COMP = gfortran
 #FFLAGS = -march=i386 -O2 
 ## FFLAGS = -g
 

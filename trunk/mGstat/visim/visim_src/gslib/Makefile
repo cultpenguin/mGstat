@@ -5,7 +5,7 @@
 COMP = ifort
 FFLAGS = -c -O
 COMP = gfortran
-#COMP = g77
+COMP = g77
 #FFLAGS =  -march=i386 -c -O2 
 
 LIBGS = ../libgs.a
