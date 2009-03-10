@@ -38,10 +38,10 @@ elseif isfield(options,'precalc_d2u')
   options.d2u=d2u;
 end
 
-
 d_est=zeros(n_est,1);
 d_var=zeros(n_est,1);
 
+%options=rmfield(options,'d2d');
 if isfield(options,'d2u');
   % MAKE USE OF PRECALCULATED DATA 2 UNKNOWN
   for i=1:n_est
@@ -55,7 +55,8 @@ else
   for i=1:n_est
     if (i/50)==round(i/50), 
       progress_txt(i,n_est,sprintf('%s : kriging',mfilename));
-    end    
+    end
+    % SOMETHING WRONG WHEN USING 1D and options.d2d
     [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i,:),V,options);
   end
 end
