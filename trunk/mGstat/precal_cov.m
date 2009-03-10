@@ -34,6 +34,9 @@ function cov=precal_cov(pos1,pos2,V,options);
   
   n_est1=size(pos1,1);
   n_est2=size(pos2,1);
+ 
+  n_dim1=size(pos1,2);
+  n_dim2=size(pos2,2);
   
   cov=zeros(n_est1,n_est2);
   d=zeros(n_est1,n_est2);
@@ -62,6 +65,7 @@ function cov=precal_cov(pos1,pos2,V,options);
   end
   
   tic
+  
     for iV=1:length(V)
     for i=1:n_est1;
       t=toc;
@@ -81,11 +85,12 @@ function cov=precal_cov(pos1,pos2,V,options);
       d(i,:)=dd;
       
       %% OLD METHOD
-      %for j=1:n_est2;
-      %   d(i,j)=edist(pos1(i,:),pos2(j,:),V(iV).par2,isorange);
-      %    
-      %end
-
+      if ((n_dim1==1)&(n_dim2==1))
+      for j=1:n_est2;
+         d(i,j)=edist(pos1(i,:),pos2(j,:),V(iV).par2,isorange);
+          
+      end
+      end
     end
 
     

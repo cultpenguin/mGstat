@@ -204,7 +204,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     K=zeros(nknown+ndim,nknown+ndim);
     k=zeros(nknown+ndim,1);
   end
-  
+
   % Data to Data matrix
   if any(strcmp(fieldnames(options),'d2d')); 
     K=options.d2d(inhood,inhood);
@@ -223,8 +223,6 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     K=gvar-K;
   end
       
-      
-  
   % APPLY GAUSSIAN DATA UNCERTAINTY
   for i=1:nknown
     K(i,i)=K(i,i)+unc_known(i);
@@ -285,7 +283,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     % to zero
     k(1:nknown)=0;
   end
-  
+ 
   % SOLVE THE LINEAR SYSTEM
   lambda = inv(K)*k;
 
