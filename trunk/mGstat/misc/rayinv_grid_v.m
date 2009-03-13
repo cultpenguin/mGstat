@@ -20,7 +20,7 @@ if nargin==0
 end
 
 if isstr(v)
-    v=rayinv_load_v;
+    [v_old,v]=rayinv_load_v;
 end
 
 if isempty(v)
@@ -48,6 +48,7 @@ end
 xg=[v.x(1:nl,:);v.x(1:nl,:)];
 yg=[v.y_u;v.y_l];
 vg=[v.v_u;v.v_l];
+
 
 % 2Dlinear interpolation
 [vvv]=griddata(xg(:),yg(:),vg(:),xxx,yyy,'linear');
