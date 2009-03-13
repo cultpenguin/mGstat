@@ -13,7 +13,7 @@
 %
 % RAYINVR : http://terra.rice.edu/department/faculty/zelt/rayinvr.html
 %
-function [vvv,xx,yy,v]=rayinv_grid_v(v,xx,yy)
+function [vvv,xx,yy,v]=rayinv_grid_v(v,xx,yy,use_layers)
 
 if nargin==0
     v='v.in';
@@ -24,7 +24,7 @@ if isstr(v)
 end
 
 if isempty(v)
-     v=rayinv_load_v('v.in');
+      [v_old,v]=rayinv_load_v('v.in');
 end
 if nargin<2
     dx=((max(v.x(:))-min(v.x(:)))./20);
@@ -35,27 +35,66 @@ if nargin<3
     yy=min(v.y(:)):dy:max(v.y(:));
 end
 
+if nargin<4
+    use_layers=1:size(v.x_u,1);
+end
+
 [xxx,yyy]=meshgrid(xx,yy);
 vvv=xxx.*0;
+
 
 nl=size(v.x,1)-1;
 
 for il=1:nl
-    v.y_u(il,:)=v.y(il,:);
+    v.y_u(il,:)=v.y(il,:);    
     v.y_l(il,:)=v.y(il+1,:)-.0001;    
 end
 
-xg=[v.x(1:nl,:);v.x(1:nl,:)];
-yg=[v.y_u;v.y_l];
-vg=[v.v_u;v.v_l];
 
+% INTERPOLATE TO EVERY X LOCATION
+for i=1:size(v.x_u,1)
+    vv.x_u(i,:)=interp1(v.x_u(i,:),v.x_u(i,:),xx,'linear','extrap');
+    vv.x_l(i,:)=interp1(v.x_l(i,:),v.x_l(i,:),xx,'linear','extrap');
+
+    vv.y_u(i,:)=interp1(v.x_u(i,:),v.y_u(i,:),xx,'linear','extrap');
+    vv.y_l(i,:)=interp1(v.x_l(i,:),v.y_l(i,:),xx,'linear','extrap');
+
+    vv.v_u(i,:)=interp1(v.x_u(i,:),v.v_u(i,:),xx,'linear','extrap');
+    vv.v_l(i,:)=interp1(v.x_l(i,:),v.v_l(i,:),xx,'linear','extrap');
+
+end
+
+
+%xg=[v.x(1:nl,:);v.x(1:nl,:)];
+
+xg=[vv.x_u(use_layers,:);vv.x_l(use_layers,:)];
+yg=[vv.y_u(use_layers,:);vv.y_l(use_layers,:)];
+vg=[vv.v_u(use_layers,:);vv.v_l(use_layers,:)];
+
+%xg=[v.x_u;v.x_l];yg=[v.y_u;v.y_l];vg=[v.v_u;v.v_l];
 
 % 2Dlinear interpolation
-[vvv]=griddata(xg(:),yg(:),vg(:),xxx,yyy,'linear');
+[vvv]=griddata(xg(:),yg(:),vg(:),xxx,yyy,'linear'); 
+
+% MAKE SURE TOP NAN ROW IS REPLACED WITH NON NANS
+iy=find(yy<min(v.y_u(1,:)));
+vvv(iy,:)=vvv(max(iy)+1,:);
 
 % 2D nearest neighbor interpolation of NaN data (outside modelgrid)
-inan=find(~isnan(vvv));
-[vvv]=griddata(xxx(inan),yyy(inan),vvv(inan),xxx,yyy,'nearest');
+nnan=length(find(isnan(vvv)));
+if (nnan>1)
+
+    inan=find(isnan(vvv));
+    nnan=find(~isnan(vvv));
+    v_grid=griddata(xxx(nnan),yyy(nnan),vvv(nnan),xxx(inan),xxx(inan),'nearest');
+    vvv(inan)=v_grid;
+    %keyboard
+    %
+    %inan=find(~isnan(vvv));
+    %[vvv]=griddata(xxx(inan),yyy(inan),vvv(inan),xxx,yyy,'nearest');
+
+end
+
 
 % 
 % keyboard
