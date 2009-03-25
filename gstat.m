@@ -69,14 +69,27 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
       % read locations
       [loc]=read_eas(dfile);
       
-      pred=d(:,ndim+1);
-      pred1=pred;
-      pred_var=d(:,ndim+2);
-      try      
-          pred_covar=d(:,ndim+2);
-      catch
-      pred_covar=[];
+      nsim=0;
+      if isfield(G,'set')
+          if (isfield(G.set,'nsim')),
+              nsim=G.set.nsim;
+          end
       end
+      
+      if nsim==0
+          pred=d(:,ndim+1);
+          pred1=pred;
+          pred_var=d(:,ndim+2);
+          try
+              pred_covar=d(:,ndim+2);
+          catch
+              pred_covar=[];
+          end
+      else
+          pred=d(:,(ndim+1):(ndim+nsim));          
+      end
+
+      
       mask=[];
 
 %       % SORT OUTPUT DATA
@@ -107,10 +120,9 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
 %         %pred(i)=d(inode,ndim+1);
 %       end
       
-      return
     end
   end
-  
+  return
   
   % RETURN PREDICTIONS OF SET
   if nargout>0
