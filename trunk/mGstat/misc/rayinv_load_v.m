@@ -14,7 +14,7 @@
 % RAYINVR : http://terra.rice.edu/department/faculty/zelt/rayinvr.html
 %
 function [v,vv]=rayinv_load_v(filename)
-
+%v_full=[];
 if nargin==0
     filename='v.in';
 end
@@ -108,7 +108,7 @@ for i=1:(nl);
 
     d=v.y(i,:);d=d(~isnan(d));
     try
-        vv.y(i,:)=interp1(x_layer,d,x_unique);
+        vv.y(i,:)=interp1(x_layer,d,x_unique,'linear','extrap');
     catch
         keyboard
     end
@@ -131,3 +131,4 @@ end
 % 
 vv.x(nl+1,:)=x_unique;
 vv.y(nl+1,:)=v.y(nl+1,1);
+

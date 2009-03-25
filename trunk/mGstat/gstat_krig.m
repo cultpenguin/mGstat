@@ -70,6 +70,10 @@
 %
 
 function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
+  
+  if nargin<5
+    options.null=0;
+  end
 
   if isstr(V),
     V=deformat_variogram(V);
@@ -83,10 +87,6 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
   if options.isorange==1;
     % Reshape the range format to suit GSTAT 
     V=isorange(V);
-  end
-  
-  if nargin<5
-    options.null=0;
   end
   
   if (isfield(options,'sk_mean')&isfield(options,'d'))

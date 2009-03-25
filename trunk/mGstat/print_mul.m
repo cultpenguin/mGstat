@@ -26,7 +26,7 @@ function print_mul(fname,color,trim);
 
     %cmap=colormap;
     %colormap gray;
-    %print(gcf, '-depsc', [fname,'.eps'] )
+    print(gcf, '-depsc', [fname,'.eps'] )
     %colormap(cmap);
     %print(gcf, '-depsc2', [fname,'_color.eps'] )
     saveas(gcf,[fname,'.fig'],'fig');
