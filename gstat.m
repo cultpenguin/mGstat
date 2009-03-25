@@ -71,8 +71,12 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
       
       pred=d(:,ndim+1);
       pred1=pred;
-      pred_var=d(:,ndim+1);
+      pred_var=d(:,ndim+2);
+      try      
+          pred_covar=d(:,ndim+2);
+      catch
       pred_covar=[];
+      end
       mask=[];
 
 %       % SORT OUTPUT DATA

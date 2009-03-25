@@ -26,24 +26,49 @@
 %
 %
 %
-function colormap_nan(cmap,nancolor)
+function colormap_nan2(im,nancolor,method)
 
     if nargin<2
         nancolor=[1 1 1];
     end
     
     if nargin<1
-        cmap=colormap;
+        return
     end
 
-    nc=size(cmap,1);
+    if nargin<3
+        method=1;
+    else
+        method=2;
+    end
     
-   
+    if length(im)==1
+        Cdata=get(im,'Cdata');
+    else
+        Cdata=im;
+    end
     
-    cmap(1,:)=[nancolor];
-    colormap(cmap);
-    
-    dperc=-1/nc;    
-    colormap_squeeze([dperc,0]);
+    %find(isnan(Cdata))=nan_val;
+    nanmap=Cdata.*0;
+    nanmap(find(isnan(Cdata)))=1;
 
+    if method==1
+        set(im,'alphadata',1-nanmap)
+    else
+        
+        cax=caxis;
+        nan_val=cax(1)-(cax(2)-cax(1));
+        Cdata(find(isnan(Cdata)))=nan_val;
+        set(im,'Cdata',Cdata);
+       
+        cmap=colormap;
+        nc=size(cmap,1);
+        cmap(1,:)=[nancolor];
+        colormap(cmap);
+        dperc=-2/nc;
+        colormap_squeeze([dperc,0]);
+        
+    end
+    return
+    
     

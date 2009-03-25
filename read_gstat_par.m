@@ -95,11 +95,11 @@ function G=read_gstat_par(filename);
         end
 %        G.set{iset}.(cmd)=data;
         G.set.(cmd)=data;
-        mgstat_verbose(sprintf('SET line %d : %s',iset,cline),10)
+        mgstat_verbose(sprintf('SET line %d : %s',iset,cline))
       elseif (strmatch(cmd,'variogram'))
         % GET VARIOGRAM....
         %if icmd==2, keyboard; end
-        mgstat_verbose(sprintf('%s : Found variogram : %s',mfilename,options),10)
+        mgstat_verbose(sprintf('%s : Found variogram : %s',mfilename,options))
         G.(cmd){icmd}.V=deformat_variogram(options);
       else         % EXTRACT OPTIONS
 
@@ -143,7 +143,7 @@ function G=read_gstat_par(filename);
           cop=options(is1:is2);
           cop=strip_space(cop);
           
-          mgstat_verbose(sprintf('%s : cop="%s"',mfilename,cop),12)
+          mgstat_verbose(sprintf('%s : cop="%s"',mfilename,cop))
           
           % mgstat_verbose(['--',cop])
           chkfile=find(cop==char(39));
