@@ -1,7 +1,7 @@
 % gstat_krig : Simple/Ordinary Kriging using GSTAT
 %
 % Call :
-% [d_est,d_var,lambda_sk,K_dd,k_du,inhood]=gstat_krig(pos_known,val_known,pos_est,V,options);
+% [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
 %
 % ndata : number of data observations
 % ndims : dimensions of data location (>=1)
@@ -46,7 +46,7 @@
 %
 % Example 2 : 1D - Data Uncertainty 
 % pos_known=[1;5;10];
-% val_known=[0 3 2;0 1 0]'; % adding some uncertainty
+% val_known=[0 3 2;0.001 1 0.001]'; % adding some uncertainty
 % pos_est=[0:.01:10]';
 % V=deformat_variogram('1 Sph(2)');
 % for i=1:length(pos_est);
@@ -64,12 +64,38 @@
 % V='1 Sph(2)';
 % [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
 %
+% %% SIMULATION
+% pos_known=[0 1;5 1;10 1];
+% val_known=[0 3 2]';
+% pos_est=linspace(-1,11,200)';pos_est(:,2)=1;
+% V='.0001 Nug(0) + .2 Gau(2)';
+% [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
+% plot(pos_est(:,1),d_est,'k-',pos_known(:,1),val_known(:,1),'r*')
+% 
+% options.nsim=120;
+% [d_sim,d_varsim,pos_sim]=gstat_krig(pos_known,val_known,pos_est,V,options);
+% d=sortrows([pos_sim(:,1) d_sim],1);
+% d_sim=d(:,2:(options.nsim+1));
+% 
+% d=sortrows([pos_sim(:,1) d_varsim],1);
+% d_varsim=d(:,2);
+% 
+% plot(pos_est(:,1),d_sim,'r-');
+% 
+% hold on
+% plot(pos_est(:,1),d_est,'k-','linewidth',4)
+% plot(pos_known(:,1),val_known(:,1),'b.')
+% 
+% plot(pos_est(:,1),d_varsim-4,'k-')
+% plot(pos_est(:,1),d_var-4,'r-')
+% hold off
+% 
 %
 
 % TMH/2005
 %
 
-function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
+function [d_est,d_var,pos_est]=gstat_krig(pos_known,val_known,pos_est,V,options);
   
   if nargin<5
     options.null=0;
@@ -96,16 +122,16 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
   end
   
   % WRITE DATA TO EAS FILES
-  if exist('obs.eas')==2
+  if exist([pwd,filesep,',obs.eas'])==2
     delete('obs.eas'); 
   end
-  if exist('est.eas')==2
+  if exist([pwd,filesep,'est.eas'])==2
     delete('est.eas'); 
   end 
   write_eas('obs.eas',[pos_known val_known]);
   write_eas('est.eas',pos_est);
   
-  G.mgstat.parfile='EsthecKrig.cmd';
+  G.mgstat.parfile='gstat.cmd';
   
   G.data{1}.data='obs';
   G.data{1}.file='obs.eas';
@@ -120,11 +146,12 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
   G.data{1}.v=(ndim+1);
   if size(val_known,2)>1, G.data{1}.V=ndim+2; end
     
-
   % PARSE mGstat options to GSTAT
-  if isfield(options,'mv'), % MISSING VALUE
-    G.set.mv=options.mv;
-  end
+%  if isfield(options,'mv'), % MISSING VALUE
+%    G.set.mv=options.mv;
+%  else
+    G.set.mv=-9e+9;
+%  end
   if isfield(options,'omax'),
     G.data{1}.omax=options.omax;
   end
@@ -159,9 +186,15 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
   end
 
   if isfield(options,'xvalid'),
-    G.set(1).xvalid=options.xvalid;
+      G.set(1).xvalid=options.xvalid;
   end
-  
+
+  if isfield(options,'nsim')
+      G.method{1}.gs='';
+      G.set.nsim=options.nsim;
+  end
+
+
   G.variogram{1}.data='obs';
   G.variogram{1}.V=V;
 
@@ -171,10 +204,12 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
   if ndim>1, G.data{2}.y=2; end
   if ndim>2, G.data{2}.z=3; end
 
-  outfile='EsthecKrig.out';
+  outfile='gstat.out';
   G.set(1).output=outfile;
 
-  write_gstat_par(G);
+  %keyboard
+  
+  %write_gstat_par(G);
   gstat(G);
 
   try
@@ -186,6 +221,13 @@ function [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
     
   end
 
+  if isfield(options,'nsim')
+      pos_est=d(:,1:ndim);
+      d_est=d(:,(ndim+1):(ndim+options.nsim));;
+      d_var=var(d_est')';
+      return
+  end  
+  
   if isfield(options,'xvalid')==1
     if options.xvalid==1
       d_est=d(:,ndim+2);

@@ -74,7 +74,7 @@ function filename=write_gstat_par(G,filename)
       for i=1:n;
         cmd=df{i};
         data=G.set(1).(df{i});
-        if isnumeric(data)
+        if (isnumeric(data)&~strcmp(cmd,'mv'))
           if data==round(data)
             fprintf(fid,'set %s = %d;\n',cmd,data);
           else
