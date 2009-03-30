@@ -38,6 +38,8 @@ end
 
 tic;
 
+echo on;
+
 if nargin<2
     dim.nx=50;
     dim.ny=30;
@@ -140,3 +142,4 @@ set(th,'interpreter','none')
 print('-dpng',sprintf('sgems_demo_%s_etype',alg))
 
 
+echo off

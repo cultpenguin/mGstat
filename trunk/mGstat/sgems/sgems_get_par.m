@@ -50,7 +50,7 @@ for i=1:length(d);
             cmd='copy';
         end
 %        cmd2=[cmd,' ''',def_dir,filesep,d(i).name,''' ''',pwd,filesep,filesep,d(i).name,''''];
-        cmd2=[cmd,' "',def_dir,filesep,d(i).name,'" "',pwd,filesep,filesep,d(i).name,'"']
+        cmd2=[cmd,' "',def_dir,filesep,d(i).name,'" "',pwd,filesep,filesep,d(i).name,'"'];
         [status,result] = system(cmd2);
         if strfind(result,'1 fil')
             mgstat_verbose(sprintf('%s : %s',mfilename,result),1)
