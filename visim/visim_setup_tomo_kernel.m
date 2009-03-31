@@ -27,11 +27,21 @@
 %
 % TMH/2006
 %
-function [V,G,Gray,rl]=visim_setup_tomo_tkernel(V,S,R,m_ref,t,t_err,name,options);
+function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options);
 
   if exist('options','var')==0
-      options.null=[],
+      options.null=[];
   end
+  
+  if exist('t','var')==0
+      t=V.gmean.*size(S,1);
+  end
+  
+  
+  if exist('t_err','var')==0
+      t_err=0.01.*t;
+  end
+  
   
   if isfield(options,'ktype')==0
       ktype=1; % RAY/HIGH FREQ
@@ -58,24 +68,13 @@ function [V,G,Gray,rl]=visim_setup_tomo_tkernel(V,S,R,m_ref,t,t_err,name,options
   else
       parameterization=options.parameterization;
   end
-
-
-  if isfield(options,'doPlot')==0
-      doPlot=0;
-  else
-      doPlot=options.doPlot;
-  end
-
-  
-  
-
-  %doPlot=0;
+    
   if nargin==0
     V=read_visim('sgsim_cond_2.par');
   end
   
   if nargin<7
-    name='';
+    name='test';
   end
   
   if nargin<2
@@ -102,21 +101,16 @@ function [V,G,Gray,rl]=visim_setup_tomo_tkernel(V,S,R,m_ref,t,t_err,name,options
     m_ref=reshape(m_ref,49,21)';
   end
 
-  if nargin<9
-      T=8;
-  end
-  if nargin<10
-      doPlot=0;
-  end
 
+  if isfield(options,'doPlot')
+      doPlot=options.doPlot;
+  else
+      doPlot=1;
+  end
   
   if isempty(t)
-    t=ones(size(S,1));
+    t=V.gmean.*ones(size(S,1));
     t_err=ones(size(S,1));
-  end
-  
-  if exist('doPlot')==0
-    doPlot=0;
   end
   
   disp(sprintf('%s : %s.par',mfilename,name))
