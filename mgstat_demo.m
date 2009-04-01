@@ -54,6 +54,11 @@ end
 
 
 switch lower(method)
+    case('mgstat')
+        disp(method)
+        addpath([mgstat_dir,filesep,'examples',filesep,'mgstat_examples'])
+        mgstat_ex_krig_1d;
+        
     case('visim')
         disp(method)
     case('sgems')

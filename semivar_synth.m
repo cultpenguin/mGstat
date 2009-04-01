@@ -39,10 +39,12 @@ function [sv,d]=semivar_synth(V,d,gstat,nugtype);
 
   sv(find(d==0))=0;
   
+  %%% BUG FIND OUT WHY THE FOLLOWING LINE IS NEEED FOR HONORING HARD DATA
+  %%% WITHOUT THESE LINES IT SEEMS THE NUGGET IS FILTERED!
   % Make sure sv(0)=0;
-  %if nugtype==1;
-  %  sv(find(d<1e-9))=0;
-  %end
+  if nugtype==1;
+    sv(find(d<1e-9))=0;
+  end
 function [gamma,h]=synthetic_variogram(V,h,gstat)
   type=V.type;
   v1=V.par1;

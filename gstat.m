@@ -6,7 +6,6 @@
 %        [pred,pred_var,pred_covar,mask,G]=gstat(G)
 %
 function [pred,pred_var,pred_covar,mask,G]=gstat(G)
-
   
   gstat_bin=gstat_binary;
   
