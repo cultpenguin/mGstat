@@ -103,7 +103,11 @@ function [d_est,d_var,pos_est]=gstat_krig(pos_known,val_known,pos_est,V,options)
 
   if isstr(V),
     V=deformat_variogram(V);
-  end 
+  end
+
+  if nargin<5
+      options.null='';
+  end
 
   % CHECK FOR ISORANGE
   if  ~any(strcmp(fieldnames(options),'isorange'))
