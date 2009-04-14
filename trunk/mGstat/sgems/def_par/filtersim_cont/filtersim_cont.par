@@ -3,7 +3,7 @@
   <Property_Name_Sim  value="filtersim" /> 
   <Nb_Realizations  value="1" /> 
   <Seed  value="211175" /> 
-  <PropertySelector_Training  grid="TI"   property="facies"  /> 
+  <PropertySelector_Training  grid="TI"   property="CONTINIOUS"  /> 
   <Scan_Template  value="11 11 5" /> 
   <Patch_Template_ADVANCED  value="7 7 3" /> 
   <Nb_Facies  value="2" /> 

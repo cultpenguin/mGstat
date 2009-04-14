@@ -1,0 +1,31 @@
+<parameters>  <algorithm name="filtersim_cate" /> 
+  <GridSelector_Sim  value="SIM"  /> 
+  <Property_Name_Sim  value="fsim" /> 
+  <Nb_Realizations  value="1" /> 
+  <Seed  value="211175" /> 
+  <PropertySelector_Training  grid="TI"   property="DISCRETE_2"  /> 
+  <Scan_Template  value=" 11 11 5" /> 
+  <Patch_Template_ADVANCED  value=" 7 7 3" /> 
+  <Nb_Facies  value="2" /> 
+  <Treat_Cate_As_Cont  value="0"  /> 
+  <Trans_Result  value="1"  /> 
+  <Hard_Data  grid=""   property=""  /> 
+  <Use_SoftField  value="0"  /> 
+  <SoftData_properties count="0"   value=""  /> 
+  <TauModelObject  value=" 1 1" /> 
+  <Region_Indicator_Prop  value=""  /> 
+  <Active_Region_Code  value="" /> 
+  <Use_Previous_Simulation  value="0"  /> 
+  <Previous_Simulation_Prop  value=""  /> 
+  <Use_Region  value="0"  /> 
+  <Nb_Multigrids_ADVANCED  value="3" /> 
+  <Debug_Level  value="0" /> 
+  <Cmin_Replicates  value=" 10 10 10" /> 
+  <Data_Weights  value=" 0.5 0.3 0.2" /> 
+  <CrossPartition  value="0"  /> 
+  <KMeanPartition  value="0"  /> 
+  <Use_Normal_Dist  value="0"  /> 
+  <Use_Score_Dist  value="0"  /> 
+  <Filter_Default  value="1"  /> 
+  <Filter_User_Define  value="0"  /> 
+</parameters> 
