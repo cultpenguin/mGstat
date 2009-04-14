@@ -1,4 +1,4 @@
-% sgems_write_xml : write XML formatted SGEMS parameter files
+% sgems_write_xml : write XML formatted SGEMS parameter file
 %
 % Call : 
 %   filename=sgems_write_xml(XML,filename);
@@ -131,8 +131,9 @@ else
          else
              tag_value_string=tag_value{i};
          end
-
          fprintf(fid,' %s="%s"',tag_name{i},strip_space(tag_value_string));
+         %fprintf(fid,' %s="%s"',tag_name{i},tag_value_string);
+
     end
     if closed_tag==1
         fprintf(fid,' />\n');
