@@ -13,7 +13,7 @@
 %
 % RAYINVR : http://terra.rice.edu/department/faculty/zelt/rayinvr.html
 %
-function [vvv,xx,yy,v]=rayinv_grid_v(v,xx,yy,use_layers)
+function [vvv,xx,yy,v,region]=rayinv_grid_v(v,xx,yy,use_layers)
 
 if nargin==0
     v='v.in';
@@ -62,6 +62,10 @@ for i=1:size(v.x_u,1)
     vv.v_u(i,:)=interp1(v.x_u(i,:),v.v_u(i,:),xx,'linear','extrap');
     vv.v_l(i,:)=interp1(v.x_l(i,:),v.v_l(i,:),xx,'linear','extrap');
 
+    vv.l_u(i,:)=vv.v_u(i,:).*0+i;
+    vv.l_l(i,:)=vv.v_l(i,:).*0+i;
+
+    
 end
 
 
@@ -70,11 +74,16 @@ end
 xg=[vv.x_u(use_layers,:);vv.x_l(use_layers,:)];
 yg=[vv.y_u(use_layers,:);vv.y_l(use_layers,:)];
 vg=[vv.v_u(use_layers,:);vv.v_l(use_layers,:)];
+vl=[vv.l_u(use_layers,:);vv.l_l(use_layers,:)];
 
 %xg=[v.x_u;v.x_l];yg=[v.y_u;v.y_l];vg=[v.v_u;v.v_l];
 
 % 2Dlinear interpolation
 [vvv]=griddata(xg(:),yg(:),vg(:),xxx,yyy,'linear'); 
+
+if nargout>4
+    [region]=griddata(xg(:),yg(:),vl(:),xxx,yyy,'linear');
+end
 
 % MAKE SURE TOP NAN ROW IS REPLACED WITH NON NANS
 iy=find(yy<min(v.y_u(1,:)));

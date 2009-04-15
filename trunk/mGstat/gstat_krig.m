@@ -214,6 +214,7 @@ function [d_est,d_var,pos_est]=gstat_krig(pos_known,val_known,pos_est,V,options)
   %keyboard
   
   %write_gstat_par(G);
+  
   gstat(G);
 
   try
