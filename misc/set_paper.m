@@ -4,6 +4,10 @@ function set_paper(paper_orientation,paper_type);
 % set_paper('landscape')
 % or
 % set_paper('portrait')
+% or
+% set_paper('portrait','a3')
+% or ...
+%
 %
 if nargin==0
 	paper_orientation='landscape';

@@ -120,21 +120,16 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options)
   
   [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,doPlot); 
   
-  
- 
   if parameterization==1
-      mgstat_verbose(sprintf('%s : USE SLOWNESS PARAMETERIZATION',mfilename))
+      mgstat_verbose(sprintf('%s : USE SLOWNESS PARAMETERIZATION',mfilename),100)
       % USE SLOWNESS PARAMETERIZATION
       d_obs=t(:);
       d_std=t_err(:);
       
   elseif parameterization==2
-      mgstat_verbose(sprintf('%s : USE VELOCITY PARAMETERIZATION',mfilename))
+      mgstat_verbose(sprintf('%s : USE VELOCITY PARAMETERIZATION',mfilename),100)
       % USE VELOCITY PARAMETERIZATION
-      %convert to velocity
-      d_obs = rl(:)./t(:);
-      d_std =  abs((rl(:)./(t(:)+t_err(:))-rl(:)./(t(:)-t_err(:)))./2);
-
+      
       %normalize kernel for velocity parameterization
       for iv=1:size(S,1);
           G(iv,:)=G(iv,:)./(rl(iv));
@@ -142,6 +137,15 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options)
           Kmat(:,:,iv)=Kmat(:,:,iv)./rl(iv);
           Raymat(:,:,iv)=Raymat(:,:,iv)./rl(iv);
       end
+
+      %convert to velocity if data is time
+      d_obs = rl(:)./t(:);
+      d_std =  abs((rl(:)./(t(:)+t_err(:))-rl(:)./(t(:)-t_err(:)))./2);
+
+
+      m2=m_ref';
+      d_obs=G*m2(:);
+      
   end
      
   
