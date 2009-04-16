@@ -1,7 +1,7 @@
 % sgems_read_xml
 function [XML,xml_entry,S]=sgems_read_xml(filename);
 
-mgstat_verbose(sprintf('%s : reading %s',mfilename,filename));
+mgstat_verbose(sprintf('%s : reading %s',mfilename,filename),0);
 
 fid=fopen(filename,'r');
 
@@ -37,12 +37,10 @@ for ientry=1:n_entries;
     p=char(cc);
     p=regexprep(p,' =','=');
     p=regexprep(p,'= ','=');
-    p=regexprep(p,char(10),''); % remove change
-    p=regexprep(p,char(13),''); % remove change
-
-
-    p=regexprep(p,char(10),'-');
-
+    p=regexprep(p,char(10),' '); % LINE FEED, NEW LINE
+    p=regexprep(p,char(13),' '); % CARRIAGE RETURN
+    mgstat_verbose(sprintf('%s : entry : %s',mfilename,p),3);
+    
     xml_entry{ientry}=p;
 end
 
@@ -65,7 +63,7 @@ for i=1:n_entries
         if (S{i}.end_tag==0)&(S{i}.closed_tag==0)
             try
             struct_level{lev}=S{i}.struct_name;
-            mgstat_verbose(sprintf('%s : XML level = %d (%s)',mfilename,lev,struct_level{lev}),1);
+            mgstat_verbose(sprintf('%s : XML level = %d (%s)',mfilename,lev,struct_level{lev}),2);
             catch
                 keyboard
             end
@@ -129,7 +127,7 @@ if isempty(ispace)
     return
 end
 struct_name=xml_string(2:ispace(1)-1);
-mgstat_verbose(sprintf('%s :   -- %s ',mfilename,struct_name),1)
+mgstat_verbose(sprintf('%s :   -- %s ',mfilename,struct_name),1);
 names= regexp(xml_string, '\w*\=','match');
 vals = regexp(xml_string, '".*"','match');
 vals = regexp(xml_string, '"[^"]*"','match');
