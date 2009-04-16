@@ -23,14 +23,18 @@
 function print_mul(fname,color,trim);
 
     print(gcf, '-dpng','-r300', [fname,'.png'] )
-    print(gcf, '-dpng','-r72', [fname,'_low.png'] )
+    
+    return
+    %print(gcf, '-dpng','-r72', [fname,'_low.png'] )
 
     %cmap=colormap;
     %colormap gray;
-    print(gcf, '-depsc', [fname,'.eps'] )
-    print(gcf, '-dpdf', [fname,'.pdf'] )
+    
+    %print(gcf, '-depsc', [fname,'.eps'] )
+    print(gcf, '-dpdf','-r300', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
     %colormap(cmap);
     %print(gcf, '-depsc2', [fname,'_color.eps'] )
+    
     saveas(gcf,[fname,'.fig'],'fig');
     
     
