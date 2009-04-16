@@ -82,7 +82,7 @@ vl=[vv.l_u(use_layers,:);vv.l_l(use_layers,:)];
 [vvv]=griddata(xg(:),yg(:),vg(:),xxx,yyy,'linear'); 
 
 if nargout>4
-    [region]=griddata(xg(:),yg(:),vl(:),xxx,yyy,'linear');
+    [region]=griddata(xg(:),yg(:),vl(:),xxx,yyy,'nearest');
 end
 
 % MAKE SURE TOP NAN ROW IS REPLACED WITH NON NANS
