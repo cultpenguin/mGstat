@@ -131,7 +131,7 @@ else
          else
              tag_value_string=tag_value{i};
          end
-         fprintf(fid,' %s="%s"',tag_name{i},strip_space(tag_value_string));
+         fprintf(fid,' %s="%s"',tag_name{i},strip_space(tag_value_string,1));
          %fprintf(fid,' %s="%s"',tag_name{i},tag_value_string);
 
     end
