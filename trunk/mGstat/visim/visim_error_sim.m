@@ -1,4 +1,4 @@
-% visim_condsim_alt : conditional simuation through error simulation
+% visim_error_sim : conditional simuation through error simulation
 %
 % See chapter VII.A in Journel and Huijbregts, pages 494-496.
 %
@@ -7,7 +7,7 @@
 %
 % Make sure it works for both V.cond_sim=[0,1,2,3] !!!
 %
-function Valt=visim_condsim_alt(V,doPlot)
+function Valt=visim_error_sim(V,doPlot)
 
      
 if isstruct(V)~=1
