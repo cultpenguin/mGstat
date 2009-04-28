@@ -1,25 +1,23 @@
 % visim_condsim_alt : conditional simuation through error simulation
 %
+% See chapter VII.A in Journel and Huijbregts, pages 494-496
 %
-function Valt=visim_condsim_alt(V)
+function Valt=visim_condsim_alt(V,doPlot)
 
      
 if isstruct(V)~=1
   V=read_visim(V);
 end
 
-
-%V.rseed=2;
-%V.nsim=10;
-%V.volnh.max=100;
-%V.debuglevel=-10;
-%V=visim(V);
+if nargin<2
+    doPlot=0;
+end
 
 tic
 start_time=clock;
     
 % GET GEOMETRY
-[G,d_obs]=visim_to_G(V);
+[G,d_obs,d_var,Cd]=visim_to_G(V);
 
 % ALTERNATE OUTPUT FILE
 [f1,f2,f3]=fileparts(V.parfile);
@@ -29,10 +27,8 @@ Valt.D=zeros(V.nx,V.ny,V.nsim);
 Valt.parfile=filename;
 write_visim(Valt);
 
-
 nsim=V.nsim;
 rseed=V.rseed;
-
 
 % CONDITIONAL ESTIMATION
 Vcond_est=V;
@@ -41,7 +37,7 @@ Vcond_est.rseed=rseed;
 Vcond_est.nsim=0;
 Vcond_est.densitypr=0;
 Vcond_est.parfile='Cest.par';
-Vcond_est.read_covtable=0; % DO NOT READ THE COV TABLE FROM DISK THIS TIME...
+Vcond_est.read_covtable=-1; % DO NOT READ THE COV TABLE FROM DISK THIS TIME...
 Vcond_est.read_lambda=0; % DO NOT READ LAMBDA FROM DISK (CALCULATE THEM)
 mgstat_verbose(sprintf('%s : Conditional estimation',mfilename),-1)
 Vcond_est=visim(Vcond_est);
@@ -70,7 +66,7 @@ for isim=1:nsim
   %v=v_cest';v=v(:);
   vfield=v_usim';v=vfield(:);
   d_est=G*v;
-  
+  d_est=d_est+randn(size(d_est)).*sqrt(diag(Cd)); % ONLY WORKS FOR UNCORRELATED ERRORS
   % KRIG ERRORS
   % POINT DATA
   try
@@ -115,9 +111,6 @@ for isim=1:nsim
   
   Valt.D(:,:,isim)=v_csim';
   
-
-  doPlot=1;
-  
   if doPlot==1;
     subplot(2,3,4)
     plot(d_est,d_obs,'*');
@@ -148,7 +141,6 @@ for isim=1:nsim
   disp(sprintf('            mean=%6.3f var=%10.8f',V.gmean,V.gvar))
   disp(sprintf('Uncon Sim : mean=%6.3f var=%10.8f',mean(v_usim(:)), var(v_usim(:))))
   disp(sprintf('Cond  Sim : mean=%6.3f var=%10.8f',mean(v_csim(:)), var(v_csim(:))))
-%  disp(sprintf('Cond2 Sim : mean=%6.3f var=%10.8f',mean(v_csim_1(:)), var(v_csim_1(:))))
 end
 
 
