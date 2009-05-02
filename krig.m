@@ -154,7 +154,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   % DETERMINE TYPE OF KRIGING
   if  any(strcmp(fieldnames(options),'polytrend'))
     ktype=2; % Ktrend
-    mgstat_verbose('Kriging with a trend',-1);
+    mgstat_verbose('Kriging with a trend',1);
   elseif  (any(strcmp(fieldnames(options),'mean')) | any(strcmp(fieldnames(options),'sk_mean')))
     ktype=0; % SK
     mgstat_verbose('Simple Kriging',-1);
@@ -172,9 +172,9 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   ndim=size(pos_known,2);
   n_est=size(pos_est,1);
   if n_est~=1, 
-    mgstat_verbose('Warning : you called krig with more than one',-10)
-    mgstat_verbose('          unknown data location',-10)
-    mgstat_verbose('--- Calling krig_npoint instead',0)
+    mgstat_verbose('Warning : you called krig with more than one',10)
+    mgstat_verbose('          unknown data location',10)
+    mgstat_verbose(sprintf('%s --- Calling krig_npoint',mfilename),0)
     [d_est,d_var,d2d,d2u]=krig_npoint(pos_known,val_known,pos_est,V,options);
     lambda_sk=[];K=[];k=[];inhood=[];
     return
@@ -218,11 +218,15 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
           d(i,j)=edist(pos_known(i,:),pos_known(j,:),V(iV).par2,isorange);
         end
       end
+      try
       K=K+semivar_synth(V(iV),d);
+      catch
+          keyboard
+      end
     end    
     K=gvar-K;
   end
-      
+
   % APPLY GAUSSIAN DATA UNCERTAINTY
   for i=1:nknown
     K(i,i)=K(i,i)+unc_known(i);

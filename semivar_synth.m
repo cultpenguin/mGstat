@@ -53,26 +53,26 @@ function [gamma,h]=synthetic_variogram(V,h,gstat)
   s1=find(h<v2);
   s2=find(h>=v2);      
   if strmatch(type,'Nug')
-    mgstat_verbose('Nug',-12);
+    mgstat_verbose('Nug',12);
     gamma=h.*0+v1;
     gamma(find(h==0))=0;
   elseif strmatch(type,'iNug')
-    mgstat_verbose('iNug',12);
+    mgstat_verbose('iNug',-12);
     gamma=h.*0+v1;    
     %% SEE GSTAT MANUAL FOR TYPES....
   elseif strmatch(type,'Sph')
-    mgstat_verbose('Sph',-12);
+    mgstat_verbose('Sph',12);
     gamma(s1)=v1.*(1.5*abs(h(s1))/(v2) - .5* (h(s1)./v2).^3);
     gamma(s2)=v1;
   elseif strmatch(type,'Gau')
-    mgstat_verbose('Gau',-12);
+    mgstat_verbose('Gau',12);
     if gstat==0
       gamma=v1.*(1-exp(-3*h.^2/v2.^2)); % GSLIB2/Goovaerts
     else
       gamma=v1.*(1-exp(-h.^2/v2.^2)); % GSTAT
     end
   elseif strmatch(type,'Lin')
-    mgstat_verbose('Lin',-12);
+    mgstat_verbose('Lin',12);
     if v2==0,
       gamma=v1.*h;
     else
@@ -81,13 +81,13 @@ function [gamma,h]=synthetic_variogram(V,h,gstat)
       gamma=gamma.*v1;
     end
   elseif strmatch(type,'Log')
-    mgstat_verbose(type,-12);
+    mgstat_verbose(type,12);
     gamma=log(h+v2);
   elseif strmatch(type,'Pow')
-    mgstat_verbose(type,-12);
+    mgstat_verbose(type,12);
     gamma=h.^v2;
   elseif strmatch(type,'Exp')
-    mgstat_verbose(type,-12);
+    mgstat_verbose(type,12);
     if gstat==0
       gamma=v1.*(1-exp(-3*h./v2)); % GSLIB2/Goovaerts
     else

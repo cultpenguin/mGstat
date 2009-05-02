@@ -62,8 +62,9 @@ if isfield(options,'d2u');
   end
 else
   for i=1:n_est
-    if (i/50)==round(i/50), 
-      %progress_txt(i,n_est,sprintf('%s : kriging',mfilename));
+%    if (i/50)==round(i/50), 
+    if (i/5)==round(i/5), 
+      progress_txt(i,n_est,sprintf('%s : kriging',mfilename));
     end
     % SOMETHING WRONG WHEN USING 1D and options.d2d
     [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i,:),V,options);

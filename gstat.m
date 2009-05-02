@@ -33,14 +33,14 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
     end
   end
   
-  mgstat_verbose(sprintf('Trying to run GSTAT on %s',gstat_filename))
+  mgstat_verbose(sprintf('Trying to run GSTAT on %s',gstat_filename),1)
   if isunix
       [s,w]=system([gstat_bin,' ',gstat_filename]);
   else
       [s,w]=system(sprintf('"%s" %s',gstat_bin,gstat_filename));
   end
-  mgstat_verbose(w,-1);
-  mgstat_verbose(sprintf('Finished running GSTAT on %s',gstat_filename))
+  mgstat_verbose(w,3);
+  mgstat_verbose(sprintf('Finished running GSTAT on %s',gstat_filename),1)
   
   
   if ~isempty(regexp(w,'fail'))
