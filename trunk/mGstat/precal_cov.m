@@ -40,7 +40,7 @@ function cov=precal_cov(pos1,pos2,V,options);
   
   cov=zeros(n_est1,n_est2);
   d=zeros(n_est1,n_est2);
-  mgstat_verbose([mfilename,' : Setting up covariance']);
+  mgstat_verbose([mfilename,' : Setting up covariance'],2);
 
   gvar=sum([V.par1]);
 
@@ -66,7 +66,7 @@ function cov=precal_cov(pos1,pos2,V,options);
   
   tic
   
-    for iV=1:length(V)
+  for iV=1:length(V)
     for i=1:n_est1;
       t=toc;
       % progress bar
@@ -77,20 +77,18 @@ function cov=precal_cov(pos1,pos2,V,options);
           end
       end
       
-      % NEW VECTORIZED APPROACH
-      jj=1:n_est2;;
-      p1=repmat(pos1(i,:),length(jj),1)';
-      p2=pos2(jj,:)';
-      dd=edist(p1,p2,V(iV).par2,isorange);
-      d(i,:)=dd;
-      
+      % NEW VECTORIZED APPROACH (ONLY WORKS FOR 2D DATA -- CHECK
+      %jj=1:n_est2;;
+      %p1=repmat(pos1(i,:),length(jj),1)';
+      %p2=pos2(jj,:)';
+      %dd=edist(p1,p2,V(iV).par2,isorange);
+      %d(i,:)=dd;
       %% OLD METHOD
-      if ((n_dim1==1)&(n_dim2==1))
-      for j=1:n_est2;
-         d(i,j)=edist(pos1(i,:),pos2(j,:),V(iV).par2,isorange);
-          
-      end
-      end
+      %if ((n_dim1==1)&(n_dim2==1))
+          for j=1:n_est2;
+              d(i,j)=edist(pos1(i,:),pos2(j,:),V(iV).par2,isorange);              
+          end
+      %end
     end
 
     
@@ -113,7 +111,7 @@ function cov=precal_cov(pos1,pos2,V,options);
             k2=min([k*nn n_est1]);
         end
         try
-            cov(k1:k2,:) = cov(k1:k2,:) + semivar_synth(V(iV),d(k1:k2,:),0);
+            cov(k1:k2,:) = cov(k1:k2,:) + semivar_synth(V(iV),d(k1:k2,:),1);
         catch
             keyboard
         end

@@ -4,7 +4,6 @@
 %
 function [V_new,be_acc,L_acc,par2,nugfrac_acc,V_acc,options]=krig_optim_mcmc(pos_known,val_known,V,options);
 
-print('hej')
 V_new=V;
 
 if isstr(V),
