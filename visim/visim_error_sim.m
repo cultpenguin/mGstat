@@ -42,7 +42,7 @@ Vcond_est.rseed=rseed;
 Vcond_est.nsim=0;
 Vcond_est.densitypr=0;
 Vcond_est.parfile='Cest.par';
-Vcond_est.read_covtable=-1; % DO NOT READ THE COV TABLE FROM DISK THIS TIME...
+Vcond_est.read_covtable=0; % DO NOT READ THE COV TABLE FROM DISK THIS TIME...
 Vcond_est.read_lambda=0; % DO NOT READ LAMBDA FROM DISK (CALCULATE THEM)
 mgstat_verbose(sprintf('%s : Conditional estimation',mfilename),-1)
 Vcond_est=visim(Vcond_est);

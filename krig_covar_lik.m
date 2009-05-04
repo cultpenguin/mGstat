@@ -9,7 +9,7 @@
 function [L,sigma2_est,Cm]=krig_covar_lik(pos_known,val_known,V,options,method)
     
     if exist('method','var')==0
-        method=1;
+        method=2;
     end
     
     
@@ -73,5 +73,5 @@ function [L,sigma2_est,Cm]=krig_covar_lik(pos_known,val_known,V,options,method)
         if nargout > 1
             sigma2_est=(1/sample_size)*(d_val'*iQ*d_val);
         end
-        %L=-1.*L_nllf;
+        L=-1.*L_nllf;
     end
