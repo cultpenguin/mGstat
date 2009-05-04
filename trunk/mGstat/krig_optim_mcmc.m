@@ -166,8 +166,11 @@ while i<=maxit
     %L_new=-1e-45;
   end
   
-  
-  Pacc=min([(L_new)/(L_old),1]);
+
+  % When L is likelihood
+  % Pacc=min([(L_new)/(L_old),1]);
+  % When L is LOG likelihood
+  Pacc=min([exp(L_new-L_old),1]);
 
   if compL==0
     Pacc=0;
