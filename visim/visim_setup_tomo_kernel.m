@@ -142,9 +142,10 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options)
       d_obs = rl(:)./t(:);
       d_std =  abs((rl(:)./(t(:)+t_err(:))-rl(:)./(t(:)-t_err(:)))./2);
 
-
-      m2=m_ref';
-      d_obs=G*m2(:);
+      % NEXT FEW LINES NOT FULLY THOUGHT THROUGH
+      %m2=m_ref';
+      %d_obs2=Gray*m2(:)
+      %pause(1)
       
   end
      
