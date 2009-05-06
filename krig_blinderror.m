@@ -65,7 +65,7 @@ if nargout>4
   for i=1:nd
     Cd(i,i)=d_var(i);
   end
-  L=exp(-.5*d_diff'*inv(Cd)*d_diff);
+  L=(-.5*d_diff'*inv(Cd)*d_diff);
 end
 
 

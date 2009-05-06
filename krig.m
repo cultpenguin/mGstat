@@ -113,7 +113,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
           d_nug=1e-9;
           for iv=1:length(V);
               if size(pos_known,2)==size(V(iv).par2,2)
-                  d_nug=.0001.*V(iv).par2;
+                  d_nug=.01.*V(iv).par2;
                   d_nug=repmat(d_nug,size(pos_known,1),1);
               end
           end
