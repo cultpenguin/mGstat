@@ -101,14 +101,18 @@ for ia=1:length(ang)
 %  keyboard
   if V.nsim>0
     pmean=plot(hc{ia},mean(g{ia}')','-','color',col{1},'linestyle',lstyle{1});
+    try
     pout{ia}=[pall,pmean,ptrue];
     if ia>0
- 	[hLeg,hObj]=legend([pall,pmean,ptrue],'All sim','Mean of all sim',vtxt{ia});
+        [hLeg,hObj]=legend([pall,pmean,ptrue],'All sim','Mean of all sim',vtxt{ia});
+    end
     end
  else
     pout{ia}=[pall,ptrue];
+    try
     if ia>0
- 	[hLeg,hObj]=legend([pall,ptrue],'E-type',vtxt{ia});
+        [hLeg,hObj]=legend([pall,ptrue],'E-type',vtxt{ia});
+    end
     end
   end
 
