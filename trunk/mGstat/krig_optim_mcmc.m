@@ -172,6 +172,7 @@ while i<=maxit
   % When L is LOG likelihood
   Pacc=min([exp(L_new-L_old),1]);
 
+  
   if compL==0
     Pacc=0;
   end
@@ -226,6 +227,7 @@ while i<=maxit
         if length(nugfrac_acc)>10
             scatter(par2(:,1),nugfrac_acc,20,-be_acc,'filled')
         end
+        colorbar
         xlabel('Range');ylabel('Nugget Fraction');title('BE')
 
         drawnow;

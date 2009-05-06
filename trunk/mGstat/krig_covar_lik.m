@@ -9,7 +9,7 @@
 function [L,sigma2_est,Cm]=krig_covar_lik(pos_known,val_known,V,options,method)
     
     if exist('method','var')==0
-        method=2;
+        method=1;
     end
     
     

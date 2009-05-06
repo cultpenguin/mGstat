@@ -215,6 +215,7 @@ end
 out.Lmean_h=Lmean_h;
 
 %COVAR PROB FOR BOTH DIRS
+
 [Lmean,L,Ldim]=covar_prob(Vu.VaExp,Vc.VaExp,options);
 [Lmean_u,L_u,Ldim_u]=covar_prob(Vu.VaExp,Vu.VaExp,options);
 
