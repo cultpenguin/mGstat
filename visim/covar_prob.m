@@ -27,7 +27,6 @@ function [Lmean,L,Ldim]=covar_prob(VaExpU,VaExpC,options)
     end    
     gcc_cross=cov(gcc_cross);
     
-    
     % NO USE OF CROSS CORRELATION
     if nocross==1
         disp(sprintf('Ignoring Cross correlation of variance !',mfilename))
