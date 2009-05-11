@@ -23,6 +23,7 @@ function D=edist(p1,p2,transform,isorange)
     p2=0.*p1;
   end
   
+  n_dim=size(p1,2);
   
   if size(p1,1)==1
     dp=(p1-p2)';
@@ -78,7 +79,9 @@ function D=edist(p1,p2,transform,isorange)
   end
 
 
-  if size(p1,1)==2
+  if n_dim==1
+      D=sqrt(dp.^2+dp.^2);
+  elseif size(p1,1)==2
       D=sqrt(dp(1,:).^2+dp(2,:).^2);
       %  elseif size(p1,1)==3
       % D=sqrt(dp(1,:).^2+dp(2,:).^2+dp(3,:).^2);
