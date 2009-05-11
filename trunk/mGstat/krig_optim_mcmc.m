@@ -112,6 +112,13 @@ L_min=L_init;
 L_new=L_init;
 range_min=0.001;
 
+%par2_all=zeros(maxit,length(par2));
+L_all=zeros(1,maxit);
+%be_all=zeros(1,maxit);
+nugfrac_all=zeros(1,maxit);
+
+
+
 nacc=0;
 i=0;icum=0;
 while i<=maxit
@@ -166,7 +173,16 @@ while i<=maxit
     %L_new=-1e-45;
   end
   
-
+  try
+  par2_all(i,:)=V_new(2).par2;  
+  catch
+  keyboard
+  end
+  L_all(i) = L_new;
+  be_all(i) = be_new;
+  nugfrac_all(i) = nugfrac;
+  
+  
   % When L is likelihood
   % Pacc=min([(L_new)/(L_old),1]);
   % When L is LOG likelihood
@@ -210,6 +226,7 @@ while i<=maxit
         %plot(par2(:,1),L_acc,'k.')
         %[ax,h1,h2]=plotyy(par2(:,1),L_acc,par2(:,1),-be_acc);
         [ax,h1,h2]=plotyy(L_acc,par2(:,1),L_acc,nugfrac_acc);
+        %[ax,h1,h2]=plotyy(L_all,par2_all(:,1),L_all,nugfrac_all);
         set(h1,'LineStyle','none')
         set(h2,'LineStyle','none')
         set(h1,'Marker','.')
@@ -221,7 +238,9 @@ while i<=maxit
         xlabel('L');
         
         subplot(2,3,5)
-        scatter(par2(:,1),nugfrac_acc,20,L_acc,'filled')
+        %scatter(par2(:,1),nugfrac_acc,20,L_acc,'filled')
+        %keyboard
+        scatter(par2_all(1:i,1),nugfrac_all(1:i),20,L_all(1:i),'filled')
         xlabel('Range');ylabel('Nugget Fraction');title('L')
         subplot(2,3,6)
         if length(nugfrac_acc)>10
