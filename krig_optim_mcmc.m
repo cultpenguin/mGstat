@@ -219,10 +219,10 @@ while i<=maxit
             t_old_plot=now;
             subplot(2,1,1)
             plotyy(1:nacc,L_acc,1:nacc,-be_acc);
-
+            nn=size(par2,1);nmax=400;ndd=ceil(nn/nmax);ii=[ndd:ndd:nn];
             if size(par2,2)==1
                 % ONLY PLOT NMAX DATA
-                nn=size(par2,1);nmax=400;ndd=ceil(nn/nmax);ii=[ndd:ndd:nn];
+                
 
                 subplot(2,3,4)
                 %plot(par2(:,1),L_acc,'k.')
@@ -256,15 +256,15 @@ while i<=maxit
                 drawnow;
             elseif size(par2,2)==2
                 subplot(2,3,4)
-                scatter(par2(:,1),par2(:,2),22,L_acc,'filled')
+                scatter(par2(ii,1),par2(ii,2),22,exp(L_acc(ii)),'filled')
                 xlabel('Range 1');ylabel('Range 2');title('Likelihood')
                 %colorbar
-                subplot(2,3,5)
-                scatter(par2(:,1),par2(:,2),22,-be_acc,'filled')
-                xlabel('Range 1');ylabel('Range 2');title('-be')
+                %%subplot(2,3,5)
+                %%scatter(par2(:,1),par2(:,2),22,-be_acc,'filled')
+                %%xlabel('Range 1');ylabel('Range 2');title('-be')
                 %colorbar
                 subplot(2,3,6)
-                scatter3(par2(:,1),par2(:,2),nugfrac_acc,20,L_acc,'filled');
+                scatter3(par2(ii,1),par2(ii,2),nugfrac_acc(ii),20,exp(L_acc(ii)),'filled');
                 xlabel('Range 1');ylabel('Range 2');zlabel('Nugget Fraction');title('Likelihood')
                 drawnow;
             elseif size(par2,2)>2
