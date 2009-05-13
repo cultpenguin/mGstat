@@ -34,8 +34,8 @@ pos=1:1:nknown;
 if isfield(options,'Cm');
     Cm=options.Cm;
 else
-    %Cm=precal_cov(pos_known,pos_known,V,options);
-    Cm=precal_cov(pos_known,pos_known,V);
+    Cm=precal_cov(pos_known,pos_known,V,options);
+    %Cm=precal_cov(pos_known,pos_known,V);
 end
 % TMH 05/05/2009 :
 % CM IS NOT RIGHT IN CASE OF A NUGGET
@@ -53,6 +53,9 @@ if method==1
     sample_size=nknown;
     sill=sum([V.par1]);
 
+    Cd=eye(size(Cm))+0.00001*sill; % FOR BETTER PERFORMANCE
+    Cm=Cm+Cd;
+    
     Q=Cm./sill;
     d_val=val_known(:,1)-mean(val_known(:,1));
     iQ=inv(Q);
