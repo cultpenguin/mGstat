@@ -157,14 +157,14 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     mgstat_verbose('Kriging with a trend',1);
   elseif  (any(strcmp(fieldnames(options),'mean')) | any(strcmp(fieldnames(options),'sk_mean')))
     ktype=0; % SK
-    mgstat_verbose('Simple Kriging',-1);
+    mgstat_verbose('Simple Kriging',1);
   else 
     if size(val_known,1)==1
         ktype=0;
         mgstat_verbose('Forcing simple kriging (only one data point)',20);
     else
         ktype=1; % OK
-        mgstat_verbose('Ordinary Kriging',-1);
+        mgstat_verbose('Ordinary Kriging',1);
     end
   end
 
@@ -175,7 +175,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     mgstat_verbose('Warning : you called krig with more than one',10)
     mgstat_verbose('          unknown data location',10)
     mgstat_verbose(sprintf('%s --- Calling krig_npoint',mfilename),0)
-    [d_est,d_var,d2d,d2u]=krig_npoint(pos_known,val_known,pos_est,V,options);
+    [d_est,d_var]=krig_npoint(pos_known,val_known,pos_est,V,options);
     lambda_sk=[];K=[];k=[];inhood=[];
     return
   end
@@ -223,6 +223,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
       catch
           keyboard
       end
+      % MAKE USE OF DIRECT CALL TO PRECAL_COV
     end    
     K=gvar-K;
   end
@@ -231,6 +232,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   for i=1:nknown
     K(i,i)=K(i,i)+unc_known(i);
   end
+  
   % Data to Unknown matrix
   if any(strcmp(fieldnames(options),'d2u')); 
     k=options.d2u(inhood,:);
@@ -242,7 +244,12 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
       for i=1:nknown;
         d(i)=edist(pos_known(i,:),pos_est(1,:),V(iV).par2,isorange);      
       end      
-      k=k+semivar_synth(V(iV),d);
+      try
+          V(iV).par2=V(iV).par2(1); % SCALE TO FIRST RANGE
+          k=k+semivar_synth(V(iV),d);
+      catch
+          keyboard
+      end
     end
     k=gvar-k;
   end

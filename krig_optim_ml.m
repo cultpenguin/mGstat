@@ -28,7 +28,7 @@ end
 % FIRST SAMPLE THE ATTRIBUTE SPACE
 %maxit=options.maxit;
 %options.maxit=10;
-figure(5);
+figure(5);clf;set_paper('landscape');
 [V,be,L,par2,nugfrac,Vall,options]=krig_optim_mcmc(pos_known,val_known,V,options);
 %options.maxit=maxit;
 iop=find(L==max(L));iop=iop(1);
@@ -44,7 +44,9 @@ mcmc_out.L=L;
 
 %% NEXT LINE TO SKIP LOCAL SEARCH
 %Vop2=Vop1;return
-figure(4);
+
+
+figure(4);clf;set_paper('landscape');
 % THEN LOOK FOR THE LOCAL MAX LIKELIHOOD MODEL
 options.step_nugfrac=options.step_nugfrac.*.01;
 options.step_range=options.step_range.*.01;
