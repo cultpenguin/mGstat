@@ -23,6 +23,31 @@ function [Vout,Vlsq,m_new]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
   % CHECK IF V IS ALLREADY SETUP WITH A PROPER KERNEL, 
   % IF NOT SET IT UP.
   
+  
+    if isfield(options,'linearize')
+      mgstat_verbose(sprintf('%s : Linearizing using precalculated kernels',mfilename));
+      
+      d_hmax=abs(V.Va.a_hmax-options.linearize.hmax_arr);
+      i_hmax=find(d_hmax==min(d_hmax));i_hmax=i_hmax(1);
+      
+      d_hmin=abs(V.Va.a_hmin-options.linearize.hmin_arr);
+      i_hmin=find(d_hmin==min(d_hmin));i_hmin=i_hmin(1);
+      
+      mgstat_verbose(sprintf('%s : Using kernel with (hmax,hmin)=(%g,%g), (hhmax,hmin)=(%g,%g)',mfilename,options.linearize.hmax_arr(i_hmax),options.linearize.hmin_arr(i_hmin),V.Va.a_hmax,V.Va.a_hmin))
+  
+      V.fvolgeom.data=options.linearize.VV{i_hmin,i_hmax}.fvolgeom.data;
+      write_eas(V.fvolgeom.fname,V.fvolgeom.data);
+      V.fvolsum.data=options.linearize.VV{i_hmin,i_hmax}.fvolsum.data;
+      write_eas(V.fvolsum.fname,V.fvolsum.data);
+      V.etype=options.linearize.VV{i_hmin,i_hmax}.etype;
+      
+      Vout=V;
+      Vlsq=Vout;
+      
+      return
+  end
+
+  
   if options.doPlot==1;
     figure(1);
     clf;
