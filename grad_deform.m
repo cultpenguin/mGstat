@@ -27,7 +27,7 @@ function X = grad_deform(X1,X2,t,doPlot)
     doPlot=0;
   end
   
-  X = X1.*cos(t) + X2.*sin(t);
+  X = X1.*cos(t).^2 + X2.*sin(t).^2;
   
   
   if doPlot==1
