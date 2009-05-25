@@ -5,14 +5,29 @@
 %
 % Example : 
 % 
-% V=read_visim('visim_sph.par');
-% m=.13;mm(1)=m;;
-% Xnew=V.D(:,:,10);
-% for i=2:V.nsim;
-%  Xnew=grad_deform(Xnew-m,V.D(:,:,i)-m,pi/8)+m;
-%  mm(i)=(mean(Xnew(:)));
-%  mv(i)=(var(Xnew(:)));
-% end
+%V=visim_init;
+%V=visim(V);
+%V.cond_sim=2;
+%D=V.D;
+%for i=1:100;
+%    V.rseed=V.rseed+1;
+%    V=visim(snesim_set_resim_data(V,D',[10 10]));
+%    
+%        V.cond_sim=0;
+%        V=visim(V);
+%    
+%    doGradDef=1;
+%    if doGradDef==1;
+%        D=grad_deform(D-V.gmean,  V.D-V.gmean,.6)+V.gmean;
+%    else
+%        D=V.D;
+%    end
+%    
+%    imagesc(D);
+%    caxis([8 12]);
+%    colorbar;
+%    drawnow;
+%end
 %
 %
 % See Hu and Ravalec-Dupin, 2004, Math Geol.
