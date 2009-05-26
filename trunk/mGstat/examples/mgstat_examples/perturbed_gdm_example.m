@@ -4,16 +4,16 @@
 %
 
 %doResim=1;doGradDef=1;gdm_step=0.6;perturb_width=10;
-doResim=0;doGradDef=1;gdm_step=0.6;perturb_width=10;
+doResim=1;perturb_width=5;doGradDef=0;gdm_step=0.6;
 
 txt=sprintf('RSIM%d_RSIMWIDTH_%g_GDM%d_GDMSTEP_%g',doResim,perturb_width,doGradDef,gdm_step);
 
-V=visim_init([.5:2:40],[.5:2:40]);
+V=visim_init([.5:1:40],[.5:1:40]);
 V.debuglevel=-2;
 V=visim(V);
 D=V.D;
-maxit=100;
-nsaves=10;
+maxit=2000;
+nsaves=50;
 ij=round(linspace(1,maxit,nsaves));
 
 Dsim=zeros(size(V.D,1),size(V.D,2),nsaves);
@@ -94,5 +94,5 @@ visim_plot_sim(V,V.nsim,[8 12],10,ceil(sqrt(nsaves)))
 suptitle(['UNCONDITIONAL ',txt])
 print_mul(sprintf('%s_reals_uncon',txt))
 
-
+save(txt);
 
