@@ -38,8 +38,6 @@ function colormap_nan2(im,nancolor,method)
 
     if nargin<3
         method=1;
-    else
-        method=2;
     end
     
     if length(im)==1
@@ -52,6 +50,7 @@ function colormap_nan2(im,nancolor,method)
     nanmap=Cdata.*0;
     nanmap(find(isnan(Cdata)))=1;
 
+   
     if method==1
         set(im,'alphadata',1-nanmap)
     else
@@ -63,7 +62,7 @@ function colormap_nan2(im,nancolor,method)
        
         cmap=colormap;
         nc=size(cmap,1);
-        cmap(1,:)=[nancolor];
+        cmap(1,:)=[nancolor]
         colormap(cmap);
         dperc=-2/nc;
         colormap_squeeze([dperc,0]);
