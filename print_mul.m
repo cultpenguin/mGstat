@@ -23,6 +23,7 @@
 function print_mul(fname,color,trim);
 
     print(gcf, '-dpng','-r300', [fname,'.png'] )
+    print(gcf, '-dpdf','-r300', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
     
     return
     %print(gcf, '-dpng','-r72', [fname,'_low.png'] )
