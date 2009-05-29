@@ -96,11 +96,11 @@ else
 end
 
 if (isinf(L_init))
-    L_init=1e-300;
+    L_init=log(1e-300);
 end
 
 if L_init==0
-    L_init=1e-300;
+    L_init=log(1e-300);
 end
 
 
@@ -155,6 +155,8 @@ while i<=maxit
         compL=0;
     end
 
+    %disp(sprintf('%g %g',L_new,L_old))
+    
     if compL==1
         try
             if method==1,
@@ -301,8 +303,12 @@ while i<=maxit
 end
 
 % FIND BEST VARIOGRAM MODEL
-i_max_L=find(L_acc==max(L_acc));
-i_max_L=i_max_L(1);
-V_new=V_acc{i_max_L};
-
+try
+    i_max_L=find(L_acc==max(L_acc));
+    i_max_L=i_max_L(1);
+    V_new=V_acc{i_max_L};
+catch
+    disp('could not find any accepted models')
+    keyboard
+end
 
