@@ -58,7 +58,8 @@ if method==1
     
     Q=Cm./sill;
     d_val=val_known(:,1)-mean(val_known(:,1));
-    iQ=inv(Q);
+    %iQ=inv(Q);
+    iQ=inv(Q+0.00000001*eye(size(Q,1))); % NEEDED FOR SOM UNSTABLE MATRIX INVERSION
     detQ=det(Q);
     FAC1=(sample_size/2)*(log(2*pi)+1-log(sample_size));
     dQd=d_val'*iQ*d_val;
@@ -80,7 +81,8 @@ elseif method==2
 
     Q=Cm./sill;
     d_val=val_known(:,1);
-    iQ=inv(Q);
+    %iQ=inv(Q);
+    iQ=inv(Q+0.00000001*eye(size(Q,1)));% NEEDED FOR SOM UNSTABLE MATRIX INVERSION
     L_nllf=(sample_size/2)*log(2*pi) + sample_size.*log(sqrt(sill)) + .5*log(det(Q))+(1/(2*sill))*(d_val'*iQ*d_val);
     %L_nllf=log(det(Q))+sample_size*(d_val'*iQ*d_val);
     L=-1.*L_nllf;
