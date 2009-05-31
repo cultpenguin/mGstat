@@ -1,0 +1,30 @@
+                  Parameters for snesim
+                  ********************
+                                      
+START OF PARAMETERS                   
+data.dat                    - 
+1 2 3 4           - 
+2                    - 
+0 1                    - 
+0.7 0.3                    - 
+0                    - 
+vertprop.dat                    - 
+1 0.5                    - 
+-2                    - 
+snesim.dbg                    - 
+snesim.out                    - 
+3                    - 
+80 0.5 0.25                   - 
+120 0.5 0.25                   - 
+1 0.5 0.25                   - 
+101                   - 
+template48.dat                    - 
+16                    - 
+0                    - 
+20                    - 
+2 1                    - 
+largetrain_rot90.dat                    - 
+250 250 1                   - 
+1                    - 
+10 10 5                    - 
+7 3 0                    - 
