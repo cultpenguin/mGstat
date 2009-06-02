@@ -2,7 +2,7 @@
 %
 % See also visim_set_resim_data, grad_deform
 %
-doPlot=0;
+if ~exist('doPlot'), doPlot=0;end
 
 if ~exist('doResim'), doResim=1;end
 if ~exist('perturb_width'), perturb_width=5;end
