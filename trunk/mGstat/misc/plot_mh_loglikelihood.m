@@ -21,6 +21,7 @@ if nargin<3
 end
 xlim=[i_acc(1) max(i_acc)+1e-4];    
 plot(i_acc,L_acc,'.')
+semilogy(i_acc,L_acc,'.')
 set(gca,'xlim',xlim)
 
 if nargin>2
