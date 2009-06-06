@@ -91,16 +91,53 @@ dx=x(2)-x(1);
 dy=y(2)-y(1);
 
 % only call fast of time fields are not given as input
-if ~isfield(options,'tS');options.tS=fast_fd_2d(x,y,v_ref,S);end
-if ~isfield(options,'tR');options.tR=fast_fd_2d(x,y,v_ref,R);end
 
+if isfield(options,'tS');tS=options.tS;end
+if isfield(options,'tR');tR=options.tR;end
 
-dt=options.tS+options.tR;
+if isfield(options,'precal');
+    n=length(options.precal.t);
+    iis=find( (options.precal.pos(:,1)==S(1)) & (options.precal.pos(:,2)==S(2)) );
+    iir=find( (options.precal.pos(:,1)==R(1)) & (options.precal.pos(:,2)==R(2)) );
+    
+    if ~isempty(iis), 
+        tS=options.precal.t{iis(1)}; 
+    else
+        tS=fast_fd_2d(x,y,v_ref,S);
+        n=n+1;
+        options.precal.pos(n,:)=S;
+        options.precal.t{n}=tS;
+    end
+    if ~isempty(iir), 
+        tR=options.precal.t{iir(1)};
+    else
+        tR=fast_fd_2d(x,y,v_ref,R);
+        n=n+1;
+        options.precal.pos(n,:)=R;
+        options.precal.t{n}=tR;
+    end
+end
+
+if ~exist('tS','var');tS=fast_fd_2d(x,y,v_ref,S);end
+if ~exist('tR','var');tR=fast_fd_2d(x,y,v_ref,R);end
+
+% SAVE PRECAL
+if ~isfield(options,'precal');
+    options.precal.pos(1,:)=S;
+    options.precal.pos(2,:)=R;
+    options.precal.t{1}=tS;
+    options.precal.t{2}=tR;
+else
+    n=length(options.precal.t);
+
+end
+
+dt=tS+tR;
 dt=dt-min(dt(:));
 if options.doplot==1;
     figure(2);
-    subplot(3,1,1);contourf(x,y,options.tS);title('options.tS');axis image;set(gca,'ydir','revers')
-    subplot(3,1,2);contourf(x,y,options.tR);title('options.tS');axis image;set(gca,'ydir','revers')
+    subplot(3,1,1);contourf(x,y,tS);title('tS');axis image;set(gca,'ydir','revers')
+    subplot(3,1,2);contourf(x,y,tR);title('tR');axis image;set(gca,'ydir','revers')
     subplot(3,1,3);contourf(x,y,dt,linspace(0,.25,11));title('dt');colorbar;axis image;set(gca,'ydir','revers')
 end
 
@@ -114,7 +151,7 @@ end
 %% NOW FIND FIRST ARRIVAL AND RAYLENGTH
 str_options = [.01 100000];
 [xx,yy]=meshgrid(x,y);
-[U,V]=gradient(options.tS);
+[U,V]=gradient(tS);
 start_point=R;
 raypath = stream2(xx,yy,-U,-V,start_point(1),start_point(2),str_options);
 
@@ -164,7 +201,7 @@ if normMethod==1;
     Knorm=K.*0;
     Ktest=K.*0.;
     % CREATE TIME SLICES
-    tt=options.tS-options.tR;
+    tt=tS-tR;
     intervals=linspace(min(tt(:)),max(tt(:)),options.Ni);
 
     % FIRST DETERMINE TRAVEL TIME IN EACH SLICE
