@@ -44,7 +44,7 @@ obj.fconddata.fname=fname;
 try
     obj.fconddata.data=read_eas(fname);
 catch
-    disp(sprintf('%s : Could not read conditional data : %s',mfilename,fname))
+    disp(sprintf('%s : Could not read conditional data : %s',mfilename,fname));
 end
 % Cols
 line=fgetl(fid);
@@ -95,6 +95,8 @@ line=fgetl(fid);
 obj.out.fname=get_string(line);
 try
     obj.out.data=read_eas(obj.out.fname);
+catch
+    obj.out.data=[];
 end
 
 % NSIM
@@ -180,7 +182,7 @@ obj.avert=data(3);
 
 nsim=obj.nsim;
 nxyz=obj.nx*obj.ny*obj.nz;
-if nsim>0
+if (nsim>0)&(~isempty(obj.out.data))
     try
         if obj.nz==1,
             obj.D=reshape(obj.out.data(1:(nsim*nxyz)),obj.nx,obj.ny,nsim);

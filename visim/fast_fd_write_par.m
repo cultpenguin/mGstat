@@ -69,8 +69,10 @@ function o=fast_fd_write_par(sx,sz,o);
   fprintf(f2,'%10.3f%10.3f%10.3f%10.3f%10.3f%10.3f%10.5f%10d%10d%10d\n',o.xmin,o.xmax,o.ymin,o.ymax,o.zmin,o.zmax,o.dx,o.nx,o.ny,o.nz);
   fclose(f2);
   
-  
+  try
   f3=fopen('nowrite','w');
   fprintf(f3,' ');
   fclose(f3);
-  
+  catch
+      mgstat_verbose(sprintf('%s : COULD NOT WRITE nowrite',mfilename),-1);
+  end
