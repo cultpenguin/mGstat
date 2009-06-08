@@ -92,17 +92,41 @@ if isfield(S,'d_obs');
     sgems_write_pointset('obs.sgems',S.d_obs,header,'OBS');
     S.f_obs='obs.sgems';
 end
-
 if isfield(S,'f_obs');
     O=sgems_read(S.f_obs,0);    
-    if isempty(S.XML.parameters.Hard_Data.grid)
-        S.XML.parameters.Hard_Data.grid=O.point_set;
-    end
-    if isempty(S.XML.parameters.Hard_Data.property)
-        S.XML.parameters.Hard_Data.property=O.property_name{1};
-    end
-    S.XML.parameters.Assign_Hard_Data.value=1;
+    try;if isempty(S.XML.parameters.Hard_Data.grid)
+            S.XML.parameters.Hard_Data.grid=O.point_set;
+    end;end
+    try;if isempty(S.XML.parameters.Hard_Data.property)
+            S.XML.parameters.Hard_Data.property=O.property_name{1};
+    end;end    
+    if strcmp(S.XML.parameters.algorithm.name,'cokriging');
+        S.XML.parameters.Primary_Harddata_Grid.value=O.point_set;
+        S.XML.parameters.Primary_Variable.value=O.property_name{1};
+    end    
 end
+
+% SECONDARY DATA
+if isfield(S,'d_obs_sec');
+    header{1}='X';
+    header{2}='Y';
+    header{3}='Z';
+    header{4}='SECDATA';
+    sgems_write_pointset('obs_sec.sgems',S.d_obs_sec,header,'SEC');
+    S.f_obs_sec='obs_sec.sgems';
+end
+
+if isfield(S,'f_obs_sec');
+    Osec=sgems_read(S.f_obs_sec,0);    
+    if strcmp(S.XML.parameters.algorithm.name,'cokriging');
+        S.XML.parameters.Secondary_Harddata_Grid.value=Osec.point_set;
+        S.XML.parameters.Secondary_Variable.value=Osec.property_name{1};
+        S.XML.parameters.Grid_Name.value=Osec.point_set;
+        S.XML.parameters.Property_Name.value='cokriging';
+    end    
+end
+
+
 
 % USING PROBABILITY FIELDS FOR SNESIM/FILTERSIM
 try
@@ -142,7 +166,6 @@ catch
 end
 
 
-
 %% Write XML file to disk
 sgems_write_xml(S.XML,S.xml_file);
 
@@ -153,8 +176,6 @@ xml_string=char(fread(fid,'char')');
 xml_string=regexprep(xml_string,char(10),''); % remove line change
 xml_string=regexprep(xml_string,char(13),''); % remove line change
 fclose(fid);
-
-
 
 %% WRITE PYTHON SCRIPTS
 fid=fopen(py_script,'w');
@@ -167,16 +188,26 @@ if isfield(S,'f_probfield');
   i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile  %s::All'')',S.f_probfield);
 end
 
-
-i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''NewCartesianGrid  %s::%d::%d::%d::%g::%g::%g::%g::%g::%g'')',grid_name,S.dim.nx,S.dim.ny,S.dim.nz,S.dim.dx,S.dim.dy,S.dim.dz,S.dim.x0,S.dim.y0,S.dim.z0);
-
-
+doCreateSimGrid=1;
+try 
+    if (strcmp(S.XML.parameters.Secondary_Harddata_Grid.value,grid_name)==1)
+        % DO NOT CREATE GRIDF IN CASE OF COKRIGING WHERE THE SECONDARY GRID
+        % IS THE SIMULATION/ESTIMATION GRID;
+        doCreateSimGrid=0;        
+    end
+end
+if doCreateSimGrid==1;
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''NewCartesianGrid  %s::%d::%d::%d::%g::%g::%g::%g::%g::%g'')',grid_name,S.dim.nx,S.dim.ny,S.dim.nz,S.dim.dx,S.dim.dy,S.dim.dz,S.dim.x0,S.dim.y0,S.dim.z0);
+end
 if isfield(S,'f_obs')
     % LOAD SGEMS OBJECT
-    % HERE IS SOME PROBLEM.....
     i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile  %s::All'')',S.f_obs);
 end
 
+if isfield(S,'f_obs_sec')
+    % LOAD SGEMS OBJECT
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile  %s::All'')',S.f_obs_sec);
+end
 if isfield(S,'ti_file')
     if exist(S.ti_file,'file')==2;
         i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile %s::s-gems'')',S.ti_file);
@@ -198,14 +229,12 @@ try
     i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0%s'')',grid_name,property_name,p);
     i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.sgems::s-gems::0%s'')',grid_name,property_name,p);
 catch
-%    keyboard
-    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0::%s'')',grid_name,property_name,property_name)
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0::%s'')',grid_name,property_name,property_name);
     property_name_unc=[property_name,'_krig_var'];
-    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0::%s'')',grid_name,property_name_unc,property_name_unc)
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0::%s'')',grid_name,property_name_unc,property_name_unc);
     mgstat_verbose(sprintf('%s : no Nb_Realizations.value in XML -> estimation algorithm',mfilename),10)
 end
 i=i+1;sgems_cmd{i}=sprintf('\n');
-
 
 i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''NewCartesianGrid  finished::1::1::1::1.0::1.0::1.0::0::0::0'')');
 i=i+1;sgems_cmd{i}=sprintf('data=[]');

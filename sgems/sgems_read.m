@@ -26,9 +26,9 @@ fid=fopen(filename,'r');
 O.magic_number = fread(fid,1,'uint32');
 
 if (O.magic_number==MN)
-    mgstat_verbose(sprintf('%s : OK S-GeMS format for %s',mfilename,filename))
+    mgstat_verbose(sprintf('%s : OK S-GeMS format for %s',mfilename,filename),1)
 else
-    mgstat_verbose(sprintf('%s : WRONG S-GeMS format for %s',mfilename,filename),10)
+    mgstat_verbose(sprintf('%s : WRONG S-GeMS format for %s',mfilename,filename),-1)
     return
 end
 
@@ -40,7 +40,7 @@ pos1=ftell(fid);
 
 % IF POINT SET
 if strcmp(O.type_def,'Point_set')
-    disp(sprintf('%s : Reading POINTSET data from %s',mfilename,filename))
+    mgstat_verbose(sprintf('%s : Reading POINTSET data from %s',mfilename,filename),1)
 
     % POINT SET NAME
     [O.point_set]=fread_charstar(fid);
@@ -82,7 +82,7 @@ if strcmp(O.type_def,'Point_set')
     
     
 elseif strcmp(O.type_def,'Cgrid')
-    mgstat_verbose(sprintf('%s : Reading GRID data from %s',mfilename,filename),10);
+    mgstat_verbose(sprintf('%s : Reading GRID data from %s',mfilename,filename),1);
     
     % POINT SET NAME
     [O.grid_name]=fread_charstar(fid);

@@ -1,0 +1,47 @@
+<parameters>  <algorithm name="cokriging" /> 
+  <Grid_Name  value="pos_est_1"  /> 
+  <Property_Name  value="CCC_M1" /> 
+  <Kriging_Type  value="Simple Kriging (SK)"  /> 
+  <SK_Means  value="0 9.8e+6" /> 
+  <Cokriging_Type  value="Markov Model 1"  /> 
+  <Primary_Harddata_Grid  value="H106"  /> 
+  <Primary_Variable  value="obs"  /> 
+  <Assign_Hard_Data  value="1"  /> 
+  <Secondary_Harddata_Grid  value="pos_est_1"  /> 
+  <Secondary_Variable  value="AI"  /> 
+  <Min_Conditioning_Data  value="0" /> 
+  <Max_Conditioning_Data  value="20" /> 
+  <Search_Ellipsoid_1  value="10000 10000 10000
+0 0 0" />
+  <Min_Conditioning_Data_2  value="0" /> 
+  <Max_Conditioning_Data_2  value="20" /> 
+  <Search_Ellipsoid_2  value="0 0 0
+0 0 0" />
+  <Variogram_C11  nugget="0.15" structures_count="1"  >
+  <structure_1  contribution="0.55"  type="Spherical"   >
+    <ranges max="1500"  medium="1500"  min="1500"   />
+    <angles x="0"  y="0"  z="0"   />
+  </structure_1>
+</Variogram_C11>
+  <Variogram_C12  nugget="0" structures_count="1"  >
+  <structure_1  contribution="0"  type="Spherical"   >
+    <ranges max="0"  medium="0"  min="0"   />
+    <angles x="0"  y="0"  z="0"   />
+  </structure_1>
+</Variogram_C12>
+  <Variogram_C22  nugget="0" structures_count="1"  >
+  <structure_1  contribution="0"  type="Spherical"   >
+    <ranges max="0"  medium="0"  min="0"   />
+    <angles x="0"  y="0"  z="0"   />
+  </structure_1>
+</Variogram_C22>
+  <Correl_Z1Z2  value="-.8" /> 
+  <Var_Z2  value="1.1e+12" /> 
+  <MM2_Correl_Z1Z2  value="-0.8" /> 
+  <MM2_Variogram_C22  nugget="0" structures_count="1"  >
+  <structure_1  contribution="7.5e+011"  type="Spherical"   >
+    <ranges max="800"  medium="800"  min="800"   />
+    <angles x="0"  y="0"  z="0"   />
+  </structure_1>
+</MM2_Variogram_C22>
+</parameters> 
