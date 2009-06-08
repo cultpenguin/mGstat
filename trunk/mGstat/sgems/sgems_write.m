@@ -41,7 +41,7 @@ if ~isfield(O,'type_def');
     end
 end
 if (strcmp(O.type_def,'Point_set')|strcmp(O.type_def,'Cgrid'));
-    mgstat_verbose(sprintf('%s : Using type definition %d',mfilename,O.type_def))
+    mgstat_verbose(sprintf('%s : Using type definition ''%s''',mfilename,O.type_def),1)   
 else
     mgstat_verbose(sprintf('%s : unsupported type definition (%d)',mfilename,O.type_def),10)
     return
@@ -67,7 +67,7 @@ fwrite_charstar(fid,O.type_def)
 
 % IF POINT SET
 if strcmp(O.type_def,'Point_set');
-    disp(sprintf('%s : Writing POINTSET data to %s',mfilename,filename))
+    mgstat_verbose(sprintf('%s : Writing POINTSET data to %s',mfilename,filename),1)
 
     % POINT SET NAME
     fwrite_charstar(fid,O.point_set)

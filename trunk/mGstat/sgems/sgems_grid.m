@@ -70,6 +70,10 @@ eas_out=sprintf('%s.out',property_name);
 if exist([pwd,filesep,eas_out])
     delete([pwd,filesep,eas_out]);
 end
+eas_out_krig_var=sprintf('%s_krig_var.out',property_name);
+if exist([pwd,filesep,eas_out_krig_var])
+    delete([pwd,filesep,eas_out_krig_var]);
+end
 eas_finished='finished';
 if exist([pwd,filesep,eas_finished])
     delete([pwd,filesep,eas_finished]);
@@ -81,23 +85,40 @@ sgems(py_script);
 
 %eas_out=sprintf('%s.out',XML.parameters.Property_Name.value);
 
-
 S.data=read_eas(eas_out);
 sgems_out=sprintf('%s.sgems',property_name);
 if exist(sgems_out)
     S.O=sgems_read(sgems_out);
 end
 
-S.x=[0:1:(S.dim.nx-1)]*S.dim.dx+S.dim.x0;
-S.y=[0:1:(S.dim.ny-1)]*S.dim.dy+S.dim.y0;
-S.z=[0:1:(S.dim.nz-1)]*S.dim.dz+S.dim.z0;
-
-nsim=size(S.data,2);
-D=zeros(S.dim.nx,S.dim.ny,S.dim.nz,nsim);
-for i=1:nsim;
-    S.D(:,:,:,i)=reshape(S.data(:,i),S.dim.nx,S.dim.ny,S.dim.nz);
+if exist(eas_out_krig_var);
+    S.data_unc=read_eas(eas_out_krig_var);
+end
+sgems_out_krig_var=sprintf('%s_krig_var.sgems',property_name);
+if exist(sgems_out_krig_var)
+    S.O_krig_var=sgems_read(sgems_out_krig_var);
 end
 
+doReformatSimGrid=1;
+try 
+    if (strcmp(S.XML.parameters.Secondary_Harddata_Grid.value,S.XML.parameters.Grid_Name.value)==1)
+        % NO GRID IS CREATED OF SIM/EST GRID IS THE SAME AS THE SECONDARY
+        % GRID
+        doReformatSimGrid=0;        
+    end
+end
+
+if doReformatSimGrid==1;
+    S.x=[0:1:(S.dim.nx-1)]*S.dim.dx+S.dim.x0;
+    S.y=[0:1:(S.dim.ny-1)]*S.dim.dy+S.dim.y0;
+    S.z=[0:1:(S.dim.nz-1)]*S.dim.dz+S.dim.z0;
+    
+    nsim=size(S.data,2);
+    D=zeros(S.dim.nx,S.dim.ny,S.dim.nz,nsim);
+    for i=1:nsim;
+        S.D(:,:,:,i)=reshape(S.data(:,i),S.dim.nx,S.dim.ny,S.dim.nz);
+    end
+end
 if exist([pwd,filesep,eas_finished])
     mgstat_verbose(sprintf('%s : SGeMS ran successfully',mfilename),11);
 else
