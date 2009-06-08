@@ -95,26 +95,30 @@ dy=y(2)-y(1);
 if isfield(options,'tS');tS=options.tS;end
 if isfield(options,'tR');tR=options.tR;end
 
+if ~isfield(options,'nforward');options.nforward=0;end
+
 if isfield(options,'precal');
-    n=length(options.precal.t);
+    n=size(options.precal.pos,1);
     iis=find( (options.precal.pos(:,1)==S(1)) & (options.precal.pos(:,2)==S(2)) );
     iir=find( (options.precal.pos(:,1)==R(1)) & (options.precal.pos(:,2)==R(2)) );
     
     if ~isempty(iis), 
-        tS=options.precal.t{iis(1)}; 
+        tS=options.precal.t(:,:,iis(1)); 
     else
         tS=fast_fd_2d(x,y,v_ref,S);
+        options.nforward=options.nforward+1;
         n=n+1;
         options.precal.pos(n,:)=S;
-        options.precal.t{n}=tS;
+        options.precal.t(:,:,n)=tS;
     end
     if ~isempty(iir), 
-        tR=options.precal.t{iir(1)};
+        tR=options.precal.t(:,:,iir(1));
     else
         tR=fast_fd_2d(x,y,v_ref,R);
+        options.nforward=options.nforward+1;
         n=n+1;
         options.precal.pos(n,:)=R;
-        options.precal.t{n}=tR;
+        options.precal.t(:,:,n)=tR;
     end
 end
 
@@ -125,8 +129,10 @@ if ~exist('tR','var');tR=fast_fd_2d(x,y,v_ref,R);end
 if ~isfield(options,'precal');
     options.precal.pos(1,:)=S;
     options.precal.pos(2,:)=R;
-    options.precal.t{1}=tS;
-    options.precal.t{2}=tR;
+    % PreAllocate lookup table
+    options.precal.t=zeros(size(tS,1),size(tS,2),100);
+    options.precal.t(:,:,1)=tS;
+    options.precal.t(:,:,2)=tR;
 else
     n=length(options.precal.t);
 
