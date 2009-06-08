@@ -6,7 +6,7 @@
   <Cokriging_Type  value="Markov Model 1"  /> 
   <Primary_Harddata_Grid  value="H106"  /> 
   <Primary_Variable  value="obs"  /> 
-  <Assign_Hard_Data  value="1"  /> 
+  <Assign_Hard_Data  value="0"  /> 
   <Secondary_Harddata_Grid  value="pos_est_1"  /> 
   <Secondary_Variable  value="AI"  /> 
   <Min_Conditioning_Data  value="0" /> 
