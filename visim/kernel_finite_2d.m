@@ -11,6 +11,12 @@ if ~isfield(options,'alpha'), options.alpha=1.5; end
 if ~isfield(options,'doplot'), options.doplot=0; end
 if ~isfield(options,'resample'), options.resample=0; end
 if ~isfield(options,'pad'), options.pad=0; end
+if ~isfield(options,'normMethod'), 
+    options.normMethod=1; % Perpedicular scaling
+    %options.normMethod=2; % simple normalize of munk kernel
+    %options.normMethod=3; % vertical scaling
+end
+
 dx=x(2)-x(1);
 dy=y(2)-y(1);
    
@@ -148,14 +154,18 @@ if options.doplot==1;
 end
 
 %% CALCULATE KERNEL
-K=munk_fresnel_2d(1./freq,dt,options.alpha);
+stS=unique(sort(tS(:)));
+stR=unique(sort(tR(:)));
+dS=max([stS(2) stS(3)-stS(2)]);
+dR=max([stR(2) stR(3)-stR(2)]);
+K=munk_fresnel_2d(1./freq,dt,options.alpha,1./(tS+dS),1./(tR+dR));
 if options.doplot==1;
     figure(3)
     imagesc(x,y,K);title('Kernel');colorbar;axis image;set(gca,'ydir','revers')
 end
 
 %% NOW FIND FIRST ARRIVAL AND RAYLENGTH
-str_options = [.01 100000];
+str_options = [.1 20000];
 [xx,yy]=meshgrid(x,y);
 [U,V]=gradient(tS);
 start_point=R;
@@ -199,11 +209,8 @@ RAY=K.*0;
 for j=1:length(ix)
     RAY(iy(j),ix(j))=RAY(iy(j),ix(j))+1;
 end
-
-
 %% NORMALIZE
-normMethod=1;
-if normMethod==1;
+if options.normMethod==1;
     Knorm=K.*0;
     Ktest=K.*0.;
     % CREATE TIME SLICES
@@ -277,6 +284,24 @@ if normMethod==1;
     
     K=raylength.*K./sum(K(:));
     
+elseif options.normMethod==2;
+    K(find(isinf(K)))=0;
+    Knorm=raylength.*K./sum(K(:));
+elseif options.normMethod==3;
+    
+    RAY=K.*0;
+    for j=1:length(ix)
+        RAY(iy(j),ix(j))=RAY(iy(j),ix(j))+1;
+    end
+    RAY(find(isinf(RAY)))=0;
+    RAY(find(isnan(RAY)))=0;
+    RAY=raylength.*RAY./sum(RAY(:));
+    K(find(isinf(K)))=0;
+    Knorm=K;
+    for j=1:size(K,2);        
+        Knorm(:,j)=sum(RAY(:,j)).*Knorm(:,j)./sum(Knorm(:,j));
+    end
+    Knorm=raylength.*Knorm./sum(Knorm(:));
 end
 
 
