@@ -5,8 +5,8 @@
 %
 %    S : SNESIM of VISIM structure
 %    D : completete conditional data set (e.g. S.D(:,:,1));
-%    lim : lim(1) : horizontal radius (in cells)
-%          lim(2) : vertical radius (in cells)
+%    lim : lim(1) : horizontal radius (in meter)
+%          lim(2) : vertical radius (in meter)
 %
 %    pos : center point pos=[x,y] for pertubation
 %
