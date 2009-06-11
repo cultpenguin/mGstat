@@ -288,7 +288,6 @@ elseif options.normMethod==2;
     K(find(isinf(K)))=0;
     Knorm=raylength.*K./sum(K(:));
 elseif options.normMethod==3;
-    
     RAY=K.*0;
     for j=1:length(ix)
         RAY(iy(j),ix(j))=RAY(iy(j),ix(j))+1;
@@ -301,6 +300,8 @@ elseif options.normMethod==3;
     for j=1:size(K,2);        
         Knorm(:,j)=sum(RAY(:,j)).*Knorm(:,j)./sum(Knorm(:,j));
     end
+    Knorm(find(isinf(Knorm)))=0;
+    Knorm(find(isnan(Knorm)))=0;
     Knorm=raylength.*Knorm./sum(Knorm(:));
 end
 

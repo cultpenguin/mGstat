@@ -12,6 +12,7 @@ if ~exist('gdm_step'), gdm_step=0.6;end
 if ~exist('maxit');maxit=10000;end
 if ~exist('nsaves');nsaves=300;end
 if ~exist('dx','var');dx=2;end
+if ~exist('it','var');it=2;end
 
 if nsaves>maxit
     nsaves=maxit;
@@ -23,6 +24,7 @@ end
 V=visim_init([.5:dx:40],[.5:dx:40]);
 
 V.debuglevel=-2;
+V.Va.it=it;
 V=visim(V);
 D=V.D;
 ij=round(linspace(1,maxit,nsaves));
