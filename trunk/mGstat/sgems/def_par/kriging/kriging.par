@@ -1,0 +1,22 @@
+<parameters>  <algorithm name="kriging" /> 
+  <Grid_Name  value="SEC"  /> 
+  <Property_Name  value="kriging" /> 
+  <Kriging_Type  type="Simple Kriging (SK)" >
+  <parameters mean="0" />
+</Kriging_Type>
+  <do_block_kriging  value="0"  /> 
+  <npoints_x  value="5" /> 
+  <npoints_y  value="5" /> 
+  <npoints_z  value="5" /> 
+  <Hard_Data  grid="OBS"   property="DATA"  /> 
+  <Search_Ellipsoid  value="10000 10000 10000
+0 0 0" />
+  <Min_Conditioning_Data  value="0" /> 
+  <Max_Conditioning_Data  value="12" /> 
+  <Variogram  nugget="0.15" structures_count="1"  >
+  <structure_1  contribution="0.85"  type="Spherical"   >
+    <ranges max="1500"  medium="1500"  min="1500"   />
+    <angles x="0"  y="0"  z="0"   />
+  </structure_1>
+</Variogram>
+</parameters> 
