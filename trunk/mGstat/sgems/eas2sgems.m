@@ -114,12 +114,12 @@ else
     nxyz=prod([O.nx,O.ny,O.nz]);
     n_prop_app=length(data)./nxyz;
     if n_prop_app==round(n_prop_app)
-        mgstat_verbose(sprintf('More data than the dimension given',mfilename))
-        mgstat_verbose(sprintf('trying to save extra data as extra properties',mfilename))
+        mgstat_verbose(sprintf('%s : More data than the dimension given',mfilename))
+        mgstat_verbose(sprintf('%s : trying to save extra data as extra properties',mfilename))
         if n_prop_app~=length(header);
             h=header{1};
             for i=1:n_prop_app                
-                header{i}=sprintf('%s_%d',h,i);
+                header{i}=sprintf('%s_%03d',h,i);
             end
         end
         O.n_prop=n_prop_app;    
