@@ -75,8 +75,6 @@ if strcmp(Dset,'point');
 else
     % GRID SET
 
-    
-    
     if nargin==2
         try
             x_pos=findstr('x',title);
@@ -113,9 +111,24 @@ else
     if nargin<10; O.y0=0; else; O.y0=y0; end
     if nargin<11; O.z0=0; else; O.z0=z0; end
 
-    O.n_prop=length(header);
+    nxyz=prod([O.nx,O.ny,O.nz]);
+    n_prop_app=length(data)./nxyz;
+    if n_prop_app==round(n_prop_app)
+        mgstat_verbose(sprintf('More data than the dimension given',mfilename))
+        mgstat_verbose(sprintf('trying to save extra data as extra properties',mfilename))
+        if n_prop_app~=length(header);
+            h=header{1};
+            for i=1:n_prop_app                
+                header{i}=sprintf('%s_%d',h,i);
+            end
+        end
+        O.n_prop=n_prop_app;    
+        O.data=reshape(data(:),[nxyz,n_prop_app]);
+    else
+        O.n_prop=length(header);
+        O.data=data;
+    end    
     O.property=header;
-    O.data=data;
     O.grid_name=title;
    
 end
