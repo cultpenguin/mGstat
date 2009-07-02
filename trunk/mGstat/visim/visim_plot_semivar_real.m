@@ -49,7 +49,7 @@ if length(width)~=nang
 end
 
 if nargin<6
-    doPlot==1;
+    doPlot=1;
 end
 
 col{1}=[0 0 0];
