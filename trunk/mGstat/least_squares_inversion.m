@@ -1,6 +1,9 @@
 % least_squares_inversion, one data set : Tarantola equations (16-17) 
 % 
 % CALL : [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d0);
+%
+% See also : least_squares_sim_cholesky
+%
 function [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d0,type);
   
 if length(m0)==1
