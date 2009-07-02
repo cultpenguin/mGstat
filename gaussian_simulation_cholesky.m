@@ -56,7 +56,6 @@ mgstat_verbose(sprintf('%s : simulation : Elapsed time : %6.1fs',mfilename,(t2-t
  
 if nargout>1
     for i=1:nsim;
-        D(:,:,i)=reshape(z(:,i),fliplr(orig_size))';
+        D(:,:,i)=reshape(z(:,i),fliplr(orig_size));
     end
-
 end
