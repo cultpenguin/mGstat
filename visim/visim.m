@@ -13,6 +13,9 @@
 %   First the local folder is searched for an exe file with the proposed
 %   name, then the mGstat/bin folder is searhed
 %
+%
+% See also: visim_error_sim, visim_cholesky
+%
 function V=visim(parfile,visim_bin);
 
 p=mgstat_dir;
