@@ -20,7 +20,13 @@ end
 
 tic
 start_time=clock;
+
+if V.cond_sim==0;
+    V=visim(V);
+    return
+end
     
+   
 % GET GEOMETRY
 [G,d_obs,d_var,Cd]=visim_to_G(V);
 
@@ -71,7 +77,12 @@ for isim=1:nsim
   %v=v_cest';v=v(:);
   vfield=v_usim';v=vfield(:);
   d_est=G*v;
-  d_est=d_est+randn(size(d_est)).*sqrt(diag(Cd)); % ONLY WORKS FOR UNCORRELATED ERRORS
+  
+  % Gaussian (correlated) noise
+  d_noise=gaussian_simulation_cholesky(zeros(1,size(Cd,1)),Cd,1);
+  % Uncorrelated gaussian noise (non-correlated)
+  %d_noise = randn(size(d_est)).*sqrt(diag(Cd));
+  d_est=d_est+ d_noise;% ONLY WORKS FOR UNCORRELATED ERRORS
   % KRIG ERRORS
   % POINT DATA
   try
