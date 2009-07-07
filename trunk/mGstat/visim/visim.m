@@ -22,9 +22,8 @@ p=mgstat_dir;
 
 visim_bin_ok=0;
 if nargin==2
-    
     if exist([pwd,filesep,visim_bin])
-        visim_bin=[pwd,filesep,visim_bin];
+        visim_bin=[pwd,filesep,visim_bin]
         visim_bin_ok=1;
     elseif exist([pwd,filesep,visim_bin,'.exe'])
         visim_bin=[pwd,filesep,visim_bin];
