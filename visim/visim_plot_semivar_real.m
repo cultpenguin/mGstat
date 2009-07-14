@@ -68,9 +68,8 @@ for ia=1:length(ang)
     end
 end
 
-[v1,v2]=visim_format_variogram(V);
 for ia=1:nang;
-    
+    [v_all,v1,v2]=visim_format_variogram(V);
     if ia==1,
         vtxt{ia}=v1;
         v1=deformat_variogram(v1);
@@ -84,7 +83,11 @@ for ia=1:nang;
     end
 end
 
+
+
 if doPlot==1
+try
+   
     i=0;
     for ia=1:length(ang)
         i=i+1;
@@ -131,7 +134,9 @@ if doPlot==1
     
     [f1,f2,f3]=fileparts(V.parfile);
     print_mul(sprintf('%s_semivar_real',f2))
+catch
+    mgstat_verbose('COULD NOT PLOT SEMIVAR PLOTS')
 end
-
+end
 
 

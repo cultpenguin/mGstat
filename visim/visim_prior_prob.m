@@ -155,21 +155,21 @@ if (options.isotropic==1)
     disp('ISOTROPIC')
     tolerance=180;
     if isfield(Vu,'VaExp')==0;
-        figure(1);clf;
+        %figure(1);clf;
         [Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0],tolerance(1),cutoff(1),width(1));
     end
     if isfield(Vc,'VaExp')==0;
-        figure(2);clf;
+        %figure(2);clf;
         [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0],tolerance(1),cutoff(1),width(1));
     end
 else
     % ANISOTROPIC    
     if isfield(Vu,'VaExp')==0;
-        figure(1);clf;
+        %figure(1);clf;
         [Vu.VaExp.g,Vu.VaExp.hc,sv,Vu.VaExp.hc2]=visim_plot_semivar_real(Vu,[0 90],tolerance,cutoff,width);
     end
     if isfield(Vc,'VaExp')==0;
-        figure(2);clf;
+        %figure(2);clf;
         [Vc.VaExp.g,Vc.VaExp.hc,sv,Vc.VaExp.hc2]=visim_plot_semivar_real(Vc,[0 90],tolerance,cutoff,width);
     end
 end
