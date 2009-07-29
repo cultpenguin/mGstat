@@ -44,7 +44,7 @@ if nargin==2
 end
 
 if visim_bin_ok==1
-    mgstat_verbose(sprintf('%s : using VISIM exe : %s',mfilename,visim_bin),0)
+    mgstat_verbose(sprintf('%s : using VISIM exe : %s',mfilename,visim_bin),1)
 else
     
     

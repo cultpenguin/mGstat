@@ -23,6 +23,7 @@ function visim_clean(V,del_out)
         for i=1:length(files)
             %V=read_visim(files(i).name);
             %delete(['*_',V.out.fname])            
+            files(i).name;
             visim_clean(files(i).name,del_out);
         end
         

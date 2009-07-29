@@ -1,3 +1,7 @@
+% kernel_finite_2d : 2D sensitivity kernels
+%
+%  Call:
+%    [Knorm,K,dt,options]=kernel_finite_2d(v_ref,x,y,S,R,freq,options);
 function [Knorm,K,dt,options]=kernel_finite_2d(v_ref,x,y,S,R,freq,options);
 
 if nargin<4, S=[x(4) y(4)];end
@@ -16,6 +20,7 @@ if ~isfield(options,'normMethod'),
     %options.normMethod=2; % simple normalize of munk kernel
     %options.normMethod=3; % vertical scaling
 end
+if ~isfield(options,'plotname'), options.plotname='kernel_finite_2d'; end
 
 dx=x(2)-x(1);
 dy=y(2)-y(1);
@@ -34,17 +39,32 @@ if options.resample>0
     Ni=options.Ni;
     resample=options.resample;
     options.resample=0;
-    options.Ni=options.Ni*2;
-    [Knorm,K,options]=kernel_finite_2d(v_new,x_new,y_new,S,R,freq,options);
+    options.Ni=options.Ni*resample;
+    [Knorm,K,dt,options]=kernel_finite_2d(v_new,x_new,y_new,S,R,freq,options);
     options.resample=resample;
     options.Ni=Ni;
     
-    % RETURN ONLY THE REQUESTED/DOWNSAMPLED DATA
-    ix=resample:resample:(length(x_new));
-    iy=resample:resample:(length(y_new));
+    mgstat_verbose(sprintf('%s : Sum of normalized kernel before rescaling : %16.5f',mfilename,sum(Knorm(:))),1)
     
-    Knorm=Knorm(iy,ix);
-    K=K(iy,ix);
+    smooth_kernel=ones(options.resample,options.resample)./options.resample.^2;
+    Knorm=conv2_strip(Knorm,smooth_kernel);
+    K=conv2_strip(K,smooth_kernel);
+    % RETURN ONLY THE REQUESTED/DOWNSAMPLED DATA
+    ix=ceil(resample/2):resample:(length(x_new));
+    iy=ceil(resample/2):resample:(length(y_new));
+    
+    Knorm=options.resample.^2.*Knorm(iy,ix);
+    K=options.resample.^2.*K(iy,ix);
+    if options.doplot==2
+        figure(8);clf
+        imagesc(x,y,Knorm);axis image;caxis([-1 1].*.01);
+        xlabel('X (m)');ylabel('Y (m)')
+        axis image
+        print_mul(sprintf('%s_%dnorm_rescale',options.plotname,options.Ni));
+    end
+    
+    mgstat_verbose(sprintf('%s : Sum of normalized kernel after  rescaling : %16.5f',mfilename,sum(Knorm(:))),1)
+    
     
     return
     
@@ -251,31 +271,44 @@ if options.normMethod==1;
 
         t_slice=zeros(size(tt));%NaN.*tt;
         it=find( (tt>=t1)&(tt<t2));
+        %it=find( (tt>=t1)&(tt<=t2));
 
         t_slice(it)=1;
 
         Ktest(it)=1;
         Knorm(it)=d_ray(j).*K(it)./sum(K(it));
 
-        if (options.doplot==1)
-            figure(6);clf;%subplot(2,1,1)
-            %imagesc(x,y,t_slice)
-            imagesc(x,y,K);caxis([-1.2 1])
-            hold on
+        if (options.doplot==2)
+            figure(6);
+            if j==1;
+                clf;
+                imagesc(x,y,K);caxis([-1 1].*.01)
+                xlabel('X (m)');ylabel('Y (m)')
+                hold on
+            end
+            %hold off;imagesc(x,y,t_slice);hold on;;title(j);
             %contour(x,y,tt,intervals,'k-');
-            contour(x,y,tt,[intervals(j:(j+1))],'k-');
+            contour(x,y,tt,[intervals(j:(j+1))],'w-');
             plot(raypath(:,1),raypath(:,2),'k.');
             plot(raypath(iray{j},1),raypath(iray{j},2),'w.');
-            hold off
+            colorbar
             axis image
             drawnow;
-            M6(j)=getframe;
-            figure(7);clf;%subplot(2,1,2)
-            imagesc(x,y,Knorm);axis image;
-            drawnow;
-            M7(j)=getframe;
+            %pause(1);
+            
         end
     end
+    if (options.doplot==2);
+        figure(6)
+        print_mul(sprintf('%s_%dslices',options.plotname,options.Ni));
+    
+        figure(7);clf
+        imagesc(x,y,Knorm);axis image;caxis([-1 1].*.01);
+        xlabel('X (m)');ylabel('Y (m)')
+        axis image
+        print_mul(sprintf('%s_%dnorm',options.plotname,options.Ni));
+    end
+        
     %figure(7);clf;
     %%imagesc(x,y,t_slice)
     %movie2avi(M6,sprintf('TimeSlices_f%03d.avi',freq),'compression','cinepak','quality',90);
@@ -283,6 +316,7 @@ if options.normMethod==1;
 
     
     K=raylength.*K./sum(K(:));
+    
     
 elseif options.normMethod==2;
     K(find(isinf(K)))=0;
