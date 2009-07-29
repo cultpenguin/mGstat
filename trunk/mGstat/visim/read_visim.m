@@ -22,13 +22,19 @@ function obj=read_visim(filename)
   
   % READ HEADER
   head=1;
+  j=0;
   while (head==1)
+      j=j+1;
     line=fgetl(fid);
     %disp(line)
     if length(line)>=19
       if (strcmp(line(1:19),'START OF PARAMETERS')) 
       head=0;
       end
+    end
+    if j==10;
+        mgstat_verbose(sprintf('%s : problem dealing with %s - exiting',mfilename,file));
+        return;
     end
   end
   
