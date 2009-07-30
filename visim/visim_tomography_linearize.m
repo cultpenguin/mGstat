@@ -75,8 +75,15 @@ function [Vout,Vlsq,m_new]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
     m_new = m_new + options.step.*(m_curr-m_new);
     
     name = sprintf('%s_lin_%d',options.name,it);
+    try
+        % MAKE SURE ETYPE IS KEPT I/II
+        etype=Vlsq{it}.etype;
+    end
     [Vlsq{it},G,Gray,rayl]=visim_setup_tomo_kernel(Vlsq{it},S,R,m_new,t,t_err,name,options);
-    
+    try
+        % MAKE SURE ETYPE IS KEPT II/II
+        Vlsq{it}.etype=etype;
+    end
     
     %disp(sprintf('%s : linearizing iteration %d/%d',mfilename,it,options.maxit))
     if (options.min_change>mean_change)
