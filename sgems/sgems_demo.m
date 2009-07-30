@@ -1,6 +1,8 @@
 % sgems_demo : testing various SGeMS algorithms available from mGstat 
 %
 % Call : 
+%
+%   [S,Sc,t] = sgems_demo(alg,dim,nsim);
 %   S=sgems_demo('sgsim');
 %   S=sgems_demo('lusim');
 %   S=sgems_demo('dssim');
@@ -12,6 +14,12 @@
 % A calculation time of -1 indicates that the demo could
 %   not be run
 % 
+%
+
+%
+%  sgsim     , sgems-wine ubuntu 8.10 : 5.0s 
+%  lusim     , sgems-wine ubuntu 8.10 : 8.1s 
+%  snesim_std, sgems-wine ubuntu 8.10 : 87.2s
 %
 function [S,Sc,t]=sgems_demo(alg,dim,nsim);
  
