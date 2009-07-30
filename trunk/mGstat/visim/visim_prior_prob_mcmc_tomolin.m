@@ -110,7 +110,7 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opt
 
     
     [grid.hmax,grid.hmin,grid.vert]=meshgrid(hmax_range,hmin_range,vert_range);
-    grid.np=prod(size(grid.hmax));
+    grid.np=prod(size(grid.hmax))
        
     if options.gridsearch==1;
         options.maxit=max([options.maxit grid.np]);
@@ -163,6 +163,7 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opt
     lsq_op=options_lsq; % USER FINER OPTIM FOR STARTER
     options_lsq.maxit=options_lsq.maxit*4;
     [V,Vlsq]=visim_tomography_linearize(V,S,R,t,t_err,m0,options_lsq);
+    
     options_lsq=lsq_op; % GO BACK TO REQUESTES SETTINSG
     m0=V.etype.mean;
     
@@ -268,10 +269,10 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc_tomolin(V,S,R,t,t_err,opt
           d_all(i_all,:)=[Va.new.ang1 Va.new.ang2 Va.new.ang3];
           gv_all(i_all,:)=Va.new.cc;
           
-          li_all_u(i_all)=out_pp.Lmean_u;
+          try;li_all_u(i_all)=out_pp.Lmean_u;end;
           
-          semi_mean_dir(i_all,:)=out_pp.semi_mean_dir;
-          semi_mean(i_all)=out_pp.semi_mean;
+          try;semi_mean_dir(i_all,:)=out_pp.semi_mean_dir;end
+          try;semi_mean(i_all)=out_pp.semi_mean;end
                     
         else
           L.new=-1e+8;

@@ -115,6 +115,16 @@ function obj=read_visim(filename)
   catch
       obj.read_randpath=-1;
   end
+  try 
+      obj.do_cholesky=tmp(6);
+  catch
+      obj.do_cholesky=0;
+  end
+  try 
+      obj.do_error_sim=tmp(7);
+  catch
+      obj.do_error_sim=0;
+  end
   
 %   if length(tmp)==1
 %       obj.read_covtable=0;
