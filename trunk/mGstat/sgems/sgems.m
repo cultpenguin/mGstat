@@ -82,7 +82,7 @@ if (exist(py_script,'file')~=2)
 end
 
 if ((use_wine_on_unix==1)&(isunix))
-    cmd=sprintf('%s "-s z:%s%s%s"',sgems_bin,space2char(pwd,'\\\','/'),'\\',py_script);
+    cmd=sprintf('%s -s "%s"',sgems_bin,py_script);
 else
     cmd=sprintf('"%s" -s %s',sgems_bin,py_script);
 end
