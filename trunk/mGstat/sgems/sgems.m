@@ -27,22 +27,23 @@
 
 % 
 
-function sgems(py_script);
+function [sgems_bin,cmd]=sgems(py_script,use_wine_on_unix);
 
-use_wine_on_unix=0;
+if nargin<2
+    use_wine_on_unix=1;
+end
 
 
 if (isunix==1)
     if (use_wine_on_unix==1);    
-        sgems_bin_install='~/.wine/drive_c/Program\ Files/SGeMS/';
-        sgems_bin=sprintf('/usr/bin/wine %s/sgems.exe',sgems_bin_install);
+        sgems_bin_install='c:\\Program Files\\SGeMS\\';
+        sgems_bin=sprintf('wine "%ssgems.exe"',sgems_bin_install);
     else
         sgems_bin_install='/usr/local/SGeMS';
         sgems_bin=sprintf('%s/sgems.exe',sgems_bin_install);    
     end
     setenv('GSTLAPPLIHOME',sgems_bin_install);
 else
-
     sgems_bin_install='c:\Program Files\SGeMS';
     if (exist('getenv')==5)
         if ~isempty(getenv('GSTLAPPLIHOME'))
@@ -52,28 +53,41 @@ else
         end
     end
     sgems_bin=[sgems_bin_install,filesep,'sgems.exe'];
-    
 end
 
-if (exist(sgems_bin,'file')~=2)
+if (~isunix)&(exist(sgems_bin,'file')~=2)
     mgstat_verbose(sprintf(['%s : SGEMS BINARY "%s" does not exist.\n' ...
-                        'UPDATE %s%ssgems.exe'],mfilename,sgems_bin,mgstat_dir,filesep),10);
-    return 
+                        'UPDATE %s%ssgems.exe'],mfilename,sgems_bin,mgstat_dir,filesep),-10);
 end
 
+if nargin==0;
+    if ((use_wine_on_unix==1)&(isunix))
+	txt=sprintf('%s : using WINE to run SGeMS binary file %s',mfilename,sgems_bin);
+    else	
+	txt=sprintf('%s : using SGeMS binary file %s',mfilename,sgems_bin);
+    end
+    mgstat_verbose(txt,-1);
+    return
+end
 
 if nargin==0;
     mgstat_verbose(sprintf('%s : Running %s',mfilename,sgems_bin),10);
     system(sprintf('"%s" &',sgems_bin));
     return
 end
+
 if (exist(py_script,'file')~=2)
     mgstat_verbose(sprintf('%s : "%s" does not exist.',mfilename,py_script),-1)
     return 
 end
-cmd=sprintf('"%s" -s %s',sgems_bin,py_script);
-mgstat_verbose(sprintf('%s : %s',mfilename,cmd));
-system(cmd);
+
+if ((use_wine_on_unix==1)&(isunix))
+    cmd=sprintf('%s "-s z:%s%s%s"',sgems_bin,space2char(pwd,'\\\','/'),'\\',py_script);
+else
+    cmd=sprintf('"%s" -s %s',sgems_bin,py_script);
+end
+mgstat_verbose(sprintf('%s : %s',mfilename,cmd),-1);
+%system(cmd);
 
 
 

@@ -49,13 +49,12 @@ for i=1:length(d);
         else
             cmd='copy';
         end
-%        cmd2=[cmd,' ''',def_dir,filesep,d(i).name,''' ''',pwd,filesep,filesep,d(i).name,''''];
         cmd2=[cmd,' "',def_dir,filesep,d(i).name,'" "',pwd,filesep,filesep,d(i).name,'"'];
         [status,result] = system(cmd2);
-        if strfind(result,'1 fil')
+        if (strfind(result,'1 fil')&(isunix==0))|((length(result)==0)&(isunix==1));
             mgstat_verbose(sprintf('%s : %s',mfilename,result),1)
         else
-            mgstat_verbose(sprintf('%s : COULD NOT COPY %s to %s',mfilename,d(i).name.pwd),10)
+            mgstat_verbose(sprintf('%s : COULD NOT COPY %s to %s',mfilename,d(i).name,pwd),10)
         end
     end
 end
