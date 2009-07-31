@@ -17,13 +17,15 @@
 %
 
 %
-%  sgsim     , sgems-wine ubuntu 8.10 : 5.0s 
-%  lusim     , sgems-wine ubuntu 8.10 : 8.1s 
-%  snesim_std, sgems-wine ubuntu 8.10 : 87.2s
+%                                        Dell    Dual
+%                                      laptop  workst 
+%  sgsim     , sgems-wine ubuntu 8.10 :  5.0s    2.5s 
+%  lusim     , sgems-wine ubuntu 8.10 :  8.1s    4.4s
+%  snesim_std, sgems-wine ubuntu 8.10 : 87.2s   47.0s
 %
-%  sgsim     , sgems XP : 2.8s 
-%  lusim     , sgems XP : 6.1s 
-%  snesim_std, sgemsXP : 68.2s
+%  sgsim     , sgems XP : 2.8s  2.47
+%  lusim     , sgems XP : 6.1s, 4.4s
+%  snesim_std, sgems XP : 68.2s,   47s
 %
 function [S,Sc,t]=sgems_demo(alg,dim,nsim);
  
@@ -111,7 +113,8 @@ set(th,'interpreter','none');
 colormap(1-gray)
 print('-dpng',sprintf('sgems_demo_%s_uncond',alg))
 
-figure;set_paper('landscape')
+figure;
+set_paper('landscape')
 for i=1:S.XML.parameters.Nb_Realizations.value
     subplot(nsp,nsp,i);
     %pcolor(Sc.x,Sc.y,Sc.D(:,:,1,i)');shading interp;

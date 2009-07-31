@@ -12,14 +12,14 @@ function [S,par_type]=sgems_get_par(par_type);
 
 par_dir=[mgstat_dir,filesep,'sgems',filesep,'def_par'];
 if nargin==0;
-    d=dir(par_dir);
+d=dir(par_dir);
     j=0;
     for i=1:length(d);
         if (d(i).isdir)
-            if ( (~strcmp(d(i).name,'.')) & (~strcmp(d(i).name,'..')) & (~strcmp(d(i).name,'CVS')) )
-                j=j+1;
+	  if ( (~strcmp(d(i).name,'.')) & (~strcmp(d(i).name,'..')) & (~strcmp(d(i).name,'CVS')) & (~strcmp(d(i).name,'.svn')) )
+	        j=j+1;
                 par_type{j}=d(i).name;
-                mgstat_verbose(sprintf('%s : available SGeMS type %s ',mfilename,par_type{j}),10)
+                mgstat_verbose(sprintf('%s : available SGeMS type %s ',mfilename,par_type{j}),-10)
                 %mgstat_verbose(sprintf('Available SGeMS type %s ',par_type{j}),10)
             end
         end
