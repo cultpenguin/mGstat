@@ -23,9 +23,9 @@
 %  lusim     , sgems-wine ubuntu 8.10 :  8.1s    4.4s
 %  snesim_std, sgems-wine ubuntu 8.10 : 87.2s   47.0s
 %
-%  sgsim     , sgems XP : 2.8s  2.47
-%  lusim     , sgems XP : 6.1s, 4.4s
-%  snesim_std, sgems XP : 68.2s,   47s
+%  sgsim     , sgems XP :                2.8s    1.7s
+%  lusim     , sgems XP :                6.1s    3.7s
+%  snesim_std, sgems XP :               68.0s   41.0s
 %
 function [S,Sc,t]=sgems_demo(alg,dim,nsim);
  

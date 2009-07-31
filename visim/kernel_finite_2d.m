@@ -2,7 +2,7 @@
 %
 %  Call:
 %    [Knorm,K,dt,options]=kernel_finite_2d(v_ref,x,y,S,R,freq,options);
-function [Knorm,K,dt,options]=kernel_finite_2d(v_ref,x,y,S,R,freq,options);
+function [Knorm,K,dt,options,tS,tR]=kernel_finite_2d(v_ref,x,y,S,R,freq,options);
 
 if nargin<4, S=[x(4) y(4)];end
 if nargin<5, R=[x(length(x)-4) y(4)];end
@@ -40,7 +40,7 @@ if options.resample>0
     resample=options.resample;
     options.resample=0;
     options.Ni=options.Ni*resample;
-    [Knorm,K,dt,options]=kernel_finite_2d(v_new,x_new,y_new,S,R,freq,options);
+    [Knorm,K,dt,options,tS,tR]=kernel_finite_2d(v_new,x_new,y_new,S,R,freq,options);
     options.resample=resample;
     options.Ni=Ni;
     
@@ -55,6 +55,10 @@ if options.resample>0
     
     Knorm=options.resample.^2.*Knorm(iy,ix);
     K=options.resample.^2.*K(iy,ix);
+    tS=tS(iy,ix);
+    tR=tR(iy,ix);
+    
+    
     if options.doplot==2
         figure(8);clf
         imagesc(x,y,Knorm);axis image;caxis([-1 1].*.01);
