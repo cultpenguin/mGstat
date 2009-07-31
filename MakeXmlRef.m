@@ -4,6 +4,7 @@ i=i+1;f{i}='visim/*.m';
 i=i+1;f{i}='sgems/*.m';
 i=i+1;f{i}='snesim/*.m';
 i=i+1;f{i}='misc/*.m';
+i=i+1;f{i}='fast/*.m';
 
 
 for ff=1:length(f)

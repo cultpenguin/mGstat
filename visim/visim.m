@@ -66,8 +66,6 @@ else
     end
     
     % TO MANUALqLY SET THE PATH TO VISIM PUT IT HERE :
-    % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_10_2000';
-    % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_100_2000';
     % visim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIV/visim/visim_400_400';
     
     if (exist(visim_bin,'file'))==0
@@ -80,13 +78,16 @@ else
     
     if (exist(visim_bin,'file'))==0
         disp(sprintf('COULD NOT FIND VISIM binary : %s',visim_bin));
+        visim_bin='';
     end
     
 end
 
-if ((nargin==0)&&(nargout==0))
-    disp(sprintf('Using VISIM binary : %s',visim_bin));
-    return
+%if ((nargin==0)&&(nargout==0))
+if ((nargin==0))
+  V=visim_bin;
+  disp(sprintf('Using VISIM binary : %s',visim_bin));
+  return
 end
 
 

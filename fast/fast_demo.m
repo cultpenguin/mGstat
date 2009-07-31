@@ -5,12 +5,19 @@ if ~exist('V')
     x=[0:.25:10];
     y=[0:.25:20];
     z=0;
+    visim_bin=visim;
     V=visim_init(x,y,z);
-    V.nsim=1;
-    V=visim(V);
-    visim_clean; % Clean up after visim;
-    v_ref=V.D';
+    if isempty(visim_bin)
+      v_ref=ones(V.ny,V.nx).*V.gmean;
+    else     
+      V=visim_init(x,y,z);
+      V.nsim=1;
+      V=visim(V);
+      visim_clean; % Clean up after visim;
+      v_ref=V.D';
+    end
 end
+keyboard
 figure(1);
 imagesc(x,y,v_ref);axis image;
 
