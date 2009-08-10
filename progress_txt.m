@@ -18,10 +18,16 @@
 % TMH/2005, thomas@cultpenguin.com
 %
 function progress_txt(i,max,varargin);
-  
+ 
   if nargin==0
     help progress_txt
     return;
+  end
+  
+  if (exist('statusbar.m')==2)
+      statusbar_ok=1;
+  else
+      statusbar_ok=0;
   end
   
   ncols=length(i);
@@ -33,7 +39,7 @@ function progress_txt(i,max,varargin);
   pc=i./max;
   
   % clear command window
-  clc; 
+  if statusbar_ok==0;clc;end 
 
   for m=1:ncols
     
@@ -46,11 +52,17 @@ function progress_txt(i,max,varargin);
     char_prog='';
     for j=1:nchar
       if j<=(pc(m)*nchar);
-        char_prog=[char_prog,'#'];
+        char_prog=[char_prog,'+'];
       else
-        char_prog=[char_prog,'_'];
+        char_prog=[char_prog,'-'];
       end
     end
-    disp(sprintf('%10s %s %3.1f%% %d/%d',txt,char_prog,100*pc(m),i(m),max(m)))
-    
+    txt=sprintf('%10s %s %3.1f %d/%d',txt,char_prog,100*pc(m),i(m),max(m));
+    if (statusbar_ok==1)
+        if (m==1)
+            statusbar(0,txt);
+        end
+    else
+        disp(txt);        
+    end
   end
