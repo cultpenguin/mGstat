@@ -1,3 +1,9 @@
+% pick_first_arrival : pick first arrival travel time data using simple
+%                      correlaion
+%
+% Call 
+%   [tt_pick]=pick_first_arrival(wf_data,ref_trace,ref_t0,doPlot);
+%
 function [tt_pick,c]=pick_first_arrival(wf_data,ref_trace,ref_t0,doPlot);
 if nargin<4,    doPlot=1;end
 if nargin<3,    ref_t0=1;end
