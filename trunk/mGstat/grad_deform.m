@@ -1,5 +1,7 @@
 % grad_deform : Gradual deformation of X1 into X2
 %
+% Call:
+%    grad_deform(X1,X2,t,doPlot)
 %
 % X1 and X2 must have the same mean !!!
 %

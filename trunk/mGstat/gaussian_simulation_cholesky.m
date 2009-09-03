@@ -5,9 +5,16 @@
 % of the posterior PDF for least squares inversion problems :
 % 
 % For example : 
-% [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d0);
-% z_uncond=gaussian_simulation(m_est,Cm_est,nsim);
-% z_cond=gaussian_simulation(m_est,Cm_est,nsim);
+%  [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d0);
+%  z_uncond=gaussian_simulation_cholesky(m_est,Cm_est,nsim);
+%  z_cond=gaussian_simulation_cholesky(m_est,Cm_est,nsim);
+%
+% Choleksy decomposition can be calculated prior to calling
+%   Cm=chol(Cm);
+%   is_chol=1;
+%   z_cond=gaussian_simulation_cholesky(m_est,Cm_est,nsim,is_chol);
+%
+%
 %
 % % unconditional realization:
 % x=[1:1:40];
@@ -16,14 +23,15 @@
 % Cm=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(45,.1,30)');
 % m0=xx.*0;
 % nsim=12;
-% [z_uncond,D]=gaussian_simulation(m0,Cm,nsim);
+% [z_uncond,D]=gaussian_simulation_cholesky(m0,Cm,nsim);
 % for i=1:nsim;subplot(4,3,i);imagesc(x,y,D(:,:,i));axis image;end
 %
 
 
 
-function [z,D]=gaussian_simulation_cholesky(m,Cm,nsim);
+function [z,D]=gaussian_simulation_cholesky(m,L,nsim,ischol);
 
+if nargin<4,is_chol=0;end
 if nargin<3,nsim=1;end
 if nargin<2,Cm=diag(length(m));;end
 if nargin<1,m=ones(1,100);end
@@ -35,7 +43,9 @@ if size(m,2)>1
 end
 
 t0=now;
-L=chol(Cm);
+if is_chol==0
+    L=chol(L);
+end
 z=zeros(length(m),nsim);
 t1=now;
 for i=1:nsim
@@ -49,7 +59,6 @@ for i=1:nsim
     end
     z(:,i)=m+L'*randn(length(m),1);
 end
-
 t2=now;
 mgstat_verbose(sprintf('%s : cholesky   : Elapsed time : %6.1fs',mfilename,(t1-t0).*(24*3600)),0);
 mgstat_verbose(sprintf('%s : simulation : Elapsed time : %6.1fs',mfilename,(t2-t1).*(24*3600)),0);
