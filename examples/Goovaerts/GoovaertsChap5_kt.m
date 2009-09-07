@@ -1,5 +1,7 @@
 % GoovaertsChap5_kt : Goovaerts Example : Chapter 5 Kriging With A Trend
-[data,header]=read_eas('transect.dat');
+dwd=[mgstat_dir,filesep,'examples',filesep,'data',filesep,'jura',filesep];
+[pdata,pheader]=read_eas([dwd,'prediction.dat']);
+[data,header]=read_eas([dwd,'transect.dat']);
 
 x=data(:,1);
 Cd=data(:,4);
@@ -31,31 +33,38 @@ d_tr=d_sk;
 d_tr_var=d_sk_var;
 d_trtr=d_tr;
 
+
+options_sk.mean=mean(Cd_obs);
+[d_sk,d_sk_var,lambda_sk,Ksk]=krig(x_obs,Cd_obs,x,Vobj,options_sk);
+weight_mean_sk=1-sum(lambda_sk);
+options_ok.max=3;
+[d_ok,d_ok_var,lambda_ok,Kok]=krig(x_obs,Cd_obs,x,Vobj,options_ok);
+options_kt.polytrend=1;
+%options_kt.max=3;
+[d_kt,d_kt_var,lambda_kt,Kkt]=krig(x_obs,Cd_obs,x,Vobj,options_kt);
+
+options_kt2=options_kt;
+options_kt2.trend=1;
+%options_kt2.max=3;
+[d_kt2,d_kt2_var,lambda_kt2,Kkt2]=krig(x_obs,Cd_obs,x,Vobj,options_kt2);
+
 figure;
-for i=1:length(x);
-  [d_sk(i),d_sk_var(i),lambda_sk]=krig_sk(x_obs,Cd_obs,x(i),Vobj);
-  weight_mean_sk(i)=1-sum(lambda_sk);
-  [d_ok(i),d_ok_var(i),lambda_ok,dmean_ok(i)]=krig_ok(x_obs,Cd_obs,x(i),Vobj);
-  [d_tr(i),d_tr_var(i)]=krig_trend(x_obs,Cd_obs,x(i),Vobj);
-  [d_trtr(i)]=krig_trend_trend(x_obs,Cd_obs,x(i),Vobj);
-  if (i/10)==round(i/10), 
-    disp(sprintf('%d/%d',i,length(x))), 
+subplot(2,1,1)
+plot(x,d_sk,'-b','linewidth',2);
+hold on
+plot(x,d_ok,'r-','linewidth',2);
+plot(x,d_kt,'g-','linewidth',2);
+plot(x,d_kt2,'k-','linewidth',1);
+plot(x_obs,Cd_obs,'k.','MarkerSize',20);
+hold off
+legend('SK','OK','KT','TREND')
 
-    subplot(2,1,1)
-    plot(x,d_sk,'-b','linewidth',2);
-    hold on  
-    plot(x,d_ok,'r-','linewidth',2);
-    plot(x,d_tr,'g-','linewidth',2);
-    plot(x_obs,Cd_obs,'k.','MarkerSize',20);
-    hold off
-    legend('SK','OK','KT')
+subplot(2,1,2)
+plot(x,dmean_ok,'r-',x,d_trtr,'g-','linewidth',2);
+legend('OK Trend','KT trend')
+drawnow
 
-    subplot(2,1,2)
-    plot(x,dmean_ok,'r-',x,d_trtr,'g-','linewidth',2);
-    legend('OK Trend','KT trend')
-    drawnow
-  end
-end
+keyboard
 subplot(2,1,1);
 ax=axis;axis([min(x) max(x) ax(3) ax(4)])
 subplot(2,1,2);

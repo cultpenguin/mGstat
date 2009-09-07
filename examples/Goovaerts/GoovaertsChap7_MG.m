@@ -1,7 +1,8 @@
 % GoovaertsChap7_MG : MultiGaussian Approach
 
 % read data
-[data,header]=read_eas('transect.dat');
+dwd=[mgstat_dir,filesep,'examples',filesep,'data',filesep,'jura',filesep];
+[data,header]=read_eas([dwd,'transect.dat']);
 x=data(:,1); % x data column
 
 id=find(data(:,4)~=-99);
@@ -29,17 +30,17 @@ Vnscore='0.3488 Nug(0) + 0.3488 Sph(0.2) + 0.3023 Sph(1.3)';
 
 %% SK KRIGING OF NORMAL SCORES NAD ORIGINAL DATA
 xu=[1.625 3.375 2.5 6];
-for i=1:4,
-  [v_est_nscore(i),v_var_nscore(i)]=krig_sk(x_obs,v_obs_nscore,xu(i),Vnscore,v_mean_nscore);
-  [v_est(i),v_var(i)]=krig_sk(x_obs,v_obs,xu(i),V,v_mean);
-end 
+options.mean=v_mean_nscore;
+keyboard
+[v_est_nscore,v_var_nscore]=krig(x_obs,v_obs_nscore,xu,Vnscore,options);
+optons.mean=v_mean;
+[v_est,v_var]=krig(x_obs,v_obs,xu,V,options);
 
 %% SK KRIGING OF WHOLE X_ARRAY
-for i=1:length(x)
-  [v2_est_nscore(i),v2_var_nscore(i)]=krig_sk(x_obs,v_obs_nscore,x(i),Vnscore,v_mean_nscore);
-
-  [v2_est(i),v2_var(i)]=krig_sk(x_obs,v_obs,x(i),V,v_mean);
-end
+options.mean=v_mean_nscore;
+[v2_est_nscore,v2_var_nscore]=krig(x_obs,v_obs_nscore,x,Vnscore,options);
+options.mean=v_mean;
+[v2_est,v2_var]=krig(x_obs,v_obs,x,V,options);
 
 %v2_est_inscore=inscore(v2_est_nscore,normscore,v_obs);
 v_est_inscore=inscore(v_est_nscore,o_nscore);

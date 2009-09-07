@@ -5,7 +5,8 @@
 %
 
 % load data
-[p,pHeader]=read_eas('prediction.dat');
+dwd=[mgstat_dir,filesep,'examples',filesep,'data',filesep,'jura',filesep];
+[p,pHeader]=read_eas([dwd,'prediction.dat']);
 
 
 

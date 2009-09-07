@@ -2,9 +2,10 @@
 %
 
 % load data
-[p,pHeader]=read_eas('prediction.dat');
-[t,tHeader]=read_eas('transect.dat');
-[v,vHeader]=read_eas('validation.dat');
+dwd=[mgstat_dir,filesep,'examples',filesep,'data',filesep,'jura',filesep];
+[p,pHeader]=read_eas([dwd,'prediction.dat']);
+[t,tHeader]=read_eas([dwd,'transect.dat']);
+[v,vHeader]=read_eas([dwd,'validation.dat']);
 
 %
 x=p(:,1)
