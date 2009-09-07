@@ -10,17 +10,31 @@
 %  
 % nbinang : [integer] number of arrays between 0/180 degrees
 %                     (default 1)
+%
+% Example : load jura data
+%   dwd=[mgstat_dir,filesep,'examples',filesep,'data',filesep,'jura',filesep];
+%   [p,pHeader]=read_eas([dwd,'prediction.dat']);
+%   idata=6;dval=pHeader{idata};
+%   pos=[p(:,1) p(:,2)];
+%   val=p(:,idata);
+%   figure;scatter(pos(:,1),pos(:,2),10,val(:,1),'filled');
+%     colorbar;title(dval);xlabel('X');ylabel('Y');axis image;
+%
 % Example isotrop: 
 %   [hc,garr]=semivar_exp(pos,val);
-%   plot(garr,hc);
+%   plot(hc,garr);
+%   xlabel('Distance (m)');ylabel('semivariance');title(dval)
 %
-% Example directional [0,45,90,135,180]: 
+% Exmple directional 
 %   [hc,garr,h,gamma,hangc]=semivar_exp(pos,val,20,4);
-%   plot(garr,hc);
-%   legend(num2str(hangc'))
+%   plot(hc,garr);
+%   legend(num2str(180*hangc'./pi))
+%   xlabel('Distance (m)');ylabel('semivariance');title(dval)
+%
 % 
 %
-% TMH/2005
+
+% TMH/2005-2009
 %
 %
 function [hc,garr,h,gamma,hangc,z_head,z_tail,dp]=semivar_exp(pos,val,nbin,nbinang)

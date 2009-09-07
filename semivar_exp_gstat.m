@@ -7,8 +7,8 @@
 % IN : 
 %    pos : [ndata,ndims] : location of data
 %    val : [ndata,1] : data values
-%    angle [1] : angle 
-%    tol [1] : angle tolerance around 'angle'
+%    angle [1] : angle (degrees)
+%    tol [1] : angle tolerance around 'angle' (degrees)
 %    width[1] : width of bin use to average semivariance
 %    cutoff[1] : max distance for whoch to compute semivariance
 %
@@ -25,7 +25,49 @@
 %    np : Number of points for each seperation distance
 %    av_dist : Average distance
 %
+% EXAMPLE : 
+%   % GET JURA DATA
+%   dwd=[mgstat_dir,filesep,'examples',filesep,'data',filesep,'jura',filesep];
+%   [p,pHeader]=read_eas([dwd,'prediction.dat']);
+%   idata=6;dval=pHeader{idata};
+%   pos=[p(:,1) p(:,2)];
+%   val=p(:,idata);
+%   figure;scatter(pos(:,1),pos(:,2),10,val(:,1),'filled');
+%     colorbar;title(dval);xlabel('X');xlabel('Y');axis image;
+% 
+%   % ISOTROP SEMIVARIOGRAM
+%   [gamma,hc]=semivar_exp_gstat(pos,val);
+%   figure;plot(hc,gamma);
+%   title(dval);xlabel('Distance (m)');ylabel('Semivariance');
 %
+%   % ANISOTROPIC SEMIVARIOGRA
+%   hang=[0 45 90];
+%   tol=10; % Angle tolerance
+%   clear gamma;
+%   figure
+%   for ih=1:length(hang);
+%      [gamma(:,ih),hc]=semivar_exp_gstat(pos,val,hang(ih),tol);
+%   end
+%   figure;plot(hc,gamma);
+%   title(dval);xlabel('Distance (m)');ylabel('Semivariance');
+%   legend(num2str(hang'));
+%
+%   % ANISOTROPIC SEMIVARIOGRAM (2)
+%   width=[0.1];
+%   cutoff=[4];
+%   hang=[0 45 90];
+%   tol=10; % Angle tolerance
+%   clear gamma;
+%   for ih=1:length(hang);
+%      [gamma,hc]=semivar_exp_gstat(pos,val,hang(ih),tol,width,cutoff);
+%      p(ih)=plot(hc,gamma);hold on
+%      if ih==1, set(p(ih),'color',[0 0 0]);end
+%      if ih==2, set(p(ih),'color',[0 1 0]);end
+%      if ih==3, set(p(ih),'color',[0 0 1]);end
+%   end
+%   hold off
+%   title(dval);xlabel('Distance (m)');ylabel('Semivariance');
+%   legend(num2str(hang'));
 %
 function [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol,width,cutoff)
   
