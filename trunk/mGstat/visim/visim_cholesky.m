@@ -2,7 +2,7 @@
 %                  Fast conditional simulation for small models. 
 %                  For larger models consider visim and visim_error_sim.
 %
-% See also: visim, visim_error_sim
+% See also: visim, visim_error_sim, gaussian_simulation_cholesky
 %
 function V=visim_cholesky(V);
 
