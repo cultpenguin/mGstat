@@ -1,5 +1,6 @@
 % Goovaerts Example : Chapter 5
-[data,header]=read_eas('transect.dat');
+dwd=[mgstat_dir,filesep,'examples',filesep,'data',filesep,'jura',filesep];
+[data,header]=read_eas([dwd,'transect.dat']);
 
 x=data(:,1);
 Cd=data(:,4);
@@ -24,27 +25,26 @@ d_sk_var=zeros(1,nx).*NaN;
 weight_mean_sk=zeros(1,nx).*NaN;
 lambda_sk=zeros(nobs,nx).*NaN;
 figure;
-for i=1:length(x);
-  [d_sk(i),d_sk_var(i),lambda_sk(:,i),Ksk]=krig_sk(x_obs,Cd_obs,x(i),Vobj);
-  if (i/10)==round(i/10), 
-    disp(sprintf('%d/%d',i,length(x))), 
-    weight_mean_sk=1-sum(lambda_sk);
-    subplot(2,1,1)
-    plot(x,d_sk,'-','linewidth',2);
-    hold on  
-    plot(x_obs,Cd_obs,'k.','MarkerSize',20);
-    hold off
-    subplot(2,1,2)
-    plot(x,weight_mean_sk,'g-','linewidth',2);
-    drawnow
-  end
-end
+options.sk_mean=mean(Cd_obs);
+[d_sk,d_sk_var,lambda_sk,K_dd,k_du,inhood]=krig(x_obs,Cd_obs,x,Vobj,options);
+weight_mean_sk=1-sum(lambda_sk);
+subplot(2,1,1)
+plot(x,d_sk,'-','linewidth',2);
+hold on
+plot(x_obs,Cd_obs,'k.','MarkerSize',20);
+hold off
+subplot(2,1,2)
+plot(x,weight_mean_sk,'g-','linewidth',2);
+drawnow
+
 subplot(2,1,1);ax=axis;axis([min(x) max(x) ax(3) ax(4)])
 legend('Simple kriging')
 subplot(2,1,2);ax=axis;axis([min(x) max(x) ax(3) ax(4)])
 legend('Weight of SK mean')
 suptitle(V)
 print -dpng GoovChap5_5.2.png
+
+
 return
 
 

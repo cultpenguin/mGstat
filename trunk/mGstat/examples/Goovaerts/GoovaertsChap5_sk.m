@@ -1,7 +1,8 @@
 % GoovaertsChap5_sk : Goovaerts Example : Chapter 5 Simple Kriging
 
-[data,header]=read_eas('transect.dat');
-[pdata,pheader]=read_eas('prediction.dat');
+dwd=[mgstat_dir,filesep,'examples',filesep,'data',filesep,'jura',filesep];
+[pdata,pheader]=read_eas([dwd,'prediction.dat']);
+[data,header]=read_eas([dwd,'transect.dat']);
 
 x=data(:,1);
 Cd=data(:,4);
@@ -26,13 +27,14 @@ d_sk_var=zeros(1,nx).*NaN;
 weight_mean_sk=zeros(1,nx).*NaN;
 figure;
 
-%options.mean=0;
-options.max=3;
+options_sk.mean=mean(Cd_obs);
+[d_sk,d_sk_var,lambda_sk,Ksk]=krig(x_obs,Cd_obs,x,Vobj,options_sk);
+%options_ok.max=3;
+%[d_ok,d_ok_var,lambda_ok,Kok]=krig(x_obs,Cd_obs,x,Vobj,options_ok);
 
 Cd_mean=mean(Cd_obs);
 for i=1:length(x);
-  [d_sk(i),d_sk_var(i),lambda_sk,Ksk]=krig(x_obs,Cd_obs,x(i),Vobj);
-  [d_ok(i),d_ok_var(i),lambda_ok,Kok]=krig(x_obs,Cd_obs,x(i),Vobj,options);
+  
   % [d_sk2(i),d_sk_var2(i),lambda_sk2,Ksk2]=krig_sk(x_obs,Cd_obs,x(i),Vobj,Cd_mean);
   weight_mean_sk(i)=1-sum(lambda_sk);
   if (i/10)==round(i/10), 
