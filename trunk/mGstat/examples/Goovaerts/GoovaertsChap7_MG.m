@@ -29,7 +29,7 @@ Vnscore='0.3488 Nug(0) + 0.3488 Sph(0.2) + 0.3023 Sph(1.3)';
 
 
 %% SK KRIGING OF NORMAL SCORES NAD ORIGINAL DATA
-xu=[1.625 3.375 2.5 6];
+xu=[1.625 3.375 2.5 6]';
 options.mean=v_mean_nscore;
 keyboard
 [v_est_nscore,v_var_nscore]=krig(x_obs,v_obs_nscore,xu,Vnscore,options);
