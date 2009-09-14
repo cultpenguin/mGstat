@@ -104,23 +104,26 @@ gamma=a_min/a_max; % anistropy factor < 1 (=1 for isotropy)
 % Geometry:
 x=cell/2:cell:nx*cell-cell/2;
 y=cell/2:cell:ny*cell-cell/2;
-[X Y]=meshgrid(x,y);
-
-h_x=X-x(ceil(length(x)/2));
-h_y=Y-y(ceil(length(y)/2));
-% Transform into rotated coordinates:
-h_min=h_x*cos(ang)-h_y*sin(ang);
-h_max=h_x*sin(ang)+h_y*cos(ang);
-% Rescale the ellipse:
-h_min_rs=h_min;
-h_max_rs=gamma*h_max;
-dist=sqrt(h_min_rs.^2+h_max_rs.^2);
-% calc semiavriogram
-Va2=Va;
-try
-    Va2.par2=Va.par2(1)*Va.par2(2);
+if ~isfield(options,'C');
+    
+    [X Y]=meshgrid(x,y);
+    
+    h_x=X-x(ceil(length(x)/2));
+    h_y=Y-y(ceil(length(y)/2));
+    % Transform into rotated coordinates:
+    h_min=h_x*cos(ang)-h_y*sin(ang);
+    h_max=h_x*sin(ang)+h_y*cos(ang);
+    % Rescale the ellipse:
+    h_min_rs=h_min;
+    h_max_rs=gamma*h_max;
+    dist=sqrt(h_min_rs.^2+h_max_rs.^2);
+    % calc semiavriogram
+    Va2=Va;
+    try
+        Va2.par2=Va.par2(1)*Va.par2(2);
+    end
+    options.C=gvar-semivar_synth(Va2,dist);
 end
-C=gvar-semivar_synth(Va2,dist);
 
 if isfield(options,'z_rand')
     z_rand=options.z_rand;
@@ -143,8 +146,8 @@ if isfield(options,'lim');
         x0=cell*ceil(rand(1)*nx_org);
         y0=cell*ceil(rand(1)*ny_org);
         options.pos=[x0 y0];
-        
         [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos);
+        [options.used]=set_resim_data(x,y,z_rand,options.lim);
     end
     ii=find(options.used==0);
     z_rand_new=randn(size(z_rand(ii)));
@@ -153,7 +156,7 @@ end
 
 z=gvar.*z_rand;
 
-options.out1=reshape(real(ifft2(sqrt(cell*fft2(C)).*fft2(z))),ny,nx);
+options.out1=reshape(real(ifft2(sqrt(cell*fft2(options.C)).*fft2(z))),ny,nx);
 
 out=options.out1(1:ny_org,1:nx_org)+gmean;
 
