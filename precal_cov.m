@@ -36,7 +36,6 @@ n_est2=size(pos2,1);
 
 n_dim1=size(pos1,2);
 n_dim2=size(pos2,2);
-
 cov=zeros(n_est1,n_est2);
 d=zeros(n_est1,n_est2);
 mgstat_verbose([mfilename,' : Setting up covariance'],2);

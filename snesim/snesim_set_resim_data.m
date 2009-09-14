@@ -25,30 +25,16 @@ if nargin<3
     lim(2)=3;
 end
 
-
 if nargin<4
 	pos(1)=min(S.x)+rand(1)*(max(S.x)-min(S.x));
 	pos(2)=min(S.y)+rand(1)*(max(S.y)-min(S.y));
 end
 
-if length(lim)==1;
-    lim(2)=lim(1);
-end
-if length(pos)==1;
-    pos(2)=S.y(1);
-end
+[used d_cond_2d]=set_resim_data(x,y,D,lim,pos)
 
 
-[xx,yy]=meshgrid(S.x,S.y);
-used=xx.*0+1;
-used(find(abs(xx-pos(1))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
-ih=find(used);
-xxx=xx(ih);
-yyy=yy(ih);
-ddd=D(ih);
 
-d_cond=[xxx(:) yyy(:) yyy(:).*0+S.z(1) ddd(:)];
-
+d_cond=[d_cond_2d(:,1) d_cond_2d(:,2) d_cond_2d(:,2).*0+S.z(1) d_cond_2d(:,3)];
 if isfield(S,'fconddata')==0
     S.fconddata.fname='cond.eas';
 end
