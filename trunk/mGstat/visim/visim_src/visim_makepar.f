@@ -47,9 +47,10 @@ c-----------------------------------------------------------------------
  14   format('-1.0       1.0e21             ',
      +       '- trimming limits for conditioning data')
       write(lun,15)
- 15   format('0 -1 0                        ',
-     +       '-debugging level: 0,1,2,3, read_covtable:0,1,
-     +     read_lambda:-1,0,1')
+ 15   format('0 -1 -1 -1 -1 0 0                        ',
+     +       '-debugging level: -1,0,1,2,3, read_covtable,',
+     +       'read_lambda,read_volnh,read_randpath,do_cholesky,',
+     +       'do_error_sim-1,0,1')
       write(lun,17)
  17   format('visim.out                     ',
      +       '-file for output')
@@ -74,8 +75,8 @@ c-----------------------------------------------------------------------
  120  format('0 2 100                       ',
      +       '-min_Gvar,max_Gvar,n_Gvar')
       write(lun,121)
- 121  format('170                           ',
-     +       '-nQ (number of wquantiles')
+ 121  format('170 0                           ',
+     +       '-nQ (number of wquantiles, do_discrete')
 
 
       write(lun,19)
@@ -117,7 +118,7 @@ c-----------------------------------------------------------------------
  28   format('60.0  60.0  60.0              ',
      +       '-maximum search radii (hmax,hmin,vert)')
       write(lun,29)
- 29   format(' 45.0   0.0   0.0             ',
+ 29   format(' 0.0   0.0   0.0             ',
      +       '-angles for search ellipsoid')
       write(lun, 305)
  305  format('10.0 2.0                      ',
