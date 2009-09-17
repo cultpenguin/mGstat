@@ -1,4 +1,4 @@
-% fft_ma_2d :
+% fft_ma7_2d :
 % Call :
 %    [out,z]=fft_ma_2d(x,y,Va,options)
 %
@@ -45,8 +45,6 @@ options.null='';
 if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'gmean');options.gmean=0;end
 if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
-%if ~isfield(options,'Nlx');options.Nlx=30;end
-%if ~isfield(options,'Nly');options.Nly=30;end
 if ~isfield(options,'fac_x');options.fac_x=4;end
 if ~isfield(options,'fac_y');options.fac_y=4;end
 
@@ -62,7 +60,7 @@ ny_c=ny*options.fac_y;
 nx_c=nx*options.fac_x;
 
 % COVARIANCE MODEL
-if ~isfield(options,'C');
+if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     options.C=zeros(ny_c,nx_c);
     
     for iv=1:length(Va);
@@ -70,7 +68,7 @@ if ~isfield(options,'C');
         % GET HMAX AND HMIN FROM SEMIVARIOGRAM MODEL
         % ONLY WORKS FOR ONE SEMIVRAIOHGRAM MODEL !!
         par2=Va(iv).par2;
-        h_max=par2(iv);
+        h_max=par2(1);
         if length(par2)>1
             h_min=h_max*par2(2);
             ang=par2(3);
@@ -110,6 +108,13 @@ if ~isfield(options,'C');
     end
     options.C=options.gvar-options.C;
 end
+
+if ~isfield(options,'fftC');
+    options.fftC=fft2(options.C);
+end
+
+
+% normal devaites
 if isfield(options,'z_rand')
     z_rand=options.z_rand;
 else
@@ -138,7 +143,7 @@ if isfield(options,'lim');
 end
 
 z=z_rand;
-options.out1=reshape(real(ifft2(sqrt(cell*fft2(options.C)).*fft2(z))),ny_c,nx_c);
+options.out1=reshape(real(ifft2(sqrt(cell*options.fftC).*fft2(z))),ny_c,nx_c);
 
 out=options.out1(1:ny,1:nx)+options.gmean;
 
