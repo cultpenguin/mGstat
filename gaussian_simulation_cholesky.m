@@ -26,10 +26,12 @@
 % [z_uncond,D]=gaussian_simulation_cholesky(m0,Cm,nsim);
 % for i=1:nsim;subplot(4,3,i);imagesc(x,y,D(:,:,i));axis image;end
 %
+%
+% see also gaussian_simulation_cholesky_resim
+%
 
 
-
-function [z,D]=gaussian_simulation_cholesky(m,L,nsim,ischol);
+function [z,D]=gaussian_simulation_cholesky(m,L,nsim,is_chol);
 
 if nargin<4,is_chol=0;end
 if nargin<3,nsim=1;end
