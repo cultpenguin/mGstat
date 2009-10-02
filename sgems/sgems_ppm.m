@@ -10,6 +10,7 @@
 %            subplot(5,5,i);
 %            imagesc(S.x,S.y,Sppm{i}.D');axis image;
 %            title(r_arr(i))
+%            drawnow;
 %        end
 function S=sgems_ppm(S,O,r);
 

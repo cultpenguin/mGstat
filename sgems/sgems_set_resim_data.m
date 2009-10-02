@@ -4,7 +4,7 @@
 %    S=sgems_set_resim_data(S,D,lim,pos)
 %
 %    S : SGEMS structure
-%    D : completete conditional data set (e.g. S.D(:,:,1));
+%    D : completete conditional data set (e.g. S.D(:,:,1)');
 %    lim : lim(1) : horizontal radius (in cells)
 %          lim(2) : vertical radius (in cells)
 %

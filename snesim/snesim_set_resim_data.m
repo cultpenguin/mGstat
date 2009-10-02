@@ -30,7 +30,7 @@ if nargin<4
 	pos(2)=min(S.y)+rand(1)*(max(S.y)-min(S.y));
 end
 
-[used d_cond_2d]=set_resim_data(x,y,D,lim,pos)
+[used d_cond_2d]=set_resim_data(S.x,S.y,D,lim,pos);
 
 
 
