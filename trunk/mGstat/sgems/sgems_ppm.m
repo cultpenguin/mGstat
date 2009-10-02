@@ -20,8 +20,10 @@ if nargin==0
     
     str=input('Do you want to see an example of PPM ? [''Y''/N] ','s');
 
-    if strcmp(upper(str),'Y')            
-        sgems_example_ppm
+    if strcmp(upper(str),'Y')        
+        %% ADD PATH TO SGEMS EXAMPLES
+        addpath(sprintf('%s%sexamples%ssgems_examples',mgstat_dir,filesep,filesep));
+        sgems_example_ppm;
     end
     return
 end
