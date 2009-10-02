@@ -51,7 +51,11 @@ if ~isfield(options,'fac_y');options.fac_y=4;end
 nx=length(x);
 ny=length(y);
 dx=x(2)-x(1);
-dy=y(2)-y(1);
+try
+    dy=y(2)-y(1);
+catch
+    dy=1;
+end
 cell=dx;
 
 
@@ -144,6 +148,7 @@ end
 
 z=z_rand;
 options.out1=reshape(real(ifft2(sqrt(cell*options.fftC).*fft2(z))),ny_c,nx_c);
+%options.out1=reshape(real(ifft2(sqrt(cell*fftshift(options.fftC)).*fft2(z))),ny_c,nx_c);
 
 out=options.out1(1:ny,1:nx)+options.gmean;
 
