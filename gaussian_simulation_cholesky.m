@@ -38,6 +38,12 @@ if nargin<3,nsim=1;end
 if nargin<2,Cm=diag(length(m));;end
 if nargin<1,m=ones(1,100);end
 
+if length(m)==1;
+    if size(L,1)>1
+        m=ones(1,size(L,1))*m;
+    end
+end
+
 orig_size=size(m);
 
 if size(m,2)>1
