@@ -44,6 +44,7 @@ if options.resample>0
     options.resample=resample;
     options.Ni=Ni;
     
+    
     mgstat_verbose(sprintf('%s : Sum of normalized kernel before rescaling : %16.5f',mfilename,sum(Knorm(:))),1)
     
     smooth_kernel=ones(options.resample,options.resample)./options.resample.^2;
@@ -98,7 +99,6 @@ if options.pad>0
     options.pad=0;    
     
     [Knorm,K,options]=kernel_finite_2d(v_new,x_new,y_new,S,R,freq,options);
-    
     options.pad=pad;
     options.resample=resample;
     
