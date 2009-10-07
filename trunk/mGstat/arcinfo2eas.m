@@ -10,10 +10,10 @@
 %
 function arcinfo2eas(file_arcinfo,file_eas);
 
-  if nargin==1,
-    [ext,file]=fileparts(file_arcinfo);
-    file_eas=[file,'.eas'];
-  end
+if nargin==1,
+  [ext,file]=fileparts(file_arcinfo);
+file_eas=[file,'.eas'];
+end
   
   [data,x,y,dx,nanval]=read_arcinfo_ascii(file_arcinfo);
   [xx,yy]=meshgrid(x,y);
