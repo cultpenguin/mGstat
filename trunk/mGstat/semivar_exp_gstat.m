@@ -80,10 +80,22 @@ function [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol,width,cutoff)
     tol=180;
   end
 
+
+  
+  f{1}='tempSemi.variogram';
+  f{2}='tempSemi.eas';
+  f{3}='tempSemi.cmd';
+  f{4}='gstat.cmd';
+  for i=1:length(f);
+      file=[pwd,filesep,f{i}];
+      if exist(file)
+          delete(file)
+      end
+  end
+  
   
   
   file='tempSemi';
-  
   write_eas([file,'.eas'],[pos val]);
   
   G.data{1}.data=file;
