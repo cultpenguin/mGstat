@@ -33,7 +33,9 @@ end
 
 
 for it=1:nt;
-    progress_txt(it,nt);
+    if nt>1;
+        progress_txt(it,nt);
+    end
     for i=1:ns-ns_ref;
         cc=corrcoef(wf_data(i:(i+ns_ref-1),it),ref_trace);
         c(i)=cc(2);
