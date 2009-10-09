@@ -46,14 +46,15 @@ for it=1:nt;
 
     
 
-    if doPlot==1;
-        set(0,'CurrentFigure',f1)
-        subplot(1,2,2);
-        imagesc(1:1:nt,1:1:ns,wf_data);
-        hold on
-        plot(1:1:it,tt_pick(1:1:it),'w-*')
-        hold off
-        drawnow;
-    end
     
 end
+if doPlot==1;
+    set(0,'CurrentFigure',f1)
+    subplot(1,2,2);
+    imagesc(1:1:nt,1:1:ns,wf_data);
+    hold on
+    plot(1:1:it,tt_pick(1:1:it),'w-*')
+    hold off
+    drawnow;
+end
+    
