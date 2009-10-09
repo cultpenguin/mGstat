@@ -80,6 +80,13 @@ function [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol,width,cutoff)
     tol=180;
   end
 
+  %% check for nan
+  inan=find(isnan(sum(pos')')|isnan(val));
+  if ~isempty(inan)
+      igood=find(~isnan(sum(pos')')&~isnan(val));
+      pos=pos(igood,:);
+      val=val(igood);
+  end
 
   
   f{1}='tempSemi.variogram';
@@ -107,6 +114,7 @@ function [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol,width,cutoff)
   G.method{1}.semivariogram='';
   G.variogram{1}.data=file;
   G.variogram{1}.file=[file,'.variogram'];
+  % G.set.mv='-1'; % SET THE MISSING VALUE / NAN FOR GSTAT
   G.set.alpha=angle;
   G.set.tol_hor=tol;
   if exist('width')==1
