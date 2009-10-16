@@ -36,11 +36,10 @@ function tmap=fast_fd_2d(x,z,V,Sources);
         disp(fd_bin);
         return
     end
-
     dx=x(2)-x(1);
-    dz=z(2)-z(1);
-    if (dx~=dz);
-        mgstat_verbose(sprintf('%s : 2D grid MUST be unuform DX=DZ. you requested(dx=%g,dz=%g)',mfilename,dx,dz),10);
+    dz=z(2)-z(1);  
+    if ( abs(dx-dz)>1e-12 );
+        mgstat_verbose(sprintf('%s : 2D grid MUST be unuform DX=DZ. you requested(dx=%g,dz=%g)',mfilename,dx,dz),-10);
         tmap=[];        
         return
     end
