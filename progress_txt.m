@@ -17,16 +17,18 @@
 %
 % TMH/2005, thomas@cultpenguin.com
 %
-function progress_txt(i,max,varargin);
+function progress_txt(i,max,varargin,statusbar_ok);
  
   if nargin==0
     help progress_txt
     return;
   end
   
-  if (exist('statusbar.m')==2)
+  if nargin<4
       statusbar_ok=1;
-  else
+  end
+  
+  if (~exist('statusbar.m')==2)
       statusbar_ok=0;
   end
   
