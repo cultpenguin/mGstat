@@ -14,6 +14,14 @@ if isempty(data),
     return
 end
 
+if size(data,2)>1
+    for i=1:size(data,2)
+        nvar(i)=nanvar(data(:,i));
+    end
+    return
+end
+
+
 npos=find( (isnan(data)==0) & (isinf(data)==0) );
 if length(npos)==0,
   nvar=NaN;

@@ -7,7 +7,10 @@
 %
 % TMH(tmh@gfy.ku.dk), 2001
 %
+
+
 function [nstd]=nanstd(data)
-nstd=std(data(find(isnan(data)==0))); 
+
+nstd=sqrt(nanvar(data));
 
   
