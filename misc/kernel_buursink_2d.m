@@ -16,14 +16,12 @@
 % Thomas Mejer Hansen (small editts, 2009)
 %
                                     
-function [kernel,L,L1_all,L2_all]=kernel_buursink_2d(model,x,z,S,R,dt,wf_trace,useEik);
-
+function [kernel,L,L1_all,L2_all,tS,tR,omega,Y]=kernel_buursink_2d(model,x,z,S,R,dt,wf_trace,useEik);
 
 % Fresnell volume
 if nargin<1
     model=ones(100,100)*((0.14*10^9));
     model=ones(60,120)*((0.14*10^9));
-    
 end
 [nz,nx]=size(model);
 
@@ -64,7 +62,6 @@ if ~(dx_x==dx_z);
     %return
 end
 
-%dx=0.2; % m
 dx=dx_x;
 
 kernel=zeros(nz,nx);
@@ -82,9 +79,17 @@ Fs=1/dt;
 NFFT = 2^nextpow2(L); % Next power of 2 from length of y
 Y=fft(y,NFFT);
 Y=abs(Y(1:NFFT/2)).^2;
-
+% CHOOSE ONE THE NEXT THREE METHODS OF COMPUTING THE FFT(y)
+% KNUD LINE
 delta_f=1/dt;
 omega=pi*delta_f*linspace(0,1,NFFT/2);
+% TMH LINES
+omega=(1./(NFFT*dt)).*[1:NFFT/2];
+% TMH ALTERNATIVE
+[A,P,omega_alt]=mspectrum(y,dt);
+Y=P;
+omega=omega_alt;
+delta_f=omega(2)-omega(1);
 
 %Calculate radius matrix
 % See Spetzler and Snieder, 2004: 
@@ -109,6 +114,8 @@ end
 
 if useEik==0
     L=dx*sqrt((trn(1)-rec(1))^2+(trn(2)-rec(2))^2);
+    tS=[];
+    tR=[];
 else
     tS=fast_fd_2d(x,z,model./1e+9,S);
     tR=fast_fd_2d(x,z,model./1e+9,R);
@@ -116,11 +123,14 @@ else
     %tR=fast_fd_2d(x,z,model,R);
     L = eikonal_raylength(x,z,model./1e+9,S,R,tS);
 end
-L1_all=zeros(nz,nx);
-L2_all=zeros(nz,nx);
+    tS=fast_fd_2d(x,z,model./1e+9,S);
+    tR=fast_fd_2d(x,z,model./1e+9,R);
 
-    
 
+if nargout>2
+    L1_all=zeros(nz,nx);
+    L2_all=zeros(nz,nx);
+end
 for i=1:nz
     progress_txt([i],[nz],'Z',0)
         
@@ -141,12 +151,15 @@ for i=1:nz
             %L1 = eikonal_raylength(x,z,model,S,P,tS);
             %L2 = eikonal_raylength(x,z,model,R,P,tR);
         end
-        L1_all(i,j)=L1;L2_all(i,j)=L2;
+        if nargout>2
+            L1_all(i,j)=L1;L2_all(i,j)=L2;
+        end
         
         %A=trapz((omega.^2).*sqrt(omega).*Y.*sin( (omega./model(i,j))*(L1+L2-L) +pi/4) )*pi*delta_f; % KNUD
         %B=trapz((omega.^2).*Y)*pi*delta_f; % KNUD ORIG
-        A=trapz((omega.^(1.5)).*Y.*sin((omega./model(i,j))*(L1+L2-L)+pi/4))*pi*delta_f;
-        B=trapz((omega).*Y)*pi*delta_f;
+        
+        A=trapz((omega.^(1.5)).*Y.*sin( (omega./model(i,j))*(L1+L2-L) +pi/4), omega);
+        B=trapz((omega).*Y, omega);
         kernel(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * 1/(sqrt(model(i,j))*model(i,j)^2)*(A/B);
         
         if (sum(P-S)==0)|(sum(P-R)==0)
@@ -155,8 +168,10 @@ for i=1:nz
         
         %end
     end
+    %    imagesc(kernel);axis image;drawnow
+    
+    
 end
-%imagesc(kernel);axis image;drawnow
 % NEXT FEW LINE SHOULD BETTER HANDLE THE SENSITIVITY AT THE SOURCE AND
 % RECEIVER LOCATIONS
 pos=find(isnan(kernel)>0);

@@ -54,6 +54,13 @@ if options.resample>0
     ix=ceil(resample/2):resample:(length(x_new));
     iy=ceil(resample/2):resample:(length(y_new));
     
+    if (length(ix)>length(x));
+        ix=ix(2:(length(x)+1));
+    end
+    if (length(iy)>length(y));
+        iy=iy(2:(length(y)+1));
+    end
+    
     Knorm=options.resample.^2.*Knorm(iy,ix);
     K=options.resample.^2.*K(iy,ix);
     tS=tS(iy,ix);
@@ -66,7 +73,7 @@ if options.resample>0
         xlabel('X (m)');ylabel('Y (m)')
         axis image
         print_mul(sprintf('%s_%dnorm_rescale',options.plotname,options.Ni));
-    end
+    end        
     
     mgstat_verbose(sprintf('%s : Sum of normalized kernel after  rescaling : %16.5f',mfilename,sum(Knorm(:))),1)
     

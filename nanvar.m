@@ -15,8 +15,13 @@ if isempty(data),
 end
 
 if size(data,2)>1
-    for i=1:size(data,2)
-        nvar(i)=nanvar(data(:,i));
+    if size(data,1)==1;
+        nvar=nanvar(data(:));
+        return
+    else
+        for i=1:size(data,2)
+            nvar(i)=nanvar(data(:,i));
+        end
     end
     return
 end
