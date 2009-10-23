@@ -16,8 +16,13 @@ end
 
 
 if size(data,2)>1
-    for i=1:size(data,2)
-        nmean(i)=nanmean(data(:,i));
+    if size(data,1)==1;
+        nmean=nanmean(data(:));
+        return
+    else
+        for i=1:size(data,2)
+            nmean(i)=nanmean(data(:,i));
+        end
     end
     return
 end
