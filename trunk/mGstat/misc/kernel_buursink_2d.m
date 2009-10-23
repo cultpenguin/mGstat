@@ -123,8 +123,12 @@ else
     %tR=fast_fd_2d(x,z,model,R);
     L = eikonal_raylength(x,z,model./1e+9,S,R,tS);
 end
-    tS=fast_fd_2d(x,z,model./1e+9,S);
-    tR=fast_fd_2d(x,z,model./1e+9,R);
+
+%if useEik==2
+%    m=model.*0+mean(model(:));
+%    L = eikonal_raylength(x,z,m./1e+9,S,R,tS);
+%end
+ 
 
 
 if nargout>2
@@ -132,7 +136,7 @@ if nargout>2
     L2_all=zeros(nz,nx);
 end
 for i=1:nz
-    progress_txt([i],[nz],'Z',0)
+    % progress_txt([i],[nz],'Z',0)
         
     for j=1:nx
         %progress_txt([i,j],[nz,nx],'Z','X',0)
@@ -145,11 +149,16 @@ for i=1:nz
         if useEik==0
             L1=dx*sqrt((trn(1)-j)^2+(trn(2)-i)^2);
             L2=dx*sqrt((j-rec(1))^2+(i-rec(2))^2);           
-        else           
+        elseif useEik==1           
             L1 = eikonal_raylength(x,z,model./1e+9,S,P,tS);
             L2 = eikonal_raylength(x,z,model./1e+9,R,P,tR);
             %L1 = eikonal_raylength(x,z,model,S,P,tS);
             %L2 = eikonal_raylength(x,z,model,R,P,tR);
+        else
+            L1 = 1e-9*tS(i,j).*model(i,j);
+            L2 = 1e-9*tR(i,j).*model(i,j);
+            L1 = 1e-9*tS(i,j).*mean(model(:));
+            L2 = 1e-9*tR(i,j).*mean(model(:));
         end
         if nargout>2
             L1_all(i,j)=L1;L2_all(i,j)=L2;
