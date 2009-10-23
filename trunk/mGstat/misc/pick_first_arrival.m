@@ -38,10 +38,12 @@ for it=1:nt;
         c(i)=cc(2);
     end
     ipick=find(c==max(c));ipick=ipick(1);
-    P=polyfit(ipick-5:ipick+5,c(ipick-5:ipick+5),2);
-    tt_pick(it)=-P(2)/(2*P(1))+ref_t0-1;
-    %tt_pick(it)=ipick+ref_t0-1;
-
+    try
+        P=polyfit(ipick-5:ipick+5,c(ipick-5:ipick+5),2);
+        tt_pick(it)=-P(2)/(2*P(1))+ref_t0-1;
+    catch
+        tt_pick(it)=ipick+ref_t0-1;
+    end
     
 end
 if doPlot==1;
