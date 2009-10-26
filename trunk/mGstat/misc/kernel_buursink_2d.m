@@ -169,7 +169,8 @@ for i=1:nz
         
         A=trapz((omega.^(1.5)).*Y.*sin( (omega./model(i,j))*(L1+L2-L) +pi/4), omega);
         B=trapz((omega).*Y, omega);
-        kernel(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * 1/(sqrt(model(i,j))*model(i,j)^2)*(A/B);
+        %kernel(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * 1/(sqrt(model(i,j))*model(i,j)^2)*(A/B);
+        kernel(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * model(i,j).^(-0.5) * (A/B);
         
         if (sum(P-S)==0)|(sum(P-R)==0)
            kernel(i,j)=0;
