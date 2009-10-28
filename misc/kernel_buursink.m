@@ -184,6 +184,8 @@ kernel(pos)=0;
 kernel=L*kernel./sum(kernel(:));
 
 
+
+
 if doPlot==1;
     figure;
     
