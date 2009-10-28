@@ -12,7 +12,7 @@
 % Ar : Amplitude fo the wavefield propagating from the receiver
 % K : normalization factor
 function S=munk_fresnel_2d(T,dt,alpha,As,Ar,K);
-  
+
   if nargin<2,    
     eval(['help ',mfilename])
     return
@@ -31,7 +31,7 @@ function S=munk_fresnel_2d(T,dt,alpha,As,Ar,K);
     K=1;
   end
   if nargin<5,
-    Ar=ones(size(dt));
+    Ar=ones(size(dt)):cpæ;
   end
   if nargin<4,
     As=ones(size(dt));

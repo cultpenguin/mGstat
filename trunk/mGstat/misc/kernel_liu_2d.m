@@ -1,22 +1,41 @@
-% kernel_buursink_2k : Computes 2D Sensitivity kernel based on 1st order EM scattering theory
+% kernel_liu_2d : Computes 2D Sensitivity kernel based on 1st order EM scattering theory
 % 
 % See 
-%   Buursink et al. 2008. Crosshole radar velocity tomography 
-%                         with finite-frequency Fresnel. Geophys J. Int.
+%   Liu er al., Sensitivity kernsels for seismic Fresnel volume tomoraphy.
+%                         Geoophysics 75(5), 2009.
 %                         (172) 117;
 %
 %  CALL : 
 %     % specify a source trace (dt, wf_trace):
-%     [kernel,L,L1_all,L2_all]=kernel_buursink_2d(model,x,z,S,R,dt,wf_trace);
+%     [kernel,L,L1_all,L2_all]=kernel_liu_2d(model,x,z,S,R,dt,wf_trace);
 %     % Use a ricker wavelet with center frequency 'f0'
-%     [kernel,L,L1_all,L2_all]=kernel_buursink_2d(model,x,z,S,R,f0));
+%     [kernel,L,L1_all,L2_all]=kernel_liu_2d(model,x,z,S,R,f0));
 %
 %
 % Knud Cordua, 2009, 
 % Thomas Mejer Hansen (small editts, 2009)
 %
                                     
-function [kernel,L,L1_all,L2_all,tS,tR,omega,Y]=kernel_buursink_2d(model,x,z,S,R,dt,wf_trace,useEik,doPlot);
+function [kernel,L,L1_all,L2_all,tS,tR,omega,Y]=kernel_liu_2d(model,x,z,S,R,dt,wf_trace,useEik,doPlot);
+
+if nargin==0;
+    dx=.05;
+    x=[1:1:120]*dx;
+    z=[1:1:60]*dx;
+    v0=0.14;
+    model=ones(length(z),length(x)).*v0;
+    S=[.5 1.5];
+    R=[5.5 1.5];
+    
+    f0=.1;
+    dt=1/(16*f0);
+    Nt=10*(1/f0)/dt;
+    wf_trace=rickerwavelet(f0,dt,Nt);;plot(wf_trace)
+    useEik=2;
+    doPlot=1;
+    [kernel,L,L1_all,L2_all,tS,tR,omega,Y]=kernel_liu_2d(model,x,z,S,R,dt,wf_trace,useEik,doPlot);
+    return
+end
 
 % Fresnell volume
 if nargin<1
@@ -77,11 +96,10 @@ rec(2)=round(interp1(z,1:1:nz,R(2)));
 
 %% COMPUTE POWERSPECTRUM OF TRACE
 y=wf_trace;
-[A,P,omega_alt]=mspectrum(y,dt);
+[A,P,omega]=mspectrum(y,dt);
 A=A./(sum(A(:)));
 P=P./(sum(P(:)));
-Y=A;
-omega=omega_alt;
+Y=P;
 delta_f=omega(2)-omega(1);
 
 
@@ -91,12 +109,14 @@ if useEik==0
     tS=[];
     tR=[];
 else
-    tS=fast_fd_2d(x,z,model./1e+9,S);
-    tR=fast_fd_2d(x,z,model./1e+9,R);
+    tS=fast_fd_2d(x,z,model,S);
+    tR=fast_fd_2d(x,z,model,R);
     %tS=fast_fd_2d(x,z,model,S);
     %tR=fast_fd_2d(x,z,model,R);
-    L = eikonal_raylength(x,z,model./1e+9,S,R,tS);
+    L = eikonal_raylength(x,z,model,S,R,tS);
 end
+    tS=fast_fd_2d(x,z,model,S);
+    tR=fast_fd_2d(x,z,model,R);
 
 if nargout>2
     L1_all=zeros(nz,nx);
@@ -113,25 +133,23 @@ for i=1:nz
             L1=dx*sqrt((trn(1)-j)^2+(trn(2)-i)^2);
             L2=dx*sqrt((j-rec(1))^2+(i-rec(2))^2);           
         elseif useEik==1           
-            L1 = eikonal_raylength(x,z,model./1e+9,S,P,tS);
-            L2 = eikonal_raylength(x,z,model./1e+9,R,P,tR);
+            L1 = eikonal_raylength(x,z,model,S,P,tS);
+            L2 = eikonal_raylength(x,z,model,R,P,tR);
             %L1 = eikonal_raylength(x,z,model,S,P,tS);
             %L2 = eikonal_raylength(x,z,model,R,P,tR);
         else
-            %L1 = 1e-9*tS(i,j).*model(i,j);
-            %L2 = 1e-9*tR(i,j).*model(i,j);
-            L1 = 1e-9*tS(i,j).*mean(model(:));
-            L2 = 1e-9*tR(i,j).*mean(model(:));
+            %L1 = tS(i,j).*model(i,j);
+            %L2 = tR(i,j).*model(i,j);
+            L1 = tS(i,j).*mean(model(:));
+            L2 = tR(i,j).*mean(model(:));
         end
         if nargout>2
             L1_all(i,j)=L1;L2_all(i,j)=L2;
         end
         
         % 2D
-        A=trapz((omega.^(0.5)).*Y.*sin( (omega./model(i,j))*(L1+L2-L) +pi/4), omega);
-        B=trapz(omega.*Y, omega);
-        %B=1;
-        kernel(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * model(i,j).^(-0.5) * (A/B);
+        A=trapz(Y.*sin( (sqrt(omega)./model(i,j))*(L1+L2-L) +pi/4), omega);
+        kernel(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * model(i,j).^(-0.5) * (A);
         
         % 3D
         %A=trapz((omega.^(3)).*Y.*sin( (omega./model(i,j))*(L1+L2-L)), omega);
@@ -162,25 +180,33 @@ kernel=L*kernel./sum(kernel(:));
 if doPlot==1;
     figure;
     
-    iy=find(Y==max(Y));iy=iy(1);omega_peak=omega(iy);
+    iy=find(Y==max(Y));iy=iy(1);omega_peak=omega(iy)
     
-    lambda_peak=model(1,1)./omega_peak;
+    lambda_peak=model(1,1)./omega_peak
+    fresnel_width=sqrt(lambda_peak*L);
+    disp(sprintf('Fresnel_width=%gm peak freq = %g Hz',fresnel_width,omega_peak));
     
-    fresnel_width=sqrt(lambda_peak*L)/2;
-    disp(sprintf('Fresnel_width=%gm peak freq = %g MHz',fresnel_width,omega_peak./1e+6));
     
+    T=1./omega_peak;
+    dt_max=3*T/8; % 2D time
+    dist_max=mean(model(:))*dt_max;
+    f_zones=[1:4].*dt_max;
+    f_zones=[1:4].*dist_max;
     
-    f_zones=[1:4].*lambda_peak/2;
     subplot(2,2,1);imagesc(x,z,model);axis image;colorbar
     subplot(2,2,2);imagesc(x,z,kernel);axis image;colorbar;cax=caxis;
    
-    if nargout>1
+    if nargout>2
         delta_t=[L1_all + L2_all - L];
         hold on
         contour(x,z,delta_t,f_zones,'w-')
         hold off
         caxis(cax)
-    end
+        caxis([-1 1].*.0001)
+        subplot(2,2,4);spy(delta_t<(mean(model(:))*dt_max))
+  end
     subplot(2,2,3);plot(omega,Y,'k-',[1 1].*omega_peak,[0 1].*max(Y),'r-');
     
 end
+
+keyboard
