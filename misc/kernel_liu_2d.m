@@ -45,7 +45,7 @@ end
 [nz,nx]=size(model);
 
 if nargin<9
-    doPlot=1;
+    doPlot=0;
 end
 
 if nargin<7
@@ -176,7 +176,7 @@ kernel=L*kernel./sum(kernel(:));
 
 
 
-
+doPlot=1;
 if doPlot==1;
     figure;
     
@@ -208,5 +208,3 @@ if doPlot==1;
     subplot(2,2,3);plot(omega,Y,'k-',[1 1].*omega_peak,[0 1].*max(Y),'r-');
     
 end
-
-keyboard
