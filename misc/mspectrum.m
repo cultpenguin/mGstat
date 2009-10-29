@@ -7,7 +7,7 @@
 
 function [A,P,kx]=mspectrum(x,dx)
 
-x=x-nanmean(x);
+%x=x-nanmean(x);
 nx=length(x);
 dkx=1./(nx*dx);
 kx=dkx*[-nx/2:1:nx/2-1];

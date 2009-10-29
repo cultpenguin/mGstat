@@ -16,7 +16,7 @@
 % Thomas Mejer Hansen (small editts, 2009)
 %
                                     
-function [kernel,L,L1_all,L2_all,tS,tR,omega,Y]=kernel_buursink_2d(model,x,z,S,R,dt,wf_trace,useEik,doPlot);
+function [kernel,L,L1_all,L2_all,tS,tR,omega,Y]=kernel_buursink_2d(model,x,z,S,R,omega,P_omega,useEik,doPlot);
 
 % Fresnell volume
 if nargin<1
@@ -26,7 +26,7 @@ end
 [nz,nx]=size(model);
 
 if nargin<9
-    doPlot=1;
+    doPlot=0;
 end
 
 if nargin<7
@@ -76,13 +76,17 @@ rec(2)=round(interp1(z,1:1:nz,R(2)));
 
 
 %% COMPUTE POWERSPECTRUM OF TRACE
-y=wf_trace;
-[A,P,omega_alt]=mspectrum(y,dt);
-A=A./(sum(A(:)));
-P=P./(sum(P(:)));
-Y=A;
-omega=omega_alt;
-delta_f=omega(2)-omega(1);
+%y=wf_trace;
+%[A,P,omega_alt]=mspectrum(y,dt);
+%A=A./(sum(A(:)));
+%P=P./(sum(P(:)));
+%Y=A;
+%omega=2*pi*omega_alt;
+%delta_f=omega(2)-omega(1);
+
+Y=P_omega.^2;
+
+
 
 
 % COMPUTE KERNEL tS
@@ -91,11 +95,11 @@ if useEik==0
     tS=[];
     tR=[];
 else
-    tS=fast_fd_2d(x,z,model./1e+9,S);
-    tR=fast_fd_2d(x,z,model./1e+9,R);
+    tS=fast_fd_2d(x,z,model,S);
+    tR=fast_fd_2d(x,z,model,R);
     %tS=fast_fd_2d(x,z,model,S);
     %tR=fast_fd_2d(x,z,model,R);
-    L = eikonal_raylength(x,z,model./1e+9,S,R,tS);
+    L = eikonal_raylength(x,z,model,S,R,tS);
 end
 
 if nargout>2
@@ -113,15 +117,15 @@ for i=1:nz
             L1=dx*sqrt((trn(1)-j)^2+(trn(2)-i)^2);
             L2=dx*sqrt((j-rec(1))^2+(i-rec(2))^2);           
         elseif useEik==1           
-            L1 = eikonal_raylength(x,z,model./1e+9,S,P,tS);
-            L2 = eikonal_raylength(x,z,model./1e+9,R,P,tR);
+            L1 = eikonal_raylength(x,z,model,S,P,tS);
+            L2 = eikonal_raylength(x,z,model,R,P,tR);
             %L1 = eikonal_raylength(x,z,model,S,P,tS);
             %L2 = eikonal_raylength(x,z,model,R,P,tR);
         else
-            %L1 = 1e-9*tS(i,j).*model(i,j);
-            %L2 = 1e-9*tR(i,j).*model(i,j);
-            L1 = 1e-9*tS(i,j).*mean(model(:));
-            L2 = 1e-9*tR(i,j).*mean(model(:));
+            %L1 = tS(i,j).*model(i,j);
+            %L2 = tR(i,j).*model(i,j);
+            L1 = tS(i,j).*mean(model(:));
+            L2 = tR(i,j).*mean(model(:));
         end
         if nargout>2
             L1_all(i,j)=L1;L2_all(i,j)=L2;
@@ -130,7 +134,6 @@ for i=1:nz
         % 2D
         A=trapz((omega.^(0.5)).*Y.*sin( (omega./model(i,j))*(L1+L2-L) +pi/4), omega);
         B=trapz(omega.*Y, omega);
-        %B=1;
         kernel(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * model(i,j).^(-0.5) * (A/B);
         
         % 3D
