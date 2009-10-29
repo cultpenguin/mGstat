@@ -96,7 +96,8 @@ rec(2)=round(interp1(z,1:1:nz,R(2)));
 
 %% COMPUTE POWERSPECTRUM OF TRACE
 y=wf_trace;
-[A,P,omega]=mspectrum(y,dt);
+[A,P,k]=mspectrum(y,dt);
+omega=2*pi*k;
 A=A./(sum(A(:)));
 P=P./(sum(P(:)));
 Y=P;
