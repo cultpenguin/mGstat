@@ -48,7 +48,11 @@ function visim_plot_hist(V,isim,FS,doPrint)
     orgpdf=V.nx*V.ny*V.nz*orgpdf./(sum(orgpdf));  
   else
     d=read_eas(V.refhist.fname);
-    orgpdf=hist(d,xall);
+    if (size(d,2)==1)
+        orgpdf=hist(d,xall);
+    else
+        orgpdf=interp1(d(:,1),d(:,2),xall);
+    end
     orgpdf=V.nx*V.ny*V.nz*orgpdf./(sum(orgpdf));      
   end
   hall=V.nx*V.ny*V.nz*hall./sum(hall);
