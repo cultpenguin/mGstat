@@ -1,10 +1,7 @@
 function visim_plot_semivar_mul(V,name,cax)
+ 
+% SAME AS visim_plot_semivar2.m ?
 
-
-%V{1}=read_visim('visim_25_geomod.par');
-%V{2}=read_visim('visim_25_geomod_unc.par');
-%name{1}='cond';
-%name{2}='uncond';
 
 ang=[0 90];
 tolerance=15;
