@@ -60,7 +60,7 @@ if (~isunix)&(exist(sgems_bin,'file')~=2)
                         'UPDATE %s%ssgems.exe'],mfilename,sgems_bin,mgstat_dir,filesep),-10);
 end
 
-if nargin==0;
+if ((nargin==0)&(nargout>0));
     if ((use_wine_on_unix==1)&(isunix))
 	txt=sprintf('%s : using WINE to run SGeMS binary file %s',mfilename,sgems_bin);
     else	
@@ -71,8 +71,9 @@ if nargin==0;
 end
 
 if nargin==0;
-    mgstat_verbose(sprintf('%s : Running %s',mfilename,sgems_bin),10);
-    system(sprintf('"%s" &',sgems_bin));
+    mgstat_verbose(sprintf('%s : Running %s',mfilename,sgems_bin),-10);
+    [s,r]=system(sprintf('"%s" &',sgems_bin));
+
     return
 end
 
