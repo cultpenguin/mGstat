@@ -53,7 +53,7 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
   % If estimating/simulating using a location file (NO MASK)
   if isfield(G,'set')
     if isfield(G.set,'output')
-    mgstat_verbose(sprintf('%s : reading output data from %s',mfilename,gstat_filename))
+    mgstat_verbose(sprintf('%s : reading output data from %s',mfilename,gstat_filename),1)
   
       % get Dimensions
       for id=1:length(G.data)
@@ -126,7 +126,7 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
   % RETURN PREDICTIONS OF SET
   if nargout>0
     if isfield(G,'predictions')
-      mgstat_verbose(sprintf('%s : reading predictions from %s',mfilename,gstat_filename))
+      mgstat_verbose(sprintf('%s : reading predictions from %s',mfilename,gstat_filename),1)
       
       nsim=1; % DEFAULT ONLY ONE SIM/ESTIMATION
       % FIND NUMBER OF SIMULATIONS
@@ -171,7 +171,7 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
   % RETURN VARIANCES
   if nargout>1
     if isfield(G,'variances')
-    mgstat_verbose(sprintf('%s : reading variances data from %s',mfilename,gstat_filename))
+    mgstat_verbose(sprintf('%s : reading variances data from %s',mfilename,gstat_filename),1)
   
       for ip=1:length(G.variances)
         %gstat_convert(G.variances{ip}.file);
@@ -191,7 +191,7 @@ function [pred,pred_var,pred_covar,mask,G]=gstat(G)
   % RETURN COVARIANCES
   if nargout>2
     if isfield(G,'covariances')
-      mgstat_verbose(sprintf('%s : reading covariances data from %s',mfilename,gstat_filename))
+      mgstat_verbose(sprintf('%s : reading covariances data from %s',mfilename,gstat_filename),1)
   
       for ip=1:length(G.covariances)
         %gstat_convert(G.covariances{ip}.file);
