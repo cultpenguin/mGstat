@@ -113,10 +113,9 @@ end
 
 function write_xml_line(fid,name,tag_name,tag_value,lev,closed_tag);
 ntab=4;
-
 if isempty(tag_name)
     for j=1:(ntab*lev); fprintf(fid,'%s',' ');  end
-    fprintf(fid,'<%s>\n',name);
+    fprintf(fid,'<%s>\n',name);   
 else
     for j=1:(ntab*lev); fprintf(fid,'%s',' ');  end
     fprintf(fid,'<%s',name);
@@ -131,9 +130,13 @@ else
          else
              tag_value_string=tag_value{i};
          end
-         fprintf(fid,' %s="%s"',tag_name{i},strip_space(tag_value_string,1));
-         %fprintf(fid,' %s="%s"',tag_name{i},tag_value_string);
-
+         %if ~isempty(tag_name{i})
+             txt_line=sprintf(' %s="%s"',tag_name{i},strip_space(tag_value_string,1));
+             fprintf(fid,'%s',txt_line);
+             %fprintf(fid,' %s="%s"',tag_name{i},strip_space(tag_value_string,1));
+         %else
+         %    disp(txt_line);
+         %end
     end
     if closed_tag==1
         fprintf(fid,' />\n');
