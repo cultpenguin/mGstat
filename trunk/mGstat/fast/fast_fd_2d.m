@@ -7,8 +7,13 @@
 %  V   :  [m/s]
 %
 %
-% Run fast_fd_2d with no arguments to run e demonstration.
-%
+% % Example
+% X=1:1:100;
+% Y=1:1:100;
+% V=ones(length(Y),length(X)).*3;
+% tmap = fast_fd_2d(X,Y,V,[30,10]);
+% contourf(X,Y,tmap);axis image;colorbar
+%   
 %
 % 'fd' is an efficient FD soultion of the eikonal equation, and is 
 % a part of the FAST pacjage created by Colin Zelt :
@@ -28,14 +33,29 @@ function tmap=fast_fd_2d(x,z,V,Sources);
     % fd_bin='/scratch/tmh/RESEARCH/PROGRAMMING/mGstat/bin/nfd';
     % fd_bin='~/bin/nfd';
     if exist(fd_bin)==0,
-        disp(sprintf('%s - NO VALID PATH TO nfd',mfilename));
+        
+        txt=sprintf('----------------------------------------\n');
+        txt=sprintf('%sNo valid path to nfd.\n',txt);
+        txt=sprintf('%sFAST/NFD is not free for commercial, \n',txt);
+        txt=sprintf('%sso you need to manually download and compile the FAST source code from\n ',txt);
+        txt=sprintf('%s %s\n',txt,'http://www.geophysics.rice.edu/department/faculty/zelt/fast.html',-10,1);
+        txt=sprintf('%sYou can find a hints to easy compilation in the mGstat documentation\n',txt);
+        txt=sprintf('%s----------------------------------------\n',txt);
+        
+        mgstat_verbose(txt);
         return;
     end
     
-    if ((nargin==0)&(nargout==0))
+    if ((nargin==0)&(nargout==0))        
         disp(fd_bin);
         return
     end
+    if ((nargin==0)&(nargout==1))        
+        tmap=fd_bin;
+        return
+    end
+    
+    
     dx=x(2)-x(1);
     dz=z(2)-z(1);  
     if ( abs(dx-dz)>1e-12 );
