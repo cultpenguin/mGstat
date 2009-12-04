@@ -36,8 +36,7 @@ function gstat_plot(G,MarkerSize,cax);
     end
   end
 
-  
-  [mask,x,y]=read_arcinfo_ascii(G.mask{1}.file);
+  %[mask,x,y]=read_arcinfo_ascii(G.mask{1}.file);
   
   for i=1:length(p)
            
