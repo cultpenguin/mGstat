@@ -43,6 +43,7 @@ function [data,header,txt_title,dim,txtdata,txtheader]=read_eas(filename);
    catch
      use_alt=1;
    end
+   
    % If no data has been read, use alternate method
    if isempty(data), use_alt=1; end
    if use_alt==1,

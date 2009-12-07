@@ -2,8 +2,7 @@
 # Universal kriging, using one continuous and
 # two binary variables.
 #
-data(ln_zinc): 'zincmap.eas', x=1, y=2, v=3, log,
-  X=-1&4&5&6;
+data(ln_zinc): 'zincmap.eas', x=1, y=2, v=3, log,  X=-1&4&5&6;
 # -1: no default intercept (col. 5 and 6 form an intercept)
 # use global kriging: local kriging would lead to a singularity
 # the variogram of e is:
