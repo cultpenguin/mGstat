@@ -1,12 +1,9 @@
 #
 # Multivariable indicator cosimulation 
 #
-data(i200): 'zinc.eas', x=1, y=2, v=3, max=20, radius=1000,
-    I=200, sk_mean = 0.28;
-data(i400): 'zinc.eas', x=1, y=2, v=3, max=20, radius=1000,
-    I=400, sk_mean = 0.56;
-data(i800): 'zinc.eas', x=1, y=2, v=3, max=20, radius=1000,
-    I=800, sk_mean = 0.85;
+data(i200): 'zinc.eas', x=1, y=2, v=3, max=20, radius=1000, I=200, sk_mean = 0.28;
+data(i400): 'zinc.eas', x=1, y=2, v=3, max=20, radius=1000, I=400, sk_mean = 0.56;
+data(i800): 'zinc.eas', x=1, y=2, v=3, max=20, radius=1000, I=800, sk_mean = 0.85;
 
 # define an LMC:
 variogram(i200): 0.0490637 Nug(0) + 0.182814 Exp(300);

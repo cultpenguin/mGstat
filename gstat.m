@@ -193,9 +193,10 @@ if (isfield(G,'mask'))
             for ip=1:length(G.mask)
                 
                 if exist(G.mask{ip}.file)==2;
-                    [mask{ip},x,y,dx,nanval]=read_arcinfo_ascii(G.mask{ip}.file);
+                    %[mask{ip}.data,mask{ip}.x,mask{ip}.y,mask{ip}.dx,mask{ip}.nanval]=read_arcinfo_ascii(G.mask{ip}.file);
+                    [mask.data,mask.x,mask.y,mask.dx,mask.nanval]=read_arcinfo_ascii(G.mask{ip}.file);
                 else
-                    mask(:,:,ip)=[];mgstat_verbose(sprintf('Cannot find "%s"',G.mask{ip}.file));
+                    mask=[];mgstat_verbose(sprintf('Cannot find "%s"',G.mask{ip}.file));
                 end
             end
         else
