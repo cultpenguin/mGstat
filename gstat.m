@@ -22,9 +22,9 @@ end
 % DELETE ANY EXISTING OUTPUT FILES
 if isfield(G,'set');
     if isfield(G.set,'output');
-        if exist(G.set.output)==2
-            delete(G.set.output);
-        end
+      if exist([pwd,filesep,G.set.output])==2
+        delete([pwd,filesep,G.set.output]);
+      end
     end
     % SET PRECISION IF NOT ALLREADY SET
     %if ~isfield(G.set,'precision');
