@@ -2,9 +2,10 @@
 %                      correlaion
 %
 % Call 
-%   [tt_pick]=pick_first_arrival(wf_data,ref_trace,ref_t0,doPlot);
+%   [tt_pick]=pick_first_arrival(wf_data,ref_trace,ref_t0,doPlot,wf_time);
 %
-function [tt_pick,c]=pick_first_arrival(wf_data,ref_trace,ref_t0,doPlot);
+function [tt_pick,time_pick,c]=pick_first_arrival(wf_data,ref_trace,ref_t0,doPlot,wf_time);
+if nargin<5,    wf_time=[];end
 if nargin<4,    doPlot=1;end
 if nargin<3,    ref_t0=1;end
 if nargin<2,    ref_trace=wf_data(:,1);end
@@ -14,7 +15,8 @@ ns_ref=length(ref_trace);
 
 
 if doPlot==1;
-    f1=figure(1);
+    %f1=figure(1);
+    f1=gcf;
     set(0,'CurrentFigure',f1)
     subplot(1,2,1);
     plot(ref_trace,1:1:ns_ref,'ko');
@@ -56,3 +58,7 @@ if doPlot==1;
     drawnow;
 end
     
+if ~isempty(wf_time);
+    time_pick=interp1(1:1:(length(wf_time)),wf_time,tt_pick);
+end
+
