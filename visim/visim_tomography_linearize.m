@@ -66,9 +66,16 @@ function [Vout,Vlsq,m_new]=visim_tomography_linearize(V,S,R,t,t_err,m0,options);
     
     Vlsq{it}.nsim=0;
     Vlsq{it}.densitypr=0;
-    Vlsq{it}=visim(Vlsq{it});
-    m_curr = Vlsq{it}.etype.mean;
-
+    useVisim=0;
+    if useVisim==1;
+        Vlsq{it}=visim(Vlsq{it});
+        m_curr2 = Vlsq{it}.etype.mean;
+    else
+        [G,d_obs,d_var,Cd,Cm,m0]=visim_to_G(Vlsq{it});
+        [m_curr]=least_squares_inversion(G,Cm,Cd,m0,d_obs);
+        m_curr=reshape(m_curr(:),Vlsq{it}.nx,Vlsq{it}.ny);
+    end
+    
     md = m_curr - m_new;
     mean_change(it) = mean(abs(md(:)));
 
