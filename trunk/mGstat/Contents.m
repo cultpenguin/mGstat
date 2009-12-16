@@ -24,7 +24,6 @@
 %   --gstat_cokrig2d- 2D cokriging
 %   gstat_binary  - returns the path to the binary gstat
 %   gstat_demo    - mGstat demos
-%   gstat_plot    - Plot predcition/simulation results.
 %   semivar_exp_gstat - 
 %
 % IO

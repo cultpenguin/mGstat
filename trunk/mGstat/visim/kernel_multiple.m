@@ -81,7 +81,6 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
     aR=spherical_spreading(aR,spread_type);
     aS=spherical_spreading(aS,spread_type);
 
-
     % CALCULATE KERNEL
     %K(:,:,is)=munk_fresnel_2d(T,dt(:,:,is),alpha,aS,aR);
     K(:,:,is)=munk_fresnel_2d(T,dt(:,:,is),alpha);

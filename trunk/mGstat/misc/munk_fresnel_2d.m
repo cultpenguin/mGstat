@@ -31,7 +31,7 @@ function S=munk_fresnel_2d(T,dt,alpha,As,Ar,K);
     K=1;
   end
   if nargin<5,
-    Ar=ones(size(dt)):cpæ;
+    Ar=ones(size(dt));
   end
   if nargin<4,
     As=ones(size(dt));
