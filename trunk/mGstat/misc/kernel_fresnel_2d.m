@@ -1,7 +1,7 @@
 %function [kernel_t,kernel_a,P_omega,omega]=kernel_fresnel_2d(v,x,y,S,R,f0,gamma);
 function [kernel_t,kernel_a,P_omega,omega]=kernel_fresnel_2d(v,x,y,S,R,omega,P_omega);
 
-doPlot=1;
+doPlot=0;
 
 omega_max=omega(find(P_omega==max(P_omega)));omega_max=omega_max(1);
 f0=omega_max/(2*pi);
