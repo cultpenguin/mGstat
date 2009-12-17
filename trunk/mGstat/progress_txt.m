@@ -37,7 +37,6 @@ function progress_txt(i,max,varargin);
   if (~exist('statusbar.m')==2)
       statusbar_ok=0;
   end
-  
   ncols=length(i);
   
   %

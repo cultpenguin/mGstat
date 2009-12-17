@@ -28,7 +28,7 @@ n_omega=length(P_omega);
 kernel_t=v.*0;
 kernel_a=v.*0;
 for i=1:n_omega
-    progress_txt(i,n_omega)
+    %if ((i/20)==round(i/20));progress_txt(i,n_omega);end
     if nargout==1;
         [kernel_mono_t]=kernel_fresnel_monochrome_2d(v,x,y,S,R,omega(i),L,L1,L2);
         kernel_t=kernel_t + P_omega(i).*kernel_mono_t.*d_omega;
