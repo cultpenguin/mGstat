@@ -43,6 +43,10 @@ end
 dt_max=(3/8)*mean(v(:))/(f0);
 dt=L1+L2-L;
 
+% ZERO BEYING 1st FRESNEL
+kernel_t(find(dt>(2*dt_max)))=0;
+try;kernel_a(find(dt>(2*dt_max)))=0;end
+
 % zero outside first fresenl zone
 %kernel_t(find(dt>(dt_max)))=0;
 %kernel_a(find(dt>(dt_max)))=0;
