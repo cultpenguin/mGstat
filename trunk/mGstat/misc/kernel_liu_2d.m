@@ -86,6 +86,17 @@ end
 
 dx=dx_x;
 
+if size(S,1)>1
+    kernel=zeros(size(S,1),nx*nz);
+    for i=1:size(S,1);
+        progress_txt(i,size(S,1),'kernel')
+        [k,L,L1_all,L2_all,tS,tR,omega,Y]=kernel_liu_2d(model,x,z,S(i,:),R(i,:),dt,wf_trace,useEik,doPlot);
+        k=k';
+        kernel(i,:)=k(:);
+    end 
+    return
+end
+
 kernel=zeros(nz,nx);
 
 trn(1)=round(interp1(x,1:1:nx,S(1)));
@@ -159,7 +170,7 @@ for i=1:nz
         
         
         
-        
+     
         if (sum(P-S)==0)|(sum(P-R)==0)
            kernel(i,j)=0;
         end
@@ -177,7 +188,7 @@ kernel=L*kernel./sum(kernel(:));
 
 
 
-doPlot=1;
+%doPlot=1;
 if doPlot==1;
     figure;
     
