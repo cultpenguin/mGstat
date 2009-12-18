@@ -23,7 +23,6 @@
 %
 function tmap=fast_fd_2d(x,z,V,Sources);
     
-    
     [p,f,s]=fileparts(which('mgstat_verbose'));  
     if isunix==1
         fd_bin=sprintf('%s/bin/nfd',p);

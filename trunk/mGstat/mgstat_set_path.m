@@ -2,6 +2,7 @@
 %
 % 
 %
+function mgstat_set_path;
 ip=0;
 ip=ip+1;P{ip}='';
 ip=ip+1;P{ip}='snesim';

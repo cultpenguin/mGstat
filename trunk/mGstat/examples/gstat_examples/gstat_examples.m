@@ -7,5 +7,6 @@ figure(6);ex06;
 figure(7);ex07;
 %figure(8);ex08;
 figure(9);ex09;
+figure(10);ex10;
 
 
