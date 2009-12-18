@@ -89,6 +89,7 @@ if isfield(options,'lim');
         [options.used]=set_resim_data(x,y,options.randdata(:,1),options.lim,options.pos+[x0 y0],options.wrap_around);
     else
         x0=cell*ceil(rand(1)*nx); y0=cell*ceil(rand(1)*ny);
+        x0=ceil(rand(1)*nx); y0=ceil(rand(1)*ny);
         options.pos=[x0 y0];
         [options.used]=set_resim_data(1:nx,1:ny,options.randdata(:,1),options.lim,options.pos,options.wrap_around);
     end    

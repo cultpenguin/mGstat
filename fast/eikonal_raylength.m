@@ -3,7 +3,7 @@
 % Call:
 %   raylength=eikonal_raylength(x,y,v,S,R,tS,doPlot)
 %
-function raylength=eikonal_raylength(x,y,v,S,R,tS,doPlot)
+function [raylength]=eikonal_raylength(x,y,v,S,R,tS,doPlot)
 
 if nargin<7
     doPlot=0;

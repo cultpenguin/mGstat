@@ -351,3 +351,15 @@ elseif options.normMethod==3;
 end
 
 
+%% PLOT KERNEL
+figure(17)
+T=1/freq;
+subplot(3,1,1);
+spy(dt<(T/4))
+subplot(3,1,2);
+imagesc(K);caxis([-1 1].*.000001);
+hold on;contour(dt,[1:1:10].*T/4,'k-');hold off
+axis  image
+title('Sensitivity kernel')
+
+%%
