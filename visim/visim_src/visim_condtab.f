@@ -284,7 +284,8 @@ c	write(*,*) '-'
 c	write(*,*) 'm_sel=',m_sel
 c	write(*,*) 'v_sel=',v_sel
 
-      lout_krig=59
+c     CHANGED FROM lout_krig=59, on Nov 9, 2009 by TMH
+      lout_krig=60
       write(lout_krig,86) cmean, cvar,m_sel,v_sel
  86   format(f12.6,f15.9,f12.6,f15.9)  
       

@@ -40,14 +40,16 @@ c
 c
 c ORIGINAL: Yongshe Liu Thomas Mejer Hansen   DATE: June, 2004
 c-----------------------------------------------------------------------
+      
       include 'visim.inc'
       integer ind,ix,iy,iz,nxy,j,k,nvp
       real tempsim(MXYZ),vvx(MAXGEOMDATA)
       real simrest(MXYZ)
-      real svoll(MXYZ),nvoll(MXYZ),vorder(MXYZ),ivoll(MXYZ)
+      real svoll(MXYZ),nvoll(MXYZ)
+      integer vorder(MXYZ),ivoll(MXYZ)
       real svoll2(MXYZ),nvoll2(MXYZ)
 c     NEXT LINE ONLY CHOSEN AS REEL TO AVOID DEBUG INFO (INT)c
-      real varr(MAXVOLS)
+      integer varr(MAXVOLS)
       real tempvol(MAXVOLS)
       real p
 c      integer shuffvol,shuffinvol,densitypr
