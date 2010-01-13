@@ -117,7 +117,7 @@ c-----------------------------------------------------------------------
       real sumderr,sumerr,temp
       real meantmh,stdtmh
       real gvar_org, gmean_org, cbb_org
-
+      
       character tmpfl*80
 c      integer lout_krig
 
@@ -485,7 +485,7 @@ c                    stop
                      write(96) (cnodey(i),i=1,ncnode)
                      write(96) (cnodez(i),i=1,ncnode)
                      write(96) (cnodev(i),i=1,ncnode)
-                     write(96) (cnodeindex(i),i=1,xncnode)
+                     write(96) (cnodeindex(i),i=1,ncnode)
                   endif	
                   if(read_volnh.eq.1) then      
                      read(97) nusev
@@ -495,7 +495,7 @@ c                    stop
                      read(96) (cnodey(i),i=1,ncnode)
                      read(96) (cnodez(i),i=1,ncnode)
                      read(96) (cnodev(i),i=1,ncnode)
-                     read(96) (cnodeindex(i),i=1,xncnode)
+                     read(96) (cnodeindex(i),i=1,ncnode)
                   endif	
 
 c     
