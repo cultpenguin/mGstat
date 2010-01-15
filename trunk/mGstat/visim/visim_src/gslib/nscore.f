@@ -1,4 +1,4 @@
-      subroutine nscore(nd,vr,tmin,tmax,iwt,wt,tmp,lout,vrg,ierror)
+      subroutine nscore(nd,vr,tmin,tmax,iwt,wt,tmp,lout,vrg,ierror,disc)
 C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 C                                                                      %
 C Copyright (C) 1996, The Board of Trustees of the Leland Stanford     %
@@ -35,6 +35,9 @@ c   iwt              =0, equal weighted; =1, then apply weight
 c   wt(nd)           Weight for each data (don't have to sum to 1.0)
 c   tmp(nd)          Temporary storage space for sorting
 c   lout             if > 0 then transformation table will be written
+c   disc             =0, wt(i) = dble(i)/nd - 1./(2*nd)
+c                    =1, wt(i) = dble(i)/nd
+c
 c
 c
 c
@@ -52,10 +55,17 @@ c   sortem           sorts a number of arrays according to a key array
 c
 c
 c
+c MODIFICATIONS 
+c   JAN 2010, TMH : added disc option in order to reproduce 
+c                   discrete distributions mor accurately
+c
+c
+c
 c-----------------------------------------------------------------------
       parameter(EPSLON=1.0e-20)
       real      vr(nd),wt(nd),vrg(nd),tmp(nd),wt2(nd)
       real*8    pd
+      integer   disc
 c
 c Sort the data in ascending order and calculate total weight:
 c
@@ -87,12 +97,19 @@ c            cp     =  cp + wt(i) / twt
 c            wt(i)  = (cp + oldcp)/ 2.0
 c            oldcp  =  cp
 c USING MORE PRCISE APPROACH :
+         if (disc.eq.0) then
             wt(i) = dble(i)/nd - 1./(2*nd)
-            
-            call gauinv(dble(wt(i)),vrg(i),ierr)
-c            write(*,*) i,cp,wt(i),wt2(i),twt,vr(i),vrg(i),nd
-            if(lout.gt.0) write(lout,'(f12.5,1x,f12.5,1x,f12.5)') 
-     1           wt(i),vr(i),vrg(i)
+         else
+            wt(i) = dble(i)/nd
+         endif
+         
+
+         
+         
+         call gauinv(dble(wt(i)),vrg(i),ierr)
+c      write(*,*) i,cp,wt(i),wt2(i),twt,vr(i),vrg(i),nd
+         if(lout.gt.0) write(lout,'(f12.5,1x,f12.5,1x,f12.5)') 
+     1        wt(i),vr(i),vrg(i)
       end do
 
 c

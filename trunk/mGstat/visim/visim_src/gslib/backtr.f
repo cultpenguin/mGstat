@@ -55,7 +55,8 @@ c      write(*,*) 'discrete ? ',discrete
 c
 c Value in the lower tail?    1=linear, 2=power, (3 and 4 are invalid):
 c
-      if(vrgs.le.vrg(1)) then
+c      if(vrgs.le.vrg(1)) then
+      if(vrgs.lt.vrg(1)) then
 c         write(*,*) 'lower tail', vrgs, vrg(1)
             backtr = vr(1)
             cdflo  = gcum(vrg(1))
@@ -69,7 +70,8 @@ c         write(*,*) 'lower tail', vrgs, vrg(1)
 c
 c Value in the upper tail?     1=linear, 2=power, 4=hyperbolic:
 c
-      else if(vrgs.ge.vrg(nt)) then
+c      else if(vrgs.ge.vrg(nt)) then
+      else if(vrgs.gt.vrg(nt)) then
 c         write(*,*) 'upper tail'
             backtr = vr(nt)
             cdfhi  = gcum(vrg(nt))

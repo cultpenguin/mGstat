@@ -29,6 +29,8 @@ c
 c     ORIGINAL : Thomas Mejer Hansen                       DATE: August 2005
 c
 c
+c     DISCRETE = 1
+c
 c-----------------------------------------------------------------------
 c      implicit none
       include 'visim.inc'
@@ -38,7 +40,9 @@ c      implicit none
       real mean_sim, var_sim
       real p,zt,ierr,simu
       real arr(20)
-      real target(nbt), target_nscore(nbt)
+      real target(nbt)
+      real target_nscore(nbt)
+      real target_nscore_center(nbt)
       real target_p(nbt), temp(nbt)
       real target_weight(nbt)
       integer itarget_quan
@@ -46,12 +50,12 @@ c      real zmin,zmax
       real ierror
       
       real q_norm, q_back(599) 
-      real x_cpdf(500) 
+      real x_cpdf(1500) 
       real backtrans
       integer index_cdf
       character tmpfl*80
       real te
-      real*8 dummy1,dummy2
+      real*8 dummy1,dummy2,draw,draw_l,draw_h
 
       integer GmeanType,GvarType
 
@@ -67,95 +71,92 @@ c     AS bootvar is NOT 1 when it has to be..
 c         write(*,*) i,target(i),target_weight(i)
       enddo
 
+C
+C SHOULD WE USE TAIL AT ALL WHEN USING DSSIM ?
+c
+c
+c AUTOMATICALLY SET NUMBER OF BINS TO THE NUMBER OF USED DATA WHEN discrete=1;
+
+
+
 
 c
 c     Compute Normal Score of TARGET HISTOGRAM
 c
-      if (idbg.gt.0) then 
-         write(*,*) 'zmin=',zmin
-         write(*,*) 'zmax=',zmax
-         write(*,*) 'ltail=',ltail,ltpar
-         write(*,*) 'utail=',utail,utpar
-      endif 
-
       call nscore(nbt,target,zmin,zmax,0,target_weight,temp,1,
-     1     target_nscore,ierror)
+     1     target_nscore,ierror,discrete)
+c     centere normal scores 
+      call nscore(nbt,target,zmin,zmax,0,target_weight,temp,1,
+     1     target_nscore_center,ierror,0)
+
 
 c     WRITING NSCORE TABLE TO FILE
       write(tmpfl,771) 'nscore',outfl
       open(39, file=tmpfl, status = 'unknown')
       do i=1,nbt
-         write(39,*) target(i),target_nscore(i),target_weight(i),
-     1        zmin,zmax
+         write(39,*) target(i),target_nscore(i),target_nscore_center(i),
+     1        target_weight(i),zmin,zmax
       enddo
 
 
-      do i=1,n_q
-         x_quan(i)=(1./n_q)/2+(i-1)*(1./n_q)
-      enddo
 
+C OLD METHOD PRE 2010
+c      do i=1,n_q
+c         x_quan(i)=(1./n_q)/2+(i-1)*(1./n_q)
+c      enddo
+c NEW METHOD POST 2010
+      
+      if (discrete.eq.1) then
+         do i=1,(n_q)
+            x_quan(i)=(i)*(1./n_q)
+         enddo
+      else
+         do i=1,(n_q)
+c BETTER HIST REPRODUCTION            
+c            x_quan(i)=(i-1)*(1./n_q) + (1./n_q)/2
+            x_quan(i)=(i-1)*(1./(n_q-1))
+         enddo 
+      endif
+
+      do i=1,(n_q)
+         x_quan_center(i)=(i-1)*(1./n_q) + (1./n_q)/2
+      enddo 
 
       if (idbg.gt.0) then 
          write(*,*) ' Nscore MEAN range=',min_Gmean,max_Gmean,n_Gmean
          write(*,*) ' Nscore VAR range = ',min_Gvar, max_Gvar, n_Gvar
          write(*,*) ' Number of quantiles = ',n_q
-         write(*,*) ' Number of samples drawn in nscore space = ',n_monte
+         write(*,*) ' Number of samples drawn in nscore space= ',n_monte
          write(*,*) 'Calc CondPDF Lookup n_Gmean,n_Gvar=',n_Gmean,n_Gvar 
       endif
 
       do im=1,n_Gmean
 
-         if (GmeanType.eq.1) then 
-c     Focus on middle range mean
-            if (im.lt.(n_Gmean/2)) then
-               Gmean = min_Gmean + 0.5*(max_Gmean-min_Gmean)*
-     1              (1- exp(-1.0*im/(n_Gmean/20)) )
-            else
-               Gmean = min_Gmean+ 0.5*(max_Gmean-min_Gmean) +
-     1              0.5*(max_Gmean-min_Gmean)*
-     1              (1-(1-exp(-1.0*(n_Gmean-im)/(n_Gmean/20)) ))
-            endif
-         else
-c     linear mean range
-            Gmean=min_Gmean+(im-1)*(max_Gmean-min_Gmean)/(n_Gmean-1)            
-         endif
-
-         if (idbg.gt.2) write(*,*) 'precalc lookup im,n_Gmean=',
-     1        im,n_Gmean
+         Gmean=min_Gmean+(im-1)*(max_Gmean-min_Gmean)/(n_Gmean-1)            
+         
+         if (idbg.ge.2) write(*,*) 'precalc lookup im,n_Gmean=',
+     1        im,n_Gmean, Gmean
 
          do iv=1,n_Gvar
 
-            if (GvarType.eq.1) then 
-c Cosine, focus on low variances
-               gGvar = min_Gvar + 
-     1              (max_Gvar-minGvar)*(1-cos(.5*iv*3.14/n_Gvar))
-            elseif (GvarType.eq.2) then
-c Cosine, focus on high variances
-               gGvar = min_Gvar + 
-     1              (max_Gvar-minGvar)*(cos(.5*iv*3.14/n_Gvar))
-            else
-c     Linear 
-               gGvar=min_Gvar+(iv-1)*(max_Gvar-min_Gvar)/(n_Gvar-1)
-            endif
+            gGvar=min_Gvar+(iv-1)*(max_Gvar-min_Gvar)/(n_Gvar-1)
+
             if (iv.eq.1) gGvar=min_Gvar
+
 c     BACK TRANSFORM QUANTILES
             dummy1=0
             dummy2=0
             do i=1,n_q
-c               x_quan(i)=(1./n_q)/2+(i-1)*(1./n_q)
-               call gauinv(dble(x_quan(i)) ,zt,ierr)
+               call gauinv(dble(x_quan_center(i)) ,zt,ierr)
                q_norm=zt*sqrt(gGvar)+Gmean            
 
-               x_cpdf(i) = backtr(q_norm,nbt,target,target_nscore,
+              x_cpdf(i) = backtr(q_norm,nbt,target,target_nscore_center,
      +              zmin,zmax,ltail,ltpar,utail,utpar,discrete)
-
-c		write(*,*) 'xcpdf(i)=',i,x_cpdf(i)
 
                dummy1 = dummy1 + x_cpdf(i)
                dummy2 = dummy2 + x_cpdf(i)*x_cpdf(i)
 
             enddo
-
             dummy1 = dummy1 / n_q
             dummy2 = dummy2 / n_q
             dummy2 = dummy2 - dummy1*dummy1
@@ -174,9 +175,10 @@ c		write(*,*) 'xcpdf(i)=',i,x_cpdf(i)
          if (idbg.gt.2) write(*,*) 'gm,gv,mean_sim,mean_var',
      1        Gmean,gGvar,mean_sim,var_sim
             
-         enddo
-         
       enddo
+     
+      enddo
+
 
 c     wirte lookup tables to disk      
       if (idbg.gt.0) then 
@@ -252,7 +254,6 @@ c     NEXT OZ
       dm=skgmean
       dv=gvar
 
-c      write(*,*) 'gmean=',gmean
       
       mindist=1e+9
       do im=1,n_Gmean
@@ -266,7 +267,7 @@ c     +        ( (condlookup_var(im,iv)-cvar)/dv )**2
 C     OZ STYLE            
 C     WORSE MATCH TO HISTOGRAM THAN ABOVE
             dist=( (condlookup_mean(im,iv)-cmean)/dm )**2+
-     +        abs (condlookup_var(im,iv)-cvar)/dv             
+     +        abs (condlookup_var(im,iv)-cvar)/sqrt(dv)             
 
             
             if (dist.lt.mindist) then
@@ -280,9 +281,13 @@ C     WORSE MATCH TO HISTOGRAM THAN ABOVE
       m_sel = condlookup_mean(im_sel,iv_sel)
       v_sel = condlookup_var(im_sel,iv_sel)
 
-c	write(*,*) '-'
-c	write(*,*) 'm_sel=',m_sel
-c	write(*,*) 'v_sel=',v_sel
+      if (idbg.gt.2) then
+	write(*,*) '-- looking up in condtab'
+        write(*,*) 'cmean,cvar=',cmean,' ',cvar
+	write(*,*) 'm_sel=',m_sel,im_sel
+	write(*,*) 'v_sel=',v_sel,iv_sel
+      endif
+
 
 c     CHANGED FROM lout_krig=59, on Nov 9, 2009 by TMH
       lout_krig=60
@@ -293,34 +298,56 @@ c     CHANGED FROM lout_krig=59, on Nov 9, 2009 by TMH
 
 
 c     NOW DRAW FROM LOCAL CPDF
+c     (ARE THE FIRST TENS OF RESULTS FROM acorni2 CORRELATED 
+c      do i=1,101
+c         p = acorni2(idum) 
+c      enddo
 
-c     MAKE SURE THAT QUANTILE IS WITHIN BOUNDS
-      do i=1,10
-c     NEXT LINE COMMENTED OUT ONCE - WHY 
-         p = acorni2(idum) 
-         if ((p.gt.x_quan(1)).AND.(p.lt.x_quan(n_q))) then
+c select random quantile
+      p = acorni2(idum) 
+
+c locate quantile      
+      do i=1,(n_q);
+         if (x_quan(i).gt.p) then
+            index_cdf=i
             exit
-         else
-            if (idbg.gt.1) then
-           write(*,*) 'QUANTILE OUTSIDE RANGE',i,p,x_quan(1),x_quan(n_q)
-            endif
          endif
+         
       enddo
-
-      if (p .le. x_quan(1)) then
-         index_cdf = 1
-         write(*,*)'bad low quantile',p,x_quan(1)
-      else if (p .gt. x_quan(n_q)) then
-         index_cdf = n_q
-         write(*,*)'bad high quantile',p,x_quan(n_q)
-      else
-         call locate(x_quan,n_q,1,n_q,p,index_cdf)
+      if (p.gt.x_quan(n_q)) then
+         index_cdf=n_q
       endif
 
-c      index_cdf = 1 + int(p*n_q)
-      draw = condlookup_cpdf(im_sel,iv_sel,index_cdf) 
-c      write(*,*) 'INDEX ME',im_sel,iv_sel,index_cdf
 
+               
+      if (discrete.eq.1) then
+c     FIND ARRAY
+         draw = condlookup_cpdf(im_sel,iv_sel,index_cdf) 
+      else
+c     ASSUME CONTINIOUS TARGET HISTOGRAM
+         
+c interpolate
+         draw_h = condlookup_cpdf(im_sel,iv_sel,index_cdf) 
+         draw_l = condlookup_cpdf(im_sel,iv_sel,index_cdf-1) 
+         
+         h=x_quan(index_cdf)-x_quan(index_cdf-1)
+         draw_a = draw_h*(x_quan(index_cdf)-p)/h 
+         draw_b = draw_l*(p-x_quan(index_cdf-1))/h 
+
+         draw = draw_a + draw_b
+
+c handle tails
+         if (p.lt.x_quan(1)) then
+            draw=condlookup_cpdf(im_sel,iv_sel,1)
+         endif
+         if (p.gt.x_quan(n_q)) then
+            draw=condlookup_cpdf(im_sel,iv_sel,n_q)
+         endif
+      endif
+
+
+
+c      index_cdf = 1 + int(p*n_q)
 
       drawfrom_condtab = draw
 
@@ -338,24 +365,8 @@ c     CORRECTION ACCORDING TO Oz et al, 2003
         drawfrom_condtab = ( draw - Fmean ) * ( Kstd / Fstd) + Kmean
       endif
 
-
-c      if (idbg.gt.14) then
-      
-      if (drawfrom_condtab.eq.(0.0000278)) then
-         write(*,*) 'INDEX CDF = ',index_cdf
-         write(*,*) 'cmean,cvar 2->',cmean,cvar
-         write(*,*) 'im_sel,iv_sel -->',im_sel,iv_sel
-         write(*,*) 'm_sel,v_sel -->',m_sel,v_sel
-         write(*,*) 'Kmean,Kstd -->',Kmean,Kstd
-         write(*,*) 'Fmean,Fstd -->',Fmean,Fstd
-         write(*,*) 'Fmean,Fstd -->',drawfrom_condtab,draw
-	endif
-      
-
-
-
       return 
-
+      
 
       end
       
