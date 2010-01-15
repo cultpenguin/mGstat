@@ -11,6 +11,7 @@ PROG   = $(progname)
 PROG = visim
 
 COMP = ifort
+#FFLAGS = -fdefault-real-8 -fdefault-double-8 -O
 FFLAGS = -O
 
 COMP = g77

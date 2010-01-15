@@ -31,6 +31,8 @@ c   MAXSAM    maximum number of data for one simulation
 c   MAXNST    maximum number of nested structures for variogram
 c   MAXVOLS   maximum number of volumes type data to include 
 c   MAXDINVOL MAXimum number of Data IN a VOLumes 
+c   MAXQUAN   maxiumum number of quantiles to use in DSSIM mode
+c   MAXMVLOOK maxiumum number of Mean and Var values to lookup in DSSIM mode
 c
 c-----------------------------------------------------------------------
 c
@@ -45,7 +47,8 @@ c
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
      +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,
      +          MAXNST =     4, MAXREF=10000,MAXCAT=24, 
-     +          MV=20         , MAXVOLS=2000 , MAXDINVOL=199)
+     +          MV=20         , MAXVOLS=2000 , MAXDINVOL=199,
+     +		MAXQUAN=501,MAXMVLOOK=201)
 c
 c Fixed Parameters:
 c
@@ -57,7 +60,7 @@ c
      +          MAXXYZ=MAXCTX*MAXCTY*MAXCTZ,MAXSB=MAXSBX*MAXSBY*MAXSBZ,
      +          MXYZ=MAXX*MAXY*MAXZ,UNEST=-99999999.0,EPSLON=1.0e-20,
      +          MAXGEOMDATA=MAXVOLS*MAXDINVOL,
-     +          VERSION=1.5000)
+     +          VERSION=1.6000)
 c
 c ACORN parameters:
 c
@@ -113,14 +116,15 @@ c FOR VOLUMES
       integer   lout_mean,lout_std,lout_krig
 	
 c FOR Histrogram Reproduction ..
-      real 	condlookup_mean(400,400)
-      real 	condlookup_var(400,400)
-      real 	condlookup_cpdf(400,400,300)
+      real 	condlookup_mean(MAXMVLOOK,MAXMVLOOK)
+      real 	condlookup_var(MAXMVLOOK,MAXMVLOOK)
+      real 	condlookup_cpdf(MAXMVLOOK,MAXMVLOOK,MAXQUAN)
       integer n_Gmean,n_Gvar,n_q,n_monte,discrete
       real min_Gmean,max_Gmean
       real min_Gvar,max_Gvar
 
-      real x_quan(500)
+      real x_quan(MAXQUAN)
+      real x_quan_center(MAXQUAN)
 
 c 	estimation/simulation
       integer doestimation
@@ -129,10 +133,9 @@ c
 c The matrices below are covariance lookup tables. 
 C they can optionally be excluded
 c
-      real*8      cv2v(MAXVOLS,MAXVOLS)
-      real*8      cd2v(MXYZ,MAXVOLS)
-c      real      cd2d(MXYZ,MXYZ)
-	integer read_covtable, read_lambda, read_volnh, read_randpath
+	real*8      cv2v(MAXVOLS,MAXVOLS)
+        real*8      cd2v(MXYZ,MAXVOLS)
+      	integer read_covtable, read_lambda, read_volnh, read_randpath
 
 c
 c Common Blocks:
@@ -189,6 +192,7 @@ c      common /iaco/   ixv(MAXOP1), itr(MAXOP1)
 	
       common /hrdssim/   condlookup_mean,condlookup_var,
      +               condlookup_cpdf,n_mean,n_var,n_monte,
-     + 	             x_quan,discrete,n_q,
+     + 	             discrete,n_q,
      +               min_Gmean, max_Gmean, n_Gmean, 
-     +               min_Gvar, max_Gvar, n_Gvar
+     +               min_Gvar, max_Gvar, n_Gvar,
+     +               x_quan
