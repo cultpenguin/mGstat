@@ -22,7 +22,9 @@ p=mgstat_dir;
 
 visim_bin_ok=0;
 if nargin==2
-    if exist([pwd,filesep,visim_bin])
+    if exist(visim_bin)
+        visim_bin_ok=1;
+    elseif exist([pwd,filesep,visim_bin])
         visim_bin=[pwd,filesep,visim_bin]
         visim_bin_ok=1;
     elseif exist([pwd,filesep,visim_bin,'.exe'])
@@ -32,10 +34,11 @@ if nargin==2
         visim_bin=[mgstat_dir,filesep,'bin',filesep,visim_bin];
         visim_bin_ok=1;
     elseif exist([mgstat_dir,filesep,'bin',filesep,visim_bin,'.exe'])
+   
         visim_bin=[mgstat_dir,filesep,'bin',filesep,visim_bin,'.exe'];
         visim_bin_ok=1;
     end
-    
+   
     if visim_bin_ok==0
         mgstat_verbose(sprintf('%s : Could not find proper VISIM exe :  %s',mfilename,visim_bin),10)
         return
