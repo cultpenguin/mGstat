@@ -32,7 +32,7 @@
 function [normscore_org,o_nscore]=nscore(d,w1,w2,dmin,dmax,DoPlot)
 
  if nargin<6
-   DoPlot=0;
+   DoPlot=1;
  end
 
   
@@ -44,6 +44,7 @@ n=length(d);
 %Calculte normal scores
 id=[1:n]';
 pk=id./n-.5/n;
+%pk=id./n; used in VISIM 1.6, DSSIM mode, for better target hist reproduction
 
 normscore=norminv(pk);
 
