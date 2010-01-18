@@ -1,5 +1,5 @@
 V=visim_init(1:1:61,1:1:61);
-V.parfile='visim_example_dssim_discrete_1';
+V.parfile='visim_example_dssim_discrete_1.par';
 d_target=[1 10 10 40]';
 V.refhist.fname='dssim_target_discrete.eas';
 write_eas(V.refhist.fname,d_target); % write target distribution

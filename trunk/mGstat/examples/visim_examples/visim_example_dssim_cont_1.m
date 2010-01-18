@@ -1,5 +1,5 @@
 V=visim_init(1:1:61,1:1:61);
-V.parfile='visim_example_dssim_cont_1';
+V.parfile='visim_example_dssim_cont_1.par
 d1=randn(1,2000)*sqrt(.2)+8;
 d2=randn(1,1200)*sqrt(.1)+10;
 d3=randn(1,2800)*sqrt(.1)+13;
