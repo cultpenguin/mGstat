@@ -8,7 +8,7 @@ visim_sgsim_cond.eas # - file with conditioning data
 visim_sgsim_volgeom.eas      # -  Geometry of volume/ray
 visim_sgsim_volsum.eas      # -  Summary of volgeom.eas
       -1    1e+21       # -  trimming limits for conditioning data
-0  0 0                # - debugging level: -1,0,1,2,3, read_covtable,read_lambda
+0  0 0 -1 -1  0 0            # - debugging level: -1,0,1,2,3, read_covtable,read_lambda,read_volnh,read_randpath,do_cholesky,do_error_sim
 sgsim_cond_2.out                    # - file for output
 30                     # - number of realizations to generate
 0                       # - ccdf. type: 0-normal, 1-target 
@@ -16,7 +16,7 @@ target_bi.eas                    # - target histogram file
 1 0                     # - columns for variable and weights
 -3.50  3.50 100         # - min_Gmean, max_Gmean, n_Gmean
  0.00  2.00 100         # - min_Gvar, max_Gvar, n_Gvar
-170 1000                # - nq, nGsim
+170 1000               # - nq, do_discrete 
  21   0.1250   0.2500   # - nx,xmn,xsiz
  49   0.1250   0.2500   # - ny,ymn,ysiz
   1   0.1250   0.2500   # - nz,zmn,zsiz
@@ -29,7 +29,7 @@ target_bi.eas                    # - target histogram file
 0                       # - maximum data per octant (0=not used)
   13.6000   13.6000   13.6000   # - radius for search ellipsoid
    0.0000    0.0000    0.0000   # - angles for search ellipsoid
-   0.130400    0.000200             # - global mean and variance 
+    0.1304000000     0.0002000000             # - global mean and variance 
 1         0.000000000             # - nst, nugget effect
 1         0.000200000  83.500000    0.0000    0.0000 # - it,cc,ang1,ang2,ang3
    4.2743    2.9772    0.2500             # - a_hmax, a_hmin, a_vert
