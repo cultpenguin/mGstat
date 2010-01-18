@@ -98,8 +98,8 @@ function V=write_visim(obj,parfile)
   fprintf(fid,'%16.10f %16.10f             # - global mean and variance \n',obj.gmean,obj.gvar);
   fprintf(fid,'%d %19.9f             # - nst, nugget effect\n',obj.Va.nst,obj.Va.nugget);
   for in=1:obj.Va.nst;
-    fprintf(fid,'%d %19.9f %10.6f %9.4f %9.4f # - it,cc,ang1,ang2,ang3\n',obj.Va.it(in),obj.Va.cc(in),obj.Va.ang1(in),obj.Va.ang2(in),obj.Va.ang3(in));
-    fprintf(fid,'%9.4f %9.4f %9.4f             # - a_hmax, a_hmin, a_vert\n',obj.Va.a_hmax(in), obj.Va.a_hmin(in), obj.Va.a_vert(in));
+      fprintf(fid,'%d %19.9f %10.6f %9.4f %9.4f # - it,cc,ang1,ang2,ang3\n',obj.Va.it(in),obj.Va.cc(in),obj.Va.ang1(in),obj.Va.ang2(in),obj.Va.ang3(in));
+      fprintf(fid,'%9.4f %9.4f %9.4f             # - a_hmax, a_hmin, a_vert\n',obj.Va.a_hmax(in), obj.Va.a_hmin(in), obj.Va.a_vert(in));
   end
   fprintf(fid,'%5.3f %5.3f             # - zmin,zmax (tail extrapolation for target histogram)\n',obj.tail.zmin,obj.tail.zmax);
   fprintf(fid,'%d %5.3f                 # - lower tail option, parameter\n',obj.tail.lower);

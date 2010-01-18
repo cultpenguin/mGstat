@@ -39,7 +39,7 @@ function V=visim_plot_sim(V,isim,cax,FS,nxsub,nysub)
     % title(sprintf('#%d',i),'FontSize',FS+2);
     caxis(cax);
     set(gca,'FontSize',FS)
-    set(gca,'XaxisL','top')
+    set(gca,'XAxisLocation','top')
     axis image
     title(sprintf('i=%03d',isim(j)))
   end
