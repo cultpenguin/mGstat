@@ -3,7 +3,7 @@ V.parfile='visim_example_dssim_cont_2.par';
 d_target=[1 10 10 40]';
 V.refhist.fname='dssim_target_discrete.eas';
 write_eas(V.refhist.fname,d_target); % write target distribution
-V.ccdf=0;                 % use DSSIM
+V.ccdf=1;                 % use DSSIM
 V.refhist.do_discrete=0;  % Assume continious target histogram
 V.nsim=10;
 V=visim_init(V); 
