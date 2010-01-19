@@ -99,7 +99,7 @@ function G=read_gstat_par_octave(filename);
         mgstat_verbose(sprintf('%s : Found variogram : %s',mfilename,options),1)
         
         setfield(G.(cmd)(icmd),'V',deformat_variogram(options));
-        %G.(cmd){icmd}.V=deformat_variogram(options);
+        G.(cmd)(icmd).V=deformat_variogram(options);
       else         % EXTRACT OPTIONS
 
         % mgstat_verbose(['********',cmd,' *******']);
@@ -114,7 +114,7 @@ function G=read_gstat_par_octave(filename);
         %end
         
         % remove semicolon
-        options=regexprep(options,';','');  
+        options=regexprep(options,';','');
         sep=find(options==',');
 
         if isempty(sep);
