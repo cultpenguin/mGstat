@@ -7,7 +7,7 @@
 %   Cannot load covariogram : covariogram(data1,data2)
 %   Semivariogram line : Can only contain veriogram, not filename
 %
-function G=read_gstat_par(filename);
+function G=read_gstat_par_octave(filename);
 
   if nargin==0,
     G=[];
@@ -77,11 +77,7 @@ function G=read_gstat_par(filename);
       
       if length(data)>0
         % IF DATA IS SET, ADD IT TO STRUCTURE
-        try
-            G.(cmd)(icmd).data=data;
-        catch
-            keyboard
-        end
+        G.(cmd)(icmd).data=data;
       end
 
       options=cline(sep+1:length(cline))      
@@ -165,12 +161,8 @@ function G=read_gstat_par(filename);
                 varval=str2num(varval);
               end
             end
-            try
-                G.(cmd)(icmd).null='';
-                setfield(G.(cmd)(icmd),varname,varval);
-            catch
-                keyboard
-            end
+            G.(cmd)(icmd).null='';
+            setfield(G.(cmd)(icmd),varname,varval);
             %G.(cmd)(icmd).(varname)=varval;
           else
             % OPTION IS A FILENAME
