@@ -28,11 +28,23 @@ function txt=strip_space(txt,type);
       type=0;
   end
 
+  if type==0
+      txt=strtrim(txt); % OCTAVE COMPLIANT
+      return
+  end
+  
   % leading space
-  if ((type==0)|(type==1))
-  txt=regexprep(txt,'\< ','');
+  if (type==1)
+    ispace=strfind(txt,' ');
+    if (ispace(1)==1);
+        % We have leading blanks
+        ilast=find(diff(ispace)>1);i_last=ilast(1)-1;
+        igood=setxor(1:ilast,1:1:length(txt));
+        txt=txt(igood);
+    end
+    txt=regexprep(txt,'\< ',''); % NOT OCTAVE COMPLIANT
   end
   % trailing space
-  if ((type==0)|(type==2))
-  txt=regexprep(txt,' \>','');  
+  if (type==2)
+      txt=deblank(txt);  
   end
