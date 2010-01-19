@@ -24,6 +24,7 @@ function [sv,d]=semivar_synth(V,d,gstat,nugtype);
   if isstr(V)
     V=deformat_variogram(V);
   end
+
   sv=zeros(size(d));
   for iv=1:length(V),
     if exist('semivariance')==3
@@ -46,6 +47,7 @@ function [sv,d]=semivar_synth(V,d,gstat,nugtype);
     sv(find(d<1e-9))=0;
   end
 function [gamma,h]=synthetic_variogram(V,h,gstat)
+
   type=V.type;
   v1=V.par1;
   v2=V.par2;
