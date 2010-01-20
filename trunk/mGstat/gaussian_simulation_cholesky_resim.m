@@ -105,7 +105,7 @@ for i=1:options.nsim
             di=i;
         end
         if ((i/di)==round(i/di))
-            progress_txt(i,optiond.nsim);
+            progress_txt(i,options.nsim);
         end
     end
   
