@@ -1,4 +1,15 @@
-%function [kernel_t,kernel_a,P_omega,omega]=kernel_fresnel_2d(v,x,y,S,R,f0,gamma);
+% kernel_fresnel_2d : sensitivity kernel for amplitude and first arrival
+%
+% Call:
+%   [kernel_t,kernel_a,P_omega,omega]=kernel_fresnel_2d(v,x,y,S,R,omega,P_omega);
+%
+%
+% Based on Liu, Dong, Wang, Zhu and Ma, 2009, Sensitivity kernels for
+% seismic Fresenl volume Tomography, Geophysics, 75(5), U35-U46
+%
+% See also kernel_fresnel_monochrome_2d
+%
+
 function [kernel_t,kernel_a,P_omega,omega]=kernel_fresnel_2d(v,x,y,S,R,omega,P_omega);
 
 doPlot=0;
@@ -26,7 +37,7 @@ L1 = tS.*mean(v(:));L2 = tR.*mean(v(:));
 %% COMPUTE MONOKERNELS
 n_omega=length(P_omega);
 kernel_t=v.*0;
-kernel_a=v.*0;
+kernel_a=v.*0
 for i=1:n_omega
     %if ((i/20)==round(i/20));progress_txt(i,n_omega);end
     if nargout==1;

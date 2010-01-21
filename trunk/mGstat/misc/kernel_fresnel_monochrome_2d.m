@@ -1,3 +1,15 @@
+% kernel_fresnel_monochrome_2d : 2D monchrome kernel for amplitude and first arrival
+%
+% Call:
+%   [kernel_t,kernel_a]=kernel_fresnel_monochrome_2d(v,x,y,S,R,omega);
+% or
+%   [kernel_t,kernel_a]=kernel_fresnel_monochrome_2d(v,x,y,S,R,omega,L,L1,L2);
+%
+% Based on Liu, Dong, Wang, Zhu and Ma, 2009, Sensitivity kernels for
+% seismic Fresenl volume Tomography, Geophysics, 75(5), U35-U46
+%
+% See also, kernel_fresnel_2d
+%
 function [kernel_t,kernel_a]=kernel_fresnel_monochrome_2d(v,x,y,S,R,omega,L,L1,L2);
 doPlot=0;
 
@@ -11,11 +23,13 @@ end
     
 delta_t=(L1+L2-L)./v;
 
+% 2D monchrome first arrival kernel, Liu et al, 2009, table 1, 2D K_T
 A = sin(omega*delta_t +pi/4);
 B = sqrt(omega)*sqrt(1/(2*pi)).*sqrt(L./(L1.*L2)).*sqrt(1./v);
 kernel_t=A.*B;
 
 if nargout>1
+    % 2D monochrome amplitude kernel, Liu et al, 2009, table 1, 2D K_A
     A = cos(omega*delta_t +pi/4);
     B = sqrt(omega.^3)*sqrt(1/(2*pi)).*sqrt(L./(L1.*L2)).*sqrt(1./v);
     kernel_a=A.*B;
