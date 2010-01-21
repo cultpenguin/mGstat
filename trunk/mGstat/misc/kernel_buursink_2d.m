@@ -29,22 +29,31 @@ if nargin<9
     doPlot=0;
 end
 
-if nargin<7
-    if nargin<6
-        f0=100*10^6;
-        dt=4.245577806149431e-11;
-        Nt=3000;
-        wf_trace=rickerwavelet(f0,dt,Nt);
-    else
-        f0=dt;
-        dt=4.245577806149431e-11;
-        Nt=3000;
-        wf_trace=rickerwavelet(f0,dt,Nt);
-    end
+if nargin<6 % no omega
+    f0=0.1*2;
+end
+
+if nargin<7 % no P_omega
+    f0=omega;
+    dt=0.1;
+    Nt=300;
+    wl=rickerwavelet(f0,dt,Nt);
+    [A,P,kx]=mspectrum(wl,dt);
+    P_omega=A;
+    omega=2*pi*kx;
+    P_omega = P_omega ./ sum(P_omega.*(omega(2)-omega(1)));
 end
 
 if nargin<8
-    useEik=0;
+    useEik=2;
+end
+
+clipOmega=1;
+if clipOmega==1
+    % REMOVE LARGEST P_omega values
+    iomega=find(cumsum(P_omega)<0.995*sum(P_omega));
+    omega=omega(iomega);
+    P_omega=P_omega(iomega);
 end
 
 if useEik==0
@@ -75,18 +84,7 @@ rec(1)=round(interp1(x,1:1:nx,R(1)));
 rec(2)=round(interp1(z,1:1:nz,R(2)));
 
 
-%% COMPUTE POWERSPECTRUM OF TRACE
-%y=wf_trace;
-%[A,P,omega_alt]=mspectrum(y,dt);
-%A=A./(sum(A(:)));
-%P=P./(sum(P(:)));
-%Y=A;
-%omega=2*pi*omega_alt;
-%delta_f=omega(2)-omega(1);
-
 Y=P_omega.^2;
-
-
 
 
 % COMPUTE KERNEL tS
@@ -107,7 +105,7 @@ if nargout>2
     L2_all=zeros(nz,nx);
 end
 for i=1:nz
-    %progress_txt([i],[nz],'Z',0)
+    %    progress_txt([i],[nz],'Z',0)
         
     for j=1:nx
         
@@ -119,11 +117,7 @@ for i=1:nz
         elseif useEik==1           
             L1 = eikonal_raylength(x,z,model,S,P,tS);
             L2 = eikonal_raylength(x,z,model,R,P,tR);
-            %L1 = eikonal_raylength(x,z,model,S,P,tS);
-            %L2 = eikonal_raylength(x,z,model,R,P,tR);
         else
-            %L1 = tS(i,j).*model(i,j);
-            %L2 = tR(i,j).*model(i,j);
             L1 = tS(i,j).*mean(model(:));
             L2 = tR(i,j).*mean(model(:));
         end
@@ -141,9 +135,6 @@ for i=1:nz
         %B=trapz(omega.^2.*Y, omega);
         %kernel(i,j)=(model(i,j)*2*pi).^(-1)*(L/(L1*L2)) * (A/B);
         
-        
-        
-        
         if (sum(P-S)==0)|(sum(P-R)==0)
            kernel(i,j)=0;
         end
@@ -157,9 +148,6 @@ pos=find(isinf(kernel)>0);
 kernel(pos)=0;
 
 kernel=L*kernel./sum(kernel(:));
-
-
-
 
 
 if doPlot==1;
