@@ -126,10 +126,10 @@ for i=1:nz
         end
         
         % 2D
-        A=trapz((omega.^(0.5)).*Y.*sin( (omega./model(i,j))*(L1+L2-L) +pi/4), omega);
-        B=trapz(omega.*Y, omega);
-        kernel(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * model(i,j).^(-0.5) * (A/B);
-        
+        A=trapz(omega,sqrt(omega.^3).*Y.*sin( (omega./model(i,j))*(L1+L2-L) +pi/4));
+        B=trapz(omega,omega.*Y);
+        kernel_(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * model(i,j).^(-0.5) * (A/B);
+
         % 3D
         %A=trapz((omega.^(3)).*Y.*sin( (omega./model(i,j))*(L1+L2-L)), omega);
         %B=trapz(omega.^2.*Y, omega);
