@@ -43,7 +43,7 @@ function filename=write_gstat_par_octave(G,filename)
       if isfield(G.mgstat,'comment')
         nc=length(G.mgstat.comment);
         for i=1:nc
-          %% fprintf(fid,'%s\n',G.mgstat.comment{i});
+          fprintf(fid,'%s\n',G.mgstat.comment{i});
         end
       end
       
@@ -113,7 +113,14 @@ function filename=write_gstat_par_octave(G,filename)
           cmd=df{idf};
           data=G.(fname)(i).(cmd);
           
-          if (isstr(data)&(length(data)>0))
+          % WE NEED TO DO MORE TO MAKE SURE THESE FOLLOWING LINES WORK IN
+          % OCTAVE! ! ! ! ! !
+          
+          add_comma=1;
+          if (isnumeric(data)&isempty(data))
+              % DO NOTHING AS THIS IS AN EMPTY STRUCTURE
+              add_comma=0;
+          elseif (isstr(data)&(length(data)>0))
             % fprintf(fid,'%s=''%s''',cmd,data);
             fprintf(fid,'''%s''',data);
           elseif isnumeric(data)
@@ -122,7 +129,7 @@ function filename=write_gstat_par_octave(G,filename)
             fprintf(fid,'%s',cmd);
           end
           
-          if ~(idf==length(df)),
+          if ((add_comma==1)&(~(idf==length(df))));
             fprintf(fid,', ');
           end
           
