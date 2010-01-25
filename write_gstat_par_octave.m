@@ -120,7 +120,7 @@ function filename=write_gstat_par_octave(G,filename)
           if (isnumeric(data)&isempty(data))
               % DO NOTHING AS THIS IS AN EMPTY STRUCTURE
               add_comma=0;
-          elseif (isstr(data)&(length(data)>0))
+          elseif (ischar(data)&(length(data)>0))
             % fprintf(fid,'%s=''%s''',cmd,data);
             fprintf(fid,'''%s''',data);
           elseif isnumeric(data)

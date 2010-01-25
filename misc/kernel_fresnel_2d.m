@@ -37,7 +37,7 @@ L1 = tS.*mean(v(:));L2 = tR.*mean(v(:));
 %% COMPUTE MONOKERNELS
 n_omega=length(P_omega);
 kernel_t=v.*0;
-kernel_a=v.*0
+kernel_a=v.*0;
 for i=1:n_omega
     %if ((i/20)==round(i/20));progress_txt(i,n_omega);end
     if nargout==1;
