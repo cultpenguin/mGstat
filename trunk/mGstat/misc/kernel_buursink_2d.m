@@ -13,7 +13,7 @@
 %
 %
 % Knud Cordua, 2009, 
-% Thomas Mejer Hansen (small editts, 2009)
+% Thomas Mejer Hansen (small edits, 2009)
 %
                                     
 function [kernel,L,L1_all,L2_all,tS,tR,omega,Y]=kernel_buursink_2d(model,x,z,S,R,omega,P_omega,useEik,doPlot);
@@ -31,6 +31,7 @@ end
 
 if nargin<6 % no omega
     f0=0.1*2;
+    omega=f0;
 end
 
 if nargin<7 % no P_omega
@@ -48,7 +49,7 @@ if nargin<8
     useEik=2;
 end
 
-clipOmega=1;
+clipOmega=0;
 if clipOmega==1
     % REMOVE LARGEST P_omega values
     iomega=find(cumsum(P_omega)<0.995*sum(P_omega));
@@ -128,7 +129,7 @@ for i=1:nz
         % 2D
         A=trapz(omega,sqrt(omega.^3).*Y.*sin( (omega./model(i,j))*(L1+L2-L) +pi/4));
         B=trapz(omega,omega.*Y);
-        kernel_(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * model(i,j).^(-0.5) * (A/B);
+        kernel(i,j)=sqrt(1/(2*pi)) * sqrt(L/(L1*L2)) * model(i,j).^(-0.5) * (A/B);
 
         % 3D
         %A=trapz((omega.^(3)).*Y.*sin( (omega./model(i,j))*(L1+L2-L)), omega);
