@@ -44,7 +44,7 @@ function V=deformat_variogram(txt);
     end
     
     vartxt=strip_space(vartxt);
-	disp(sprintf('ivar=%d ifp=%d --%s--',ivar,ifp,vartxt))
+	%disp(sprintf('ivar=%d ifp=%d --%s--',ivar,ifp,vartxt))
     
     sp=find(vartxt==' ');
     lb=find(vartxt=='(');

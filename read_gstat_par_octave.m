@@ -29,6 +29,7 @@ function G=read_gstat_par_octave(filename);
   
   il=0;icomment=0;
   while (~feof(fid))
+      
     il=il+1;
     
     % READ LINE AND STRIP LEADING AND TRAILING SPACES
@@ -43,6 +44,7 @@ function G=read_gstat_par_octave(filename);
       G.mgstat.comment{icomment}=cline;
       mgstat_verbose(sprintf('Reading comment : %s',cline),10)
     else
+        
       % SO, IT IS NOT A COMMENT LINE
 
       % CHECK THAT THE HOLE LINE IS READ (UNTIL ';')
@@ -80,7 +82,7 @@ function G=read_gstat_par_octave(filename);
         G.(cmd)(icmd).data=data;
       end
 
-      options=cline(sep+1:length(cline))      
+      options=cline(sep+1:length(cline));
 
       if isempty(sep)==1,
         % SET LINE
@@ -93,15 +95,18 @@ function G=read_gstat_par_octave(filename);
 %        G.set{iset}.(cmd)=data;
         G.set.(cmd)=data;
         mgstat_verbose(sprintf('SET line %d : %s',iset,cline),1)
+
       elseif (strmatch(cmd,'variogram'))
         % GET VARIOGRAM....
         %if icmd==2, keyboard; end
-        mgstat_verbose(sprintf('%s : Found variogram : %s',mfilename,options),1)
-        
+        mgstat_verbose(sprintf('%s : Found variogram : %s',mfilename,options),1)       
         setfield(G.(cmd)(icmd),'V',deformat_variogram(options));
         G.(cmd)(icmd).V=deformat_variogram(options);
+        
       else         % EXTRACT OPTIONS
 
+              
+          
         % mgstat_verbose(['********',cmd,' *******']);
         
         % if strmatch('mask',cmd),,end
@@ -142,12 +147,14 @@ function G=read_gstat_par_octave(filename);
           cop=options(is1:is2);
           cop=strip_space(cop);
           
-          mgstat_verbose(sprintf('%s : cop="%s"',mfilename,cop),1)
+          mgstat_verbose(sprintf('%s : cop="%s"',mfilename,cop),2)
           
           % mgstat_verbose(['--',cop])
           chkfile=find(cop==char(39));
           if isempty(chkfile);
-            % OPTION IS NOT A FILENAME
+              
+              
+              % OPTION IS NOT A FILENAME
              
             ieq=find(cop=='=');
             if isempty(ieq);
@@ -161,9 +168,7 @@ function G=read_gstat_par_octave(filename);
                 varval=str2num(varval);
               end
             end
-            G.(cmd)(icmd).null='';
-            setfield(G.(cmd)(icmd),varname,varval);
-            %G.(cmd)(icmd).(varname)=varval;
+            G.(cmd)(icmd).(varname)=varval;
           else
             % OPTION IS A FILENAME
             for ifile=1:(length(chkfile)./2)
@@ -173,12 +178,10 @@ function G=read_gstat_par_octave(filename);
                 filename=cop( chkfile(in)+1 : chkfile(in+1)-1 );
               end          
             end
-            try
-                setfield(G.(cmd)(icmd),file,filename);
-            end
-            %G.(cmd){icmd}.file=filename;            
+            
+            
+            G.(cmd)(icmd).file=filename;            
           end
-
           
 
         
