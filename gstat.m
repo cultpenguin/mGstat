@@ -205,7 +205,7 @@ if (isfield(G,'mask'))
     end
 end
 
-if ((nargout>4)&(isstr(G)));
+if ((nargout>4)&(ischar(G)));
     G=read_gstat_par(G);
 end
     

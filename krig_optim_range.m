@@ -4,7 +4,7 @@
 %
 function [V,be_acc,V_acc]=krig_optim_range(pos_known,val_known,V,options);
 
-if isstr(V),
+if ischar(V),
   V=deformat_variogram(V);
 end 
 

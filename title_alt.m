@@ -57,7 +57,7 @@ function title_alt(string,isub,location,dw,w_out)
         w_out=.1;
     end
     
-    if isstr(string);
+    if ischar(string);
         t1=title(string);
     end
         

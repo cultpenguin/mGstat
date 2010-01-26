@@ -8,7 +8,7 @@ be_acc=0;
 
 V_new=V;
 
-if isstr(V),
+if ischar(V),
   V=deformat_variogram(V);
 end 
 

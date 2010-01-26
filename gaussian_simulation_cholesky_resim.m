@@ -48,7 +48,7 @@ if ~isfield(options,'nsim');options.nsim=1;end
 %if nargin<2,L=diag(length(m));;end
 %if nargin<1,m=ones(size(L,1));end
 
-if isstr(L)
+if ischar(L)
     % % 'L' is a covariance model description (string)
    L=deformat_variogram(L);
 end

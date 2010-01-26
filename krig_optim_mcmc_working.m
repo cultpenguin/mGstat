@@ -4,7 +4,7 @@
 %
 function [V,be_acc,L_acc,par2]=krig_optim_mcmc(pos_known,val_known,V,options);
 
-if isstr(V),
+if ischar(V),
   V=deformat_variogram(V);
 end 
 

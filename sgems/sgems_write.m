@@ -93,7 +93,7 @@ if strcmp(O.type_def,'Point_set');
     for i=1:O.n_prop
                 
         
-        if isstr(O.property_name)
+        if ischar(O.property_name)
             str=O.property_name;
             O=rmfield(O,'property_name');
             O.property_name{i}=str;

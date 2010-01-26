@@ -16,7 +16,7 @@ function [d_est,d_var,be,d_diff,L]=gstat_krig_blinderror(pos_known,val_known,pos
     T=1;
   end
   
-  if isstr(V),
+  if ischar(V),
     V=deformat_variogram(V);
   end 
   

@@ -113,7 +113,7 @@ function filename=write_gstat_par(G,filename)
           cmd=df{idf};
           data=G.(fname){i}.(cmd);
           
-          if (isstr(data)&(length(data)>0))
+          if (ischar(data)&(length(data)>0))
             % fprintf(fid,'%s=''%s''',cmd,data);
             fprintf(fid,'''%s''',data);
           elseif isnumeric(data)
