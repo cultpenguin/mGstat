@@ -90,7 +90,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     optiions.null=1;
   end
   
-  if isstr(V),
+  if ischar(V),
     V=deformat_variogram(V);
   end 
 

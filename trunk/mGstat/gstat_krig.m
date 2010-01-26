@@ -101,7 +101,7 @@ function [d_est,d_var,pos_est]=gstat_krig(pos_known,val_known,pos_est,V,options)
     options.null=0;
   end
 
-  if isstr(V),
+  if ischar(V),
     V=deformat_variogram(V);
   end
 

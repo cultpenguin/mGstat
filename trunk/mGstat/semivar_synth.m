@@ -21,7 +21,7 @@ function [sv,d]=semivar_synth(V,d,gstat,nugtype);
   if nargin==1
     d=[0:.1:20];
   end
-  if isstr(V)
+  if ischar(V)
     V=deformat_variogram(V);
   end
 

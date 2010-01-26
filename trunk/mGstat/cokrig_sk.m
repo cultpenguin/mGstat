@@ -8,7 +8,7 @@
 
 function [d_est,d_var,lambda_sk,K_sk,k_sk]=cokrig_sk(pos_known1,val_known1,pos_known2,val_known2,pos_est,V1,V2,V12,mean1,mean2);
 
-%  if isstr(V),
+%  if ischar(V),
 %    V=deformat_variogram(V);
 %  end 
 %  

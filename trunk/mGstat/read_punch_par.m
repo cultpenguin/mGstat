@@ -10,7 +10,7 @@ fid=fopen(filename);
  while 1
    n=n+1;
    line = fgetl(fid);
-   if ~isstr(line), break, end
+   if ~ischar(line), break, end
    sep=find(line=='=');
    l=length(line);
    %disp([num2str(n),line(1:sep),'  ',line(sep+1:l)]);

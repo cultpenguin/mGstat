@@ -6,7 +6,7 @@ function [V_new,be_acc,L_acc,par2,nugfrac_acc,V_acc,options]=krig_optim_mcmc(pos
 
 V_new=V;
 
-if isstr(V),
+if ischar(V),
     V=deformat_variogram(V);
 end
 

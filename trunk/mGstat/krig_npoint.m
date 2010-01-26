@@ -19,7 +19,7 @@ ndata=size(pos_known,1);
 n_est=size(pos_est,1);
 
 
-if isstr(V)
+if ischar(V)
   V=deformat_variogram(V);
 end
 gvar=sum([V.par1]);

@@ -19,7 +19,7 @@ function Voptim=semivar_optim(loc,val,bin_array,V,doPlot);
   end
   
       
-  if isstr(V)
+  if ischar(V)
     V=deformat_variogram(V);
   end
   
