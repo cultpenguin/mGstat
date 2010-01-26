@@ -1,3 +1,4 @@
+% ex07 : gstat example ex07.cmd
 cmd_file='ex07';
 [pred,pred_var,pred_covar,mask,G]=gstat(sprintf('%s.cmd',cmd_file));
 
@@ -8,12 +9,12 @@ if (isfield(G.data{1},'log')); pred=exp(pred);end
 
 
 
-clf;
+figure(7);clf;
 imagesc(mask.x,mask.y,pred(:,:,1));
 
 hold on
 plot(obs(:,1),obs(:,2),'k.','MarkerSize',12);
-scatter(obs(:,1),obs(:,2),10,obs(:,3),'filled');
+scatter(obs(:,1),obs(:,2),10,obs(:,3));
 hold off
 axis image
 cb=colorbar;
@@ -27,4 +28,4 @@ axis image
 title('Unconditional Gaussian simulation')
 watermark(sprintf('GSTAT %s.cmd - %s',cmd_file,G.mgstat.comment{2}));
 
-print('-dpng',sprintf('%s',cmd_file))
+print('-dpng',sprintf('%s.png',cmd_file))
