@@ -36,17 +36,16 @@ end
 ylim=get(gca,'ylim');    
 set(gca,'ylim',ylim)
 
-ntext=min([ceil(length(L_acc)/30) 10]);
+ntext=min([ceil(length(L_acc)/30) 5]);
 ii=unique(round(linspace(1,length(L_acc),ntext)));
 dt=.1.*(ylim(2)-ylim(1));
 if length(ii)>2;
     for i=2:(length(ii))     
         j=ii(i);
-        
         acc=(ii(i)-ii(i-1)) / (i_acc(ii(i))-i_acc(ii(i-1)));
         y=min([L_acc(j)+dt,ylim(2)]);
-        %t=text(i_acc(j),min([L_acc(j)+dt,ylim(2)]),sprintf('%2.1f',100.*acc));
-        t=text(i_acc(j),y,sprintf('%2.1f',100.*acc));
+        t=text(i_acc(j),min([L_acc(j)+dt,ylim(2)]),sprintf('%2.1f',100.*acc));
+        %t=text(i_acc(j),y,sprintf('%2.1f',100.*acc));
         set(t,'FontSize',8,'HorizontalAlignment','center')
     end
 end
