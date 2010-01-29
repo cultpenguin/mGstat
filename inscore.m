@@ -29,7 +29,7 @@ function d_out=inscore(d_normal,o_nscore)
   % 'help interp1' to see list of interpolation options.
   d_out=interp1(o_nscore.normscore(id),s_origdata(id),d_normal,style');
   
-  doPlot=1;
+  doPlot=0;
   if doPlot==1;
      plot(o_nscore.normscore(id),s_origdata(id),'k-*',d_normal,d_out,'go')
   end 
