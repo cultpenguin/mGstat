@@ -42,12 +42,12 @@ c
       integer MAXSBX, MAXSBY, MAXSBZ, MAXDAT, MAXNOD, MAXSAM
       integer MAXNST, MAXREF, MAXCAT, MV, MAXVOLS, MAXDINVOL
 
-      parameter(MAXX   =   801, MAXY   = 801, MAXZ   = 1,
+      parameter(MAXX   =   102, MAXY   = 102, MAXZ   = 1,
      +          MAXCTX =  MAXX, MAXCTY =MAXY, MAXCTZ =MAXZ,
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
      +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,
      +          MAXNST =     4, MAXREF=10000,MAXCAT=24, 
-     +          MV=20         , MAXVOLS=1 , MAXDINVOL=1,
+     +          MV=20         , MAXVOLS=745 , MAXDINVOL=1836,
      +		MAXQUAN=501,MAXMVLOOK=201)
 c
 c Fixed Parameters:
@@ -60,7 +60,7 @@ c
      +          MAXXYZ=MAXCTX*MAXCTY*MAXCTZ,MAXSB=MAXSBX*MAXSBY*MAXSBZ,
      +          MXYZ=MAXX*MAXY*MAXZ,UNEST=-99999999.0,EPSLON=1.0e-20,
      +          MAXGEOMDATA=MAXVOLS*MAXDINVOL,
-     +          VERSION=1.6000)
+     +          VERSION=1.7000)
 c
 c ACORN parameters:
 c

@@ -217,7 +217,7 @@ c SORT THE DATA
    
 cc     WRITE THE RANDOM PATH TO DISK 
 c               if (idbg.gt.-2) then
-c                 write(tmpfl,871) 'randpath',outfl
+c                 tmpfl='randpath'//'_'//outfl
 c                 open(9, file=tmpfl, status = 'unknown')
 c         	
 c                 do ind=1,nxyz

@@ -60,7 +60,7 @@ c
      +          MAXXYZ=MAXCTX*MAXCTY*MAXCTZ,MAXSB=MAXSBX*MAXSBY*MAXSBZ,
      +          MXYZ=MAXX*MAXY*MAXZ,UNEST=-99999999.0,EPSLON=1.0e-20,
      +          MAXGEOMDATA=MAXVOLS*MAXDINVOL,
-     +          VERSION=1.6000)
+     +          VERSION=1.7000)
 c
 c ACORN parameters:
 c
