@@ -166,8 +166,7 @@ c      open(ldbg,file=dbgfl,status='UNKNOWN')
 c      write(*,*) parfile,'.OUT'
 
 c      stop
-      write(tmpfl,871) 'debug',outfl
- 871  format(A,'_',A)
+      tmpfl='debug'//'_'//outfl 
       if (idbg.gt.0) write(*,*) ' debugging file = ',tmpfl
       open(ldbg,file=tmpfl,status='UNKNOWN')
 
@@ -641,14 +640,16 @@ c +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 c
 c     CHECK IF DATA COVARIANCE FILE IS GIVEN, THEN READ IT
          
-         write(datacovfl,971) 'datacov',outfl
- 971     format(A,'_',A)
 
+c         datacovfl='visim_datacov.eas'
+c         call chknam(datacovfl,40)
+
+         datacovfl='datacov'//'_'//outfl
 
          inquire(file=datacovfl,exist=testfl)
          if(testfl) then
             if (idbg.gt.(-1)) write(*,*) 
-     +           'Reading data covariance from file =',datacovfl 
+     +           'Reading data covariance from file =',datacovfl
             open(lin,file=datacovfl,status='OLD')
 c     READ THE FIRST COMMENTED LINES
             read(lin,*,err=99)

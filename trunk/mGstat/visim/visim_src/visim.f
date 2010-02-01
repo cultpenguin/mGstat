@@ -85,9 +85,8 @@ c
       open(lout,file=outfl,status='UNKNOWN')
 
       if (doestimation.eq.1) then 
-         write(tmpfl,871) 'visim_estimation',outfl
+         tmpfl='visim_estimation'//'_'//outfl               
          open(lout_mean,file=tmpfl,status='UNKNOWN')
- 871     format(A,'_',A)
          write(lout_mean,110)
       endif
 
@@ -97,7 +96,7 @@ c
  110  format('VISIM ESTIMATION',/,'2',/,'mean',/,'std')
 
       if (read_randpath.eq.1) then
-         write(tmpfl,1871) 'randpath',outfl
+         tmpfl='randpath'//'_'//outfl               
          inquire(file=tmpfl,exist=testfl)
          if(.not.testfl) then
 c            read_randpath=-1;
@@ -111,7 +110,7 @@ c            read_randpath=-1;
 	
 
       if (read_volnh.eq.1) then
-         write(tmpfl,1871) 'volnh',outfl
+         tmpfl='volnh'//'_'//outfl               
          inquire(file=tmpfl,exist=testfl)
          if(.not.testfl) then
 c            read_volnh=0;
@@ -138,7 +137,7 @@ c     INITIALIZE Volume2Volume lookup table
 
       if (read_covtable.eq.1) then
 c     ALSO CHECK IF FILES EXIST
-         write(tmpfl,1871) 'cv2v',outfl
+         tmpfl='cv2v'//'_'//outfl               
          inquire(file=tmpfl,exist=testfl)
          if(.not.testfl) then
             write(*,*) 'Could not read Covariance lookup table : ',
@@ -153,7 +152,7 @@ c     ALSO CHECK IF FILES EXIST
             end do
             close(9)
          endif
-         write(tmpfl,1871) 'cd2v',outfl
+         tmpfl='cd2v'//'_'//outfl               
          inquire(file=tmpfl,exist=testfl)
          if(.not.testfl) then
             write(*,*) 'Could not read Covariance lookup table : ',
@@ -173,18 +172,18 @@ c     ALSO CHECK IF FILES EXIST
 c
 c     Open File Handle for lambdas
 c
-      write(tmpfl,1871) 'lambda',outfl
+      tmpfl='lambda'//'_'//outfl               
       open(99, file=tmpfl, status = 'unknown',form='unformatted')
       
 c     	open File Handle for volnh
       if (read_volnh.ge.0) then
-      	write(tmpfl,1871) 'volnh',outfl
+        tmpfl='volnh'//'_'//outfl               
       	open(97, file=tmpfl, status = 'unknown',form='unformatted')
-      	write(tmpfl,1871) 'nh',outfl
+        tmpfl='nh'//'_'//outfl               
       	open(96, file=tmpfl, status = 'unknown',form='unformatted')
       endif	
       if (read_randpath.ge.0) then
-      	write(tmpfl,1871) 'randpath',outfl
+        tmpfl='randpath'//'_'//outfl               
       	open(98, file=tmpfl, status = 'unknown',form='unformatted')
       endif	
              
@@ -207,22 +206,20 @@ c
       if (read_covtable.eq.0) then
 	      
 	      
-	
-         write(tmpfl,1871) 'cv2v',outfl
+         tmpfl='cv2v'//'_'//outfl
          open(9,file=tmpfl,status='unknown',form='unformatted')
          do i=1,nvol
             write(9) ((cv2v(i,j)),j=1,nvol)
          end do
          close(9)
 
-         write(tmpfl,1871) 'cd2v',outfl
+         tmpfl='cd2v'//'_'//outfl
          open(9,file=tmpfl,status='unknown',form='unformatted')
          do i=1,nxyz
             write(9) ((cd2v(i,j)),j=1,nvol)
          end do
          close(9)
 
- 1871    format(A,'_',A)
 
 c     Close file handle 99 (lambdas)
          close(99)

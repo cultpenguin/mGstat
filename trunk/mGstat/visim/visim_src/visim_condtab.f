@@ -91,7 +91,8 @@ c     centere normal scores
 
 
 c     WRITING NSCORE TABLE TO FILE
-      write(tmpfl,771) 'nscore',outfl
+      tmpfl='nscore'//'_'//outfl
+
       open(39, file=tmpfl, status = 'unknown')
       do i=1,nbt
          write(39,*) target(i),target_nscore(i),target_nscore_center(i),
@@ -182,15 +183,15 @@ c     BACK TRANSFORM QUANTILES
 
 c     wirte lookup tables to disk      
       if (idbg.gt.0) then 
-         write(tmpfl,771) 'cond_imean',outfl
+         
+         tmpfl='cond_imean'//'_'//outfl
          open(29, file=tmpfl, status = 'unknown')
-         write(tmpfl,771) 'cond_mean',outfl
+         tmpfl='cond_mean'//'_'//outfl
          open(30, file=tmpfl, status = 'unknown')
-         write(tmpfl,771) 'cond_var',outfl
+         tmpfl='cond_var'//'_'//outfl
          open(31, file=tmpfl, status = 'unknown')
-         write(tmpfl,771) 'cond_cpdf',outfl
+         tmpfl='cond_cpdf'//'_'//outfl
          open(32, file=tmpfl, status = 'unknown')
- 771     format(A,'_',A)
          do im=1,n_Gmean
             do iv=1,n_Gvar
                write(29,*) im

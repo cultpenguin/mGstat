@@ -253,7 +253,6 @@ c      sequential 1,2,3,4.... path
 c      do i=1,nxyz
 c        order(i)=i
 c      enddo
-871    format(A,'_',A)
 
 c      READ/WRITE RANDOM PATH FROM/TO DISK? 
       if(read_randpath.eq.0) then      
@@ -269,8 +268,7 @@ c	  read(98) (sim(i),i=1,nxyz)
 
 c     OPEN HANDLE FOR KRIGING MEAN + VAR
 
-      lout_krig = 60
-      write(tmpfl,871) 'kriging',outfl
+      tmpfl='kriging'//'_'//outfl
       open(lout_krig, file=tmpfl, status = 'unknown')
 
 
@@ -373,9 +371,7 @@ c     end do
 c     write(*,*) 'sim(1)=',sim(1)
       
       do in=1,nxyz
-        if((in/500*500 .eq.in).AND.(idbg.ge.0)) write(*,103)in
-c     if(in/1*1 .eq.in) write(*,103)in
-c     write(*,103)in
+        if(((in/500)*500 .eq.in).AND.(idbg.ge.0)) write(*,103)in
  103     format('************   currently on node 
      +        ',i9,' *****')
          
