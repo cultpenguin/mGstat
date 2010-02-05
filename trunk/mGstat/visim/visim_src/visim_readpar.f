@@ -31,12 +31,13 @@ c-----------------------------------------------------------------------
       character cdfl*80,tmpfl*80,datafl*40,btfl*40,
      +          dbgfl*40,lvmfl*40,str*40,parfile*40
       character volgeomfl*40,volsumfl*40,datacovfl*40
+      character maskfl*40
       logical   testfl
       integer   ix1,iy1,iz1
       integer   ndinv,ivol,iv,ivol_new,nvoldata,IntVar
       real      ivolx,ivoly,ivolz,ivoll,cumsum,vvtmp,realtmp
       logical   testind 
-      integer   tempa,tempb,iargc
+      integer   tempa,tempb,iargc,tempint
 c
 c Note VERSION number:
 c
@@ -110,8 +111,8 @@ c     NEXT LINE LEFT TO ENABLE EASY UPGRADE TO COKRIGING
       call chknam(volsumfl,40)
 
 
-      datacovfl='visim_datacov.eas'
-      call chknam(datacovfl,40)
+c      datacovfl='visim_datacov.eas'
+c      call chknam(datacovfl,40)
 
       read(lin,*,err=98) tmin,tmax
 
@@ -121,10 +122,11 @@ c     NEXT LINE LEFT TO ENABLE EASY UPGRADE TO COKRIGING
 
       
       if (idbg.gt.-2) then
-         write(*,9999) VERSION
- 9999    format(/' VISIM Version: ',f5.3,' Start')
+        write(*,*) 'VISIM ',VERSION,' ',parfile
+c         write(*,9999) VERSION,parilfe
+c 9999    format(' VISIM Version: ',f5.3,' Start',I10)
       endif
-      if (idbg.gt.-2) write(*,*) 'VISIM parfile: ', parfile 
+c      if (idbg.gt.-2) write(*,*) 'VISIM parfile: ', parfile 
 
 
       if (idbg.gt.0) then 
@@ -636,16 +638,11 @@ ccccc
          if (idbg.gt.0) write(*,*) '----------------------------'
          
 
+
 c +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-c
 c     CHECK IF DATA COVARIANCE FILE IS GIVEN, THEN READ IT
-         
-
-c         datacovfl='visim_datacov.eas'
-c         call chknam(datacovfl,40)
-
+c
          datacovfl='datacov'//'_'//outfl
-
          inquire(file=datacovfl,exist=testfl)
          if(testfl) then
             if (idbg.gt.(-1)) write(*,*) 
@@ -836,7 +833,6 @@ c WRITE DEBUG TO SCREEN
          endif
 
 
-
 c
 c COMPUTE REFERENCE VELOCITY 
 c     
@@ -862,6 +858,7 @@ c            endif
 
          enddo
      
+
        
 c
 c Populate the V matrix containig the geometry if the volume data !!
@@ -886,6 +883,37 @@ c
      +         '               Weighted Average           = ',f12.4,/,
      +         '               Weighted Variance          = ',f12.4,/)
       endif
+
+
+
+c +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+c     CHECK IF MASK FILE IS GIVEN, THEN READ IT
+c
+         maskfl='mask'//'_'//outfl
+         inquire(file=maskfl,exist=testfl)
+         if(testfl) then
+            if (idbg.gt.-1) write(*,*) 'Using mask:',maskfl
+
+            open(lin,file=maskfl,status='OLD')
+            read(lin,*,err=999)
+            read(lin,*,err=999) nvari
+            do i=1,nvari
+               read(lin,*,err=999)
+            end do
+            do i=1,nxyz
+               read(lin,*,iostat = IntVar) tempint
+               mask(i)=tempint
+            enddo
+
+
+         else
+            do i=1,(nxyz)
+               mask(i)=1;
+            enddo
+c            write(*,*) 'NOT Using mask:',maskfl
+         endif
+
+
 
 
 c
@@ -914,9 +942,7 @@ c      if ((idrawopt .eq. 2).or.(idrawopt .eq. 4)) then
          do i=1,nvarbt
             read(lin,*,err=999)
          end do
-         
-         
-         
+                         
  55      read(lin,*,end=66,err=999) (var(j),j=1,nvarbt)
          
          

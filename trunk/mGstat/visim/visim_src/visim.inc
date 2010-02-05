@@ -42,12 +42,12 @@ c
       integer MAXSBX, MAXSBY, MAXSBZ, MAXDAT, MAXNOD, MAXSAM
       integer MAXNST, MAXREF, MAXCAT, MV, MAXVOLS, MAXDINVOL
 
-      parameter(MAXX   =   102, MAXY   = 102, MAXZ   = 1,
+      parameter(MAXX   =   201, MAXY   = 201, MAXZ   = 1,
      +          MAXCTX =  MAXX, MAXCTY =MAXY, MAXCTZ =MAXZ,
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
      +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,
      +          MAXNST =     4, MAXREF=10000,MAXCAT=24, 
-     +          MV=20         , MAXVOLS=745 , MAXDINVOL=1836,
+     +          MV=20         , MAXVOLS=805 , MAXDINVOL=199,
      +		MAXQUAN=501,MAXMVLOOK=201)
 c
 c Fixed Parameters:
@@ -58,9 +58,9 @@ c
       parameter(MAXKR1=MAXNOD+MAXSAM+1,MAXKR2=MAXKR1*MAXKR1,
      +          MAXROT=MAXNST+1,MAXCXY=MAXCTX*MAXCTY,
      +          MAXXYZ=MAXCTX*MAXCTY*MAXCTZ,MAXSB=MAXSBX*MAXSBY*MAXSBZ,
-     +          MXYZ=MAXX*MAXY*MAXZ,UNEST=-99999999.0,EPSLON=1.0e-20,
+     +          MXYZ=MAXX*MAXY*MAXZ,UNEST=-9999999.0,EPSLON=1.0e-20,
      +          MAXGEOMDATA=MAXVOLS*MAXDINVOL,
-     +          VERSION=1.7000)
+     +          VERSION=1.8000)
 c
 c ACORN parameters:
 c
@@ -96,7 +96,7 @@ c
       character distin*40, localfl*40, outfl*40, transoutfl*40      
       character lambdafl*40
 
-      integer   ibt,ibtw,nbt
+      integer   ibt,ibtw,nbt,mask(MXYZ)
       real	bootvar(MAXDAT),bootwt(MAXDAT),btmean,btvar
       real	bootcdf(MAXDAT)	
 c FOR VOLUMES
@@ -163,7 +163,7 @@ c      common /iaco/   ixv(MAXOP1), itr(MAXOP1)
       common /volume/ nvol,ndatainvol,volobs,
      +	volvar,volobs_ref,volx,voly,volz,voll,voli
 
-      common /simula/ doestimation,isim, nsim,sim,lvm
+      common /simula/ doestimation,isim, nsim,sim,lvm,mask
 
       common /search/ radius,radsqd,sang1,sang2,sang3,sanis1,sanis2,
      +                noct,nclose,close,ndmin,ndmax,sstrat,mults,nmult
