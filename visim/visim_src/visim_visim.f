@@ -386,17 +386,13 @@ c     order() keeps the simulation random path
          
          index = int(order(in)+0.5)
          
-c     WRITE(*, *) 'SIM(', INDEX, ')=', SIM(INDEX),order(in)
-c         WRITE(ldbg, *) 'SIM(', INDEX, ')=', SIM(INDEX)
-c         if (((sim(index).gt.(UNEST+EPSLON).or.
-c     +        sim(index).lt.(UNEST*2.0)))) go to 5
+c      WRITE(*, *) 'SIM(', INDEX, ')=', SIM(INDEX),order(in)
+c      WRITE(*, *) 'mask(', index, ')=', mask(index)
          
          
 C CHECK IF SAMPLE IS ALLREADY CONDITIONED 
 C THIS IS ESSENTIAL,          
-         if (sim(index).eq.UNEST) then
-c            go to 5
-         else 
+         if ((sim(index).ne.UNEST).or.(mask(index).eq.0)) then
             go to 5
          end if
       
@@ -559,9 +555,6 @@ c      cstdev=0
 c                     stop
                   endif
 
-c                  write(*,*) 'ncnode=',ncnode 
-c                  write(*,*) 'nclose=',nclose 
-
 c     
 c     Draw a value from the uniform distribution having conditional mean and
 c     variance and assign a value to this node:
@@ -570,21 +563,12 @@ c
 c DRAW A RANDOM SAMPLE FROM THE CHOSEN DISTRBUTION                  
 
 
-c                  write(*,*)'',cmean,cstdev
                   p = acorni(idum)   
-c                  write(*,*)'p=',p,' pkr=',pkr
 
                   if (p .ge. pkr) then 
                      if (doestimation.eq.0) then
                         sim(index) = simu(cmean,cstdev)                           write(*,*) 'pos ',cmean,sim(index)
                      endif
-                     
-c                     if(sim(index).lt.zmin) then
-c	           	write(*,*) 'ZMIN VIOLATION',zmin,sim(index)
-c                     endif
-c                     if(sim(index).gt.zmax) then
-c	           	write(*,*) 'ZMAX VIOLATION',zmax,sim(index)
-c                     endif
                       
                      sim_mean(index) = cmean
                      sim_std(index) = cstdev                         
@@ -686,11 +670,11 @@ c
                   av = av + simval
                   ss = ss + simval*simval
 c		  write(ldbg, *) simval 
-                  write(lout,'(f16.8)') simval
+                  write(lout,'(f19.10)') simval
                end do
                av = av / max(real(ne),1.0)
                ss =(ss / max(real(ne),1.0)) - av * av
-               if (idbg.gt.-2)  then 
+               if (idbg.gt.-1)  then 
                  write(ldbg,112) isim,ne,av,ss
                  write(*,   112) isim,ne,av,ss
  112             format(/,' Realization ',i3,': number   = ',i8,/,
