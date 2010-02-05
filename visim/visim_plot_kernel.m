@@ -45,8 +45,8 @@ function visim_plot_kernel(V,ivol,G,doPlot)
   
   hold off
   
-  axis([V.x(1) max(V.x) V.y(1) max(V.y)])
   axis image
+  axis([V.x(1) max(V.x) V.y(1) max(V.y)])
   
   
   if doPlot>0

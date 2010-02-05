@@ -5,7 +5,14 @@
 function V=visim_set_conditional_point(V,x,y,z,val,add)
     if nargin==0;
         %V=visim_init(0:.25:40,0:.25:40);
-        V=visim_init;
+        load visim_default;    
+        y=[V.y(1):(V.y(2)-V.y(1)):80];
+        x=[V.x(1):(V.x(2)-V.x(1)):50];
+        %x=1:1:150;
+        %y=1:1:160;
+        V.x=x;V.y=y;
+        V=visim_init(V.x,V.y);
+        V.debuglevel=-1;
         [xx,yy]=meshgrid(V.x,V.y);
         region=zeros(size(xx))+1;
         dy=5;
@@ -14,8 +21,9 @@ function V=visim_set_conditional_point(V,x,y,z,val,add)
         for iy=1:length(y_arr)
             region(find(yy>=y_arr(iy)))=iy;
             Va{iy}=V.Va;
-            Va{iy}.ang1=(iy/NR)*90;
-            Va{iy}.a_hmax=130;
+            Va{iy}.ang1=(iy/NR)*180-90;
+            Va{iy}.a_hmax=60;
+            Va{iy}.a_hmin=5;
         end
         for i=1:NR;
             
@@ -38,7 +46,6 @@ function V=visim_set_conditional_point(V,x,y,z,val,add)
         imagesc(V.x,V.y,V.D(:,:,1)');
         axis image
         title('non-stationary prior Cm')
-        keyboard
         return
     end
     
