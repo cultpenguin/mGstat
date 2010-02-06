@@ -34,7 +34,7 @@ if isfield(G,'set');
     if ~isfield(G.set,'mv')
         G.set.mv='-999';
     end
-    write_gstat_par(G);
+    G.mgstat.parfile=write_gstat_par(G);
     G=read_gstat_par(G.mgstat.parfile);
 end
 

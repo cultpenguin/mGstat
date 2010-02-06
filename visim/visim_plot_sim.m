@@ -17,14 +17,14 @@ function V=visim_plot_sim(V,isim,cax,FS,nxsub,nysub)
   if isempty(isim), isim=1:1:V.nsim;  end  
   nsim=length(isim);
   
-  if nargin<3, cax=[min(V.out.data) max(V.out.data)]; end
+  if nargin<3, cax=[min(V.D(:)) max(V.D(:))]; end
   
   if nargin<4, FS=6; end
   if isempty(FS), FS=6; end
   
   if nargin<5
-    dxy=V.nx/V.ny;
-    nxsub=max([1 floor(sqrt(nsim)*dxy)]);
+    dyx=V.ny/V.nx;
+    nxsub=max([1 floor(sqrt(nsim*dyx))]);
   end
   if nargin<6
     nysub=ceil(nsim/nxsub);
