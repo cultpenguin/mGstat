@@ -342,7 +342,7 @@ try
             fname=['visim_estimation_',obj.out.fname];
             if exist([pwd,filesep,fname],'file');
                 [d]=read_eas(fname);
-                d(find(obj.d==UNEST))=NaN;
+                d(find(d==UNEST))=NaN;
                 try
                     obj.etype.mean=reshape(d(:,1),obj.nx,obj.ny);
                     obj.etype.var=reshape(d(:,2),obj.nx,obj.ny);

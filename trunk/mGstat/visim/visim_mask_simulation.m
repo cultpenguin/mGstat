@@ -1,6 +1,7 @@
 % visim_mask_simulation : conditional simulation on mask with unique properties
 %
-%
+% Call:
+%  V=visim_mask_simulation(V,mask,Vmask,doPlot);
 %
 function V=visim_mask_simulation(V,mask,Vmask,doPlot);
 
@@ -32,6 +33,27 @@ end
 
 if nargin<4
     doPlot=0;
+end
+
+try
+   [p,f]=fileparts(V.parfile);
+   if isempty(strfind(f,'mask'))
+       V.parfile=sprintf('%s_mask.par',f);
+   end
+end
+
+
+if V.nsim>1
+   
+    for i=1:V.nsim;
+        mgstat_verbose(sprintf('%s : real %d/%d',mfilename,i,V.nsim));
+        VV=V;
+        VV.nsim=1;
+        VV.rseed=V.rseed+i-1;
+        VV=visim_mask_simulation(VV,mask,Vmask,doPlot);
+        V.D(:,:,i)=VV.D(:,:,1);
+    end
+    return
 end
 
 [xx,yy]=meshgrid(V.x,V.y);
@@ -79,5 +101,8 @@ for i=1:length(Vmask)
     
 end
 
+try
+    V=rmfield(V,'mask');
+end
 
 

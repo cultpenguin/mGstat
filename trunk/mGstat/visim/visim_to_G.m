@@ -33,6 +33,7 @@ function [G,d_obs,d_var,Cd,Cm,m0]=visim_to_G(V);
               progress_txt(ivol,nvol,'Setting up G')
           end
           idata=find(V.fvolgeom.data(:,4)==ivol);
+          %idata=find(V.fvolgeom.data(:,4)==ivol);
           POS=V.fvolgeom.data(idata,[1 2 3]);
           SENS=V.fvolgeom.data(idata,[5]);
           
@@ -40,7 +41,6 @@ function [G,d_obs,d_var,Cd,Cm,m0]=visim_to_G(V);
           iy=(POS(:,2)-V.ymn+V.ysiz)/V.ysiz;
           iz=(POS(:,3)-V.zmn+V.zsiz)/V.zsiz;
           
-          idata=find(V.fvolgeom.data(:,4)==ivol);
           [iix,iiy]=pos2index(POS(:,1),POS(:,2),V.x,V.y);
           ind=sub2ind([V.nx V.ny],iix,iiy);
           

@@ -41,11 +41,11 @@ function V=visim_plot_sim(V,isim,cax,FS,nxsub,nysub)
     set(gca,'FontSize',FS)
     set(gca,'XAxisLocation','top')
     axis image
-    title(sprintf('i=%03d',isim(j)))
+    %title(sprintf('i=%03d',isim(j)))
   end
  
   %set(gca,'visible','off');  colorbar;  cla
-  [f1,f2,f3]=fileparts(V.parfile);
+  %[f1,f2,f3]=fileparts(V.parfile);
   %title([f2,' Realizations'],'interpr','none')
   
   %print_mul(sprintf('%s_sim',f2))
