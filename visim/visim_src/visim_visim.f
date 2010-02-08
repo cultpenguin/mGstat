@@ -117,6 +117,7 @@ c-----------------------------------------------------------------------
       real sumderr,sumerr,temp
       real meantmh,stdtmh
       real gvar_org, gmean_org, cbb_org
+      integer tstep
       
       character tmpfl*80
 c      integer lout_krig
@@ -364,14 +365,14 @@ c
          end do
       endif
       
-      
-c     do ind=1,nxyz
-c     write(*,*) 'i,sim=',ind,sim(ind)
-c     end do
-c     write(*,*) 'sim(1)=',sim(1)
-      
+      tstep=5000000;
+      if (idbg.ge.-1) tstep=10000;
+      if (idbg.ge.0) tstep=1000;
+      if (idbg.ge.1) tstep=100;
+      if (idbg.ge.2) tstep=1;
+
       do in=1,nxyz
-        if(((in/500)*500 .eq.in).AND.(idbg.ge.0)) write(*,103)in
+        if(((in/tstep)*tstep .eq.in).AND.(idbg.ge.0)) write(*,103)in
  103     format('************   currently on node 
      +        ',i9,' *****')
          

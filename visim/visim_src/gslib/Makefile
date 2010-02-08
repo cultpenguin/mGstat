@@ -2,9 +2,9 @@
 # Makefile for generating "libgs.a"
 #
 
-COMP = ifort
+#COMP = ifort
 FFLAGS = -c -O
-#COMP = gfortran
+COMP = gfortran
 #FFLAGS =  -march=i386 -c -O2 
 
 LIBGS = ../libgs.a

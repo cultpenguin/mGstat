@@ -10,12 +10,12 @@ progname=visim
 PROG   = $(progname)
 PROG = visim
 
-COMP = ifort
+#COMP = ifort
 #FFLAGS = -fdefault-real-8 -fdefault-double-8 -O
 FFLAGS = -O
 
 #COMP = g77
-#COMP = gfortran
+COMP = gfortran
 #FFLAGS = -march=i386 -O2 
 ## FFLAGS = -g
 

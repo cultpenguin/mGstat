@@ -33,9 +33,14 @@ function visim_clean(V,del_out)
             if ~isstruct(V)
                 V=read_visim(V);
             end
+      
+            try
+                [p,f]=fileparts(V);
+                delete(sprintf('%s_mask.out',f));
+            end
             
             if isfield(V,'out')
-                delete(['*_',V.out.fname])
+                delete(['*',V.out.fname])
             end
         catch
             if ~isstruct(V)
@@ -48,6 +53,8 @@ function visim_clean(V,del_out)
     end
     
     delete('fort.*');
+    
+    
     
     if nargin==2
         if ((del_out==1)&(isfield(V,'out'))),

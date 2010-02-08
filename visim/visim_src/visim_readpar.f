@@ -892,7 +892,9 @@ c
          maskfl='mask'//'_'//outfl
          inquire(file=maskfl,exist=testfl)
          if(testfl) then
-            if (idbg.gt.-1) write(*,*) 'Using mask:',maskfl
+            if (idbg.gt.0) write(*,*) ' read MASK from file = YES '
+     1           ,maskfl
+
 
             open(lin,file=maskfl,status='OLD')
             read(lin,*,err=999)
@@ -910,9 +912,11 @@ c
             do i=1,(nxyz)
                mask(i)=1;
             enddo
-c            write(*,*) 'NOT Using mask:',maskfl
-         endif
+            if (idbg.gt.0) then
+               write(*,*) ' read MASK from file = NO '
+            endif
 
+         endif
 
 
 
