@@ -47,7 +47,7 @@ c
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
      +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,
      +          MAXNST =     4, MAXREF=10000,MAXCAT=24, 
-     +          MV=20         , MAXVOLS=805 , MAXDINVOL=199,
+     +          MV=20         , MAXVOLS=805 , MAXDINVOL=1199,
      +		MAXQUAN=501,MAXMVLOOK=201)
 c
 c Fixed Parameters:

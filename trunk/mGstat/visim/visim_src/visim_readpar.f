@@ -897,7 +897,7 @@ c
          maskfl='mask'//'_'//outfl
          inquire(file=maskfl,exist=testfl)
          if(testfl) then
-            if (idbg.gt.0) write(*,*) ' read MASK from file = YES '
+            if (idbg.ge.0) write(*,*) ' read MASK from file = YES '
      1           ,maskfl
 
 
