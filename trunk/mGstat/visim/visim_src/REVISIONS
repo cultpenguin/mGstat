@@ -1,0 +1,13 @@
+VERSION 1.6, Jan, 2010 :
+DSSIM simulation of highly skewed target histograms improved
+
+VERSION 1.7, Jan, 2010 : 
+Fixed problem opening files using Gfortran
+
+VERSION 1.8, Feb, 2010:
+Added option to use mask files, to simulate/estimate only part of the model parameter space.
+If the 'visim.par' is used as a parameter file, mask simulation is performed if the files 'visim_mask.out' exist. 
+visim_mask.out must be a one column EAS file with as many data values as number for data (NXYZ). A '1' indicated that the correpsonding data location should be computed, '0' means that it will be omitted.
+Check out visim_mask.m from mGstat fo handling of mask from Matlab.
+
+

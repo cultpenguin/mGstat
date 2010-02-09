@@ -7,7 +7,12 @@ Edit the parameter 'COMP' in the two files :
 visim/gslib/Makefile 
 visim/Makefile
 
-to point to your fortran compiler of choice. Gnu F77 and Intel Fortran is known to work nicely.
+to point to your fortran compiler of choice. 
+
+GFortran and Intel Fortran is known to work nicely.
+Gfortran for winXP can be downloaded from :
+http://www.equation.com/servlet/equation.cmd?call=fortran
+
 
 To compile :
 cd gslib
@@ -19,7 +24,7 @@ This should create the visim binary in visim/visim
 
 in visim_examples contains examples of running visim.
 
-If you use Matlab consider downloading mGstat http://mgstat.sf.net/ that contains an interface to run visim, edit the parameter files, and plot simulations resilts.
+If you use Matlab consider downloading mGstat http://mgstat.sourceforge.net/ that contains an interface to run visim, edit the parameter files, and plot simulations resilts.
 
 
 ___________
