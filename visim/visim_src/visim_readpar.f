@@ -257,12 +257,17 @@ c     1     in nscore space = ',n_monte
 c         musevols=0
       endif
 
-c      read(lin,*,err=98) densitypr,shuffvol,shuffinvol
-c      if (idbg.gt.0) write(*,*) ' random path = ',
-c     1     densitypr,shuffvol,shuffinvol
 
       read(lin,*,err=98) densitypr
+      if ((doestimation.eq.1).and.(densitypr.ne.0)) then
+         densitypr=0;
+         if (idbg.ge.-1) write(*,*) ' forcing random path = ',densitypr
+      endif
+      
       if (idbg.gt.0) write(*,*) ' random path = ',densitypr
+
+      
+
 
       read(lin,*,err=98) sstrat
       if (idbg.gt.0) write(*,*) ' two-part search flag = ',sstrat
