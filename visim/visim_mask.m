@@ -1,9 +1,9 @@
-% visim_mask_simulation : conditional simulation on mask with unique properties
+% visim_mask : conditional simulation on mask with unique properties
 %
 % Call:
-%  V=visim_mask_simulation(V,mask,Vmask,doPlot);
+%  V=visim_mask(V,mask,Vmask,doPlot);
 %
-function V=visim_mask_simulation(V,mask,Vmask,doPlot);
+function V=visim_mask(V,mask,Vmask,doPlot);
 
 if nargin==0;
     load visim_default;
@@ -27,7 +27,7 @@ if nargin==0;
         Vmask{iy}.gmean=10+(iy-1)*2;
     end
     
-    V=visim_mask_simulation(V,mask,Vmask,1);
+    V=visim_mask(V,mask,Vmask,1);
     return
 end
 
@@ -37,8 +37,8 @@ end
 
 try
    [p,f]=fileparts(V.parfile);
-   if isempty(strfind(f,'mask'))
-       V.parfile=sprintf('%s_mask.par',f);
+   if isempty(strfind(f,'masksim'))
+       V.parfile=sprintf('%s_masksim.par',f);
    end
 end
 
@@ -50,13 +50,19 @@ if V.nsim>1
         VV=V;
         VV.nsim=1;
         VV.rseed=V.rseed+i-1;
-        VV=visim_mask_simulation(VV,mask,Vmask,doPlot);
+        VV=visim_mask(VV,mask,Vmask,doPlot);
         V.D(:,:,i)=VV.D(:,:,1);
     end
+    [em,ev]=etype(V.D);
+    V.etype.mean=em;
+    V.etype.var=ev;
+    
     return
 end
 
 [xx,yy]=meshgrid(V.x,V.y);
+
+try;fconddata_org=V.fconddata;;end
 
 Nr=length(Vmask);
 for i=1:length(Vmask)
@@ -98,8 +104,9 @@ for i=1:length(Vmask)
         drawnow;
     end
     
-    
 end
+
+try;V.fconddata=fconddata_org;;end
 
 try
     V=rmfield(V,'mask');

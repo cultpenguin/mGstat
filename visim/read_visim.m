@@ -345,6 +345,7 @@ try
                 d(find(d==UNEST))=NaN;
                 try
                     obj.etype.mean=reshape(d(:,1),obj.nx,obj.ny);
+                    obj.D=obj.etype.mean;
                     obj.etype.var=reshape(d(:,2),obj.nx,obj.ny);
                 catch
                     mgstat_verbose(sprintf('%s : Failed to load estimations results from %s',mfilename,fname),8)

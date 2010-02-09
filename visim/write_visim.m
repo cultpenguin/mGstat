@@ -110,8 +110,15 @@ fclose(fid);
 
 % WRITE MASK IF IT EXISTS
 if isfield(obj,'mask');
+    
+    f_mask=sprintf('mask_%s.out',par_file);
+    if isfield(obj.mask,'enable')
+        if obj.mask.enable==0
+            delete(f_mask);
+        end
+    end
+    
     try
-        f_mask=sprintf('mask_%s.out',par_file);
         if (isfield(obj.mask,'write'));
             if obj.mask.write==1;
                 m=obj.mask.mask';
