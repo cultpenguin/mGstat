@@ -31,4 +31,4 @@ end
 set(ax,'position',position);
 set(ax,'visible','off')
 box on
-t_handle=text(.99,.5,txt,'FontSize',FontSize,'HorizontalAlignment',HorizontalAlignment);
+t_handle=text(.99,.5,txt,'FontSize',FontSize,'HorizontalAlignment',HorizontalAlignment,'Interpreter','None');

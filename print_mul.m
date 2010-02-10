@@ -24,6 +24,7 @@ function print_mul(fname,color,trim);
 
     watermark(fname);
 
+    print(gcf, '-dtiff', [fname,'.tiff'] )
     print(gcf, '-dpng', [fname,'.png'] )
     print(gcf, '-dpdf', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
     print(gcf, '-depsc2', [fname,'.eps'] )
