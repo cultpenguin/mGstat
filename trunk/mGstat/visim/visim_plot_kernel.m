@@ -13,7 +13,13 @@ function visim_plot_kernel(V,ivol,G,doPlot)
   end
 
   if isfield(V,'fvolsum')
-    
+    if (isfield(V.fvolsum,'data')==0)	
+      V.fvolsum.data=read_eas(V.fvolsum.fname);
+    end
+    if (isfield(V.fvolgeom,'data')==0)	
+      V.fvolgeom.data=read_eas(V.fvolgeom.fname);
+    end
+        
     if nargin==1;
       ivol=1:size(V.fvolsum.data,1);
     end

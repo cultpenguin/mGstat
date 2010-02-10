@@ -354,7 +354,8 @@ c      index_cdf = 1 + int(p*n_q)
 
 
 c     CORRECTION ACCORDING TO Oz et al, 2003
-
+c     Consider another correction that builds a differet
+c     local cpdf based on closeness to lookup table
       doOzCorr=0
       if (doOzCorr.eq.1) then
         Fmean = condlookup_mean(im_sel,iv_sel)
@@ -362,8 +363,20 @@ c     CORRECTION ACCORDING TO Oz et al, 2003
 
         Kmean= cmean
         Kstd = sqrt(cvar)
+
+        if (Fstd.lt.(0.00001)) then
+           write(*,*) 'draw=',drawfrom_condtab,Fmean,Fstd,
+     1          Kmean,Kstd
+        endif
       
         drawfrom_condtab = ( draw - Fmean ) * ( Kstd / Fstd) + Kmean
+
+        if (Fstd.lt.(0.00001)) then
+           write(*,*) 'draw=',drawfrom_condtab,Fmean,Fstd,
+     1          Kmean,Kstd
+           stop
+        endif
+
       endif
 
       return 
