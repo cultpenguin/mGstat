@@ -11,13 +11,14 @@ PROG   = $(progname)
 PROG = visim
 
 COMP = ifort
-#FFLAGS = -fdefault-real-8 -fdefault-double-8 -O
 FFLAGS = -O
+#FFLAGS = -fdefault-real-8 -fdefault-double-8 -O
 
-#COMP = g77
-#COMP = gfortran
+
+COMP = gfortran
+FFLAGS = -O
 #FFLAGS = -march=i386 -O2 
-## FFLAGS = -g
+# FFLAGS = -g
 
 SRCS   =  $(progname).f visim_krige.f visim_krige_volume.f \
                         visim_randpath.f visim_nhoodvol.f \
