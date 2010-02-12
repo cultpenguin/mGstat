@@ -44,9 +44,17 @@ end
 
 
 if V.nsim>1
-   
+   t0=now;
     for i=1:V.nsim;
-        mgstat_verbose(sprintf('%s : real %d/%d',mfilename,i,V.nsim));
+        if i==1
+            mgstat_verbose(sprintf('%s : real %d/%d',mfilename,i,V.nsim));
+        else
+            tnow=now;
+            t_it=(tnow-t0)./(i-1);
+            t_end=t0+V.nsim*t_it;
+            t_left=(V.nsim*t_it);
+            mgstat_verbose(sprintf('%s : real %d/%d finish:%s',mfilename,i,V.nsim,datestr(t_end)));
+        end
         VV=V;
         VV.nsim=1;
         VV.rseed=V.rseed+i-1;
@@ -66,7 +74,7 @@ try;fconddata_org=V.fconddata;;end
 
 Nr=length(Vmask);
 for i=1:length(Vmask)
-    mgstat_verbose(sprintf('%s : region %2d/%2d',mfilename,i,Nr))
+    mgstat_verbose(sprintf('%s : region %2d/%2d',mfilename,i,Nr),1)
     
     % SET CONDITIONAL
     if i>1
@@ -94,6 +102,18 @@ for i=1:length(Vmask)
     % PERFORM CONDITIONAL SIMULATION
     V=visim(V);
     
+    % UPDATE etype for LSQ mode
+    if V.nsim==0
+        if i==1;
+            VLSQ.etype.mean=V.etype.mean;
+            VLSQ.etype.var=V.etype.var;            
+        else
+            iuse=find(use_mask');
+            VLSQ.etype.mean(iuse)=V.etype.mean(iuse);
+            VLSQ.etype.var(iuse)=V.etype.var(iuse);                        
+        end
+    end
+    
     % PLOT DATA
     if doPlot==1;
         if i>1;
@@ -106,7 +126,19 @@ for i=1:length(Vmask)
     
 end
 
-try;V.fconddata=fconddata_org;;end
+if (V.nsim==0)
+    % UPDATE etype for LSQ mode    
+    V.etype=VLSQ.etype;
+end
+
+% REMOVE CONDTIONAL MASK DATA
+try
+    V=rmfield(V,'fconddata');   
+end
+% REVERT TO ORIGINAL SET OF COND DATA
+try
+    V.fconddata=fconddata_org;
+end
 
 try
     V=rmfield(V,'mask');
