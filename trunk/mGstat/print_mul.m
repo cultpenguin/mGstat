@@ -26,9 +26,9 @@ function print_mul(fname,color,trim);
 
     print(gcf, '-dtiff', [fname,'.tiff'] )
     print(gcf, '-dpng', [fname,'.png'] )
-    print(gcf, '-dpdf', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
     print(gcf, '-depsc2', [fname,'.eps'] )
     return
+    print(gcf, '-dpdf', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
     print(gcf, '-dpng','-r300', [fname,'.png'] )
     print(gcf, '-dpdf','-r300', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
     print(gcf, '-depsc2','-r300', [fname,'.eps'] )
