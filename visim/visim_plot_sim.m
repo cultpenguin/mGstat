@@ -37,8 +37,8 @@ function V=visim_plot_sim(V,isim,cax,FS,nxsub,nysub)
     subplot(nysub,nxsub,i)
     imagesc(V.x,V.y,V.D(:,:,isim(j))');
     % title(sprintf('#%d',i),'FontSize',FS+2);
-    xlabel('Distance (m)');
-    ylabel('Depth (m)');
+    xlabel('Distance (m)','FontSize',FS);
+    if i==1;ylabel('Depth (m)','FontSize',FS);;end
     caxis(cax);
     set(gca,'FontSize',FS)
     set(gca,'XAxisLocation','top')
