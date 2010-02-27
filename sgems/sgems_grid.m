@@ -58,12 +58,18 @@ if ~isfield(S.dim,'z0');S.dim.z0=0;end
 [py_script,S]=sgems_grid_py(S);
 
 % delete output eas file
+% FEATURE REQ : CHANGE THE TRY_CATCH LOOPS TO CHECK FOR ALGORITHM NAME
+% EXPLICITLY
 try
     % sgsim, dssim, LU_sim
     property_name=S.XML.parameters.Property_Name.value;
-catch
+end
+try
     % snesim_std
     property_name=S.XML.parameters.Property_Name_Sim.value;
+end
+if (strcmp(S.XML.parameters.algorithm.name,'tiGenerator'))
+    property_name=S.XML.parameters.Ti_prop_name.value;
 end
 
 eas_out=sprintf('%s.out',property_name);

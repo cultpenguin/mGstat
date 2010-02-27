@@ -148,22 +148,32 @@ try
 end
 
 
+% GRID_NAME
 try
     % sgsim, dssim, LU_sim
     grid_name=S.XML.parameters.Grid_Name.value;
-catch
+end
+try
     % snesim_std
     grid_name=S.XML.parameters.GridSelector_Sim.value;
 end
+if (strcmp(S.XML.parameters.algorithm.name,'tiGenerator'))
+    grid_name=S.XML.parameters.Ti_grid.value;
+end
 
-
+% GRID PROPERTY
 try
     % sgsim, dssim, LU_sim
     property_name=S.XML.parameters.Property_Name.value;
-catch
+end
+try
     % snesim_std
     property_name=S.XML.parameters.Property_Name_Sim.value;
 end
+if (strcmp(S.XML.parameters.algorithm.name,'tiGenerator'))
+    property_name=S.XML.parameters.Ti_prop_name.value;
+end
+
 
 
 %% Write XML file to disk
@@ -224,7 +234,12 @@ p='';
 
 %%% MAKE THE DEFAULT OUTPUT FORMAT SGEMS and NOT GSLIB! MUCH FASTER
 try
-    nsim=S.XML.parameters.Nb_Realizations.value;
+    % APPLIES TO SIMULATION ALGORITHMS 
+    try
+        nsim=S.XML.parameters.Nb_Realizations.value;
+    catch
+        nsim=S.XML.parameters.nb_realizations.value;
+    end
     for j=1:nsim; p=sprintf('%s::%s__real%d',p,property_name,j-1);end
     i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0%s'')',grid_name,property_name,p);
     i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.sgems::s-gems::0%s'')',grid_name,property_name,p);

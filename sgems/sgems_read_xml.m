@@ -62,8 +62,8 @@ for i=1:n_entries
         
         if (S{i}.end_tag==0)&(S{i}.closed_tag==0)
             try
-            struct_level{lev}=S{i}.struct_name;
-            mgstat_verbose(sprintf('%s : XML level = %d (%s)',mfilename,lev,struct_level{lev}),2);
+              struct_level{lev}=S{i}.struct_name;
+              mgstat_verbose(sprintf('%s : XML level = %d (%s)',mfilename,lev,struct_level{lev}),2);
             catch
                 keyboard
             end
@@ -104,6 +104,9 @@ end
 %%
 function S=parse_xml_entry(xml_string)
 
+% FIX LEADING SPACE BEFORE '=', such as 'cdf_type ="constant"' 
+xml_string=regexprep(xml_string, '\s=','=');
+
 % FIND LEADING TAG
 ispace=findstr(xml_string,' ');
 ieq=findstr(xml_string,'=');
@@ -127,7 +130,7 @@ if isempty(ispace)
     return
 end
 struct_name=xml_string(2:ispace(1)-1);
-mgstat_verbose(sprintf('%s :   -- %s ',mfilename,struct_name),1);
+mgstat_verbose(sprintf('%s :   -- %s (%s)',mfilename,struct_name,xml_string),1);
 names= regexp(xml_string, '\w*\=','match');
 vals = regexp(xml_string, '".*"','match');
 vals = regexp(xml_string, '"[^"]*"','match');

@@ -38,13 +38,15 @@ if (type==1)
     ispace=strfind(txt,' ');
     if ~isempty(ispace)
         
-        
         if (ispace(1)==1);
             % We have leading blanks
             if length(ispace)==1
                 ilast=1;
             else
-                ilast=find(diff(ispace)>1);i_last=ilast(1)-1;
+                ilast=find(diff(ispace)>1);
+                if ~isempty(ilast);
+                    ilast=ilast(1)-1;
+                end
             end
             igood=setxor(1:ilast,1:1:length(txt));
             txt=txt(igood);
