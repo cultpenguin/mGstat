@@ -1,0 +1,31 @@
+<parameters>  <algorithm name="tiGenerator" /> 
+  <Ti_grid  value="SIM"  /> 
+  <Ti_prop_name  value="TIG" /> 
+  <nb_realizations  value="5" /> 
+  <seed_rand  value="52817" /> 
+  <nb_geobodies  value="1" /> 
+  <geobodySelector  index="1"  prop="0.2"  type="Sinusoid" >
+<sinRot  cdf_type  ="Constant" >
+<const mean="25" />
+</sinRot>
+<sinLen  cdf_type  ="Uniform" >
+<unif min="80"  max="100" />
+</sinLen>
+<sinWid  cdf_type  ="Uniform" >
+<unif min="6"  max="8" />
+</sinWid>
+<sinThk  cdf_type  ="Uniform" >
+<unif min="2"  max="4" />
+</sinThk>
+<sinAmp  cdf_type  ="Uniform" >
+<unif min="4"  max="8" />
+</sinAmp>
+<sinWvl  cdf_type  ="Uniform" >
+<unif min="20"  max="40" />
+</sinWvl>
+<interaction erosion="" >
+<overlap  min="" max="" />
+<flag  no_self_overlap="1" />
+</interaction>
+</geobodySelector>
+</parameters> 
