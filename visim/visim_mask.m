@@ -1,7 +1,10 @@
-% visim_mask : conditional simulation on mask with unique properties
+% visim_mask : conditional simulation on mask with unique covariance properties
 %
 % Call:
 %  V=visim_mask(V,mask,Vmask,doPlot);
+%
+% Call without arguments to see an example:
+%  V=visim_mask;
 %
 function V=visim_mask(V,mask,Vmask,doPlot);
 
