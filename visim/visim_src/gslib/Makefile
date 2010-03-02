@@ -6,6 +6,7 @@
 #FFLAGS = -c -O
 
 COMP = gfortran
+FFLAGS = -c -m32 -O
 FFLAGS = -c -O
 
 
