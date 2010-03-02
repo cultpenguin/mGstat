@@ -16,9 +16,8 @@ FFLAGS = -O
 
 
 COMP = gfortran
+FFLAGS = -m32 -O
 FFLAGS = -O
-#FFLAGS = -march=i386 -O2 
-# FFLAGS = -g
 
 SRCS   =  $(progname).f visim_krige.f visim_krige_volume.f \
                         visim_randpath.f visim_nhoodvol.f \
