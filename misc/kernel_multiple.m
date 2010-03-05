@@ -4,7 +4,7 @@
 %    [K,RAY,Gk,Gray,timeS,timeR,raypath]=kernel_multiple(Vel,x,y,z,S,R,T,alpha,Knorm);
 %
 % IN : 
-%    Vel : Velocity field
+%    Vel [ny,nx] : Velocity field
 %    x [1:nx] :
 %    y [1:ny] :
 %    z [1:nz] :
