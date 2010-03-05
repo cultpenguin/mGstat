@@ -30,7 +30,7 @@ function progress_txt(i,max,varargin);
       end
   end
   if ~exist('statusbar_ok','var')
-      statusbar_ok=1;
+      statusbar_ok=0;
   end
   
   
