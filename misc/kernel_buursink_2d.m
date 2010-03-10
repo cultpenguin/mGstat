@@ -26,7 +26,7 @@ end
 [nz,nx]=size(model);
 
 if nargin<9
-    doPlot=0;
+    doPlot=1;
 end
 
 if nargin<6 % no omega
@@ -106,7 +106,7 @@ if nargout>2
     L2_all=zeros(nz,nx);
 end
 for i=1:nz
-    %    progress_txt([i],[nz],'Z',0)
+    progress_txt([i],[nz],'Z',0)
         
     for j=1:nx
         
@@ -141,6 +141,7 @@ for i=1:nz
         end
     end
 end
+kernel=kernel.*dx*dx;
 
 % NEXT FEW LINE SHOULD BETTER HANDLE THE SENSITIVITY AT THE SOURCE AND
 % RECEIVER LOCATIONS
@@ -148,7 +149,7 @@ pos=find(isnan(kernel)>0);
 pos=find(isinf(kernel)>0);
 kernel(pos)=0;
 
-kernel=L*kernel./sum(kernel(:));
+%kernel=L*kernel./sum(kernel(:));
 
 
 if doPlot==1;
