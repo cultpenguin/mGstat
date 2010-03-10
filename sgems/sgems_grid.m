@@ -121,6 +121,7 @@ if doReformatSimGrid==1;
     
     nsim=size(S.data,2);
     D=zeros(S.dim.nx,S.dim.ny,S.dim.nz,nsim);
+    try;S=rmfield(S,'D');end
     for i=1:nsim;
         S.D(:,:,:,i)=reshape(S.data(:,i),S.dim.nx,S.dim.ny,S.dim.nz);
     end
