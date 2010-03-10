@@ -124,7 +124,7 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
     K(:,:,is)=raylength_mat(is).*K(:,:,is)./sk;
        
   end
-
+  
   % NORMALIZE RAY
   for is=1:ns
        r=RAY(:,:,is);
