@@ -16,7 +16,7 @@
 function [kernel_t,kernel_a,P_omega,omega]=kernel_fresnel_2d(v,x,y,S,R,omega,P_omega,thres,doNormalize,doZeroOutsideFresnel,doPlot);
 
 if nargin==0;
-    dx=.0125;dy=dx;    
+    dx=.1;dy=dx;    
     x=[0:dx:7];
     y=[0:dy:6];
     S=[1 3];
