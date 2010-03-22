@@ -132,10 +132,10 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options)
       
       %normalize kernel for velocity parameterization
       for iv=1:size(S,1);
-          G(iv,:)=G(iv,:)./(rl(iv));
-          Gray(iv,:)=Gray(iv,:)./(rl(iv));
-          Kmat(:,:,iv)=Kmat(:,:,iv)./rl(iv);
-          Raymat(:,:,iv)=Raymat(:,:,iv)./rl(iv);
+          G(iv,:)=kernel_slowness_to_velocity(G(iv,:),m_ref);
+          Gray(iv,:)=kernel_slowness_to_velocity(Gray(iv,:),m_ref);
+          Kmat(:,:,iv)=kernel_slowness_to_velocity(Kmat(:,:,iv),m_ref');
+          Raymat(:,:,iv)=kernel_slowness_to_velocity(Raymat(:,:,iv),m_ref');
       end
 
       %convert to velocity if data is time
