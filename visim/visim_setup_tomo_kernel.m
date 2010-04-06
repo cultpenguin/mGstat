@@ -6,6 +6,7 @@
 % V: VISIM matlab structure
 % S: [Nvol,2] list of sources for each volume
 % R: [Nvol,2] list of Receivers for each volume
+% m_ref: [nx,ny] (NB DIFFERENT FROM KERNEL_MULTIPLE)
 % t: [Nvol,1] List of observed travel times for each volume
 % t_err: [Nvol,1] List of observed travel times measurement errors
 % optional
@@ -62,6 +63,10 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options)
       alpha=options.alpha;
   end
 
+  if isfield(options,'knorm')==0
+      options.knorm=1;
+  end
+  
     if isfield(options,'parameterization')==0
       parameterization=2; % VELOCITY
       % parameterization=1; % SLOWNESS
@@ -105,7 +110,7 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options)
   if isfield(options,'doPlot')
       doPlot=options.doPlot;
   else
-      doPlot=1;
+      doPlot=0;
   end
   
   if isempty(t)
@@ -118,7 +123,10 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options)
   G=zeros(size(S,1),length(m_ref(:)));
   Gray=G;
   
-  [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,doPlot); 
+  [Kmat,Raymat,G,Gray,tS,tR,raypath,rl]=kernel_multiple(m_ref',V.x,V.y,V.z,[S],[R],freq,alpha,options.knorm,doPlot); 
+  
+  %keyboard
+  
   
   if parameterization==1
       mgstat_verbose(sprintf('%s : USE SLOWNESS PARAMETERIZATION',mfilename),100)
@@ -131,9 +139,10 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options)
       % USE VELOCITY PARAMETERIZATION
       
       %normalize kernel for velocity parameterization
+      %[G_vel,v_obs,Cd_v]=kernel_slowness_to_velocity(G,V,t,Cd);
       for iv=1:size(S,1);
-          G(iv,:)=kernel_slowness_to_velocity(G(iv,:),m_ref);
-          Gray(iv,:)=kernel_slowness_to_velocity(Gray(iv,:),m_ref);
+          G(iv,:)=kernel_slowness_to_velocity(G(iv,:),m_ref');
+          Gray(iv,:)=kernel_slowness_to_velocity(Gray(iv,:),m_ref');
           Kmat(:,:,iv)=kernel_slowness_to_velocity(Kmat(:,:,iv),m_ref');
           Raymat(:,:,iv)=kernel_slowness_to_velocity(Raymat(:,:,iv),m_ref');
       end
@@ -204,5 +213,6 @@ function [V,G,Gray,rl]=visim_setup_tomo_kernel(V,S,R,m_ref,t,t_err,name,options)
   V.fvolgeom.fname=fvolgeom;
 
   write_visim(V);
+  
   V=read_visim(V.parfile);
   
