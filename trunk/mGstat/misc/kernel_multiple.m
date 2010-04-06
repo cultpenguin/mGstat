@@ -1,4 +1,5 @@
-% kernel_multiple : computes the sensitivity kernel for a wave traveling from S to R.
+% kernel_multiple : computes the sensitivity kernel for a wave traveling
+% from S to R.
 %
 % CALL : 
 %    [K,RAY,Gk,Gray,timeS,timeR,raypath]=kernel_multiple(Vel,x,y,z,S,R,T,alpha,Knorm);
@@ -173,6 +174,7 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
     Gk(is,:)=gk(:);
   end
 
+  
   if doPlot>0;
     figure;
     ip=size(K,3);
