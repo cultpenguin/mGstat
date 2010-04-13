@@ -160,7 +160,6 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
           end
       end
   end
-  
   % REPORT 
   Gray=zeros(ns,length(x)*length(y));
   Gk=zeros(ns,length(x)*length(y));
