@@ -31,7 +31,7 @@
 %
 function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y,z,S,R,T,alpha,Knorm,doPlot);
 
-  if nargin<7, T=2.7; end
+  if nargin<7, T=1; end
   if nargin<8, alpha=1; end
   if nargin<9, 
       Knorm=0;

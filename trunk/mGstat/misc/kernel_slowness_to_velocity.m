@@ -1,5 +1,9 @@
 % kernel_slowness_to_velocity : converts from slowness to velocity parameterizations
 %
+% G : kernel [1,nkernels]
+% V : Velocity field (
+%
+%
 % CALL:
 %   G_vel=kernel_slowness_to_velocity(G,V);
 % or 
