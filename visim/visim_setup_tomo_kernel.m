@@ -59,7 +59,7 @@ if nargin==0
     %options.parameterization=1; % SLOWNESS
     options.parameterization=2; % VELOCITY
     options.knorm=0; % NO NORMALIZATION
-    options.knorm=1; % VERTICAL TOMOGRAPHY NORMALIZATION % NOT GOOD AT THE MOMENT
+    %options.knorm=1; % VERTICAL TOMOGRAPHY NORMALIZATION % NOT GOOD AT THE MOMENT
     options.freq=1;
     options.ktype=1; % RAY
     options.ktype=2; % FINITE FREQUENCY
