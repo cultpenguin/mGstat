@@ -93,7 +93,7 @@ else
 end
 
 if isfield(options,'freq')==0
-    freq=10;
+    freq=1;
 else
     freq=options.freq;
 end
