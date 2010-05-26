@@ -6,7 +6,7 @@
 % Call without arguments to see an example:
 %  V=visim_mask;
 %
-function V=visim_mask(V,mask,Vmask,doPlot);
+function [V,Vmask,mask]=visim_mask(V,mask,Vmask,doPlot);
 
 if nargin==0;
     load visim_default;
