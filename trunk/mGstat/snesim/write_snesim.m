@@ -2,7 +2,7 @@
 %
 % write snesim parameter file 
 %
-function write_snesim(obj,parfile)
+function obj=write_snesim(obj,parfile)
   
   if nargin==0
     help write_snesim
