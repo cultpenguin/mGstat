@@ -13,7 +13,7 @@
 %   sgems_image2ti;
 %
 %
-function file_out=sgems_image2ti(filename_img);
+function file_out=sgems_image2ti(filename_img,lims);
 
 file_out=[];
 
@@ -52,25 +52,45 @@ for i=1:length(d_img)
         
         d_sort=sort(d(:));
         % make discrete data
-        for icat=2:5;
-            cont_method=2;
-            if cont_method==1;
-                lims=linspace(0,255,icat+1);
-            else
-                ilims=round(linspace(1,nx*ny,icat+1));
-                lims=d_sort(ilims);
-            end
-            IM_CAT{icat-1}=zeros(size(IM));
-            for k=1:icat
-                kk=find((IM>=lims(k))&(IM<=lims(k+1)));
-                IM_CAT{icat-1}(kk)=k-1;
+        if nargin==2
+            % LIMS GIVEN AS INPUT
+            for icat=1:(length(lims)-1);
+                IM_CAT=zeros(size(IM));
+                for k=1:icat
+                    kk=find((IM>lims(k))&(IM<=lims(k+1)));
+                    IM_CAT(kk)=k-1;
+                end
             end
             
             id=id+1;
-            d=IM_CAT{icat-1}';
+            d=IM_CAT';
             data(:,id)=d(:);
             property{id}=sprintf('DISCRETE_%d',icat');;
             
+                
+        else
+            
+            for icat=2:5;
+                cont_method=2;
+                if cont_method==1;
+                    lims=linspace(0,255,icat+1);
+                else
+                    ilims=round(linspace(1,nx*ny,icat+1));
+                    lims=d_sort(ilims);
+                end
+                
+                IM_CAT{icat-1}=zeros(size(IM));
+                for k=1:icat
+                    kk=find((IM>=lims(k))&(IM<=lims(k+1)));
+                    IM_CAT{icat-1}(kk)=k-1;
+                end
+                
+                id=id+1;
+                d=IM_CAT{icat-1}';
+                data(:,id)=d(:);
+                property{id}=sprintf('DISCRETE_%d',icat');;
+                
+            end
         end
     end
     file_out=[filename,'.sgems'];
