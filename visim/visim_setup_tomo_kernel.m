@@ -115,6 +115,14 @@ else
     parameterization=options.parameterization;
 end
 
+if isfield(options,'nsim_cd')==0
+    nsim_cd=1000;
+else
+    nsim_cd=options.nsim_cd;
+end
+
+
+
 if nargin==0
     V=read_visim('sgsim_cond_2.par');
 end
@@ -175,6 +183,11 @@ if parameterization==1
     d_obs=t(:);
     d_std=t_err(:);
     
+    if (prod(size(t_err))==length(d_obs).^2);
+        % CORRELATED DATA ERROR
+        Cd=t_err;
+    end
+    
 elseif parameterization==2
     mgstat_verbose(sprintf('%s : USE VELOCITY PARAMETERIZATION',mfilename),100)
     % USE VELOCITY PARAMETERIZATION
@@ -190,13 +203,43 @@ elseif parameterization==2
     
     %convert to velocity if data is time
     d_obs = rl(:)./t(:);
-    d_std =  abs((rl(:)./(t(:)+t_err(:))-rl(:)./(t(:)-t_err(:)))./2);
-    
+    if (prod(size(t_err))==length(d_obs).^2);
+        %% CORRELATED DATA ERRORS
+        [t_err_sim]=gaussian_simulation_cholesky(zeros(1,size(t_err,1)),t_err,nsim_cd);
+        
+        Cd_est_time=[t_err_sim*t_err_sim']./nsim_cd;
+        
+        %vel_err_sim=zeros(size(t_err,1),nsim_cd);
+        for isim=1:nsim_cd
+           vel_err_sim(:,isim)=rl(:)./(t(:)+t_err_sim(:,isim))-d_obs; 
+        end
+        Cd_est_velocity=[vel_err_sim*vel_err_sim']./nsim_cd;
+        Cd=Cd_est_velocity;
+        
+        d_std=sqrt(diag(Cd));
+        
+        %d_std =  abs((rl(:)./(t(:)+diag(t_err))-rl(:)./(t(:)-diag(t_err)))./2);
+        %subplot(1,2,1);
+        %imagesc([Cd_est_time;t_err]);
+        %subplot(1,2,2);
+        %plot([d_std,diag(Cd_est_velocity)])
+
+        
+    else
+        d_std =  abs((rl(:)./(t(:)+t_err(:))-rl(:)./(t(:)-t_err(:)))./2);
+    end
+        
     % NEXT FEW LINES NOT FULLY THOUGHT THROUGH
     %m2=m_ref';
     %d_obs2=Gray*m2(:)
     %pause(1)
     
+end
+
+% IF CORRELATED DATA ERRORS WRITE TO FILE
+if (prod(size(t_err))==length(d_obs).^2);
+    fcorrdata=sprintf('datacov_%s.out',name);
+    write_eas(fcorrdata,Cd(:));
 end
 
 
