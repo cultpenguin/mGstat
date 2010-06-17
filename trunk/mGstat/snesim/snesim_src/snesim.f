@@ -12,6 +12,7 @@ c and redistribute the programs in GSLIB, but only under the          %
 c condition that this notice remain intact.                           %
 c                                                                     %
 c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 c----------------------------------------------------------------------
 c
 c                Single Normal Equation Simulation
@@ -51,7 +52,7 @@ c----------------------------------------------------------------------
       INTEGER, PARAMETER :: MAXCUT=2
 
       ! Maximum dimensions of the simulation grid
-      INTEGER, PARAMETER :: MAXX=100, MAXY=100, MAXZ=20
+      INTEGER, PARAMETER :: MAXX=300, MAXY=300, MAXZ=20
 
       ! Maximum dimensions of the training image
       INTEGER, PARAMETER :: MAXXTR=250, MAXYTR=250, MAXZTR=20
@@ -66,7 +67,7 @@ c----------------------------------------------------------------------
       INTEGER, PARAMETER :: MAXCTXYZ=MAXCTXY*MAXCTZ
 
       ! Maximum number of original sample data
-      INTEGER, PARAMETER :: MAXDAT=1000
+      INTEGER, PARAMETER :: MAXDAT=100000
 
       ! Maximum number of conditioning nodes
       INTEGER, PARAMETER :: MAXNOD=100
