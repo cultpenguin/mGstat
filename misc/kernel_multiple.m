@@ -174,7 +174,7 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
   end
 
   
-  if doPlot>0;
+  if doPlot>1;
     figure;
     ip=size(K,3);
     subplot(2,3,1)
@@ -204,7 +204,7 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
     drawnow;
   end
   
-  if doPlot>1;    
+  if doPlot>2;    
     for i=1:ns;imagesc(dt(:,:,i));axis image;drawnow;end
     for i=1:ns;imagesc(K(:,:,i));axis image;drawnow;end
     for i=1:ns;imagesc(RAY(:,:,i));axis image;drawnow;end
