@@ -3,6 +3,8 @@
 
 % get default snesim parameter file
 S=sgems_get_par('snesim_std');
+%S=sgems_get_par('filtersim_cate'); % SOFT PROB NOT YET IMPLEMENTED FOR
+%FILTERSIM
 
 % generate starting realization
 S.XML.parameters.Nb_Realizations.value=1;
