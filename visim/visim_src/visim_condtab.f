@@ -295,7 +295,6 @@ c     CHANGED FROM lout_krig=59, on Nov 9, 2009 by TMH
       write(lout_krig,86) cmean, cvar,m_sel,v_sel
  86   format(f12.6,f15.9,f12.6,f15.9)  
       
-      
 
 
 c     NOW DRAW FROM LOCAL CPDF
@@ -307,6 +306,7 @@ c      enddo
 c select random quantile
       p = acorni2(idum) 
 
+
 c locate quantile      
       do i=1,(n_q);
          if (x_quan(i).gt.p) then
@@ -315,17 +315,19 @@ c locate quantile
          endif
          
       enddo
+
       if (p.gt.x_quan(n_q)) then
          index_cdf=n_q
       endif
 
-
-               
       if (discrete.eq.1) then
 c     FIND ARRAY
+         write(*,*) 'DEBUG7 PRE',im_sel, iv_sel,index_cdf
          draw = condlookup_cpdf(im_sel,iv_sel,index_cdf) 
+         write(*,*) 'DEBUG7 PRO, draw=',draw
+ 
       else
-c     ASSUME CONTINIOUS TARGET HISTOGRAM
+c      ASSUME CONTINIOUS TARGET HISTOGRAM
          
 c interpolate
          draw_h = condlookup_cpdf(im_sel,iv_sel,index_cdf) 
@@ -353,6 +355,9 @@ c      index_cdf = 1 + int(p*n_q)
       drawfrom_condtab = draw
 
 
+      write(*,*) 'DEBUG8 draw=',drawfrom_condtab
+         
+
 c     CORRECTION ACCORDING TO Oz et al, 2003
 c     Consider another correction that builds a differet
 c     local cpdf based on closeness to lookup table
@@ -378,6 +383,9 @@ c     local cpdf based on closeness to lookup table
         endif
 
       endif
+
+      write(*,*) 'DEBUG8 draw=',drawfrom_condtab
+            
 
       return 
       

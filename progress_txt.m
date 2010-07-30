@@ -42,6 +42,7 @@ function progress_txt(i,max,varargin);
       statusbar_ok=0;
   end
 
+  statusbar_ok=0;
   ncols=length(i);
   
   %

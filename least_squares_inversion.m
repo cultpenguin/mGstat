@@ -2,7 +2,7 @@
 % 
 % CALL : [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d0);
 %
-% See also : least_squares_sim_cholesky
+% See also : gaussian_simulation_cholesky
 %
 function [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d0,type);
   
