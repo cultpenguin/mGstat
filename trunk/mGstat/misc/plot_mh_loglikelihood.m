@@ -8,8 +8,9 @@
 %
 
 
-function plot_mh_loglikelihood(L_acc,i_acc,N)
+function acc=plot_mh_loglikelihood(L_acc,i_acc,N);
 
+acc=NaN;
 %cla;
 
 if nargin<2

@@ -26,6 +26,11 @@ end
 if f(fig_id)==0;
     f(fig_id)=figure(fig_id);
 else;
-    set(0,'CurrentFigure',f(fig_id));
+    
+    try    
+        set(0,'CurrentFigure',f(fig_id));
+    catch
+        f(fig_id)=figure(fig_id);
+    end
 end
 
