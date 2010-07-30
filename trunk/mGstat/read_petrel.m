@@ -24,6 +24,14 @@ function [data,header,txtdata,txtheader]=read_petrel(filename);
      i=i+1;
      header{i}=cl;
      cl=fgetl(fid);
+     if i>100;
+         disp(sprintf('%s : %s does not seem to a valid formatted petrel ascii point data file',mfilename,filename))
+         data=[];
+         header=[];
+         txtdata=[];
+         txtheader=[];
+         return
+     end
    end
    
    nc=length(header);

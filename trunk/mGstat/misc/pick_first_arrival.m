@@ -29,17 +29,23 @@ if doPlot==1;
     set(gca,'ydir','revers')
 end
 
+% TRACE NORMALIZE
+%    for i=1:size(wf_data,2);
+%        wf_data(:,i)=wf_data(:,i)./max(wf_data(:,i));
+%    end
+    
 
-
+c=zeros(1,length((ns-ns_ref)));
 for it=1:nt;
     if nt>1;
         progress_txt(it,nt);
     end
-    for i=1:ns-ns_ref;
+    parfor i=1:(ns-ns_ref);
         cc=corrcoef(wf_data(i:(i+ns_ref-1),it),ref_trace);
         c(i)=cc(2);
-    end
+    end 
     ipick=find(c==max(c));ipick=ipick(1);
+    
     try
         P=polyfit(ipick-5:ipick+5,c(ipick-5:ipick+5),2);
         tt_pick(it)=-P(2)/(2*P(1))+ref_t0-1;
@@ -51,9 +57,20 @@ end
 if doPlot==1;
     set(0,'CurrentFigure',f1)
     subplot(1,2,2);
-    imagesc(1:1:nt,1:1:ns,wf_data);
+    % S/N = 26 add
+    %sig=max(wf_data(:));
+    %wf_data=wf_data+(sig/26).*randn(size(wf_data));
+    
+    % TRACE NORMALIZE
+    for i=1:size(wf_data,2);
+        wf_data(:,i)=wf_data(:,i)./max(wf_data(:,i));
+    end
+       
+    %imagesc(1:1:nt,1:1:ns,wf_data);
+    %caxis([-1 1].*.01)
+    wiggle(1:1:nt,1:1:ns,wf_data);
     hold on
-    plot(1:1:it,tt_pick(1:1:it),'w-*')
+    plot(1:1:it,tt_pick(1:1:it),'k-*')
     hold off
     drawnow;
 end

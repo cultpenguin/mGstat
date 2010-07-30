@@ -15,5 +15,6 @@ do
   make
   #  cp visim visim_$par.exe
   cp visim visim_$par
+  cp visim_$par ../../bin/visim_$par
 done
 

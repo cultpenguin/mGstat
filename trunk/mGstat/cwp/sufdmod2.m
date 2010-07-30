@@ -1,4 +1,4 @@
-function [vs,hs,ss,mov]=sufdmod2(v,supar);
+function [vs,hs,ss,supar,mov]=sufdmod2(v,supar);
 
     supar.f_out='movie.su';
     supar.v_in='vel.out';
@@ -62,11 +62,11 @@ function [vs,hs,ss,mov]=sufdmod2(v,supar);
     
     unix(cmd);
     
-    if nargout>0, vs=ReadSuFast(supar.vsfile'); end
-    if nargout>1, hs=ReadSuFast(supar.hsfile'); end
-    if nargout>1, ss=ReadSuFast(supar.ssfile'); end
-    if nargout>3
-        mov=ReadSu(supar.f_out','endian','b');
+    if nargout>0, vs=ReadSu(supar.vsfile); end
+    if nargout>1, hs=ReadSu(supar.hsfile); end
+    if nargout>2, ss=ReadSu(supar.ssfile); end
+    if nargout>4
+        mov=ReadSu(supar.f_out,'endian','b');
     end
     
 

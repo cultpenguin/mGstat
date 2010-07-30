@@ -41,6 +41,7 @@ c
       integer MAXX, MAXY, MAXZ, MAXCTX, MAXCTY, MAXCTZ
       integer MAXSBX, MAXSBY, MAXSBZ, MAXDAT, MAXNOD, MAXSAM
       integer MAXNST, MAXREF, MAXCAT, MV, MAXVOLS, MAXDINVOL
+      integer MAXQUAN,MAXMVLOOK
 
       parameter(MAXX   =   201, MAXY   = 201, MAXZ   = 1,
      +          MAXCTX =  MAXX, MAXCTY =MAXY, MAXCTZ =MAXZ,
@@ -129,6 +130,20 @@ c FOR Histrogram Reproduction ..
 c 	estimation/simulation
       integer doestimation
 
+      integer idbg, ldbg, idum, lin, lout, ivrr, iwtr
+      integer icoll, icond, icollvm
+      integer itrans, ivrd, iwtd, ktype, noct
+      integer nodmax
+      integer nsim
+      integer ntr  
+
+      integer nctx,ncty,nctz
+
+
+
+
+      integer nlooku,ncnode
+
 c
 c The matrices below are covariance lookup tables. 
 C they can optionally be excluded
@@ -136,6 +151,9 @@ c
 	real*8      cv2v(MAXVOLS,MAXVOLS)
         real*8      cd2v(MXYZ,MAXVOLS)
       	integer read_covtable, read_lambda, read_volnh, read_randpath
+        real cmax
+
+        
 
 c
 c Common Blocks:
@@ -194,5 +212,4 @@ c      common /iaco/   ixv(MAXOP1), itr(MAXOP1)
      +               condlookup_cpdf,n_mean,n_var,n_monte,
      + 	             discrete,n_q,
      +               min_Gmean, max_Gmean, n_Gmean, 
-     +               min_Gvar, max_Gvar, n_Gvar,
-     +               x_quan
+     +               min_Gvar, max_Gvar, n_Gvar, x_quan

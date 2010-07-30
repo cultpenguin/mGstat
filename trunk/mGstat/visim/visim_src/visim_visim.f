@@ -108,6 +108,7 @@ c
 c     Concepts taken from F. Alabert and E. Isaaks
 c     
 c-----------------------------------------------------------------------
+c      implicit none
       include  'visim.inc'
       real      randnu(1),var(10),vobs,derr
       real*8    p,acorni,cp,oldcp,w
@@ -117,7 +118,15 @@ c-----------------------------------------------------------------------
       real sumderr,sumerr,temp
       real meantmh,stdtmh
       real gvar_org, gmean_org, cbb_org
+      real av
       integer tstep
+      integer c,d,e,f,g,h
+      integer imult, nmult, in, ind, index, iy, ix, iz
+      integer ix1, iy1, iz1, jx ,jy, j, jz, id, i, id2
+      integer is, irepo, isrot
+      
+      real cmean,cstdev,gmean, gvar, lktype, cbb
+      integer n_mean, n_var
       
       character tmpfl*80
 c      integer lout_krig
