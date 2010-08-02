@@ -49,7 +49,18 @@ R=R(uses,:);
 
 t0=fast_fd_2d(x,y,v,S);
 
-for ishot=1:ns
-    time{ishot}=interp2(xx,yy,t0(:,:,ishot),R(ishot,1),R(ishot,2));
-    t( ishot)=time{ishot};
+Su=unique(S,'rows');
+nu=size(Su,1);
+if nu==ns
+    for ishot=1:ns
+        time{ishot}=interp2(xx,yy,t0(:,:,ishot),R(ishot,1),R(ishot,2));
+        t( ishot)=time{ishot};
+    end
+else
+    % ONLY CALL INTERP ONCE FOR EACH UNIQUE SHOTPOINT
+    for iu=1:nu;        
+        ishot=find( (S(:,1)==Su(iu,1)) & (S(:,2)==Su(iu,2)));
+        t(ishot)=interp2(xx,yy,t0(:,:,ishot(1)),R(ishot,1),R(ishot,2));
+        %keyboard
+    end
 end
