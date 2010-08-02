@@ -95,6 +95,15 @@ function [gamma,h]=synthetic_variogram(V,h,gstat)
     else
       gamma=v1.*(1-exp(-h./v2)); % GSTAT
     end
+  elseif strmatch(type,'Bal')
+        % BALGOVIND, Daley, Atmospheric Data Analysis, (4.3.20), page 117
+        gamma = v1.*(1-(1+abs(h)./v2).*exp(-1.*(abs(h)./v2)));
+  elseif strmatch(type,'Thie')
+        % THIBEAUX, Daley, Atmospheric Data Analysis, (4.3.18), page 117
+        c=3;
+        gamma = (cos(c*h) + sin(c*h)./(v2.*c)).*exp(-1.*h./v2);
+        gamma= v1.*(1-gamma);
+        
   else      
     mgstat_verbose(sprintf('%s : ''%s'' type is not recognized',mfilename,type),-1);
   end

@@ -140,6 +140,7 @@ if isfield(options,'lim');
         %x0=cell*ceil(rand(1)*nx); y0=cell*ceil(rand(1)*ny);
         options.pos=[x0 y0];
         [options.used]=set_resim_data(1:nx_c,1:ny_c,z_rand,options.lim,options.pos,options.wrap_around);
+        
     end
     ii=find(options.used==0);
     z_rand_new=randn(size(z_rand(ii)));
