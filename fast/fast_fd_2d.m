@@ -86,6 +86,7 @@ if ns>1
     nu=length(SourcesUnique);
     if (nu<ns)
         tmapU=fast_fd_2d(x,z,V,SourcesUnique);
+        tmap=zeros(nz,nx,ns);
         for j=1:ns
             iu=find( (SourcesUnique(:,1)==Sources(j,1)) & (SourcesUnique(:,2)==Sources(j,2)));
             tmap(:,:,j)=tmapU(:,:,iu);
@@ -155,7 +156,7 @@ o=fast_fd_write_par(Sources(:,1),Sources(:,2),o);
 unix(fd_bin);
 
 tmap=zeros(nz,nx,ns);
-disp(1)
+
 for i=1:size(Sources,1);
     
     orgCode=1;
@@ -189,5 +190,3 @@ for i=1:size(Sources,1);
     %imagesc(t);axis image;drawnow;
     tmap(:,:,i)=t;
 end
-fclose all
-disp(2);
