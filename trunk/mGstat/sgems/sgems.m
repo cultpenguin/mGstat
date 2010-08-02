@@ -30,7 +30,7 @@
 function [sgems_bin,cmd]=sgems(py_script,use_wine_on_unix);
 
 if nargin<2
-    use_wine_on_unix=1;
+    use_wine_on_unix=0;
 end
 
 
@@ -39,8 +39,8 @@ if (isunix==1)
         sgems_bin_install='c:\\Program Files\\SGeMS\\';
         sgems_bin=sprintf('wine "%ssgems.exe"',sgems_bin_install);
     else
-        sgems_bin_install='/usr/local/SGeMS';
-        sgems_bin=sprintf('%s/sgems.exe',sgems_bin_install);    
+        sgems_bin_install='/home/tmh/RESEARCH/PROGRAMMING/SGeMS/sgems/sgems/bin/linux';
+        sgems_bin=sprintf('%s/sgems',sgems_bin_install);    
     end
     setenv('GSTLAPPLIHOME',sgems_bin_install);
 else
@@ -81,12 +81,12 @@ if (exist(py_script,'file')~=2)
     mgstat_verbose(sprintf('%s : "%s" does not exist.',mfilename,py_script),-1)
     return 
 end
-
 if ((use_wine_on_unix==1)&(isunix))
     cmd=sprintf('%s -s "%s"',sgems_bin,py_script);
 else
     cmd=sprintf('"%s" -s %s',sgems_bin,py_script);
 end
+
 mgstat_verbose(sprintf('%s : %s',mfilename,cmd),-1);
 system(cmd);
 
