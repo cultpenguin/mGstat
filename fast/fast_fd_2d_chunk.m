@@ -15,6 +15,8 @@
 %
 function tmap=fast_fd_2d_chunk(x,z,V,Sources);
 
+
+  keyboard
   
   nx=length(x);
   nz=length(z);
