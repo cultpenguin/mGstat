@@ -29,4 +29,3 @@ time=1:Nt;
 Tp=1/(f0*dt);
 tmp=f0*dt*(-Tp+time+1);
 w=(1-2*pi*pi*tmp.*tmp).*exp(-pi*pi*tmp.*tmp);
-

@@ -3,7 +3,7 @@ function S=snesim_init
 % call: S=snesim_init
 
 %Data file:
-S.fconddata.fname='data.dat'; 
+S.fconddata.fname=''; 
 %Input columns: 
 S.fconddata.xcol=1;
 S.fconddata.ycol=2;

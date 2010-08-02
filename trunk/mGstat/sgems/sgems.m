@@ -44,7 +44,8 @@ if (isunix==1)
     end
     setenv('GSTLAPPLIHOME',sgems_bin_install);
 else
-    sgems_bin_install='c:\Program Files\SGeMS';
+    sgems_bin_install='C:\Programmer\SGeMS';
+    setenv('GSTLAPPLIHOME', sgems_bin_install);
     if (exist('getenv')==5)
         if ~isempty(getenv('GSTLAPPLIHOME'))
             sgems_bin_install=getenv('GSTLAPPLIHOME');
