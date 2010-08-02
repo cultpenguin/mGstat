@@ -47,9 +47,7 @@ function V=snesim(parfile);
   
   if isstruct(parfile);    
     write_snesim(parfile);
-    disp('KSC:')
     parfile=parfile.parfile
-        disp('KSC:')
   end
   tic
     
