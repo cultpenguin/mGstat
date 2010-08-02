@@ -44,24 +44,11 @@ end
 S=S(uses,:);
 R=R(uses,:);
 
-autochunk=0;
-% AUTo CHUNKING HAPPENS AUTOMATICALLY.... REMOVE
-if autochunk==1
-    SR_index=S(:,1)*(2*max(S(:,1)))+S(:,2);
-    unique_SR=unique(SR_index);
-    N_unique=length(unique_SR);
-    if ~(N_unique==size(S,1))
-        for i=1:N_unique;
-            iuse=find(SR_index==unique_SR(i));
-            [t(iuse),time]=fast_fd_2d_traveltime_matrix(x,y,v,S(iuse(1),:),R(iuse,:));
-        end
-        return
-    end
-end
 
 [xx,yy]=meshgrid(x,y);
 
 t0=fast_fd_2d(x,y,v,S);
+
 for ishot=1:ns
     time{ishot}=interp2(xx,yy,t0(:,:,ishot),R(ishot,1),R(ishot,2));
     t( ishot)=time{ishot};
