@@ -34,7 +34,7 @@ if size(G,2)==nxy
     % NORMALIZE KERNEL FOR VELOCITY
     t_app=G*(1./varr);
     for i=1:nxy
-        G_vel(:,i)=(G(:,i)/varr(i))./t_app;
+        G_vel(:,i)=(G(:,i)./varr(i))./t_app;
     end
     
     if nargin>2
