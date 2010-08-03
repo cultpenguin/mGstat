@@ -17,6 +17,7 @@ Cd_synth=normpdf(x,0,sqrt(Cd));
 
 hx=hist(d_est-d_obs,x);
 plot(x,Cd_synth./max(Cd_synth),'k-',x,hx./max(hx),'r-')
+set(gca,'xlim',xlim)
 
 
 
