@@ -25,10 +25,11 @@ function print_mul(fname,color,trim);
     %watermark(fname);
 
     %print(gcf, '-dtiff', [fname,'.tiff'] )
-    print(gcf, '-dpng', [fname,'.png'] )
     print(gcf, '-dpdf','-r300', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
-    print(gcf, '-depsc2', [fname,'.eps'] )
+    print(gcf, '-dpng', [fname,'.png'] )
     return
+    print(gcf, '-dpng', [fname,'.png'] )
+    print(gcf, '-depsc2', [fname,'.eps'] )
     print(gcf, '-dpdf', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
     print(gcf, '-dpng','-r300', [fname,'.png'] )
     print(gcf, '-depsc2','-r300', [fname,'.eps'] )
