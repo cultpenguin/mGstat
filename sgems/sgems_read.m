@@ -129,7 +129,12 @@ elseif strcmp(O.type_def,'Cgrid')
     end
     
     
-    
+end
+
+try 
+    % Set NAN
+    O.data(O.data==-9966699)=NaN;
+    O.D(O.D==-9966699)=NaN;
 end
 
 fclose(fid);
