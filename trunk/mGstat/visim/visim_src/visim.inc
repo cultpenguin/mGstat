@@ -43,12 +43,12 @@ c
       integer MAXNST, MAXREF, MAXCAT, MV, MAXVOLS, MAXDINVOL
       integer MAXQUAN,MAXMVLOOK
 
-      parameter(MAXX   =   201, MAXY   = 201, MAXZ   = 1,
+      parameter(MAXX   =   801, MAXY   = 801, MAXZ   = 1,
      +          MAXCTX =  MAXX, MAXCTY =MAXY, MAXCTZ =MAXZ,
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
      +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,
      +          MAXNST =     4, MAXREF=10000,MAXCAT=24, 
-     +          MV=20         , MAXVOLS=805 , MAXDINVOL=2000,
+     +          MV=20         , MAXVOLS=1 , MAXDINVOL=1,
      +		MAXQUAN=501,MAXMVLOOK=201)
 c
 c Fixed Parameters:

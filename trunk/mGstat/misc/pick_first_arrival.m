@@ -6,7 +6,7 @@
 %
 function [tt_pick,time_pick,c]=pick_first_arrival(wf_data,ref_trace,ref_t0,doPlot,wf_time);
 if nargin<5,    wf_time=[];end
-if nargin<4,    doPlot=1;end
+if nargin<4,    doPlot=0;end
 if nargin<3,    ref_t0=1;end
 if nargin<2,    ref_trace=wf_data(:,1);end
 
