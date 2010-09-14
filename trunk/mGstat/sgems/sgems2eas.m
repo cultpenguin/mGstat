@@ -19,10 +19,24 @@
 
 function [data,header,title]=sgems2eas(file_sgems,file_eas);
 
+if nargin==0;
+    d=dir('*.sgems');
+    if (length(d)>0)
+        disp(sprintf('%s : Converting all ''.sgems'' files to EAS files in 2 seconds',mfilename))
+        pause(2);
+        for i=1:length(d);
+            disp(sprintf('%s : Converting %s to EAS format',mfilename,d(i).name))
+            [data,header,title]=sgems2eas(d(i).name);
+        end
+        return
+    end
+end
+
 if nargin<2
     [p,f,e]=fileparts(file_sgems);
     if isempty(p); p=pwd;end
-    file_eas=[p,filesep,f,'_test','.eas'];
+    %file_eas=[p,filesep,f,'_test','.eas'];
+    file_eas=[p,filesep,f,'.eas'];
 end
 
 O=sgems_read(file_sgems);

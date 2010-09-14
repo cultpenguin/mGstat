@@ -123,6 +123,8 @@ if isfield(options,'z_rand')
     z_rand=options.z_rand;
 else
     z_rand=randn(ny_c,nx_c);
+    z_rand=gsingle(z_rand);
+    
 end
 
 

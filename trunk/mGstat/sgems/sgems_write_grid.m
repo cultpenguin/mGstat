@@ -50,6 +50,12 @@ if nargin<7
         property{i}=sprintf('P%d',i);
     end
 end
+
+% REPLACE NAN with SGEMS NaN VALUE (-9966699)
+try
+    data(find(isnan(data)))=-9966699;
+end
+
 O.type_def='Cgrid';
 
 O.x0=x(1);
