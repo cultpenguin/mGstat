@@ -30,7 +30,7 @@
 function [sgems_bin,cmd]=sgems(py_script,use_wine_on_unix);
 
 if nargin<2
-    use_wine_on_unix=0;
+    use_wine_on_unix=1;
 end
 
 

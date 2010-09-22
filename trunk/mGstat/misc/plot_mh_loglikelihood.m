@@ -35,9 +35,9 @@ if nargin>2
 end
 
 ylim=get(gca,'ylim');    
-set(gca,'ylim',ylim)
-
-ntext=min([ceil(length(L_acc)/30) 5]);
+set(gca,'ylim',ylim);
+ntext=min([ceil(length(L_acc)/30) 15]);
+ntext=ceil(length(L_acc)/100);
 ii=unique(round(linspace(1,length(L_acc),ntext)));
 dt=.1.*(ylim(2)-ylim(1));
 if length(ii)>2;
