@@ -37,7 +37,7 @@ def_windows_dir{3}='C:\Program Files (x86)\SGeMS';
 
 
 if nargin<2
-    use_wine_on_unix=1;
+    use_wine_on_unix=0;
 end
 
 
@@ -50,7 +50,12 @@ if (isunix==1)
     else
         sgems_bin_install='/home/tmh/RESEARCH/PROGRAMMING/SGeMS/sgems/sgems/bin/linux';
         sgems_bin=sprintf('%s/sgems',sgems_bin_install);
+        sgems_bin_install='/opt/sgems';
+        sgems_bin=sprintf('%s/bin/linux/sgems',sgems_bin_install);
+        setenv('LD_LIBRARY_PATH', [getenv('LD_LIBRARY_PATH') ':/opt/sgems/lib/linux:/opt/sgems/plugins/designer:/opt/SoQt/lib:/opt/coin/lib']);
     end
+    
+    
     setenv('GSTLAPPLIHOME',sgems_bin_install);
 else
     % WE ARE ON A WINDOWS SYSTEM
