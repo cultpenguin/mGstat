@@ -19,6 +19,7 @@ end
 
 
 
+
 % DELETE ANY EXISTING OUTPUT FILES
 if isfield(G,'set');
     if isfield(G.set,'output');
@@ -37,8 +38,6 @@ if isfield(G,'set');
     G.mgstat.parfile=write_gstat_par(G);
     G=read_gstat_par(G.mgstat.parfile);
 end
-
-
 
 mgstat_verbose(sprintf('Trying to run GSTAT on %s',gstat_filename),-1)
 if isunix

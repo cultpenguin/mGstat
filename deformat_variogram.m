@@ -81,8 +81,10 @@ function V=deformat_variogram(txt);
 			itype=10;
 		elseif (strcmp(type,'Thi'))
 			itype=11;
-		else 
-			disp(['Unknown semivariogram type : ',type])
+        elseif (isempty(type))
+            itype=-1;
+        else 
+			disp(sprintf('%s : Unknown semivariogram type : %s ',mfilename,type))
 			itype=8;			
 		end
 		
