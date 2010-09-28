@@ -100,8 +100,6 @@ function [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol,width,cutoff)
       end
   end
   
-  
-  
   file='tempSemi';
   write_eas([file,'.eas'],[pos val]);
   
@@ -125,9 +123,9 @@ function [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol,width,cutoff)
   end
   
   write_gstat_par(G,[file,'.cmd']);
-  
+
   gstat(G);
-  
+
   d=read_gstat_semivar('tempSemi.variogram');
    
   av_dist=d(:,4);

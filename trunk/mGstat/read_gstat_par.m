@@ -69,7 +69,6 @@ function G=read_gstat_par(filename);
       % SPLIT LINE INTO COMMAND AND DATA
       [cmd,data]=strip_command(cline(1:sep-1));        
 
-      
       if isfield(G,cmd),
         icmd=length(G.(cmd))+1;
       else
