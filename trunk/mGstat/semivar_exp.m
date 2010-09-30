@@ -1,4 +1,4 @@
-% semivar_exp : Calcualte experimental variogram 
+% semivar_exp : Calculate experimental variogram 
 %
 %[hc,garr,h,gamma,hangc,head,tail]=semivar_exp(pos,val,nbin,nbinang)
 %  

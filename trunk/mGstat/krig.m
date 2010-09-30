@@ -307,3 +307,4 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   else
   end
   d_var = gvar - k'*lambda;
+  
