@@ -220,7 +220,8 @@ if isfield(S,'f_obs_sec')
 end
 if isfield(S,'ti_file')
     if exist(S.ti_file,'file')==2;
-        i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile %s::s-gems'')',S.ti_file);
+%        i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile %s::s-gems'')',S.ti_file);
+        i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile %s::All'')',S.ti_file);
     else
         mgstat_verbose(sprintf('%s : Could not load %s',mfilename,S.ti_file))
     end

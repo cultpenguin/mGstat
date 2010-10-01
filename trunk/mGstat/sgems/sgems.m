@@ -53,14 +53,15 @@ if (isunix==1)
         sgems_bin_install='/opt/sgems';
         sgems_bin=sprintf('%s/bin/linux/sgems',sgems_bin_install);
         setenv('LD_LIBRARY_PATH', [getenv('LD_LIBRARY_PATH') ':/opt/sgems/lib/linux:/opt/sgems/plugins/designer:/opt/SoQt/lib:/opt/coin/lib']);
+        if isempty(getenv('SGEMS_DEV'));
+            setenv('SGEMS_DEV', '1'); % AKE USE OF DEV VERSION OF SGeMS
+        end
     end
-    
-    
     setenv('GSTLAPPLIHOME',sgems_bin_install);
 else
     % WE ARE ON A WINDOWS SYSTEM
     for i=1:length(def_windows_dir);
-        sgems_bin_install=def_windows_dir{i}
+        sgems_bin_install=def_windows_dir{i};
         if (exist(sgems_bin_install,'dir'))
             break
         end

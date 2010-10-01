@@ -8,13 +8,16 @@
 %
 % Call with no arguments for a list of supported algoritm types
 %
-function [S,par_type]=sgems_get_par(par_type);
+function [S,par_type]=sgems_get_par(par_type)
 
 % CHECK WHETHER THE DEV VERSION OF SGEMS IS USED.
-if strcmp(getenv('SGEMS_DEV'),'1')
-    def_dir_name='def_par_dev';
-else
-    def_dir_name='def_par';
+
+def_dir_name='def_par';
+
+try 
+    if (strcmp(getenv('SGEMS_DEV'),'1')==1)
+        def_dir_name='def_par_dev';
+    end
 end
 
 par_dir=[mgstat_dir,filesep,'sgems',filesep,def_dir_name];
