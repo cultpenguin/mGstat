@@ -11,9 +11,7 @@
 function [S,par_type]=sgems_get_par(par_type)
 
 % CHECK WHETHER THE DEV VERSION OF SGEMS IS USED.
-
 def_dir_name='def_par';
-
 try 
     if (strcmp(getenv('SGEMS_DEV'),'1')==1)
         def_dir_name='def_par_dev';

@@ -52,6 +52,14 @@ if nargin<2;
 end
 
 
+sgems_grid_type='s-gems';
+try 
+    if (strcmp(getenv('SGEMS_DEV'),'1')==1)
+        sgems_grid_type='sgems';
+    end
+end
+
+
 
 if ~isfield(S,'dim'), S.dim.null=0;end
 if ~isfield(S.dim,'nx');S.dim.nx=30;end
@@ -220,7 +228,6 @@ if isfield(S,'f_obs_sec')
 end
 if isfield(S,'ti_file')
     if exist(S.ti_file,'file')==2;
-%        i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile %s::s-gems'')',S.ti_file);
         i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile %s::All'')',S.ti_file);
     else
         mgstat_verbose(sprintf('%s : Could not load %s',mfilename,S.ti_file))
@@ -243,7 +250,7 @@ try
     end
     for j=1:nsim; p=sprintf('%s::%s__real%d',p,property_name,j-1);end
     i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0%s'')',grid_name,property_name,p);
-    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.sgems::s-gems::0%s'')',grid_name,property_name,p);
+    i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.sgems::%s::0%s'')',grid_name,property_name,sgems_grid_type,p);
 catch
     i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''SaveGeostatGrid  %s::%s.out::gslib::0::%s'')',grid_name,property_name,property_name);
     property_name_unc=[property_name,'_krig_var'];
