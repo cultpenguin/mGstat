@@ -1,21 +1,4 @@
 <parameters>  <algorithm name="snesim_std" /> 
-  <GridSelector_Sim  value="SIM"  /> 
-  <Property_Name_Sim  value="snesim_std" /> 
-  <Nb_Realizations  value="10" /> 
-  <Seed  value="211175" /> 
-  <PropertySelector_Training  grid="TI"   property="facies"  /> 
-  <Nb_Facies  value="2" /> 
-  <Marginal_Cdf  value="0.73 0.27" /> 
-  <Max_Cond  value="60" /> 
-  <Search_Ellipsoid  value="80 80 80 0 0 0" />
-  <Hard_Data  grid=""   property=""  /> 
-  <Use_ProbField  value="0"  /> 
-  <ProbField_properties count="0"   value=""  /> 
-  <TauModelObject  value="1 1" /> 
-  <VerticalPropObject  value=""  /> 
-  <VerticalProperties count="0"   value=""  /> 
-  <Use_Affinity  value="0"  /> 
-  <Use_Rotation  value="0"  /> 
   <Cmin  value="1" /> 
   <Constraint_Marginal_ADVANCED  value="0.5" /> 
   <resimulation_criterion  value="-1" /> 
@@ -28,8 +11,26 @@
   <aniso_factor  value="
 
 " /> 
-  <Region_Indicator_Prop  value="snesim_std q__real0"  /> 
+  <Region_Indicator_Prop  value="snesim_std__real0"  /> 
   <Active_Region_Code  value="" /> 
   <Use_Previous_Simulation  value="0"  /> 
   <Use_Region  value="0"  /> 
+  <GridSelector_Sim value="SIM" region=""  /> 
+  <Property_Name_Sim  value="snesim_std" /> 
+  <Nb_Realizations  value="10" /> 
+  <Seed  value="211175" /> 
+  <PropertySelector_Training  grid="TI" region="" property="facies"  /> 
+  <Nb_Facies  value="2" /> 
+  <Marginal_Cdf  value="0.73 0.27" /> 
+  <Max_Cond  value="60" /> 
+  <Search_Ellipsoid  value="80 80 80
+0 0 0" />
+  <Hard_Data  grid="" region="" property=""  /> 
+  <Use_ProbField  value="0"  /> 
+  <ProbField_properties count="0"   value=""  /> 
+  <TauModelObject  value="1 1" /> 
+  <VerticalPropObject value="" region=""  /> 
+  <VerticalProperties count="0"   value=""  /> 
+  <Use_Affinity  value="0"  /> 
+  <Use_Rotation  value="0"  /> 
 </parameters> 
