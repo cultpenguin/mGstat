@@ -89,12 +89,13 @@ mgstat_verbose(sprintf('%s : Trying to run SGeMS using %s, output to %s',mfilena
 
 sgems(py_script);
 
-%eas_out=sprintf('%s.out',XML.parameters.Property_Name.value);
-
+eas_out=sprintf('%s.out',XML.parameters.Property_Name.value);
 S.data=read_eas(eas_out);
+
 sgems_out=sprintf('%s.sgems',property_name);
 if exist(sgems_out)
-    S.O=sgems_read(sgems_out);
+    O.D=sgems_read(sgems_out);
+    S.D=O.D;
 end
 
 if exist(eas_out_krig_var);
