@@ -1,0 +1,39 @@
+<parameters>  <algorithm name="sisim" /> 
+  <Grid_Name  value="SIM"  /> 
+  <Property_Name  value="SISIM" /> 
+  <Nb_Realizations  value="1" /> 
+  <Seed  value="14071789" /> 
+  <Categorical_Variable_Flag  value="1"  /> 
+  <Nb_Indicators  value="2" /> 
+  <Marginal_Probabilities  value=".5 .5" /> 
+  <lowerTailCdf  function ="Power"  extreme ="-5"  omega ="3" />
+  <upperTailCdf  function ="Power"  extreme ="5"  omega ="0.333" />
+  <Median_Ik_Flag  value="1"  /> 
+  <Full_Ik_Flag  value="0"  /> 
+  <Hard_Data_Grid  value=""  /> 
+  <Hard_Data_Property  value=""  /> 
+  <Assign_Hard_Data  value="1"  /> 
+  <coded_grid  value=""  /> 
+  <coded_props count="0"   value=""  /> 
+  <Max_Conditioning_Data  value="12" /> 
+  <Search_Ellipsoid  value="1000 1000 1000
+0 0 0" />
+  <Variogram_Median_Ik  nugget="0" structures_count="1"  >
+  <structure_1  contribution="0.6"  type="Spherical"   >
+    <ranges max="30"  medium="30"  min="10"   />
+    <angles x="0"  y="0"  z="0"   />
+  </structure_1>
+</Variogram_Median_Ik>
+  <Variogram_Full_Ik  nugget="0" structures_count="1"  >
+  <structure_1  contribution="0"  type="Spherical"   >
+    <ranges max="0"  medium="0"  min="0"   />
+    <angles x="0"  y="0"  z="0"   />
+  </structure_1>
+</Variogram_Full_Ik>
+  <Variogram_Full_Ik_2  nugget="0" structures_count="1"  >
+  <structure_1  contribution="0"  type="Spherical"   >
+    <ranges max="0"  medium="0"  min="0"   />
+    <angles x="0"  y="0"  z="0"   />
+  </structure_1>
+</Variogram_Full_Ik_2>
+</parameters> 
