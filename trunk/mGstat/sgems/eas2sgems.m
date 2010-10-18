@@ -71,7 +71,7 @@ if strcmp(Dset,'point');
     O.data=data(:,(idim+1):size(data,2));
 
     O.point_set=title;
-
+    
 else
     % GRID SET
 
