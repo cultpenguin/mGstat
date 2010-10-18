@@ -1,15 +1,16 @@
 % write_eas : writes a GEO EAS formatted file into Matlab.
 %
-% Call write_eas(filename,data,header,title);
+% Call write_eas(filename,data,header,title,nanValue);
 %
 % filename [string]
 % data [ndata,natts] 
 % header [structure{natts}] : header values for data columns
 % title [string] : optional title for EAS file
+% nanValue [float] : NaN value
 %
 % TMH (tmh@gfy.ku.dk)
 %
-function write_eas(filename,data,header,line1);
+function write_eas(filename,data,header,line1,nanValue);
   
   if nargin<1,
     help write_eas;
@@ -21,18 +22,32 @@ function write_eas(filename,data,header,line1);
     filename='dummy.eas';;
     mgstat_verbose(sprintf('%s : Filename not set, using ''%s''.',mfilename,filename),0)
   end
- 
+
   if nargin<3,
     for i=1:size(data,2);
       header{i}=sprintf('col%d, unknown',i);
     end
+  end
+  if (ischar(header));
+      header_tmp=header;
+      clear header;
+      header{1}=header_tmp;
   end
   
   if nargin<4,
     line1=sprintf('Data written by mGstat %s',date);
   end
   
+  if nargin<5,
+      nanValue=NaN;
+  end
+
+  
+  
   nd=size(data,2);
+
+  % replace NAN values
+  data(find(isnan(data)))=nanValue;
   
   fid=fopen(filename,'w');
   

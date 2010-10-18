@@ -50,6 +50,13 @@ if nargin<7
         property{i}=sprintf('P%d',i);
     end
 end
+if (ischar(property));
+    property_tmp=property;
+    clear property;
+    property{1}=property_tmp;
+end
+  
+
 
 % REPLACE NAN with SGEMS NaN VALUE (-9966699)
 try
