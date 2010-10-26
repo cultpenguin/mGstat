@@ -11,58 +11,41 @@
 % val_known [ndata,1 or 2]  : col1 : Data value as measured at 'pos_known'
 %                             col2 : Data uncertainty as measured at
 %                             'pos_known' (optional)
-% pos_est   [1 ,ndims] : Location of data to be estimated
+% pos_est   [nest ,ndims] : Location of data to be estimated
 % V : Variogram model, e.g. '1 Sph(100)'
 %
 %
-% Example 1D - NO DATA UNCERTAINTY
+%%% Example 1 : 1D - NO DATA UNCERTAINTY
 % profile on
 % pos_known=10*rand(10,1);
 % val_known=rand(size(pos_known)); % adding some uncertainty
 % pos_est=[0:.01:10]';
 % V=deformat_variogram('1 Sph(1)');
-% for i=1:length(pos_est);
-%   [d_est(i),d_var(i)]=gstat_krig(pos_known,val_known,pos_est(i),V);
-% end
-% plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
-% legend('SK estimate','SK variance','Observed Data')
-% %title(['V = ',V])
-% profile viewer
-%
-% See source code for more examples
-%
-%
-% Example 1 : 1D - NO DATA UNCERTAINTY
-% pos_known=[1;5;10];
-% val_known=[0 3 2]'; % adding some uncertainty
-% pos_est=[0:.01:10]';
-% V='1 Sph(.2)';
-% for i=1:length(pos_est);
-%   [d_est(i),d_var(i)]=gstat_krig(pos_known,val_known,pos_est(i),V);
-% end
+% [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
 % plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
 % legend('SK estimate','SK variance','Observed Data')
 % title(['V = ',V])
+% profile viewer
 %
-% Example 2 : 1D - Data Uncertainty 
+%
+%
+%%% Example 2 : 1D - Data Uncertainty 
 % pos_known=[1;5;10];
 % val_known=[0 3 2;0.001 1 0.001]'; % adding some uncertainty
 % pos_est=[0:.01:10]';
-% V=deformat_variogram('1 Sph(2)');
-% for i=1:length(pos_est);
-%   [d_est(i),d_var(i)]=gstat_krig(pos_known,val_known,pos_est(i),V);
-% end
+% V='1 Sph(2)';
+% [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
 % plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
 % legend('SK estimate','SK variance','Observed Data')
 % title(['using data uncertainty, V = ',V])
 %
 %
-% Example 3 : 2D : 
-% pos_known=[0 1;5 1;10 1];
-% val_known=[0 3 2]';
-% pos_est=[1.1 1];
-% V='1 Sph(2)';
-% [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
+%%% Example 3 : 2D : 
+%% pos_known=[0 1;5 1;10 1];
+%% val_known=[0 3 2]';
+%% pos_est=[1.1 1];
+%% V='1 Sph(2)';
+%% [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
 %
 % %% SIMULATION
 % pos_known=[0 1;5 1;10 1];

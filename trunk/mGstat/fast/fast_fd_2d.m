@@ -183,7 +183,7 @@ for i=1:size(Sources,1);
     
     % READ OUTPUT
     try
-        t=read_bin(fname,o.nx,o.nz,1,'uint16').*o.tmax./32766;
+        t=read_bin(fname,o.nx,o.nz,1,'uint16').*o.tmax./32767;
     catch
         disp(sprintf('could not read %s',fname));
     end

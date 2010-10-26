@@ -48,16 +48,25 @@ if (isunix==1)
         sgems_bin_install='c:\\Program Files\\SGeMS\\';
         sgems_bin=sprintf('wine "%ssgems.exe"',sgems_bin_install);
     else
-        sgems_bin_install='/home/tmh/RESEARCH/PROGRAMMING/SGeMS/sgems/sgems/bin/linux';
-        sgems_bin=sprintf('%s/sgems',sgems_bin_install);
-        sgems_bin_install='/opt/sgems';
-        sgems_bin=sprintf('%s/bin/linux/sgems',sgems_bin_install);
-        setenv('LD_LIBRARY_PATH', [getenv('LD_LIBRARY_PATH') ':/opt/sgems/lib/linux:/opt/sgems/plugins/designer:/opt/SoQt/lib:/opt/coin/lib']);
+        
+        if ~isempty(getenv('GSTLAPPLIHOME'))
+            sgems_bin_install=getenv('GSTLAPPLIHOME');
+            sgems_bin=sprintf('%s/bin/linux/sgems',sgems_bin_install);
+        else
+            sgems_bin_install='/home/tmh/RESEARCH/PROGRAMMING/SGeMS/sgems/sgems/bin/linux';
+            sgems_bin=sprintf('%s/sgems',sgems_bin_install);
+            sgems_bin_install='/opt/sgems';
+            sgems_bin=sprintf('%s/bin/linux/sgems',sgems_bin_install);
+            
+            setenv('LD_LIBRARY_PATH', [getenv('LD_LIBRARY_PATH') ':/opt/sgems/lib/linux:/opt/sgems/plugins/designer:/opt/SoQt/lib:/opt/coin/lib']);
+            setenv('GSTLAPPLIHOME',sgems_bin_install);
+
+        end
+       
         if isempty(getenv('SGEMS_DEV'));
             setenv('SGEMS_DEV', '1'); % AKE USE OF DEV VERSION OF SGeMS
         end
     end
-    setenv('GSTLAPPLIHOME',sgems_bin_install);
 else
     % WE ARE ON A WINDOWS SYSTEM
     for i=1:length(def_windows_dir);
