@@ -4,75 +4,63 @@
 %    gstat_bin = gstat_binary;
 %
 function gstat=gstat_binary;
-  
-%gstat='/usr/local/bin/gstat';    
-gstat='';    
-% YOU CAN EITHER SPECIFY THE PATH TO GSTAT HERE BELOW
-%  gstat='/home/tmh/bin/gstat-2.4.0';
-%  gstat='/home/tmh/bin/gstat-2.4.3/src/gstat';
-% gstat='/home/tmh/RESEARCH/PROGRAMMING/mGstat/gstat/gstat';
-%gstat='d:\thomas\Programming\mGstat\gstat.exe';
-% gstat='';
 
-% IF THE gstat VARAIABLE IS ÆEFT EMPTY(DEFAULT)
-% IT WILL BE LOCATED ON YOUR SYSTEM IF THE 
+% YOU CAN EITHER SPECIFY THE PATH TO GSTAT HERE BELOW
+% gstat='/home/tmh/bin/gstat-2.4.0';
+% gstat='/home/tmh/bin/gstat-2.4.3/src/gstat';
+% gstat='/home/tmh/RESEARCH/PROGRAMMING/mGstat/gstat/gstat';
+% gstat='d:\thomas\Programming\mGstat\gstat.exe';
+gstat='';
+
+% IF THE gstat VARAIABLE IS LEFT EMPTY(DEFAULT)
+% IT WILL BE LOCATED ON YOUR SYSTEM IF THE
 % GSTAT EXECUTABLE IS SOMEWEHRE IN THE PATH
 
-if isempty(gstat)
-  [p,f,s]=fileparts(which('gstat_binary'));
-  if ~isempty(p)
-    if isunix
-      gstat=sprintf('%s%sbin%sgstat',p,filesep,filesep);
-    else
-      gstat=sprintf('%s%sbin%sgstat.exe',p,filesep,filesep);
-    end
-  else
-    gstat='';
-  end
-end
-if exist(gstat)==0, 
-    gstat='';
-end
 
-if isempty(gstat)  
+%% LOCATE GSTAT ON SYSTEM
+if isempty(gstat)
     if isunix
-      [s,w]=system('which gstat');
-            
-      if isempty(w),
-        [p,f,s]=fileparts(which('gstat'));
-        gstat=fullfile(p,'gstat');            
-      else
-        gstat=w(1:length(w)-1);
-      end
+        [s,w]=system('which gstat');
+        
+        if ~isempty(w),
+            gstat=w(1:length(w)-1);
+        end
     else
-			gstat='gstat.exe';
-    %  [p,f,s]=fileparts(which('gstat'));
-    %  if isempty(p),
-    %    gstat='gstat.exe';
-		%  else
-    %       gstat=fullfile(p,'gstat.exe');
-		%  end
+        gstat='gstat.exe';
     end
     
-    if exist(gstat)==0, 
-      gstat='';
     end
-  end
-  if exist(gstat)==0, 
-      gstat='';
-  end
-  
-  
-  if isempty(gstat)  
-    mgstat_verbose('--------------------------------------------------',-1);
-    mgstat_verbose('FATAL ERROR !!! ----------------------------------',-1);
+if ~exist(gstat,'file'),
+    gstat='';
+end
 
+
+%% LOCATE GSTAT IN mGstat DISTRIBUTION
+if isempty(gstat)
+    p=mgstat_dir;
+    if isunix
+        gstat=sprintf('%s%sbin%sgstat',p,filesep,filesep);
+        % IF NOT FOUND AND ON MAC MAKE USE OF PRECOMPILED GSTAT FOR MAC
+        if ((~exist(gstat,'file'))&ismac)
+            gstat=sprintf('%s%sbin%sgstat_mac_g3',p,filesep,filesep);
+        end
+    else
+        gstat=sprintf('%s%sbin%sgstat.exe',p,filesep,filesep);
+    end    
+end
+if ~exist(gstat,'file'),
+    gstat='';
+end
+
+
+if isempty(gstat)
+    mgstat_verbose('------------------------------------------------------------',-1);
+    mgstat_verbose('FATAL ERROR !!! --------------------------------------------',-1);
     mgstat_verbose('COULD NOT FIND GSTAT EXECUTABLE ',-1);
-    mgstat_verbose(sprintf('Please edit ''%s.m'' to point to the',mfilename),-1);
-    mgstat_verbose('the location of gstat or put gstat somewhere',-1);
-    mgstat_verbose('in the system path !',-1);
-    mgstat_verbose('--------------------------------------------------',-1);
+    mgstat_verbose('Please put a copy of a compiled ''gstat'' somewhere in your system path',-1);
+    mgstat_verbose(sprintf('or in the folder %s%sbin',mgstat_dir,filesep),-1);
+    mgstat_verbose('------------------------------------------------------------',-1);
     gstat='';
     return;
-  end
-  
+end
+
