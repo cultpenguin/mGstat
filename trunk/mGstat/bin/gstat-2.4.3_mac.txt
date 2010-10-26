@@ -1,0 +1,2 @@
+A mac binary (Apple G3) for for gstat 2.4.3 contributed by Syed Abdul Rahman Shibli.
+
