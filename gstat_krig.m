@@ -15,7 +15,7 @@
 % V : Variogram model, e.g. '1 Sph(100)'
 %
 %
-%%% Example 1 : 1D - NO DATA UNCERTAINTY
+% %% Example 1 : 1D - NO DATA UNCERTAINTY
 % profile on
 % pos_known=10*rand(10,1);
 % val_known=rand(size(pos_known)); % adding some uncertainty
@@ -29,7 +29,7 @@
 %
 %
 %
-%%% Example 2 : 1D - Data Uncertainty 
+% %% Example 2 : 1D - Data Uncertainty 
 % pos_known=[1;5;10];
 % val_known=[0 3 2;0.001 1 0.001]'; % adding some uncertainty
 % pos_est=[0:.01:10]';
@@ -40,14 +40,22 @@
 % title(['using data uncertainty, V = ',V])
 %
 %
-%%% Example 3 : 2D : 
-%% pos_known=[0 1;5 1;10 1];
-%% val_known=[0 3 2]';
-%% pos_est=[1.1 1];
-%% V='1 Sph(2)';
-%% [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
+% %% Example 3 : 2D estimation 
+% pos_known=[0 1;5 8;10 1];
+% val_known=[0 3 2]';
+% x=[0:.1:10];
+% y=[0:.1:10];
+% [xx,yy]=meshgrid(x,y);
+% pos_est=[xx(:) yy(:)];
+% V='1 Sph(7)';
+% [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
+% subplot(1,2,1);scatter(pos_est(:,1),pos_est(:,2),10,d_est)
+% axis image;title('Kriging mean')
+% subplot(1,2,2);scatter(pos_est(:,1),pos_est(:,2),10,d_var)
+% axis image;title('Kriging variance')
 %
-% %% SIMULATION
+%
+% %% Example 4 :SIMULATION
 % pos_known=[0 1;5 1;10 1];
 % val_known=[0 3 2]';
 % pos_est=linspace(-1,11,200)';pos_est(:,2)=1;
