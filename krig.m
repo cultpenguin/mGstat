@@ -87,7 +87,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   end
   
   if ischar(options)
-    optiions.null=1;
+    options.null=1;
   end
   
   if ischar(V),
@@ -219,7 +219,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
         end
       end
       try
-      K=K+semivar_synth(V(iV),d);
+      K=K+semivar_synth(V(iV),d,0);
       catch
           keyboard
       end
@@ -246,7 +246,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
       end      
       try
           V(iV).par2=V(iV).par2(1); % SCALE TO FIRST RANGE
-          k=k+semivar_synth(V(iV),d);
+          k=k+semivar_synth(V(iV),d,0);
       catch
           keyboard
       end

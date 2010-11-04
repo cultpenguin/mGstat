@@ -18,12 +18,15 @@ ndata=size(pos_known,1);
 
 n_est=size(pos_est,1);
 
-
 if ischar(V)
   V=deformat_variogram(V);
 end
-gvar=sum([V.par1]);
+%gvar=sum([V.par1]);
 
+
+if iscell(V)
+    options.noprecalc_d2d=1;
+end
 
 %% %% %% BUG BUG IN SETTUP ING d2d table!!!
 
@@ -70,6 +73,11 @@ else
       progress_txt(i,n_est,sprintf('%s : kriging',mfilename));
     end
     % SOMETHING WRONG WHEN USING 1D and options.d2d
-    [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i,:),V,options);
-  end
+    
+    if iscell(V)
+        [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i,:),V{i},options);
+    else
+        [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i,:),V,options);
+    end
+ end
 end
