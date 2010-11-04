@@ -20,7 +20,9 @@ function txt=format_variogram(V,short);
       % make sure to add extra space around negative values (MINUS
       % signs), but NOT for example on '1e-6'
       %%range=regexprep( strip_space(sprintf('%4.2f',V(i).par2)) , ' -','  -' );
-      range=regexprep( strip_space(num2str(V(i).par2)) , ' -','  -' );
+      %range=regexprep( strip_space(num2str(V(i).par2)) , ' -','  -' );
+      range=regexprep( strip_space(strip_space(num2str(V(i).par2),1)) , ' -','  -' );
+
       range=regexprep( range, ' ',',' );
     else
       if short==1

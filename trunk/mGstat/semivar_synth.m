@@ -8,6 +8,10 @@
 %    [sv,d]=semivar_synth(V,[0:.1:6]);plot(d,sv)
 %
 function [sv,d]=semivar_synth(V,d,gstat,nugtype);
+  
+  %% UPDATE TO WORK FOR 2D PROBLEMS !!!
+  %%
+  
   if nargin<3
     gstat=0;
   end
@@ -38,7 +42,7 @@ function [sv,d]=semivar_synth(V,d,gstat,nugtype);
     sv=sv+gamma;
   end
 
-  sv(find(d==0))=0;
+  sv(d==0)=0;
   
   %%% BUG FIND OUT WHY THE FOLLOWING LINE IS NEEED FOR HONORING HARD DATA
   %%% WITHOUT THESE LINES IT SEEMS THE NUGGET IS FILTERED!
@@ -50,10 +54,11 @@ function [gamma,h]=synthetic_variogram(V,h,gstat)
 
   type=V.type;
   v1=V.par1;
-  v2=V.par2;
+  v2=V.par2(1);
   gamma=h.*0;
   s1=find(h<v2);
-  s2=find(h>=v2);      
+  s2=find(h>=v2);
+ 
   if strmatch(type,'Nug')
     mgstat_verbose('Nug',12);
     gamma=h.*0+v1;

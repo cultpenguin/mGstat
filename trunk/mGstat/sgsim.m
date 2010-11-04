@@ -1,24 +1,4 @@
-% ## Copyright (C) 2010 tmh
-% ##
-% ## This program is free software; you can redistribute it and/or modify
-% ## it under the terms of the GNU General Public License as published by
-% ## the Free Software Foundation; either version 2 of the License, or
-% ## (at your option) any later version.
-% ##
-% ## This program is distributed in the hope that it will be useful,
-% ## but WITHOUT ANY WARRANTY; without even the implied warranty of
-% ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-% ## GNU General Public License for more details.
-% ##
-% ## You should have received a copy of the GNU General Public License
-% ## along with Octave; see the file COPYING.  If not, see
-% ## <http://www.gnu.org/licenses/>.
-%
-% ## sgsim
-%
-% ## Author: tmh <thomas.mejer.hansen@gmail.com>
-% ## Created: 2010-10-11
-
+% sgsim : DO NOT USE YET....
 function [sim_mul]=sgsim(pos_known,val_known,pos_est,V,options);
 
 if nargin<5;
@@ -26,14 +6,13 @@ if nargin<5;
 end
 
 if ~isfield(options,'nsim');
-    options.nsim=10,
+    options.nsim=10;
 end
 
 pos_known_all=pos_known;
 val_known_all=val_known;
 
 for j=1:options.nsim
-    
     % COMPUTE RANDOM PATH
     n_pos=size(pos_est,1);
     rp(:,1)=1:1:n_pos;rp(:,2)=rand(n_pos,1);
@@ -60,9 +39,19 @@ for j=1:options.nsim
             disp(sprintf('j=%d/%d, i=%d/%d',j,options.nsim,i,size(pos_est,1)))
         end
         i_pos=i_path(i);
-        
+
         % COMPUTE LOCAL CONDITIONAL PDF
-        [mean_est,var_est] = krig(pos_known(1:j_cond,:),val_known(1:j_cond,:),pos_est(i_pos),V,options);
+        
+        try
+            [mean_est,var_est] = krig(pos_known(1:j_cond,:),val_known(1:j_cond,:),pos_est(i_pos,:),V,options);
+        catch
+            keyboard
+        end
+          
+        %if i==10;
+        %    keyboard
+        %end
+        
         % DRAW A REALIZATION
         d_sim(i_pos) = norminv(rand(1),mean_est,sqrt(var_est));
         
