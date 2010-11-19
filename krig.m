@@ -1,7 +1,7 @@
 % krig : Simple/Ordinar/Trend Kriging
 %
 % Call :
-% [d_est,d_var,lambda_sk,K_dd,k_du,inhood]=krig(pos_known,val_known,pos_est,V,options);
+% [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,options);
 %
 % ndata : number of data observations
 % ndims : dimensions of data location (>=1)
@@ -78,6 +78,26 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   k=[];
   inhood=[];
 
+  if size(pos_est,1)==1
+      % check if data is a hard data;
+      ii=ones(size(pos_known,1),1);
+      for j=1:size(pos_known,2)
+          ii(find(pos_known(:,j)~=pos_est(j)))=0;
+      end
+      if (sum(ii)>0) 
+          % IDENTIAL LOCATIONS!!!
+          % If multiple values -> average
+          i_ident=find(ii);
+          d_est=mean(val_known(i_ident),1);
+          if size(val_known,2)==2;
+              d_var=mean(val_known(i_ident),2);
+          else 
+              d_var=0;
+          end
+      end
+      
+  end
+  
   if nargin<5
     if isfield(V,'options')==1
       options=V.options;
@@ -296,9 +316,9 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   end
  
   % SOLVE THE LINEAR SYSTEM
-  lambda = inv(K)*k;
+  %lambda = inv(K)*k;
   %fK=factorize(K);
-  %lambda = K\k;
+  lambda = K\k;
   
   %keyboard
   
