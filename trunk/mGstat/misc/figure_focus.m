@@ -2,7 +2,18 @@
 %                i.e. window is not intrusively poppoing up in windows.
 %
 %
-% Call : 
+% Call :
+%   figure_focus(1); % open figure 1
+%     plot(rand(10,10));
+%   figure_focus(2); % open figure 2
+%     imagesc(rand(10,10);
+%   figure_focus(1);  % set focus for figure (1), but do not raise it
+%     plot(rand(100,100));
+%
+%
+
+%
+% OLD version
 %   f=figure_focus(1); % open figure 1
 %     plot(rand(10,10));
 %   f=figure_focus(2,f); % open figure 2
@@ -16,7 +27,8 @@ if nargin<1
     fig_id=1;
 end
 if nargin<2
-    f(fig_id)=figure(fig_id);
+    %f(fig_id)=figure(fig_id);
+    f(fig_id)=fig_id;
 end
 
 if length(f)<fig_id
