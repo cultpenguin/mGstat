@@ -2,13 +2,13 @@
 %                         plots accept ratio
 %
 % Call : 
-%    plot_mh_loglikelihood(L_acc,i_acc,N)
+%    plot_mh_loglikelihood(L_acc,i_acc,N,itext)
 %
 %
 %
 
 
-function acc=plot_mh_loglikelihood(L_acc,i_acc,N);
+function acc=plot_mh_loglikelihood(L_acc,i_acc,N,itext);
 
 acc=NaN;
 %cla;
@@ -20,7 +20,12 @@ end
 if nargin<3
     N=1;
 end
-xlim=[i_acc(1) max(i_acc)+1e-4];    
+
+if nargin<4
+    itext=25;
+end
+
+xlim=[i_acc(1) max(i_acc)+1e-4];
 plot(i_acc,L_acc,'.')
 semilogy(i_acc,L_acc,'.')
 set(gca,'xlim',xlim)
@@ -37,7 +42,7 @@ end
 ylim=get(gca,'ylim');    
 set(gca,'ylim',ylim);
 ntext=min([ceil(length(L_acc)/30) 15]);
-ntext=ceil(length(L_acc)/100);
+ntext=ceil(length(L_acc)/itext);
 ii=unique(round(linspace(1,length(L_acc),ntext)));
 dt=.1.*(ylim(2)-ylim(1));
 if length(ii)>2;
