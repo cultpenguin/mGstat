@@ -81,6 +81,7 @@ if (exist(ti_file,'file')==2)
     S.ti_file=ti_file;
 end
 S.xml_file=par_file;
+
 S.XML=sgems_read_xml(par_file);
 
 
