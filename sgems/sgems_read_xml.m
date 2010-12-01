@@ -47,10 +47,9 @@ end
 % FIND LEVEL OF EACH ENTRY
 lev=1;
 for i=1:n_entries
+    
     S{i}=parse_xml_entry(xml_entry{i});
 
-
-    
     if S{i}.end_tag==1;
         lev=lev-1;
         try
@@ -138,8 +137,12 @@ for i=1:length(names);
     try
         str=strrep(names{i},'=','');
         val=strrep(vals{i},'"','');
+        if exist(val,'file')~=2 
+            % ABOVE LINE TO PREVENT FAILURR CALLING 'sgsim.m' WHEN 
+            % TRYING TO USE STR2NUM('sgsim')
         if ~isempty(str2num(val))
             val=str2num(val);
+        end
         end
         %if (isstr(val)&~isempty(val))
         %    mgstat_verbose(sprintf('%s = %s',str,val),1);           
