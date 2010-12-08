@@ -5,7 +5,7 @@
 %
 %    P is a matlab structure containing all read information
 % 
-function P=sgems_read(foldername)
+function P=sgems_read_project(foldername)
 
 if nargin<1
     help mfilename
