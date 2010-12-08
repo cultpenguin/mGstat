@@ -1,5 +1,12 @@
 % semivar_synth : synthethic semivariogram
 %
+% [sv,d]=semivar_synth(V,d,gstat);
+%    V : Variogram model
+%    d : seperation (array or matrix)
+%    gstat : [0] use SGeMS semivariogram definitions (default)
+%    gstat : [1] use GSTAT semivariogram definitions 
+% 
+%
 % Call ex :  
 %    [sv,d]=semivar_synth('0.1 Nug(0) + 1 Gau(1.5)',[0:.1:6]);plot(d,sv)
 % or : 
