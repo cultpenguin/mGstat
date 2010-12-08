@@ -1,11 +1,21 @@
-% sgems_plot_structure
+% sgems_plot_structure : plot data in a SGeMS data object
+%
+% Call : 
+%   sgems_plot_structure(S,i_prop);
+%
+%      S: SGeMS matlab SGeMS data objcmat (as given by sgems_read)
+%      i_prop : proerty number to plot (all if not given)
+%
+%  See also: sgems_read
 %
 % S=sgems_read('test.sgems');
 % figure(1);
 % subplot(1,2,1);plot(S,1); % first property
 % subplot(1,2,2);plot(S,2); % second property
 %
-function sgems_plot_structure(S,i_prop,ndim);
+%
+%
+function sgems_plot_structure(S,i_prop);
 
 if nargin<2
     

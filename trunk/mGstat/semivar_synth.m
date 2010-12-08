@@ -21,6 +21,15 @@ function [sv,d]=semivar_synth(V,d,gstat,nugtype);
   
   if nargin<3
     gstat=0;
+    % GET FORMAT FROM ENV VARIABLE IF IOT EXISTS
+    if strcmp(lower(getenv('SEMIVAR_DEF')),lower('GSTAT'));
+        gstat=1;
+    end
+    if strcmp(lower(getenv('SEMIVAR_DEF')),lower('SGeMS'));
+        gstat=0;
+    end
+    
+    
   end
   if nargin<4
     nugtype=1;
