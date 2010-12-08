@@ -86,7 +86,7 @@
 % TMH/2005
 %
 
-function [d_est,d_var,pos_est]=gstat_krig(pos_known,val_known,pos_est,V,options);
+function [d_est,d_var,pos_est,G]=gstat_krig(pos_known,val_known,pos_est,V,options);
   
   if nargin<5
     options.null=0;

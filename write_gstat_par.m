@@ -80,8 +80,12 @@ function filename=write_gstat_par(G,filename)
           else
             fprintf(fid,'set %s = %8.4f;\n',cmd,data);
           end
-        else
-          fprintf(fid,'set %s = ''%s'';\n',cmd,data);
+        else      
+            if ischar(data)
+                fprintf(fid,'set %s = ''%s'';\n',cmd,data);
+            else
+                fprintf(fid,'set %s = ''%g'';\n',cmd,data);
+            end
         end
         
       end
