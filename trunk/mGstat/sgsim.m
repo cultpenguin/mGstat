@@ -1,28 +1,25 @@
-% sgsim : DO NOT USE YET....
-
+% sgsim : sequential Gaussian simulation
+%
+% Call : 
+%   [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);%
+% 
+% all arguments are the same as for 'krig.m', except the number of
+% generated realizations can be set using :
+%    options.nsim=10; (default is options.nsim=1)
+%
+% note: this algorithm is very slow and for teaching purposes 
+%       if you intend to simulate large fields use either the 
+%       'gstat' or 'mgstat' simulation options.
 %
 %
-%
-%
+% see also: krig
 
 function [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);%
 
 if nargin==0;
     
-    use_ex=2;
-    if use_ex==1;
-        % example
-        pos_known=10*rand(10,1);
-        val_known=rand(size(pos_known)); % adding some uncertainty
-        pos_sim=[0:.01:10]';
-        V=deformat_variogram('1 Sph(1)');
-        options.max=10;
-        options.nsim=10;
-        [d_sim]=sgsim(pos_known,val_known,pos_sim,V,options);
-        %plot(pos_sim,d_est,'r.',pos_sim,d_var,'b.',pos_known,val_known(:,1),'g*')
-        %legend('SK estimate','SK variance','Observed Data')
-        sim_mul=d_sim;
-    elseif use_ex==2
+    use_ex=3;
+    if use_ex==2
         pos_known=[2.01 2;4.01 4;2.01 4;4.01 2];
         val_known=[-1;-.5;.5;1];
         x_est=[0:.25:5];
@@ -74,14 +71,6 @@ if ischar(V),
     V=deformat_variogram(V);
 end
 
-
-%pos_known_all=pos_known;
-%val_known_all=val_known;
-
-% START BY ASSIGNING DATA AT GRID NOTES A VALUE !!!
-% OTHERWISE WE GET NAN VALUES !!!
-
-
 for j=1:options.nsim
     % COMPUTE RANDOM PATH
     n_pos=size(pos_sim,1);
@@ -98,16 +87,7 @@ for j=1:options.nsim
     nc=size(pos_sim,2);
     pos=zeros(n_pos,nc);
     val=zeros(n_pos,nc);
-    
-    
-    % add conditional data
-    %if n_cond>0
-    %    pos_known(1:n_cond,:)=pos_known_all;
-    %    val_known(1:n_cond,size(val_known_all,2))=val_known_all;
-    %end
-    %j_cond=n_cond;
-    %j_cond=0;
-    
+        
     disp(sprintf('j=%d/%d',j,options.nsim))
     d_sim=ones(size(pos_sim,1),1).*NaN;
     i_use_cond=ones(size(pos_known,1),1);
@@ -125,15 +105,12 @@ for j=1:options.nsim
         % FIND ALL CONDITIONAL DATA : Observed + Simulated
         pos_all = [pos(1:(i-1),:) ; pos_known(i_cond,:)];
         val_all = [val(1:(i-1),:) ; val_known(i_cond,:)];
-        %disp(sprintf('i=%d, ncond=%d',i,size(pos_all,1)))
         
         % COMPUTE LOCAL CONDITIONAL PDF
         try
             if iscell(V);
-                %[mean_est,var_est] = krig(pos_known(i_cond,:),val_known(i_cond,:),pos_sim(i_pos,:),V{i_pos},options);
                 [mean_est,var_est] = krig(pos_all,val_all,pos_sim(i_pos,:),V{i_pos},options);
             else
-                %[mean_est,var_est] = krig(pos_known(i_cond,:),val_known(i_cond,:),pos_sim(i_pos,:),V,options);
                 [mean_est,var_est] = krig(pos_all,val_all,pos_sim(i_pos,:),V,options);
             end
             
@@ -148,18 +125,9 @@ for j=1:options.nsim
                 i_use_cond(ir)=0;
             end
         end
-        if (isreal(mean_est)==0)
-            keyboard
-        end
-        
         
         % DRAW A REALIZATION
         d_sim(i_pos) = norminv(rand(1),mean_est,sqrt(var_est));
-        
-        if (isreal(d_sim(i_pos))==0)
-            keyboard
-        end
-        
         
         % ADD SIMULATED VALUE TO LIST OF KNOWN VALUES
         pos(i,:)=[pos_sim(i_pos,:)];
@@ -168,9 +136,7 @@ for j=1:options.nsim
         else
             val(i,:)=[d_sim(i_pos) 0 ];
         end
-        %
         
-        %scatter(pos(:,1),pos(:,2),10,val(:,1),'filled');drawnow;
     end
     sim_mul(:,j)=d_sim;
 end
