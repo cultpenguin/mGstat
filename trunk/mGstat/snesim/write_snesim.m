@@ -1,7 +1,12 @@
-% write_snesim : obj=write_snesim(V,parfile)
+% write_snesim : write SNESIM parameter file
 %
-% write snesim parameter file 
+% Ex. read/write snesim parameter file 
+%   V=read_snesim('snesim.par');
+%   V.nsim=10;
+%   write('snesim.par',V)
 %
+% See also: read_snesim, snesim
+% 
 function obj=write_snesim(obj,parfile)
   
   if nargin==0

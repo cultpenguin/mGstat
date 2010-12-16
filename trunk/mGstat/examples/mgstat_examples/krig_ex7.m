@@ -3,7 +3,7 @@ ndata=30;
 pos_known=rand(ndata,2)*10;
 val_known=randn(ndata,1); % 
 val_var=zeros(ndata,1)+.1; % 
-V='1 Sph(8,.4,30)';   % Select variogram model (this one is anisotropic)
+V='1 Sph(8,30,.4)';   % Select variogram model (this one is anisotropic)
 x_est=[-2:.25:12]';nx=length(x_est);
 y_est=[-2:.25:12]';ny=length(y_est);
 [xx,yy]=meshgrid(x_est,y_est);
