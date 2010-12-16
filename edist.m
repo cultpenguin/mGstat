@@ -47,8 +47,8 @@ else
     if (nargin>2)&(n_dim==2);
         mgstat_verbose(sprintf('%s : 2D coordinate transform'),0);
         if length(transform)>1
-            rescale=transform(1:2);
-            rotate=transform(3)*pi/180;
+            rescale=transform([1,3]);
+            rotate=transform(2)*pi/180;
             
             dp=dp';
             
