@@ -3,6 +3,8 @@
 % Call :
 %   txt=format_variogram(V);
 %
+% See also: deformat_variogram
+%
 function txt=format_variogram(V,short);
   
   if nargin==1

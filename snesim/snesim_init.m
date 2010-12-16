@@ -1,3 +1,12 @@
+% snesim_init : load default parameter file and training image
+%
+% Call : 
+%   S = snesim_init;
+%   S = snesim;
+%   imagesc(S.D(:,:));
+%
+% See also: snesim 
+%
 function S=snesim_init
 
 % call: S=snesim_init
@@ -66,3 +75,12 @@ S.amax=7;
 S.amin=3;
 S.avert=0;
 S.parfile='snesim.par';
+
+file_ti=[mgstat_dir,filesep,'snesim',filesep,S.fti.fname];
+[data,header,title]=read_eas(file_ti);
+write_eas(S.fti.fname,data,header,title);
+
+
+file_tem=[mgstat_dir,filesep,'snesim',filesep,S.ftemplate.fname];
+[data,header,title]=read_eas(file_tem);
+write_eas(S.ftemplate.fname,data,header,title);

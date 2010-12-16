@@ -1,5 +1,19 @@
 % deformat_variogram : convert gstat variogram line into matlab structure
 %
+% Call:
+%   V=deformat_variogram(txt);
+% 
+% Example: 
+% V=deformat_variogram('1 Sph(2)')
+%
+%V = 
+%
+%     par1: 1
+%     par2: 2
+%     type: 'Sph'
+%     itype: 1
+% 
+% 
 % See also : format_variogram
 %
 % TMH /2004

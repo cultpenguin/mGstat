@@ -1,4 +1,10 @@
 % read_snesim : Read SNESIM parameter file
+% 
+%  S = read_snesim(filename);
+%  
+%  S is a Matlab structure will all options for running SNESIM
+%
+% See also: write_snesim, snesim
 %
 function obj=read_snesim(filename)
 

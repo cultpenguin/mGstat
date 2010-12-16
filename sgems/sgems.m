@@ -37,7 +37,8 @@ def_windows_dir{3}='C:\Program Files (x86)\SGeMS';
 
 
 if nargin<2
-    use_wine_on_unix=0;
+    use_wine_on_unix = str2num(getenv('USE_WINE_ON_UNIX'));
+    if (isempty(use_wine_on_unix)),  use_wine_on_unix=0; end
 end
 
 
