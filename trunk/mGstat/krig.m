@@ -80,21 +80,45 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
 
   if size(pos_est,1)==1
       % check if data is a hard data;
+      ir=find_row_array(pos_known,pos_est);
+      if length(ir)==1
+          % The location to estimate is a known data          
+          use_hard_data=0;
+          if (size(val_known,2)==2)
+              if (val_known(ir,2)<1e-19)
+                  use_hard_data=1;
+              end
+          else
+              % No noise
+              use_hard_data=1;
+          end
+              
+          if use_hard_data==1;
+              d_est=val_known(ir,1);
+              d_var=0;
+              lambda=[];K=[];k=[];inhood=[];
+              return
+          end
+      else
+          % more than one value at the same location !!
+      end
+      
+    
       ii=ones(size(pos_known,1),1);
       for j=1:size(pos_known,2)
           ii(find(pos_known(:,j)~=pos_est(j)))=0;
       end
-      if (sum(ii)>0) 
-          % IDENTIAL LOCATIONS!!!
-          % If multiple values -> average
-          i_ident=find(ii);
-          d_est=mean(val_known(i_ident),1);
-          if size(val_known,2)==2;
-              d_var=mean(val_known(i_ident),2);
-          else 
-              d_var=0;
-          end
-      end
+      %if (sum(ii)>0) 
+      %    % IDENTIAL LOCATIONS!!!
+      %    % If multiple values -> average
+      %    i_ident=find(ii);
+      %    d_est=mean(val_known(i_ident),1);
+      %    if size(val_known,2)==2;
+      %        d_var=mean(val_known(i_ident),2);
+      %    else 
+      %        d_var=0;
+      %    end
+      %end
       
   end
   

@@ -1,11 +1,11 @@
 % sgsim : DO NOT USE YET....
 
 %
-% 
+%
 %
 %
 
-function [sim_mul]=sgsim(pos_known,val_known,pos_est,V,options);%
+function [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);%
 
 if nargin==0;
     
@@ -14,12 +14,12 @@ if nargin==0;
         % example
         pos_known=10*rand(10,1);
         val_known=rand(size(pos_known)); % adding some uncertainty
-        pos_est=[0:.01:10]';
+        pos_sim=[0:.01:10]';
         V=deformat_variogram('1 Sph(1)');
         options.max=10;
         options.nsim=10;
-        [d_sim]=sgsim(pos_known,val_known,pos_est,V,options);
-        %plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
+        [d_sim]=sgsim(pos_known,val_known,pos_sim,V,options);
+        %plot(pos_sim,d_est,'r.',pos_sim,d_var,'b.',pos_known,val_known(:,1),'g*')
         %legend('SK estimate','SK variance','Observed Data')
         sim_mul=d_sim;
     elseif use_ex==2
@@ -28,15 +28,15 @@ if nargin==0;
         x_est=[0:.25:5];
         y_est=[0:.25:5];
         [xx,yy]=meshgrid(x_est,y_est);
-        pos_est=[xx(:) yy(:)];
+        pos_sim=[xx(:) yy(:)];
         V=deformat_variogram('0.01 Nug(0) + 1 Sph(1)');
         options.max=10;
         options.nsim=4;
         options.mean=0;
-        [sim_mul]=sgsim(pos_known,val_known,pos_est,V,options);
+        [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);
         for i=1:options.nsim
             subplot(2,ceil(options.nsim/2),i);
-            scatter(pos_est(:,1),pos_est(:,2),10,sim_mul(:,i),'filled');axis image
+            scatter(pos_sim(:,1),pos_sim(:,2),10,sim_mul(:,i),'filled');axis image
         end
     elseif use_ex==3
         pos_known=[];
@@ -44,15 +44,15 @@ if nargin==0;
         x_est=[0:.25:5];
         y_est=[0:.25:5];
         [xx,yy]=meshgrid(x_est,y_est);
-        pos_est=[xx(:) yy(:)];
+        pos_sim=[xx(:) yy(:)];
         V=deformat_variogram('0.01 Nug(0) + 1 Sph(1)');
         options.max=10;
         options.nsim=4;
         options.mean=0;
-        [sim_mul]=sgsim(pos_known,val_known,pos_est,V,options);
+        [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);
         for i=1:options.nsim
             subplot(2,ceil(options.nsim/2),i);
-            scatter(pos_est(:,1),pos_est(:,2),10,sim_mul(:,i),'filled');axis image
+            scatter(pos_sim(:,1),pos_sim(:,2),10,sim_mul(:,i),'filled');axis image
         end
     end
     return
@@ -66,9 +66,17 @@ if ~isfield(options,'nsim');
     options.nsim=1;
 end
 
-pos_known_all=pos_known;
-val_known_all=val_known;
+if (size(val_known,2)==1)
+    val_known(:,2)=0;
+end
 
+if ischar(V),
+    V=deformat_variogram(V);
+end
+
+
+%pos_known_all=pos_known;
+%val_known_all=val_known;
 
 % START BY ASSIGNING DATA AT GRID NOTES A VALUE !!!
 % OTHERWISE WE GET NAN VALUES !!!
@@ -76,74 +84,93 @@ val_known_all=val_known;
 
 for j=1:options.nsim
     % COMPUTE RANDOM PATH
-    n_pos=size(pos_est,1);
+    n_pos=size(pos_sim,1);
     rp(:,1)=1:1:n_pos;rp(:,2)=rand(n_pos,1);
     i_path=sortrows(rp,2);;
     i_path=i_path(:,1);
     rand_path(:,1)=i_path;
     
-    n_cond=size(pos_known_all,1);
-
-    % pre allocate 
-    pos_known=zeros(n_pos+n_cond,size(pos_est,2));
-    val_known=zeros(n_pos+n_cond,size(pos_known,2));
+    
+    n_cond=size(pos_known,1);
+    if (n_cond==0); nc=2;end
+    
+    % pre allocate
+    nc=size(pos_sim,2);
+    pos=zeros(n_pos,nc);
+    val=zeros(n_pos,nc);
+    
     
     % add conditional data
-    if n_cond>0
-        pos_known(1:n_cond,:)=pos_known_all;
-        val_known(1:n_cond,size(val_known_all,2))=val_known_all;
-    end
-    j_cond=n_cond;
+    %if n_cond>0
+    %    pos_known(1:n_cond,:)=pos_known_all;
+    %    val_known(1:n_cond,size(val_known_all,2))=val_known_all;
+    %end
+    %j_cond=n_cond;
+    %j_cond=0;
     
     disp(sprintf('j=%d/%d',j,options.nsim))
-    d_sim=ones(size(pos_est,1),1).*NaN;
-    for i=1:size(pos_est,1)
+    d_sim=ones(size(pos_sim,1),1).*NaN;
+    i_use_cond=ones(size(pos_known,1),1);
+    
+    for i=1:size(pos_sim,1)
         if ((i/100)==round(i/100))
-            disp(sprintf('j=%d/%d, i=%d/%d',j,options.nsim,i,size(pos_est,1)))
+            disp(sprintf('j=%d/%d, i=%d/%d',j,options.nsim,i,size(pos_sim,1)))
         end
         i_pos=i_path(i);
-
-        % COMPUTE LOCAL CONDITIONAL PDF
-        if j_cond==0
-            mean_est=0;
-            if isfield(options,'mean'); mean_est=options.mean;end
-            if isfield(options,'mean_sk'); mean_est=options.mean_sk;end
-            var_est=sum([V.par1]);
-        else
         
-            try
-                if iscell(V);
-                    [mean_est,var_est] = krig(pos_known(1:j_cond,:),val_known(1:j_cond,:),pos_est(i_pos,:),V{i_pos},options);
-                else
-                    [mean_est,var_est] = krig(pos_known(1:j_cond,:),val_known(1:j_cond,:),pos_est(i_pos,:),V,options);
-                end
-                
-            catch
-                keyboard
+        % Find the data observations that should be used as conditional
+        % (This should exclude data at datalocations allready simulated)
+        i_cond=find(i_use_cond);
+        
+        % FIND ALL CONDITIONAL DATA : Observed + Simulated
+        pos_all = [pos(1:(i-1),:) ; pos_known(i_cond,:)];
+        val_all = [val(1:(i-1),:) ; val_known(i_cond,:)];
+        %disp(sprintf('i=%d, ncond=%d',i,size(pos_all,1)))
+        
+        % COMPUTE LOCAL CONDITIONAL PDF
+        try
+            if iscell(V);
+                %[mean_est,var_est] = krig(pos_known(i_cond,:),val_known(i_cond,:),pos_sim(i_pos,:),V{i_pos},options);
+                [mean_est,var_est] = krig(pos_all,val_all,pos_sim(i_pos,:),V{i_pos},options);
+            else
+                %[mean_est,var_est] = krig(pos_known(i_cond,:),val_known(i_cond,:),pos_sim(i_pos,:),V,options);
+                [mean_est,var_est] = krig(pos_all,val_all,pos_sim(i_pos,:),V,options);
             end
-        end
-        if (isnan(mean_est))
+            
+        catch
             keyboard
         end
         
-        %if i==10;
-        %    keyboard
-        %end
+        % FIND OUT IF WE JUST KRIGED AN 'OBSERVED' LOCATION
+        if n_cond>0
+            ir=find_row_array(pos_known,pos_sim(i_pos,:));
+            if ~isempty(ir)
+                i_use_cond(ir)=0;
+            end
+        end
+        if (isreal(mean_est)==0)
+            keyboard
+        end
+        
         
         % DRAW A REALIZATION
         d_sim(i_pos) = norminv(rand(1),mean_est,sqrt(var_est));
-        %d_sim(i_pos) = mean_est;
-        % ADD SIMULATED VALUE TO LIST OF KNOWN VALUES        
-        %keyboard
-        j_cond=j_cond+1;
-        pos_known(j_cond,:)=[pos_est(i_pos,:)];
-        if size(val_known,2)==1            
-            val_known(j_cond,:)=[d_sim(i_pos)];
+        
+        if (isreal(d_sim(i_pos))==0)
+            keyboard
+        end
+        
+        
+        % ADD SIMULATED VALUE TO LIST OF KNOWN VALUES
+        pos(i,:)=[pos_sim(i_pos,:)];
+        if size(val,2)==1
+            val(i,:)=[d_sim(i_pos)];
         else
-            val_known(j_cond,:)=[d_sim(i_pos) 0 ];
+            val(i,:)=[d_sim(i_pos) 0 ];
         end
         %
         
+        %scatter(pos(:,1),pos(:,2),10,val(:,1),'filled');drawnow;
     end
     sim_mul(:,j)=d_sim;
 end
