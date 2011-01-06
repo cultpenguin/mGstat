@@ -31,5 +31,6 @@ try
         cmap_out(i,3)=interp1(1:n_cmap,cmap(:,3),i_cmap);
     end
 catch
+    disp('fail')
     cmap_out=cmap;
 end
