@@ -49,18 +49,21 @@ options.null='';
 if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'gmean');options.gmean=0;end
 if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
-if ~isfield(options,'fac_x');options.fac_x=4;end
-if ~isfield(options,'fac_y');options.fac_y=4;end
+if ~isfield(options,'fac_x');options.fac_x=2;end
+if ~isfield(options,'fac_y');options.fac_y=2;end
 
-if length(x)==1; x=[x x+1]; end
+org.nx=length(x);
+org.ny=length(y);
+
+if length(x)==1; x=[x x+.0001]; end
+if length(y)==1; y=[y y+.0001]; end
+
 
 nx=length(x);
 ny=length(y);
 cell=1;
 if nx>1; dx=x(2)-x(1); cell=dx; else dx=1; end
 if ny>1; dy=y(2)-y(1); cell=dy; else dy=1; end
-
-
 
 ny_c=ny*options.fac_y;
 nx_c=nx*options.fac_x;
@@ -90,8 +93,10 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
         ang1=ang*(pi/180);
         
         
-        x=cell/2:cell:nx_c*cell-cell/2;
-        y=cell/2:cell:ny_c*cell-cell/2;
+        %x=cell/2:cell:nx_c*cell-cell/2;
+        %y=cell/2:cell:ny_c*cell-cell/2;
+        x=dx/2:dx:nx_c*dx-dx/2;
+        y=dy/2:dy:ny_c*dy-dy/2;
         [X Y]=meshgrid(x,y);
         h_x=X-x(ceil(nx_c/2));
         h_y=Y-y(ceil(ny_c/2));
@@ -118,8 +123,6 @@ end
 if ~isfield(options,'fftC');
     options.fftC=fft2(options.C);
 end
-
-
 % normal devaites
 if isfield(options,'z_rand')
     z_rand=options.z_rand;
@@ -139,7 +142,7 @@ if isfield(options,'lim');
     if isfield(options,'pos');
         [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
     else
-        x0=cell*ceil(rand(1)*nx_c); y0=cell*ceil(rand(1)*ny_c);
+        x0=dx*ceil(rand(1)*nx_c); y0=dy*ceil(rand(1)*ny_c);
         %x0=cell*ceil(rand(1)*nx); y0=cell*ceil(rand(1)*ny);
         options.pos=[x0 y0]
         [options.used]=set_resim_data(1:nx_c,1:ny_c,z_rand,options.lim,options.pos,options.wrap_around)
@@ -154,7 +157,14 @@ z=z_rand;
 %options.out1=reshape(real(ifft2(sqrt(cell*options.fftC).*fft2(z))),ny_c,nx_c);
 options.out1=reshape(real(ifft2(sqrt(options.fftC).*fft2(z))),ny_c,nx_c);
 
-out=options.out1(1:ny,1:nx).*sqrt(options.gvar)+options.gmean;
+
+
+
+out=options.out1(1:ny,1:nx)+options.gmean;
+%out=options.out1(1:ny,1:nx).*sqrt(options.gvar)+options.gmean;
+
+if org.nx==1; out=out(:,1); end
+if org.ny==1; out=out(1,:); end
 
 options.nx=nx;
 options.ny=ny;
