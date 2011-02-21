@@ -12,6 +12,8 @@
 %  lik_p = abs(peaks(x_p,y_p));
 %  subplot(1,3,1);
 %  [lik,levels,x,y]=hpd_2d_point(x_p,y_p,lik_p);
+%  subplot(1,3,1);
+%  plot(x_p,y_p),
 %  subplot(1,3,2);
 %  [lik,levels,x,y]=hpd_2d_point(x_p,y_p,lik_p,[],[],[.1:.1:1]);
 %  subplot(1,3,3);
@@ -28,7 +30,8 @@ if nargin==0;
     lik_p = abs(peaks(x_p,y_p));
 
     subplot(1,3,1);
-    [lik,levels,x,y]=hpd_2d_point(x_p,y_p,lik_p);
+    plot(x_p,y_p,'.'),
+    %[lik,levels,x,y]=hpd_2d_point(x_p,y_p,lik_p);
     subplot(1,3,2);
     [lik,levels,x,y]=hpd_2d_point(x_p,y_p,lik_p,[],[],[0.1:.2:1]);
     subplot(1,3,3);
@@ -74,7 +77,7 @@ lik = griddata(x_p,y_p,lik_p,xx,yy,'cubic');
 [levels]=hpd_2d(lik,hpd_levels);
 
 
-[C,h,CF]=contourf(x,y,lik,levels);
+[C,h]=contourf(x,y,lik,levels);
 
 %
 
