@@ -1,7 +1,7 @@
 % hpd_2d : highest posterior density 
 %
 % call : 
-%    [levels]=hpd_2d(lik,hpd_level)cl
+%    [levels]=hpd_2d(lik,hpd_level)
 %
 % lik=abs(peaks);
 % levels=hpd_2d(lik,[.1:.2:.9])
