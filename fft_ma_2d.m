@@ -143,9 +143,10 @@ if isfield(options,'lim');
         [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
     else
         x0=dx*ceil(rand(1)*nx_c); y0=dy*ceil(rand(1)*ny_c);
+        %disp(sprintf('x0=%5g %5g  y0=%5g %5g',x0,nx_c*dx,y0,ny_c*dy))
         %x0=cell*ceil(rand(1)*nx); y0=cell*ceil(rand(1)*ny);
-        options.pos=[x0 y0]
-        [options.used]=set_resim_data(1:nx_c,1:ny_c,z_rand,options.lim,options.pos,options.wrap_around)
+        options.pos=[x0 y0];
+        [options.used]=set_resim_data([1:nx_c]*dx,[1:ny_c]*dy,z_rand,options.lim,options.pos,options.wrap_around);
         
     end
     ii=find(options.used==0);

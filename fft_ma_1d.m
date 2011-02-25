@@ -122,10 +122,11 @@ if isfield(options,'lim');
     else
         x0=dx*ceil(rand(1)*nx_c);
         options.pos=[x0 0];
-        [options.used]=set_resim_data(1:nx_c,1,z_rand,options.lim,options.pos,options.wrap_around);
+        [options.used]=set_resim_data([1:nx_c]*dx,0,z_rand,options.lim,options.pos,options.wrap_around);
         
     end
     ii=find(options.used==0);
+    %if isempty(ii); keyboard;end
     z_rand_new=randn(size(z_rand(ii)));
     z_rand(ii) = z_rand_new;
 end

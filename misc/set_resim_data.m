@@ -32,12 +32,11 @@ if length(pos)==1;
     pos(2)=S.y(1);
 end
 
-xl=max(x)-min(x);
-yl=max(y)-min(y);
 
 [xx,yy]=meshgrid(x,y);
-used=xx.*0+1;
+used=ones(size(xx));
 used(find(abs(xx-pos(1))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
+
 if wrap_around==1
     used(find(abs(fliplr(xx)+pos(1))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
     used(find(abs(fliplr(xx)+pos(1))<lim(1) & abs(flipud(yy)+pos(2))<lim(2)))=0;
