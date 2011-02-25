@@ -34,7 +34,7 @@ for i=1:length(Va)
         XML.(STRUC).contribution = Va(i).par1;
         % variogram type
         if Va(i).itype==1; XML.(STRUC).type = 'Exponential';
-        elseif Va(i).itype==2; XML.(STRUC).type = 'Sperical'; 
+        elseif Va(i).itype==2; XML.(STRUC).type = 'Spherical'; 
         elseif Va(i).itype==3; XML.(STRUC).type = 'Gaussian'; 
         else XML.(STRUC).type = 'UnsupportedBySgems'; end
         % Range + rotation
