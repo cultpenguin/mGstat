@@ -22,7 +22,7 @@ if nargin<3
 end
 
 if nargin<4
-    itext=25;
+    itext=max(i_acc)/5;
 end
 
 xlim=[i_acc(1) max(i_acc)+1e-4];
