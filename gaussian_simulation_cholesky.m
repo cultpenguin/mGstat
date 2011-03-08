@@ -52,8 +52,7 @@ end
 
 t0=now;
 if is_chol==0
-    %L=chol(L);
-    L=lu(L);
+    L=chol(L);
 end
 z=zeros(length(m),nsim);
 t1=now;
