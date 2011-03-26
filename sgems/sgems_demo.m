@@ -78,7 +78,7 @@ S=sgems_grid(S);
 Sc=S;
 
 % conditional data
-Sc.d_obs=[18 13 0 0; 5 5 0 1; 2 28 0 1];
+
 %header{1}='X';header{2}='Y';header{3}='Z';
 %header{4}='DATA';
 %Sc.f_obs='obs.sgems';
