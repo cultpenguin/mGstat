@@ -17,14 +17,27 @@ if nargin<6, type=2;end
 
   if type==2,
     S = Cd + G*Cm*G';    
-    T = inv(S);
-    %disp([mfilename,' : Estimating m_est type1'])
-    m_est  = m0 + Cm*G'*T*(d0-G*m0);
-    if nargout>1
-      % disp([mfilename,' : Estimating Cm type1'])
-      Cm_est = Cm - Cm*G'*T*G*Cm; % SLOW
+    
+    use_imm_style=1;
+    if use_imm_style==1;
+        % shiny new fast IMM style
+        K=(Cm*G')/S;
+        m_est  = m0 + K * (d0-G*m0);
+        if nargout>1
+            Cm_est = Cm - K * (G*Cm); % SLOW      
+        end
+    else
+        % Old slow
+        T = inv(S);
+        m_est  = m0 + Cm*G'*T*(d0-G*m0);
+        if nargout>1
+            % disp([mfilename,' : Estimating Cm type1'])
+            Cm_est = Cm - Cm*G'*T*G*Cm; % SLOW
+        end
     end
-   
+    
+    
+    
   else
     
     if size(G,1)==1,
