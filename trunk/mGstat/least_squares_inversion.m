@@ -16,7 +16,8 @@ t1=now;
 if nargin<6, type=2;end
 
   if type==2,
-    S = Cd + G*Cm*G';    
+      
+      S = Cd + G*Cm*G';    
     
     use_imm_style=1;
     if use_imm_style==1;
