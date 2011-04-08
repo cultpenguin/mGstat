@@ -132,28 +132,44 @@ else
     
 end
 
-
-if isfield(options,'lim');
-    x0=dx.*(nx-nx_c)/2;
-    y0=dy.*(ny-ny_c)/2;
-    x0=0;y0=0;
-    options.wrap_around=1;
-    
-    if isfield(options,'pos');
-        [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
-    else
-        x0=dx*ceil(rand(1)*nx_c); y0=dy*ceil(rand(1)*ny_c);
-        %disp(sprintf('x0=%5g %5g  y0=%5g %5g',x0,nx_c*dx,y0,ny_c*dy))
-        %x0=cell*ceil(rand(1)*nx); y0=cell*ceil(rand(1)*ny);
-        options.pos=[x0 y0];
-        [options.used]=set_resim_data([1:nx_c]*dx,[1:ny_c]*dy,z_rand,options.lim,options.pos,options.wrap_around);
-        
-    end
-    ii=find(options.used==0);
-    z_rand_new=randn(size(z_rand(ii)));
-    z_rand(ii) = z_rand_new;
+%% RESIM
+if ~isfield(options,'resim_type');
+    options.resim_type=2;
 end
 
+
+if isfield(options,'lim');
+    if options.resim_type==1;
+        % resom box_type
+        x0=dx.*(nx-nx_c)/2;
+        y0=dy.*(ny-ny_c)/2;
+        x0=0;y0=0;
+        options.wrap_around=1;
+        
+        if isfield(options,'pos');
+            [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
+        else
+            x0=dx*ceil(rand(1)*nx_c); y0=dy*ceil(rand(1)*ny_c);
+            %disp(sprintf('x0=%5g %5g  y0=%5g %5g',x0,nx_c*dx,y0,ny_c*dy))
+            %x0=cell*ceil(rand(1)*nx); y0=cell*ceil(rand(1)*ny);
+            options.pos=[x0 y0];
+            [options.used]=set_resim_data([1:nx_c]*dx,[1:ny_c]*dy,z_rand,options.lim,options.pos,options.wrap_around);
+            
+        end
+        ii=find(options.used==0);
+        z_rand_new=randn(size(z_rand(ii)));
+        z_rand(ii) = z_rand_new;
+    else
+        % resim random locations
+        n_resim=ceil(options.lim(1));
+        n_resim = min([n_resim prod(size(z_rand))]);
+        %if ~isfield(options,'n_resim');options.n_resim=ceil(prod(size(z_rand))/20);end        
+        ii=ceil(rand(1,n_resim)*prod(size(z_rand)));
+        z_rand_new=randn(size(z_rand(ii)));
+        z_rand(ii) = z_rand_new;
+    end
+end
+    
 z=z_rand;
 %options.out1=reshape(real(ifft2(sqrt(cell*options.fftC).*fft2(z))),ny_c,nx_c);
 options.out1=reshape(real(ifft2(sqrt(options.fftC).*fft2(z))),ny_c,nx_c);
