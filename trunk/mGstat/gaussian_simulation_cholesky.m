@@ -68,8 +68,8 @@ for i=1:nsim
     z(:,i)=m+L'*randn(length(m),1);
 end
 t2=now;
-mgstat_verbose(sprintf('%s : cholesky   : Elapsed time : %6.1fs',mfilename,(t1-t0).*(24*3600)),0);
-mgstat_verbose(sprintf('%s : simulation : Elapsed time : %6.1fs',mfilename,(t2-t1).*(24*3600)),0);
+mgstat_verbose(sprintf('%s : cholesky   : Elapsed time : %6.1fs',mfilename,(t1-t0).*(24*3600)),1);
+mgstat_verbose(sprintf('%s : simulation : Elapsed time : %6.1fs',mfilename,(t2-t1).*(24*3600)),1);
  
 if nargout>1
     for i=1:nsim;
