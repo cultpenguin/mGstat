@@ -15,7 +15,11 @@
 %
 %
 %
-function sgems_plot_structure(S,i_prop);
+function S=sgems_plot_structure(S,i_prop);
+
+if isstr(S)
+    S=sgems_read(S);
+end
 
 if nargin<2
     
