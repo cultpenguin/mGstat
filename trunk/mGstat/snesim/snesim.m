@@ -47,7 +47,7 @@ function V=snesim(parfile);
   
   if isstruct(parfile);    
     write_snesim(parfile);
-    parfile=parfile.parfile
+    parfile=parfile.parfile;
   end
   tic
     
