@@ -18,8 +18,20 @@ function [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);%
 
 if nargin==0;
     
-    use_ex=3;
-    if use_ex==2
+    use_ex=1;
+    if use_ex==1
+        pos_known=[1 2 4.5]';
+        val_known=[-1 .5 -.5]';
+        pos_est=0:.05:5;
+        pos_sim=[pos_est(:)];
+        V=deformat_variogram('0.00001 Nug(0) + 1 Gau(3)');
+        options.max=10;
+        options.nsim=14;
+        options.mean=0;
+        [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);
+        plot(pos_sim,sim_mul);
+        
+    elseif use_ex==2
         pos_known=[2.01 2;4.01 4;2.01 4;4.01 2];
         val_known=[-1;-.5;.5;1];
         x_est=[0:.25:5];
@@ -63,6 +75,12 @@ if ~isfield(options,'nsim');
     options.nsim=1;
 end
 
+if (size(pos_known,2)==1)
+    pos_known(:,2)=0;
+    pos_sim(:,2)=0;
+end
+
+
 if (size(val_known,2)==1)
     val_known(:,2)=0;
 end
@@ -88,13 +106,13 @@ for j=1:options.nsim
     pos=zeros(n_pos,nc);
     val=zeros(n_pos,nc);
         
-    disp(sprintf('j=%d/%d',j,options.nsim))
+    disp(sprintf('%s : realization %d/%d',mfilename,j,options.nsim))
     d_sim=ones(size(pos_sim,1),1).*NaN;
     i_use_cond=ones(size(pos_known,1),1);
     
     for i=1:size(pos_sim,1)
         if ((i/100)==round(i/100))
-            disp(sprintf('j=%d/%d, i=%d/%d',j,options.nsim,i,size(pos_sim,1)))
+            disp(sprintf('%s : realization=%d/%d, i=%d/%d',mfilename,j,options.nsim,i,size(pos_sim,1)))
         end
         i_pos=i_path(i);
         
@@ -107,11 +125,14 @@ for j=1:options.nsim
         val_all = [val(1:(i-1),:) ; val_known(i_cond,:)];
         
         % COMPUTE LOCAL CONDITIONAL PDF
+        options_krig=options;
+        try;options_krig=rmfield(options_krig,'nsim');end
+        
         try
             if iscell(V);
-                [mean_est,var_est] = krig(pos_all,val_all,pos_sim(i_pos,:),V{i_pos},options);
+                [mean_est,var_est] = krig(pos_all,val_all,pos_sim(i_pos,:),V{i_pos},options_krig);
             else
-                [mean_est,var_est] = krig(pos_all,val_all,pos_sim(i_pos,:),V,options);
+                [mean_est,var_est] = krig(pos_all,val_all,pos_sim(i_pos,:),V,options_krig);
             end
             
         catch
