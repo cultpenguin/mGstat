@@ -32,7 +32,7 @@
 % See source code for more examples
 %
 %
-% see also : krig_npoint, krig_blinderror
+% see also : krig_npoint, krig_blinderror, sgsim
 %
 
 % Example 1 : 1D - NO DATA UNCERTAINTY
@@ -130,6 +130,13 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     end
   end
   
+  if isfield(options,'nsim');
+      %         krig(pos_known,val_known,pos_est,V,options);
+      [d_est]=sgsim(pos_known,val_known,pos_est,V,options);
+      d_var=0.*d_est;
+      return
+  end
+      
   if ischar(options)
     options.null=1;
   end
