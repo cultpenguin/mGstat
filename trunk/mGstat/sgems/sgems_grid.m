@@ -2,11 +2,12 @@
 % 
 % Ex :
 % S=sgems_get_par('snesim_std');
-% S.dim.x=[0:.25:5];
+% S.dim.x=[0:.25:15];
 % S.dim.y=[0:.25:12];
-% S.dim.z=[0];
-% S=sgems_grid(S);
 %
+% S=sgems_grid(S);
+% sgems_plot_structure('snesim_std.sgems');
+
 function S=sgems_grid(S,obs);
 
 if ~isfield(S,'dim'), S.dim.null=0;end

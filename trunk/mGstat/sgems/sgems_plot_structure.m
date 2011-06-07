@@ -17,7 +17,7 @@
 %
 function S=sgems_plot_structure(S,i_prop);
 
-if isstr(S)
+if ischar(S);
     S=sgems_read(S);
 end
 

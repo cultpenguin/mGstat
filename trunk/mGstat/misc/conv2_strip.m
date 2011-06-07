@@ -1,8 +1,17 @@
 %conv2_strip : as conv2 but strips leading and trailing tails of convolved
 %data
-function C=conv_strip2(A,B,npad)
+function C=conv_strip2(A,B,sub_mean)
 
-mA=mean(A(:));
+if nargin<3
+    sub_mean=1;
+end
+
+if sub_mean==1
+    mA=mean(A(:));
+else
+    mA=0;
+end
+
 A=A-mA;
 
 
@@ -10,7 +19,6 @@ A=A-mA;
 [b1,b2]=size(B);
 
 C=conv2(A,B);
-C=C;
 [c1,c2]=size(C);
 
 

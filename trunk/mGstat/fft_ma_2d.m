@@ -34,7 +34,7 @@
 %
 % original (FFT_MA_2D) Knud S. Cordua (June 2009)
 % Thomas M. Hansen (September, 2009)
-%
+% Jan Frydendall (April, 2011) Zero padding
 
 
 % UPDATE TO WORK IN 1D   
@@ -49,8 +49,8 @@ options.null='';
 if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'gmean');options.gmean=0;end
 if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
-if ~isfield(options,'fac_x');options.fac_x=2;end
-if ~isfield(options,'fac_y');options.fac_y=2;end
+if ~isfield(options,'fac_x');options.fac_x=1;end
+if ~isfield(options,'fac_y');options.fac_y=1;end
 
 org.nx=length(x);
 org.ny=length(y);
@@ -159,7 +159,7 @@ if isfield(options,'lim');
         ii=find(options.used==0);
         z_rand_new=randn(size(z_rand(ii)));
         z_rand(ii) = z_rand_new;
-    else
+    else     
         % resim random locations
         n_resim=ceil(options.lim(1));
         n_resim = min([n_resim prod(size(z_rand))]);
