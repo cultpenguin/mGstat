@@ -60,7 +60,7 @@ elseif strcmp(S.type_def,'Cgrid');
     
     if S.nz==1
         % ndim=2
-        imagesc(S.x,S.y,S.D(:,:,1,i_prop))
+        imagesc(S.x,S.y,S.D(:,:,1,i_prop)')
     else
         % ndim=3
     end

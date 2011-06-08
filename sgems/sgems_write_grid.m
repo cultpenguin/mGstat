@@ -58,9 +58,15 @@ end
   
 
 
+
+
 % REPLACE NAN with SGEMS NaN VALUE (-9966699)
 try
     data(find(isnan(data)))=-9966699;
+end
+
+if ((size(data,1)==length(x))&(size(data,2)==length(y))&(size(data,3)==length(z)))
+    data=data(:);
 end
 
 O.type_def='Cgrid';
