@@ -2,7 +2,7 @@
 %
 % Call:
 %
-%    f = generalized_gaussian(x,x0,sigma,p);
+%    f = generalized_gaussian(x,x0,sigma,p,do_log);
 %
 
 function f = generalized_gaussian(x,x0,sigma,p,do_log);

@@ -173,6 +173,7 @@ end
 z=z_rand;
 %options.out1=reshape(real(ifft2(sqrt(cell*options.fftC).*fft2(z))),ny_c,nx_c);
 options.out1=reshape(real(ifft2(sqrt(options.fftC).*fft2(z))),ny_c,nx_c);
+options.out1_complex=reshape((ifft2(sqrt(options.fftC).*fft2(z))),ny_c,nx_c);
 
 
 

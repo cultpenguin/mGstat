@@ -51,7 +51,6 @@ end
 if ~isfield(O,'version')
     O.version=100;
 end
-
 n_prop=size(O.data,2);
 if ~isfield(O,'n_prop')
     O.n_prop=size(O.data,2);
@@ -142,7 +141,6 @@ elseif strcmp(O.type_def,'Cgrid');
 
     % Properties
     fwrite(fid,O.n_prop,'uint32','b');
-
     for i=1:O.n_prop
         fwrite_charstar(fid,O.property{i});
     end
