@@ -191,6 +191,9 @@ c----------------------------------------------------------------------
       
       ! Index of the nodes successively visited in the current multiple grid
       INTEGER, DIMENSION(MAXXYZ) :: order
+
+      ! random number seed for gfortran
+      integer :: seed_size
       
       CONTAINS
       
@@ -211,7 +214,7 @@ c-----------------------------------------------------------------------
       
       ! Declare local variables
       REAL, DIMENSION(10) :: var
-      INTEGER, DIMENSION(2) :: seed
+      INTEGER,allocatable, DIMENSION(:) :: seed
       CHARACTER (LEN=30) :: datafl, outfl, dbgfl, templatefl
       CHARACTER (LEN=30) :: vertpropfl
       CHARACTER (LEN=30), DIMENSION(MAXMULT) :: trainfl
@@ -339,9 +342,11 @@ c-----------------------------------------------------------------------
       WRITE(*,*) ' random number seed = ',ixv
       
       ! Initialize the random seed of the simulation:
+      CALL random_seed(size = seed_size)
+      allocate(seed(1:seed_size))
       seed(1)=ixv
       seed(2)=ixv+1
-      CALL random_seed(PUT=seed(1:2))
+      CALL random_seed(PUT=seed)
       
       READ(lin,'(a30)',err=98) templatefl
       CALL chknam(templatefl,30)
