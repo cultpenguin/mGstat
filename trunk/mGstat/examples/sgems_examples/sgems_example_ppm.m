@@ -9,6 +9,7 @@ S=sgems_get_par('snesim_std');
 % generate starting realization
 S.XML.parameters.Nb_Realizations.value=1;
 S=sgems_grid(S);
+S.O=sgems_read('snesim_std.sgems');
 
 % loop over array of TAU values
 r_arr=linspace(0,1,25);
