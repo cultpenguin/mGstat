@@ -24,7 +24,11 @@
 function tmap=fast_fd_2d(x,z,V,Sources);
 [p,f,s]=fileparts(which('mgstat_verbose'));
 if isunix==1
-    fd_bin=sprintf('%s/bin/nfd',p);
+    if ismac==1
+        fd_bin=sprintf('%s/bin/nfd_mac_g3',p);
+    else
+        fd_bin=sprintf('%s/bin/nfd',p);
+    end
 else
     fd_bin=sprintf('%s\\bin\\nfd.exe',p);
 end
