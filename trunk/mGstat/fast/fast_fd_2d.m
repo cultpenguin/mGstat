@@ -19,7 +19,7 @@
 % a part of the FAST pacjage created by Colin Zelt :
 % http://www.geophysics.rice.edu/department/faculty/zelt/fast.html
 %
-% TMH/2006
+% TMH/2011
 %
 function tmap=fast_fd_2d(x,z,V,Sources);
 [p,f,s]=fileparts(which('mgstat_verbose'));
