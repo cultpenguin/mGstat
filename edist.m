@@ -26,7 +26,7 @@ n_dim=size(p1,2);
 dp=(p1-p2);
 if isorange==1
     %mgstat_verbose(sprintf('%s : isorange',mfilename))
-    % ONLY SACLING, no transformation
+    % ONLY SCCALING,edit no transformation
     
     if length(transform)==1;
         transform=ones(1,n_dim).*transform;

@@ -9,16 +9,48 @@
 %
 % cov [ndata1,ndata1] : Covariance matrix
 %
-% Ex:
-% x=[1:1:10];
-% y=[1:1:20];
-% [xx,yy]=meshgrid(x,y);
-% cov=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(5,.1,0)');
+%     
+%     % Ex: 2D covariance (Call precal_cov with no arguments for an example)
+%     x=[1:.5:10];nx=length(x);
+%     y=[1:.5:20];ny=length(y);
+%     [xx,yy]=meshgrid(x,y);
+%     cov=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(5,30,.5)');
+%     subplot(2,1,1);imagesc(cov);axis image;colorbar
+%     
+%     % generate some unconditional realizations
+%     nsim=4;
+%     reals_of_cov=gaussian_simulation_cholesky(0,cov,4);
+%     for i=1:nsim;
+%         subplot(2,nsim,nsim+i);imagesc(x,y,reshape(reals_of_cov(:,i),ny,nx));axis image
+%     end
+%
+% 
+%
 %
 
 function [cov,d]=precal_cov(pos1,pos2,V,options);
 options.dummy='';
 if ~isfield(options,'verbose'), options.verbose=0;end
+
+if nargin==0
+    
+    
+    % Ex: 2D covariance
+    x=[1:.25:10];nx=length(x);
+    y=[1:.25:20];ny=length(y);
+    [xx,yy]=meshgrid(x,y);
+    cov=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(5,30,.5)');
+    subplot(2,1,1);imagesc(cov);axis image;colorbar
+    
+    % generate som unconditional realizations
+    nsim=4;
+    reals_of_cov=gaussian_simulation_cholesky(0,cov,4);
+    for i=1:nsim;
+        subplot(2,nsim,nsim+i);imagesc(x,y,reshape(reals_of_cov(:,i),ny,nx));axis image
+    end
+    
+    return
+end
 
 % DETERMINE ISORANGE
 if  any(strcmp(fieldnames(options),'isorange'))
