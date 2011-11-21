@@ -15,7 +15,7 @@ S.O=sgems_read('snesim_std.sgems');
 r_arr=linspace(0,1,25);
 Sppm{1}=S;
 for i=2:length(r_arr)
-    % perform PPM with tau=r_arr(i)
+    % perform PPM with rc=r_arr(i)
     Sppm{i}=sgems_ppm(S,S.O,r_arr(i));
 end
 
@@ -26,7 +26,7 @@ for i=1:length(r_arr)
     ax(i)=subplot(5,5,i);
     imagesc(S.x,S.y,Sppm{i}.D');axis image;
     set(gca,'FontSize',6)
-    title(sprintf('tau=%4.2g',r_arr(i)),'FontSize',10)
+    title(sprintf('rc=%4.2g',r_arr(i)),'FontSize',10)
 end
 colormap(1-gray)
 print('-dpng','-r200','sgems_example_ppm.png');

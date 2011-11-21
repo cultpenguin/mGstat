@@ -49,6 +49,13 @@ for ig=1:S.XML.parameters.Nb_Facies.value
     %p_facies=(1-tau).*[O.data(1,:)==(ig-1)]+tau.*marg_pdf
     O.data(:,ig)=p_facies;
     O.n_prop=length(O.property{ig}); % update
+    
+    figure_focus(12);
+    subplot(1,S.XML.parameters.Nb_Facies.value,ig)
+    imagesc(reshape(p_facies,S.dim.nx,S.dim.ny)')
+    %imagesc(p_facies);
+    axis image;caxis([0 1]);colorbar
+    drawnow;
 end
 S.f_probfield=sprintf('prob_%d.sgems',round(tau*100));
 

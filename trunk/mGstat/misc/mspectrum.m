@@ -1,6 +1,6 @@
 % mspectrum : Amplitude and Power spectrum
 % Call  :
-%     function [A,P,kx]=mspectrum(x,dx)
+%     function [A,P,smoothP,kx]=mspectrum(x,dx)
 % 
 % 1D (A)mplitude and (P)owerspectrum of x-series with spacing dx
 %
@@ -32,7 +32,7 @@ range=[floor(nx/2)+1:1:nx];
 kx=kx(range);
 A=A(range);
 P=P(range);
-smoothP=conv(P,ones(1,9)/9);
+smoothP=conv_strip(P,ones(1,9)/9);
 
 
 
