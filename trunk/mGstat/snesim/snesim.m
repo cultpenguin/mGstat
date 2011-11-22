@@ -7,34 +7,31 @@
 %   V.nsim=10;
 %   snesim(V)
 %
+%   V=snesim_init;
+%   V.nsim=10;
+%   snesim(V)
+%
 function V=snesim(parfile);
-  
-
+ 
   % FIRST TRY TO FIND THE snesim BINARY IN THE mGstat/bin/ DIRECTORY
-  [p,f,s]=fileparts(which('snesim'));
-  if isunix
-    snesim_bin=[mgstat_dir,filesep,'bin',filesep,'snesim'];
+  [p,f,s]=fileparts(which('mgstat_verbose'));
+  if isunix==1
+      if ismac==1
+          snesim_bin=sprintf('%s/bin/snesim_mac_g3',p);
+      else
+          snesim_bin=sprintf('%s/bin/snesim',p);
+      end
   else
-    snesim_bin=[mgstat_dir,filesep,'bin',filesep,'snesim.exe'];
+      snesim_bin=sprintf('%s\\bin\\snesim.exe',p);
   end
 
-  if (exist(snesim_bin,'file'))==0
-    if isunix
-      % TRY TO LOCATE snesim IN THE UNIX PATH
-      [s,snesim_bin]=system('which snesim');      
-    end
-  end
-
- % TO MANUALqLY SET THE PATH TO snesim PUT IT HERE :
+ % TO MANUALLLY SET THE PATH TO snesim PUT IT HERE :
  % snesim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIB/snesim/snesim';
 
   if (exist(snesim_bin,'file'))==0
     % MANUALLU THE THE PATH TO snesim
   end
-
  
-
-  
   
   if (exist(snesim_bin,'file'))==0
     disp(sprintf('COULD NOT FIND snesim binary : %s',snesim_bin));
