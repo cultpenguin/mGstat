@@ -159,8 +159,15 @@ if isfield(options,'lim');
         z_rand_new=randn(size(z_rand(ii)));
         z_rand(ii) = z_rand_new;
     else     
-        % resim random locations
-        n_resim=ceil(options.lim(1).*prod(size(z_rand)));
+        % resim random locations        
+        
+        n_resim=options.lim(1);
+        if n_resim<=1
+            % use n_resim as a proportion of all random deviates
+            n_resim=n_resim.*prod(size(z_rand));
+        end
+        n_resim=ceil(n_resim);
+        
         n_resim = min([n_resim prod(size(z_rand))]);
         %if ~isfield(options,'n_resim');options.n_resim=ceil(prod(size(z_rand))/20);end        
         ii=ceil(rand(1,n_resim)*prod(size(z_rand)));
