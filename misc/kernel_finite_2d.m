@@ -350,7 +350,7 @@ elseif options.normMethod==3;
     Knorm=raylength.*Knorm./sum(Knorm(:));
 end
 
-
+return
 %% PLOT KERNEL
 figure(17)
 T=1/freq;

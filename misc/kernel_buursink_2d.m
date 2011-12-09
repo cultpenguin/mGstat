@@ -46,7 +46,7 @@ if nargin<7 % no P_omega
 end
 
 if nargin<8
-    useEik=2;
+    useEik=1;
 end
 
 clipOmega=0;
