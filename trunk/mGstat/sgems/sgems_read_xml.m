@@ -1,7 +1,7 @@
 % sgems_read_xml
 function [XML,xml_entry,S]=sgems_read_xml(filename);
 
-mgstat_verbose(sprintf('%s : reading %s',mfilename,filename),0);
+mgstat_verbose(sprintf('%s : reading %s',mfilename,filename),1);
 
 fid=fopen(filename,'r');
 
