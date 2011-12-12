@@ -23,7 +23,7 @@ if ~isstruct(XML)
 end
 
 
-mgstat_verbose(sprintf('%s : writing %s',mfilename,filename));
+mgstat_verbose(sprintf('%s : writing %s',mfilename,filename),1);
 
 fid=fopen(filename,'w');
 

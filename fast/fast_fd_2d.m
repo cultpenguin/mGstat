@@ -157,7 +157,8 @@ o.tmax=V_gain.*( sqrt( (max(x)-min(x)).^2 +  (max(z)-min(z)).^2 )) ./ min(V(:));
 o=fast_fd_write_par(Sources(:,1),Sources(:,2),o);
 
 % RUN 'fd'
-unix(fd_bin);
+[status,result]=system(fd_bin);
+mgstat_verbose(sprintf('%s : %s',mfilename,result),1);
 
 tmap=zeros(nz,nx,ns);
 

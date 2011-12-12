@@ -119,8 +119,9 @@ else
     cmd=sprintf('"%s" -s %s',sgems_bin,py_script);
 end
 
-mgstat_verbose(sprintf('%s : %s',mfilename,cmd),-1);
-system(cmd);
+mgstat_verbose(sprintf('%s : %s',mfilename,cmd),1);
+[status,result]=system(cmd);
+mgstat_verbose(sprintf('%s : %s',mfilename,result),1);
 
 
 
