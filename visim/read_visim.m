@@ -54,7 +54,7 @@ if ((obj.cond_sim==1)|(obj.cond_sim==2))
             obj.fconddata.header=header;
             obj.fconddata.fname=fname;
         catch
-            disp(sprintf('%s : could not read %s',mfilename,fname));
+            mgstat_verbose(sprintf('%s : could not read %s',mfilename,fname));
         end
     end
 end

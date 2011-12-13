@@ -12,7 +12,7 @@
 %
 %    unc : resimulate using uncertainty unc  (standard deviation)   
 %
-function [S pos]=visim_set_resim_data(S,D,lim,pos,unc)
+function [S,ih,pos]=visim_set_resim_data(S,D,lim,pos,unc)
 
 
 if nargin<2

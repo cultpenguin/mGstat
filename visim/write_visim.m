@@ -114,7 +114,9 @@ if isfield(obj,'mask');
     f_mask=sprintf('mask_%s.out',par_file);
     if isfield(obj.mask,'enable')
         if obj.mask.enable==0
-            delete(f_mask);
+            if exist(f_mask,'file')
+                delete(f_mask);
+            end
         end
     end
     
