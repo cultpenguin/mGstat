@@ -26,16 +26,17 @@ if nargin<4
 end
 
 xlim=[i_acc(1) max(i_acc)+1e-4];
-%plot(i_acc,L_acc,'k.')
-semilogy(i_acc,L_acc,'k-')
+close all
+plot(i_acc,L_acc,'k.')
+%semilogy(i_acc,L_acc,'k-')
 set(gca,'xlim',xlim)
 
 %% FORMAT Y TICK
-Yt=get(gca,'Ytick')';
-for i=1:length(Yt)
-    Yl{i}=sprintf('%4.1f',Yt(i));
-end
-set(gca,'YtickLabel',Yl);
+%Yt=get(gca,'Ytick')';
+%for i=1:length(Yt)
+%    Yl{i}=sprintf('%4.1f',Yt(i));
+%end
+%set(gca,'YtickLabel',Yl);
 
 if nargin>2
     hold on

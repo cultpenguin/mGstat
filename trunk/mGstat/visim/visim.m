@@ -117,12 +117,15 @@ if (isstruct(parfile));
 end
 
 if isunix==1
-    unix(sprintf('%s %s',visim_bin,parfile));
+    [status,result]=system(sprintf('%s %s',visim_bin,parfile));
 else
-    dos(sprintf('"%s" %s',visim_bin,parfile));
+    [status,result]=system(sprintf('"%s" %s',visim_bin,parfile));
 end
 V=read_visim(parfile);
 V.time=toc;
+
+mgstat_verbose(sprintf('%s : %s',mfilename,result),1);
+
 
 %fclose all;
 
