@@ -169,8 +169,10 @@ if isfield(options,'lim');
         n_resim=ceil(n_resim);
         
         n_resim = min([n_resim prod(size(z_rand))]);
-        %if ~isfield(options,'n_resim');options.n_resim=ceil(prod(size(z_rand))/20);end        
-        ii=ceil(rand(1,n_resim)*prod(size(z_rand)));
+        N_all=prod(size(z_rand));
+        % find random sample of size 'n_resim'
+        ii=randomsample(N_all,n_resim);
+                
         z_rand_new=randn(size(z_rand(ii)));
         z_rand(ii) = z_rand_new;
     end
