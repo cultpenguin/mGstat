@@ -27,7 +27,7 @@ function d_out=inscore(d_normal,o_nscore)
              
   % INTERPOLATE BETWEEN KNOWN DATA
   % 'help interp1' to see list of interpolation options.
-  d_out=interp1(o_nscore.normscore(id),s_origdata(id),d_normal,style');
+  d_out=interp1(o_nscore.normscore(id),s_origdata(id),d_normal,style);
   
   doPlot=0;
   if doPlot==1;
