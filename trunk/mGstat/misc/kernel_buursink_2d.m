@@ -1,3 +1,4 @@
+
 % kernel_buursink_2k : Computes 2D Sensitivity kernel based on 1st order EM scattering theory
 % 
 % See 
@@ -26,7 +27,7 @@ end
 [nz,nx]=size(model);
 
 if nargin<9
-    doPlot=1;
+    doPlot=2;
 end
 
 if nargin<6 % no omega
@@ -36,10 +37,10 @@ end
 
 if nargin<7 % no P_omega
     f0=omega;
-    dt=0.1;
-    Nt=300;
+    dt=0.02;
+    Nt=1500;
     wl=rickerwavelet(f0,dt,Nt);
-    [A,P,kx]=mspectrum(wl,dt);
+    [A,P,Psmooth,kx]=mspectrum(wl,dt);
     P_omega=A;
     omega=2*pi*kx;
     P_omega = P_omega ./ sum(P_omega.*(omega(2)-omega(1)));
@@ -136,9 +137,13 @@ for i=1:nz
         %B=trapz(omega.^2.*Y, omega);
         %kernel(i,j)=(model(i,j)*2*pi).^(-1)*(L/(L1*L2)) * (A/B);
         
-        if (sum(P-S)==0)|(sum(P-R)==0)
+        if (sum(abs(P-S))==0)|(sum(abs(P-R))==0)
            kernel(i,j)=0;
         end
+        
+    end
+    if doPlot>1
+        figure_focus(1);imagesc(kernel);drawnow;axis image
     end
 end
 kernel=kernel.*dx*dx;
@@ -152,7 +157,7 @@ kernel(pos)=0;
 %kernel=L*kernel./sum(kernel(:));
 
 
-if doPlot==1;
+if doPlot>0;
     figure;
     
     iy=find(Y==max(Y));iy=iy(1);omega_peak=omega(iy);

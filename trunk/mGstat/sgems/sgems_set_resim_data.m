@@ -45,10 +45,10 @@ if resim_type==2;
     nn=prod(size(xx));
     %ih=unique(ceil(nn*rand(1,lim(1)*nn)));
     ih_inv=unique(ceil(nn*rand(1,ceil(lim(1)*nn))));
-    
-    ih=setxor(ih_inv,1:1:nn);
+    n_resim=ceil((1-lim(1))*nn);
+    ih=randomsample(nn,n_resim);
     d_cond=[xx(ih(:)) yy(ih(:)) zz(ih(:)) D(ih(:))];
-    disp(resim_type)
+    %    disp(resim_type)
 else
     used=xx.*0+1;
     used(find( (abs(xx-pos(1))<lim(1)) & (abs(yy-pos(2))<lim(2)) ))=0;
