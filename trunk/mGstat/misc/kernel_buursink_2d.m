@@ -27,7 +27,7 @@ end
 [nz,nx]=size(model);
 
 if nargin<9
-    doPlot=2;
+    doPlot=0;
 end
 
 if nargin<6 % no omega
@@ -107,7 +107,7 @@ if nargout>2
     L2_all=zeros(nz,nx);
 end
 for i=1:nz
-    progress_txt([i],[nz],'Z',0)
+    %progress_txt([i],[nz],'Z',0)
         
     for j=1:nx
         
@@ -143,7 +143,11 @@ for i=1:nz
         
     end
     if doPlot>1
-        figure_focus(1);imagesc(kernel);drawnow;axis image
+        figure_focus(2);imagesc(kernel);
+        cax=caxis;cax=[-1 1].*max(abs(cax));caxis(cax);
+        colormap(cmap_linear([1 0 0;1 1 1;0 0 0]))
+        axis image
+        drawnow;
     end
 end
 kernel=kernel.*dx*dx;
@@ -158,20 +162,22 @@ kernel(pos)=0;
 
 
 if doPlot>0;
-    figure;
+    figure_focus(1);
     
     iy=find(Y==max(Y));iy=iy(1);omega_peak=omega(iy);
     
     lambda_peak=model(1,1)./omega_peak;
     
     fresnel_width=sqrt(lambda_peak*L)/2;
-    disp(sprintf('Fresnel_width=%gm peak freq = %g MHz',fresnel_width,omega_peak./1e+6));
+    disp(sprintf('Fresnel_width=%gm peak freq = %g MHz',fresnel_width,(omega_peak/2*pi)));
     
     
     f_zones=[1:4].*lambda_peak/2;
     subplot(2,2,1);imagesc(x,z,model);axis image;colorbar
     subplot(2,2,2);imagesc(x,z,kernel);axis image;colorbar;cax=caxis;
-   
+    cax=[-1 1].*max(abs(cax));
+    caxis(cax);
+    colormap(cmap_linear([1 0 0;1 1 1;0 0 0]))
     if nargout>1
         delta_t=[L1_all + L2_all - L];
         hold on
@@ -179,6 +185,6 @@ if doPlot>0;
         hold off
         caxis(cax)
     end
-    subplot(2,2,3);plot(omega,Y,'k-',[1 1].*omega_peak,[0 1].*max(Y),'r-');
+    subplot(2,1,2);plot(omega/(2*pi),Y,'k-',[1 1].*omega_peak/(2*pi),[0 1].*max(Y),'r-');
     
 end

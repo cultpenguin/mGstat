@@ -23,5 +23,5 @@ sed -i 's/335   format/c335   format/g' fd/main.f
 # COMPILE
 find ./pltlib -name '*.f' -exec $COMP -c {} \;
 find ./fd -name '*.f' -exec $COMP -c {} \;
-$COMP -o nfd main.o model.o time.o findiff.o findiff2d.o stencils.o stencils2d.o misc.o plt.o blkdat.o nopltlib.o
+$COMP -o nfd -static main.o model.o time.o findiff.o findiff2d.o stencils.o stencils2d.o misc.o plt.o blkdat.o nopltlib.o
 cp nfd ../.
