@@ -186,5 +186,6 @@ if doPlot>0;
         caxis(cax)
     end
     subplot(2,1,2);plot(omega/(2*pi),Y,'k-',[1 1].*omega_peak/(2*pi),[0 1].*max(Y),'r-');
+    drawnow;
     
 end
