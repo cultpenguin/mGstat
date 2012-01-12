@@ -172,7 +172,7 @@ end
 
 %% NORMALIZE SENSITIVITY KERNEL
 %disp(sprintf('BUURSINK : sum(kernel)=%g, L=%g',sum(kernel(:)), L))
-doNormalize=1
+doNormalize=1;
 if doNormalize==1
     kernel=L*kernel./sum(kernel(:));
 end
