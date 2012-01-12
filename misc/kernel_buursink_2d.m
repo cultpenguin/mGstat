@@ -107,7 +107,7 @@ if nargout>2
     L2_all=zeros(nz,nx);
 end
 for i=1:nz
-    %progress_txt([i],[nz],'Z',0)
+    % progress_txt([i],[nz],'Z',0)
         
     for j=1:nx
         
@@ -116,7 +116,7 @@ for i=1:nz
         if useEik==0
             L1=dx*sqrt((trn(1)-j)^2+(trn(2)-i)^2);
             L2=dx*sqrt((j-rec(1))^2+(i-rec(2))^2);           
-        elseif useEik==1           
+        elseif useEik==1                       
             L1 = eikonal_raylength(x,z,model,S,P,tS);
             L2 = eikonal_raylength(x,z,model,R,P,tR);
         else
@@ -137,8 +137,8 @@ for i=1:nz
         %B=trapz(omega.^2.*Y, omega);
         %kernel(i,j)=(model(i,j)*2*pi).^(-1)*(L/(L1*L2)) * (A/B);
         
-        if (sum(abs(P-S))==0)|(sum(abs(P-R))==0)
-           kernel(i,j)=0;
+        if (sum(abs(P-S))==0)|(sum(abs(P-R))==0)                      
+            kernel(i,j)=0;
         end
         
     end
@@ -150,16 +150,32 @@ for i=1:nz
         drawnow;
     end
 end
+
+
 kernel=kernel.*dx*dx;
 
-% NEXT FEW LINE SHOULD BETTER HANDLE THE SENSITIVITY AT THE SOURCE AND
+%% NEXT FEW LINE SHOULD BETTER HANDLE THE SENSITIVITY AT THE SOURCE AND
 % RECEIVER LOCATIONS
 pos=find(isnan(kernel)>0);
 pos=find(isinf(kernel)>0);
-kernel(pos)=0;
+for i=1:length(pos);
+    [iz,ix]=ind2sub([nz,nx],pos(i));
+    try
+        % USE AVERAGE AROUND SINGULAR POINT
+        kernel(iz,ix)=(kernel(iz,ix-1)+kernel(iz,ix+1))/2;
+    catch
+        kernel(iz,ix)=0;
+    end
+    
+end
 
-%kernel=L*kernel./sum(kernel(:));
 
+%% NORMALIZE SENSITIVITY KERNEL
+%disp(sprintf('BUURSINK : sum(kernel)=%g, L=%g',sum(kernel(:)), L))
+doNormalize=1
+if doNormalize==1
+    kernel=L*kernel./sum(kernel(:));
+end
 
 if doPlot>0;
     figure_focus(1);
