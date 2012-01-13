@@ -137,9 +137,9 @@ for i=1:nz
         %B=trapz(omega.^2.*Y, omega);
         %kernel(i,j)=(model(i,j)*2*pi).^(-1)*(L/(L1*L2)) * (A/B);
         
-        if (sum(abs(P-S))==0)|(sum(abs(P-R))==0)                      
-            kernel(i,j)=0;
-        end
+        %if (sum(abs(P-S))==0)|(sum(abs(P-R))==0)                      
+            %kernel(i,j)=0;
+        %end
         
     end
     if doPlot>1
@@ -163,7 +163,7 @@ for i=1:length(pos);
     try
         % USE AVERAGE AROUND SINGULAR POINT
         kernel(iz,ix)=(kernel(iz,ix-1)+kernel(iz,ix+1))/2;
-    catch
+    catch       
         kernel(iz,ix)=0;
     end
     
