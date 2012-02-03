@@ -137,6 +137,9 @@ nx=length(x);
 nz=length(z);
 ns=size(Sources,1);
 
+%
+
+
 % WRITE VELOCITY FILE
 write_bin('vel.mod',V,1,'int16');
 
