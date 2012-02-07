@@ -1,115 +1,159 @@
-function out=FFT_MA_3D(ny,nx,nz,Nly,Nlx,Nlz,cell,h_min,h_max,h_z,gmean,gvar,it)
+% fft_ma_3d :
+% Call :
+%    [out,z,options,logL]=fft_ma_2d(x,y,z,Va,options)
+%
+%    x: array, ex : x=1:1:80:
+%    y: array, ex : y=1:1:50:
+%    z: array, ex : y=1:1:30:
+%    Va: variogram def, ex : Va="1 Sph (10,.4,30)";
+%
+%
+% "
+%   Ravalec, M.L. and Noetinger, B. and Hu, L.Y.},
+%   Mathematical Geology 32(6), 2000, pp 701-723
+%   The FFT moving average (FFT-MA) generator: An efficient numerical
+%   method for generating and conditioning Gaussian simulations
+% "
+%
+% Example:
+%  x=[1:1:50];y=1:1:80;z=1::30;
+%  Va='1  Sph(10,.25,30)';
+%  [out,z]=fft_ma_3d(x,y,z,Va);
 
-% The FFT-MA algorithm in 3D
-% Call: out=FFT_MA_3D(ny,nx,nz,Nly,Nlx,Nlz,cell,h_min,h_max,h_z,gmean,gvar,it)
-% it: 1) Spherical, 2) Exponential, 3) Gaussian
-% ny, nx, nz: Number of model parameters in the x, y, and z directions,
-% respectively
-% Nlx, Nly, Nlz: Extensions of the grid in the x, y, and z directions in 
-% order to avoid artefacts due to edge effects. Number of model parameters 
-% in the extension = Nlx*range_x/cell, where cell is the size of the cells 
-% and range_x is the range i the x-direction.
-% h_min, h_max, and h_z, are the ranges in the horizontal (x), vertical (y) and (z) direction.
-% gvar: Global variance
-% gmean: Global mean
+%
+% original (FFT_MA_2D) Knud S. Cordua (June 2009)
+% Thomas M. Hansen (September, 2009)
+% Jan Frydendall (April, 2011) Zero padding
 
-% Knud S. Cordua (June 2009)
+%
+function [out,z_rand,options,logL]=fft_ma_2d(x,y,z,Va,options)
 
-if nargin<14
-    lim=0;
-    r=0;
-end
-lim=lim/cell;
-h_max=h_max/cell;
-h_min=h_min/cell;
-h_z=h_z/cell;
-dx=cell;
+
+options.null='';
+if ~isstruct(Va);Va=deformat_variogram(Va);end
+if ~isfield(options,'gmean');options.gmean=0;end
+if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
+if ~isfield(options,'fac_x');options.fac_x=4;end
+if ~isfield(options,'fac_y');options.fac_y=4;end
+if ~isfield(options,'fac_<');options.fac_z=4;end
+
+org.nx=length(x);
+org.ny=length(y);
+org.nz=length(z);
+
+% ?
+if length(x)==1; x=[x x+.0001]; end
+if length(y)==1; y=[y y+.0001]; end
+if length(z)==1; z=[z z+.0001]; end
+
+
+nx=length(x);
+ny=length(y);
+nz=length(z);
 cell=1;
-Nx=nx;
-Ny=ny;
-Nz=nz;
-nx=nx+Nlx*ceil(h_max/cell);
-ny=ny+Nly*ceil(h_min/cell);
-nz=nz+Nlz*ceil(h_z/cell);
+if nx>1; dx=x(2)-x(1); cell=dx; else dx=1; end
+if ny>1; dy=y(2)-y(1); cell=dy; else dy=1; end
+if nz>1; dz=z(2)-z(1); cell=dz; else dz=1; end
 
-%if 2*h_min>cell*ny || 2*h_max>cell*nx || 2*h_z>cell*nz
-%    error('Warning: A range is too long - extend the grid size')
-%end
+nx_c=nx*options.fac_x;
+ny_c=ny*options.fac_y;
+nz_c=nz*options.fac_z;
 
-ang=0;
-if h_min>h_max
-    disp('Warning:')
-    disp('Choose h_min<=h_max because h_max is the direction of maximum continuity.')
-    disp('Use the input "ang" to change the direction of maximum continutiy')
+% COVARIANCE MODEL
+if (~isfield(options,'C'))&(~isfield(options,'fftC'));
+    x1=dx/2:dx:nx_c*dx-dx/2;
+    y1=dy/2:dy:ny_c*dy-dy/2;
+    z1=dz/2:dz:nz_c*dz-dz/2;
+    [X Y Z]=meshgrid(x1,y1,z1);
+    h_x=X-x1(ceil(nx_c/2));
+    h_y=Y-y1(ceil(ny_c/2));
+    h_z=Z-z1(ceil(nz_c/2));
+    C=precal_cov([0 0 0],[h_x(:) h_y(:) h_z(:)],Va);
+
+    options.C=reshape(C,ny_c,nx_c,nz_c);
+    
 end
 
-a_max=h_max;
-a_min=h_min;
-a_z=h_z;
-ang=ang*(pi/180); % Transform angle into radians
-gamma=a_min/a_max; % anistropy factor < 1 (=1 for isotropy)
-
-% Geometry:
-x=cell/2:cell:nx*cell-cell/2;
-y=cell/2:cell:ny*cell-cell/2;
-z=cell/2:cell:ny*cell-cell/2;
-[X Y Z]=meshgrid(x,y,z);
-
-h_x=X-x(ceil(length(x)/2));
-h_y=Y-y(ceil(length(y)/2));
-h_z=Z-z(ceil(length(z)/2));
-% Transform into rotated coordinates:
-h_min=h_x*cos(ang)-h_y*sin(ang);
-h_max=h_x*sin(ang)+h_y*cos(ang);
-h_zdir=h_z;
-% Rescale the ellipse:
-h_min_rs=h_min;
-h_max_rs=gamma*h_max;
-dist=sqrt(h_min_rs.^2+h_max_rs.^2+h_zdir.^2);
-if it==1
-    dist(find(dist>a_min))=a_min;
+if ~isfield(options,'fftC');
+    options.fftC=fftn(options.C);
+end
+% normal devaites
+if isfield(options,'z_rand')
+    z_rand=options.z_rand;
+else
+    z_rand=randn(ny_c,nx_c,nz_c);
+    %z_rand=gsingle(z_rand);
+    
 end
 
-if it==1 % Spherical
-    C=1-(1.5*(dist./a_min)-0.5*(dist./a_min).^3);
-elseif it==2 % Exponential
-    C=exp(-3*dist./a_min);
-elseif it==3 % Gaussian
-    C=exp(-3*dist.^2./a_min.^2);
-else % Ricker
-    dx=1;
-    t0=0;
-    dt=1.061394451537358e-010;
-    time=dist*dt;
-    f0=100*10^6;
-    C=(1-2*pi^2*f0^2*(time-t0).^2).*exp(-pi^2*f0^2*(time-t0).^2);
+%% RESIM
+if ~isfield(options,'resim_type');
+    options.resim_type=2;
 end
 
-% figure(1)
-% plot(C)
 
-%randn('seed',50)
+if isfield(options,'lim');
+    if options.resim_type==1;
+        % resom box_type
+        x0=dx.*(nx-nx_c)/2;
+        y0=dy.*(ny-ny_c)/2;
+        x0=0;y0=0;
+        options.wrap_around=1;
+        
+        if isfield(options,'pos');
+            [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
+        else
+            x0=dx*ceil(rand(1)*nx_c); y0=dy*ceil(rand(1)*ny_c);
+            %disp(sprintf('x0=%5g %5g  y0=%5g %5g',x0,nx_c*dx,y0,ny_c*dy))
+            %x0=cell*ceil(rand(1)*nx); y0=cell*ceil(rand(1)*ny);
+            options.pos=[x0 y0];
+            [options.used]=set_resim_data([1:nx_c]*dx,[1:ny_c]*dy,z_rand,options.lim,options.pos,options.wrap_around);
+            
+        end
+        ii=find(options.used==0);
+        z_rand_new=randn(size(z_rand(ii)));
+        z_rand(ii) = z_rand_new;
+    else     
+        % resim random locations        
+        
+        n_resim=options.lim(1);
+        if n_resim<=1
+            % use n_resim as a proportion of all random deviates
+            n_resim=n_resim.*prod(size(z_rand));
+        end
+        n_resim=ceil(n_resim);
+        
+        n_resim = min([n_resim prod(size(z_rand))]);
+        N_all=prod(size(z_rand));
+        % find random sample of size 'n_resim'
+        ii=randomsample(N_all,n_resim);
+                
+        z_rand_new=randn(size(z_rand(ii)));
+        z_rand(ii) = z_rand_new;
+    end
+end
+    
+z=z_rand;
 
-    z=sqrt(gvar)*randn(ny,nx,nz);
+%options.out1=reshape(real(ifft2(sqrt(cell*options.fftC).*fft2(z))),ny_c,nx_c);
+options.out1=reshape(real(ifftn(sqrt(options.fftC).*fftn(z))),ny_c,nx_c,nz_c);
+%options.out1_complex=reshape((ifftn(sqrt(options.fftC).*fftn(z))),ny_c,nx_c,nz_c);
+
+% prior likelihood
+logL = -.5*sum(z(:).^2);
 
 
-%for i=1:100
+out=options.out1(1:ny,1:nx,1:ny)+options.gmean;
+%out=options.out1(1:ny,1:nx).*sqrt(options.gvar)+options.gmean;
 
-    S=fftn(C);
-    Z=fftn(z);
-    G=sqrt(S);
-    out1=G.*Z;
-    out3=real(ifftn(out1));
-    out4=reshape(out3,ny,nx,nz);
-     
-%      out1=reshape(real(ifftn(sqrt(fftn(C)).*fftn(z))),ny,nx,nz);
-      out=out4(1:Ny,1:Nx,1:Nz)+gmean;
-      
-%      figure(20),subplot(1,2,1),imagesc(out),drawnow,title(sprintf('%i',i)),caxis([2.5 8.5])
-%      if i>1
-%          subplot(1,2,2),imagesc(out-out_old),axis image,caxis([-1 1])
-%      end
-%      out_old=out;
-%      pause
-% end
+if org.nx==1; out=out(:,1,:); end
+if org.ny==1; out=out(1,:,:); end
+if org.nz==1; out=out(:,:,1); end
+
+options.nx=nx;
+options.ny=ny;
+options.nz=nz;
+options.nx_c=nx_c;
+options.ny_c=ny_c;
+options.nz_c=nz_c;
 
