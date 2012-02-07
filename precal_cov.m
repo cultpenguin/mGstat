@@ -74,15 +74,13 @@ mgstat_verbose([mfilename,' : Setting up covariance'],2);
 
 gvar=sum([V.par1]);
 
-tic;
-t=toc;
 semiv=zeros(size(d));
 for iV=1:length(V)
     mgstat_verbose(sprintf('%s : semivar struc #%d',mfilename,iV),2)
 
     for i=1:n_est1;
         % progress bar
-        if ((t>0)&(options.verbose>0))
+        if ((options.verbose>0))
             di=100;
             if (i/di)==round(i/di)
                 progress_txt([i iV],[n_est1 length(V)],sprintf('%s : ',mfilename),'Nested struture');

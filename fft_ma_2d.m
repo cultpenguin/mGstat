@@ -4,7 +4,7 @@
 %
 %    x: array, ex : x=1:1:80:
 %    y: array, ex : y=1:1:50:
-%    Va: variogram def, ex : Va="1 Sph (10,.4,30)";
+%    Va: variogram def, ex : Va="1 Sph (10,30,4)";
 %
 %
 % "
@@ -22,7 +22,7 @@
 %
 %
 %  x=[1:1:50];y=1:1:80;
-%  Va='1  Sph(10,.25,30)';
+%  Va='1  Sph(10,30,.25)';
 %  [out1,z_rand]=fft_ma_2d(x,y,Va);
 %  ii=300:350;
 %  z_rand(ii)=randn(size(z_rand(ii)));
@@ -32,6 +32,7 @@
 %  subplot(1,3,2),imagesc(x,y,[out2]);caxis(cax);colorbar;axis image
 %  subplot(1,3,3),imagesc(x,y,[out2-out1]);colorbar;axis image
 %
+% Using proper semivariogram anisotropy specification (Feb, 2012)
 % original (FFT_MA_2D) Knud S. Cordua (June 2009)
 % Thomas M. Hansen (September, 2009)
 % Jan Frydendall (April, 2011) Zero padding
@@ -66,57 +67,69 @@ if ny>1; dy=y(2)-y(1); cell=dy; else dy=1; end
 
 ny_c=ny*options.fac_y;
 nx_c=nx*options.fac_x;
-
+%%
 % COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
+    
+    
     options.C=zeros(ny_c,nx_c);
     
-    for iv=1:length(Va);
-        
-        % GET HMAX AND HMIN FROM SEMIVARIOGRAM MODEL
-        % ONLY WORKS FOR ONE SEMIVRAIOHGRAM MODEL !!
-        par2=Va(iv).par2;
-        h_max=par2(1);
-        if length(par2)>1
-            h_min=h_max*par2(2);
-            ang=par2(3);
-        else
-            h_min=h_max;
-            ang=0;
+    iM=1;
+    
+    if iM==1
+        x1=dx/2:dx:nx_c*dx-dx/2;
+        y1=dy/2:dy:ny_c*dy-dy/2;
+        [X Y]=meshgrid(x1,y1);
+        h_x=X-x1(ceil(nx_c/2));
+        h_y=Y-y1(ceil(ny_c/2));
+        C=precal_cov([0 0],[h_x(:) h_y(:)],Va);
+        options.C=reshape(C,ny_c,nx_c);
+    else
+        for iv=1:length(Va);
+            
+            % GET HMAX AND HMIN FROM SEMIVARIOGRAM MODEL
+            % ONLY WORKS FOR ONE SEMIVRAIOHGRAM MODEL !!
+            par2=Va(iv).par2;
+            h_max=par2(1);
+            if length(par2)>1
+                h_min=h_max*par2(3);
+                ang=par2(2);
+            else
+                h_min=h_max;
+                ang=0;
+            end
+            try
+                aniso=Va(iv).par2(3);
+            catch
+                aniso=1;
+            end
+            ang1=ang*(pi/180);
+            
+            
+            x=dx/2:dx:nx_c*dx-dx/2;
+            y=dy/2:dy:ny_c*dy-dy/2;
+            [X Y]=meshgrid(x,y);
+            h_x=X-x(ceil(nx_c/2));
+            h_y=Y-y(ceil(ny_c/2));
+            
+            % Transform into rotated coordinates:
+            h_min=h_x*cos(ang1)-h_y*sin(ang1);
+            h_max=h_x*sin(ang1)+h_y*cos(ang1);
+            
+            % Rescale the ellipse:
+            h_min_rs=h_min;
+            h_max_rs=aniso*h_max;
+            dist=sqrt(h_min_rs.^2+h_max_rs.^2);
+            
+            % calc semiavriogram
+            Va2=Va(iv);
+            try
+                Va2.par2=Va(iv).par2(1)*Va(iv).par2(3);
+            end
+            options.C=options.C+semivar_synth(Va2,dist);
         end
-        try
-            aniso=Va(iv).par2(2);
-        catch
-            aniso=1;
-        end
-        ang1=ang*(pi/180);
-        
-        
-        %x=cell/2:cell:nx_c*cell-cell/2;
-        %y=cell/2:cell:ny_c*cell-cell/2;
-        x=dx/2:dx:nx_c*dx-dx/2;
-        y=dy/2:dy:ny_c*dy-dy/2;
-        [X Y]=meshgrid(x,y);
-        h_x=X-x(ceil(nx_c/2));
-        h_y=Y-y(ceil(ny_c/2));
-        
-        % Transform into rotated coordinates:
-        h_min=h_x*cos(ang1)-h_y*sin(ang1);
-        h_max=h_x*sin(ang1)+h_y*cos(ang1);
-        
-        % Rescale the ellipse:
-        h_min_rs=h_min;
-        h_max_rs=aniso*h_max;
-        dist=sqrt(h_min_rs.^2+h_max_rs.^2);
-        
-        % calc semiavriogram
-        Va2=Va(iv);
-        try
-            Va2.par2=Va(iv).par2(1)*Va(iv).par2(2);
-        end
-        options.C=options.C+semivar_synth(Va2,dist);        
+        options.C=options.gvar-options.C;
     end
-    options.C=options.gvar-options.C;
 end
 
 if ~isfield(options,'fftC');
@@ -130,6 +143,13 @@ else
     %z_rand=gsingle(z_rand);
     
 end
+%keyboard
+%%
+%profile on
+%CC=precal_cov([h_x(:) h_y(:)],[0 0],Va);CC=reshape(CC,80,50);
+%CC=precal_cov([0 0],[h_x(:) h_y(:)],Va);CC=reshape(CC,80,50);
+%profile rep[ort
+%profile off
 
 %% RESIM
 if ~isfield(options,'resim_type');

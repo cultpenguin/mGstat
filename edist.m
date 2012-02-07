@@ -11,8 +11,7 @@
 % isorange : [1] means that transform simply lists the range in
 % each dimensions, and that no rotation is performed
 
-function D=edist(p1,p2,transform,isorange)
-
+function [D,dp]=edist(p1,p2,transform,isorange)
 if nargin<4
     isorange=0;
 end
@@ -45,11 +44,18 @@ else
     
     % 2D COORDINATE TRANSFORMATION
     if (nargin>2)&(n_dim==2);
-        mgstat_verbose(sprintf('%s : 2D coordinate transform'),0);
+        %mgstat_verbose(sprintf('%s : 2D coordinate transform'),0);
         if length(transform)>1
-            rescale=transform([1,3]);
-            rotate=transform(2)*pi/180;
             
+            if length(transform)==6
+                t=transform;
+                transform=zeros(1,3);
+                transform(1:3)=t([1,2,5]);
+            end
+            rescale=transform([1,3]);
+            r1=rescale(1);
+            r2=rescale(1)*rescale(2);
+            rotate=transform(2)*pi/180;
             dp=dp';
             
             RotMat=[cos(rotate) -sin(rotate);sin(rotate) cos(rotate)];
@@ -62,19 +68,63 @@ else
             dp=dp./rescale(2);
             
             dp=dp';
+            
+           
         end
     end
     
     % 3D COORDINATE TRANSFORMATION
     if (nargin>2)&(n_dim==3);
-        mgstat_verbose(sprintf('%s : 3D anisotropy not yet implemented',mfilename),-1)
         % NOT YET IMPLEMENTED, SEE GSLIB BOOK
+        
+        if length(transform)>1 % length(trasnform)=1 --> isotropic
+        
+            if length(transform)==3;
+                % 2D Anisotropy only;
+                t=transform;
+                transform=zeros(1,6);
+                transform([1,2,5])=t;
+                transform(6)=1;
+            end
+            rescale=transform([1,5,6]);
+            r1=rescale(1);
+            r2=rescale(1)*rescale(2);
+            r3=rescale(1)*rescale(3);
+            a=transform(2:4)*pi/180;
+            
+            % SGEMS DEF
+            %T1 = [ 1 0 0 ; 0 cos(a(3)) sin(a(3)) ; 0 -sin(a(3)) cos(a(3))];
+            %T2 = [ sin(a(2)) 0 -cos(a(2)) ; 0 1 0 ; cos(a(2)) 0 sin(a(2))];
+            %T3 = [ sin(a(1)) -cos(a(1)) 0 ; cos(a(1)) sin(a(1)) 0 ; 0 0 1];
+            
+            % WIKIPEDIA
+            T1 = [ 1 0 0 ; 0 cos(a(3)) -sin(a(3)) ; 0 sin(a(3)) cos(a(3))];
+            T2 = [ cos(a(2)) 0 sin(a(2)) ; 0 1 0 ; -sin(a(2)) 0 cos(a(2))];
+            T3 = [ cos(a(1)) -sin(a(1)) 0 ; sin(a(1)) cos(a(1)) 0 ; 0 0 1];
+            
+            RotMat=T1*T2*T3;
+            
+            RescaleMat=zeros(3,3);
+            %RescaleMat(1,1)=1;
+            %RescaleMat(2,2)=rescale(2);
+            %RescaleMat(3,3)=rescale(3);
+            RescaleMat(1,1)=r1;
+            RescaleMat(2,2)=r2;
+            RescaleMat(3,3)=r3;
+            
+            
+            dp=(RescaleMat*RotMat*dp')';
+            
+            
+        end
+        
     end
 end
 
-
 if n_dim==1
     D=abs(dp);
+elseif n_dim==2
+    D=sqrt(dp(:,1).^2+dp(:,2).^2);
 else
     D=transpose(sqrt(sum(transpose(dp.^2))));
 end
