@@ -105,6 +105,6 @@ for iV=1:length(V)
     end
     
     V(iV).par2=V(iV).par2(1);
-    semiv = semiv + semivar_synth(V(iV),d,0);      
+    semiv = semiv + semivar_synth(V(iV),d,0);
 end
 cov=gvar-semiv;

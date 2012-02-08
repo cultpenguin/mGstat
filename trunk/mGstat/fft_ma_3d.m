@@ -26,7 +26,7 @@
 % Jan Frydendall (April, 2011) Zero padding
 
 %
-function [out,z_rand,options,logL]=fft_ma_2d(x,y,z,Va,options)
+function [out,z_rand,options,logL]=fft_ma_3d(x,y,z,Va,options)
 
 
 options.null='';
@@ -35,7 +35,7 @@ if ~isfield(options,'gmean');options.gmean=0;end
 if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
 if ~isfield(options,'fac_x');options.fac_x=4;end
 if ~isfield(options,'fac_y');options.fac_y=4;end
-if ~isfield(options,'fac_<');options.fac_z=4;end
+if ~isfield(options,'fac_z');options.fac_z=4;end
 
 org.nx=length(x);
 org.ny=length(y);
@@ -68,10 +68,9 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     h_x=X-x1(ceil(nx_c/2));
     h_y=Y-y1(ceil(ny_c/2));
     h_z=Z-z1(ceil(nz_c/2));
-    C=precal_cov([0 0 0],[h_x(:) h_y(:) h_z(:)],Va);
-
-    options.C=reshape(C,ny_c,nx_c,nz_c);
     
+    C=precal_cov([0 0 0],[h_x(:) h_y(:) h_z(:)],Va);
+    options.C=reshape(C,ny_c,nx_c,nz_c);
 end
 
 if ~isfield(options,'fftC');
@@ -135,16 +134,15 @@ end
     
 z=z_rand;
 
-%options.out1=reshape(real(ifft2(sqrt(cell*options.fftC).*fft2(z))),ny_c,nx_c);
-options.out1=reshape(real(ifftn(sqrt(options.fftC).*fftn(z))),ny_c,nx_c,nz_c);
-%options.out1_complex=reshape((ifftn(sqrt(options.fftC).*fftn(z))),ny_c,nx_c,nz_c);
+%out=reshape(real(ifft2(sqrt(cell*options.fftC).*fft2(z))),ny_c,nx_c);
+out=reshape(real(ifftn(sqrt(options.fftC).*fftn(z))),ny_c,nx_c,nz_c);
+%out1_complex=reshape((ifftn(sqrt(options.fftC).*fftn(z))),ny_c,nx_c,nz_c);
 
 % prior likelihood
 logL = -.5*sum(z(:).^2);
 
 
-out=options.out1(1:ny,1:nx,1:ny)+options.gmean;
-%out=options.out1(1:ny,1:nx).*sqrt(options.gvar)+options.gmean;
+out=out(1:ny,1:nx,1:nz)+options.gmean;
 
 if org.nx==1; out=out(:,1,:); end
 if org.ny==1; out=out(1,:,:); end
