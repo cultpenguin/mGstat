@@ -12,6 +12,7 @@
 % each dimensions, and that no rotation is performed
 
 function [D,dp]=edist(p1,p2,transform,isorange)
+
 if nargin<4
     isorange=0;
 end
@@ -22,7 +23,7 @@ end
 
 n_dim=size(p1,2);
 
-dp=(p1-p2);
+dp=(p2-p1);
 if isorange==1
     %mgstat_verbose(sprintf('%s : isorange',mfilename))
     % ONLY SCCALING,edit no transformation
@@ -56,21 +57,17 @@ else
             r1=rescale(1);
             r2=rescale(1)*rescale(2);
             rotate=transform(2)*pi/180;
-            dp=dp';
             
+            % ROTATE
             RotMat=[cos(rotate) -sin(rotate);sin(rotate) cos(rotate)];
-            RescaleMat=eye(length(rescale));
-            RescaleMat(1,1)=1;
-            RescaleMat(2,2)=rescale(2);
+            dp=(RotMat*dp')';
             
-            %dp=RotMat*dp;%dp=RescaleMat*dp;
-            dp=RescaleMat*RotMat*dp;
-            dp=dp./rescale(2);
+            % SCALE
+            dp(:,2)=dp(:,2)./1;
+            dp(:,1)=dp(:,1)./rescale(2);
             
-            dp=dp';
-            
-           
         end
+        
     end
     
     % 3D COORDINATE TRANSFORMATION
@@ -87,9 +84,6 @@ else
                 transform(6)=1;
             end
             rescale=transform([1,5,6]);
-            r1=rescale(1);
-            r2=rescale(1)*rescale(2);
-            r3=rescale(1)*rescale(3);
             a=transform(2:4)*pi/180;
             
             % SGEMS DEF
@@ -104,18 +98,14 @@ else
             
             RotMat=T1*T2*T3;
             
-            RescaleMat=zeros(3,3);
-            %RescaleMat(1,1)=1;
-            %RescaleMat(2,2)=rescale(2);
-            %RescaleMat(3,3)=rescale(3);
-            RescaleMat(1,1)=r1;
-            RescaleMat(2,2)=r2;
-            RescaleMat(3,3)=r3;
+            % ROTATE
+            dp=(RotMat*dp')';
             
-            
-            dp=(RescaleMat*RotMat*dp')';
-            
-            
+            % SCALE
+            dp(:,2)=dp(:,2)./1;
+            dp(:,1)=dp(:,1)./rescale(2);
+            dp(:,3)=dp(:,3)./rescale(3);
+          
         end
         
     end
