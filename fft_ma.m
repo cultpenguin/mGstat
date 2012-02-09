@@ -37,6 +37,7 @@ if nargin>1,
         Va=y;
         % 1D
         if nargin==3, options=z; else; options.null='';end
+        Va=y;
         [out,z_rand,options,logL]=fft_ma_2d(x,Va,options);
         return
     end
@@ -44,9 +45,9 @@ end
 
 if nargin>2,
     if (isstr(z)|isstruct(z))
-        % 2D
+        % 2D 
+        if nargin==4,options=Va; else; options.null='';end
         Va=z;
-        if nargin==4, options=Va; else; options.null='';end
         [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options);
         return
     end
@@ -54,3 +55,4 @@ end
 
 options.null='';
 [out,z_rand,options,logL]=fft_ma_3d(x,y,z,Va,options);
+out=squeeze(out);
