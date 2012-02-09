@@ -19,17 +19,20 @@
 %  [out,z]=fft_ma_1d(x,Va);
 %  plot(x,out);colorbar
 %
+% %%
+%  x=[1:1:200];
+%  Va='1 Sph(40)';
+%  [out,z_rand,options]=fft_ma_1d(x,Va);
+%  plot(x,out,'r-');
+%  hold on;p_c=plot(x,out,'k-');hold off
+%  axis([min(x) max(x) -4 4])
+%  options.lim=2;
+%  for i=1:500;
+%     options.z_rand=z_rand;
+%    [out,z_rand,options]=fft_ma_1d(x,Va,options);
+%    set(p_c,'Ydata',out);drawnow;pause(.01)
+%  end
 %
-%  x=[1:1:50];
-%  Va='1  Sph(10,.25,30)';
-%  [out1,z_rand]=fft_ma_1d(x,Va);
-%  ii=300:350;
-%  z_rand(ii)=randn(size(z_rand(ii)));
-%  options.z_rand=z_rand;
-%  [out2,z_rand2]=fft_ma_1(x,Va,options);
-%  subplot(1,3,1),plot(x,[out1]);
-%  subplot(1,3,2),plot(x,[out2]);
-%  subplot(1,3,3),plot(x,[out2-out1]);
 %
 % original (FFT_MA_2D) Knud S. Cordua (June 2009)
 % Thomas M. Hansen (September, 2009)
@@ -49,7 +52,7 @@ if ~isfield(options,'fac_x');options.fac_x=2;end
 org.nx=length(x);
 
 nx=length(x);
-dx=x(2)-x(1); cell=dx; 
+dx=x(2)-x(1); cell=dx;
 
 nx_c=nx*options.fac_x;
 
@@ -95,7 +98,7 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
         try
             Va2.par2=Va(iv).par2(1)*Va(iv).par2(2);
         end
-        options.C=options.C+semivar_synth(Va2,dist);        
+        options.C=options.C+semivar_synth(Va2,dist);
     end
     options.C=options.gvar-options.C;
 end
@@ -109,33 +112,58 @@ end
 if isfield(options,'z_rand')
     z_rand=options.z_rand;
 else
-    z_rand=randn(1,nx_c);    
+    z_rand=randn(1,nx_c);
 end
 
+
+%% RESIM
+if ~isfield(options,'resim_type');
+    options.resim_type=2;
+end
 if isfield(options,'lim');
-    % Sequential Gibbs Resimulation
-    x0=dx.*(nx-nx_c)/2;
-    x0=0;y0=0;
-    options.wrap_around=1;
-    if isfield(options,'pos');
-        [options.used]=set_resim_data(x,0,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
+    if options.resim_type==1;
+        % Sequential Gibbs Resimulation
+        x0=dx.*(nx-nx_c)/2;
+        x0=0;y0=0;
+        options.wrap_around=1;
+        if isfield(options,'pos');
+            [options.used]=set_resim_data(x,0,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
+        else
+            x0=dx*ceil(rand(1)*nx_c);
+            options.pos=[x0 0];
+            [options.used]=set_resim_data([1:nx_c]*dx,0,z_rand,options.lim,options.pos,options.wrap_around);
+            
+        end
+        ii=find(options.used==0);
+        %if isempty(ii); keyboard;end
+        z_rand_new=randn(size(z_rand(ii)));
+        z_rand(ii) = z_rand_new;
     else
-        x0=dx*ceil(rand(1)*nx_c);
-        options.pos=[x0 0];
-        [options.used]=set_resim_data([1:nx_c]*dx,0,z_rand,options.lim,options.pos,options.wrap_around);
+        % resim random locations
         
+        n_resim=options.lim(1);
+        if n_resim<=1
+            % use n_resim as a proportion of all random deviates
+            n_resim=n_resim.*prod(size(z_rand));
+        end
+        n_resim=ceil(n_resim);
+        
+        n_resim = min([n_resim prod(size(z_rand))]);
+        N_all=prod(size(z_rand));
+        % find random sample of size 'n_resim'
+        ii=randomsample(N_all,n_resim);
+        
+        z_rand_new=randn(size(z_rand(ii)));
+        z_rand(ii) = z_rand_new;
     end
-    ii=find(options.used==0);
-    %if isempty(ii); keyboard;end
-    z_rand_new=randn(size(z_rand(ii)));
-    z_rand(ii) = z_rand_new;
+    
 end
 
 
 z=z_rand;
-options.out1=reshape(real(ifft2(sqrt(options.fftC).*fft2(z))),1,nx_c);
+out=reshape(real(ifft2(sqrt(options.fftC).*fft2(z))),1,nx_c);
 
-out=options.out1(1,1:nx)+options.gmean;
+out=out(1,1:nx)+options.gmean;
 
 return
 

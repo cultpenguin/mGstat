@@ -4,8 +4,10 @@
 %
 %    x: array, ex : x=1:1:80:
 %    y: array, ex : y=1:1:50:
-%    z: array, ex : y=1:1:30:
-%    Va: variogram def, ex : Va="1 Sph (10,.4,30)";
+%    z: array, ex : z=1:1:30:
+%    Va: variogram def, ex : Va="1 Sph (10)";
+%    Va: variogram def, ex : Va="1 Sph (10,30,.5)";
+%    Va: variogram def, ex : Va="1 Sph (10,ang1,ang2,ang3,aniso_1,aniso_2)";
 %
 %
 % "
@@ -15,11 +17,27 @@
 %   method for generating and conditioning Gaussian simulations
 % "
 %
-% Example:
-%  x=[1:1:50];y=1:1:80;z=1::30;
-%  Va='1  Sph(10,.25,30)';
-%  [out,z]=fft_ma_3d(x,y,z,Va);
-
+% Examples:
+% % 3D Gaussian simulation
+%  x=[1:1:50];y=1:1:80;z=1:30;
+%  Va='1  Sph(10,30,.25)';
+%  [m,z]=fft_ma_3d(x,y,z,Va);
+%
+%
+% % Sequential Gibbs with 3D FFT_MA
+% x=[1:1:50];y=1:1:55;z=1:45;
+% options.fac_x=2;options.fac_y=2;options.fac_z=2;
+% Va='.001 Nug(0) + 1 Gau(40,30,.25)';
+% [m,z_rand,options]=fft_ma_3d(x,y,z,Va,options);
+% options.lim=.1;
+% for i=1:6;
+%    options.z_rand=z_rand;
+%    [m_new,z_rand,options]=fft_ma_3d(x,y,z,Va,options);
+%    subplot(2,3,i);
+%    isosurface(m_new,.6);isosurface(m_new,0);isosurface(m_new,-.6)
+%    view([30 40 10]);axis image
+% end
+%
 %
 % original (FFT_MA_2D) Knud S. Cordua (June 2009)
 % Thomas M. Hansen (September, 2009)
@@ -34,8 +52,8 @@ if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'gmean');options.gmean=0;end
 if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
 if ~isfield(options,'fac_x');options.fac_x=4;end
-if ~isfield(options,'fac_y');options.fac_y=4;end
-if ~isfield(options,'fac_z');options.fac_z=4;end
+if ~isfield(options,'fac_y');options.fac_y=options.fac_x;end
+if ~isfield(options,'fac_z');options.fac_z=options.fac_y;end
 
 org.nx=length(x);
 org.ny=length(y);
@@ -90,15 +108,16 @@ if ~isfield(options,'resim_type');
     options.resim_type=2;
 end
 
-
 if isfield(options,'lim');
     if options.resim_type==1;
+        disp(sprintf('%s : UPDATE TO WORK IN 3D',mfilename))
         % resom box_type
         x0=dx.*(nx-nx_c)/2;
         y0=dy.*(ny-ny_c)/2;
-        x0=0;y0=0;
+        z0=dz.*(ny-nz_c)/2;
+        x0=0;y0=0;z0=0;
         options.wrap_around=1;
-        
+                
         if isfield(options,'pos');
             [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
         else
@@ -133,10 +152,13 @@ if isfield(options,'lim');
 end
     
 z=z_rand;
+%fftw('planner', 'hybrid');
+fftw('planner', 'exhaustive');
 
-%out=reshape(real(ifft2(sqrt(cell*options.fftC).*fft2(z))),ny_c,nx_c);
-out=reshape(real(ifftn(sqrt(options.fftC).*fftn(z))),ny_c,nx_c,nz_c);
-%out1_complex=reshape((ifftn(sqrt(options.fftC).*fftn(z))),ny_c,nx_c,nz_c);
+%fn=fftn(z);
+%out=real(ifftn(sqrt(options.fftC).*fn));
+out=real(ifftn(sqrt(options.fftC).*fftn(z)));
+out=reshape(out,ny_c,nx_c,nz_c);
 
 % prior likelihood
 logL = -.5*sum(z(:).^2);

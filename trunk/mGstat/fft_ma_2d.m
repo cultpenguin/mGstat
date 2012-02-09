@@ -44,13 +44,12 @@
 %
 function [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options)
 
-
 options.null='';
 if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'gmean');options.gmean=0;end
 if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
 if ~isfield(options,'fac_x');options.fac_x=4;end
-if ~isfield(options,'fac_y');options.fac_y=4;end
+if ~isfield(options,'fac_y');options.fac_y=options.fac_x;end
 
 org.nx=length(x);
 org.ny=length(y);
@@ -143,19 +142,11 @@ else
     %z_rand=gsingle(z_rand);
     
 end
-%keyboard
-%%
-%profile on
-%CC=precal_cov([h_x(:) h_y(:)],[0 0],Va);CC=reshape(CC,80,50);
-%CC=precal_cov([0 0],[h_x(:) h_y(:)],Va);CC=reshape(CC,80,50);
-%profile rep[ort
-%profile off
 
 %% RESIM
 if ~isfield(options,'resim_type');
     options.resim_type=2;
 end
-
 
 if isfield(options,'lim');
     if options.resim_type==1;
@@ -199,15 +190,14 @@ if isfield(options,'lim');
 end
     
 z=z_rand;
-%options.out1=reshape(real(ifft2(sqrt(cell*options.fftC).*fft2(z))),ny_c,nx_c);
-options.out1=reshape(real(ifft2(sqrt(options.fftC).*fft2(z))),ny_c,nx_c);
-options.out1_complex=reshape((ifft2(sqrt(options.fftC).*fft2(z))),ny_c,nx_c);
+out=reshape(real(ifft2(sqrt(options.fftC).*fft2(z))),ny_c,nx_c);
+out1_complex=reshape((ifft2(sqrt(options.fftC).*fft2(z))),ny_c,nx_c);
 
 % prior likelihood
 logL = -.5*sum(z(:).^2);
 
 
-out=options.out1(1:ny,1:nx)+options.gmean;
+out=out(1:ny,1:nx)+options.gmean;
 %out=options.out1(1:ny,1:nx).*sqrt(options.gvar)+options.gmean;
 
 if org.nx==1; out=out(:,1); end
