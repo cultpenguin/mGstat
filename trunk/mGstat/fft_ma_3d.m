@@ -1,6 +1,6 @@
 % fft_ma_3d :
 % Call :
-%    [out,z,options,logL]=fft_ma_2d(x,y,z,Va,options)
+%    [out,z,options,logL]=fft_ma_3d(x,y,z,Va,options)
 %
 %    x: array, ex : x=1:1:80:
 %    y: array, ex : y=1:1:50:
@@ -133,7 +133,6 @@ if isfield(options,'lim');
         z_rand(ii) = z_rand_new;
     else     
         % resim random locations        
-        
         n_resim=options.lim(1);
         if n_resim<=1
             % use n_resim as a proportion of all random deviates
@@ -146,7 +145,7 @@ if isfield(options,'lim');
         % find random sample of size 'n_resim'
         ii=randomsample(N_all,n_resim);
                 
-        z_rand_new=randn(size(z_rand(ii)));
+        z_rand_new=randn(size(z_rand(ii)));      
         z_rand(ii) = z_rand_new;
     end
 end
