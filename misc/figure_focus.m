@@ -24,7 +24,7 @@
 
 function f=figure_focus(fig_id,f);
 if nargin<1
-    fig_id=1;
+    f=gcf;return
 end
 if nargin<2
     %f(fig_id)=figure(fig_id);
