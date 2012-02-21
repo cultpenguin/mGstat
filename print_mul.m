@@ -1,83 +1,107 @@
 % print_mul : prints both EPS and PNG figures of current plot
 %
+% CALL :
+%    print_mul(fname,trim,transp,res,do_watermark);
+%    fname : filename
+%            ['test'] (def)
+%    trim  : trim PNG image (remove borders - requires mogrify)
+%            [0]: no trimminf (def)
+%            [1]: trimming
+%    trans : transparency of PNG image(requires mogrify)
+%            [0]: no transparency (def)
+%            [1]: white as transparent
+%            ['red']: red as transparent
+%    res : resolution 
+%            [300] (def)
+%    do_watermark : add fname as watermark to figure in lower right corner
+%            [0] no watermark(def)
+%            [1] watermark(def)
 %
-% Call :
-%   print_mul('test') : prints test.eps and test.png
+% Ex :
+%   print_mul('test') % prints test.eps, test.png, and test.pdf
+%   print_mul('test',1,1) % prints test.eps, test.png, and test.pdf
+%                         % test.png will be trimmed and white set as 
+%                         % transparent color
 %
-% In case 'mogrify' is available on the system
-% the png file will be trimmed and optionall 
-% A specific color will be made transparent :
+%   print_mul('test',0,'black',600,1) % prints test.eps, test.png, and test.pdf
+%                         % test.png will NOT be trimmed and BLACK set as 
+%                         % transparent color. resolution is set to 600dpi
+%                         % and a watermark is added
 %
-%   print_mul('test',red) 
-%       also creates trim_test.png
-%
-%   print_mul('test',1) 
-%       also creates trim_test.png, with transparent white color
-%
-%   print_mul('test','red') 
-%       also creates trim_test.png, with transparent red color
-%
-% /TMH 12/2005
+%% /TMH 2005-2012
 %
 
-function print_mul(fname,color,trim);
+function print_mul(fname,trim,transp,res,do_watermark);
 
-    %watermark(fname);
 
-    %print(gcf, '-dtiff', [fname,'.tiff'] )
-    print(gcf, '-dpdf','-r300', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
-    print(gcf, '-dpng','-r300', [fname,'.png'] )
-    print(gcf, '-depsc2','-r300', [fname,'.eps'] )
-    return
-    print(gcf, '-dpng', [fname,'.png'] )
-    print(gcf, '-depsc2', [fname,'.eps'] )
-    print(gcf, '-dpdf', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
-    print(gcf, '-dpng','-r300', [fname,'.png'] )
-    return
-    %print(gcf, '-dpng','-r72', [fname,'_low.png'] )
+if nargin<1, fname='test';end
+if nargin<4, res=300;end
+if nargin<2, trim=0;end
+if nargin<3, transp=1;end
+if nargin<5, do_watermark=0;end
 
-    %cmap=colormap;
-    %colormap gray;
+
+if do_watermark==1
+    watermark(fname);
+end
     
-    %print(gcf, '-depsc', [fname,'.eps'] )
-    print(gcf, '-dpdf','-r300', [fname,'.pdf'] ); % BAD RESOLUTION FOR IMAGE PLOTS
-    %colormap(cmap);
-    %print(gcf, '-depsc2', [fname,'_color.eps'] )
-    
-    saveas(gcf,[fname,'.fig'],'fig');
-    
-    
-    return
-    
-    [a,mogrifybin]=unix('which mogrify');
-    mogrifybin=mogrifybin(1:length(mogrifybin)-1);
-    fname_trim=sprintf('trim_%s',fname);
-    
-    if nargin<3
-        trim=0;
+P{1}.type='-dpng';P{1}.ext='.png';
+P{2}.type='-depsc';P{2}.ext='.eps';
+P{3}.type='-dpdf';P{3}.ext='.pdf';
+
+for i=1:length(P)
+    res_string=sprintf('-r%d',res);
+    %file_out=[fname,P{i}.ext];
+    file_out=[fname];
+    try
+        print(gcf, P{i}.type,res_string,file_out  )
+    catch
+        disp(sprintf('%s : failed to print %s as %s',mfilename,fname,P{i}.ext))
     end
-    
-    if (trim==0);
-        return
-    end
-    
-    if exist(mogrifybin)==2,
-        
-        system(sprintf('cp %s.png %s.png',fname,fname_trim));    
-        if nargin==1
-            system(sprintf('%s -trim %s.png',mogrifybin,fname_trim));
-            
-        else
-            if isnumeric(color)
-                if color==1;
-                    color='white';
-                else
-                    return
-                end
-            end
-            
-            system(sprintf('%s -trim -transparent %s %s.png',mogrifybin,color,fname_trim));
-        end
+end
+
+
+saveas(gcf,[fname,'.fig'],'fig');
+
+
+% TRIM IMAGE USING MOGRIFY
+
+if (trim==1)|(transp~=0)
+    if isunix
+        [a,mogrifybin]=unix('which mogrify');
+        mogrifybin=mogrifybin(1:length(mogrifybin)-1);
+    else
+        mogrifybin='c:\cygwin\bin\mogrify.exe';
+        %disp(sprintf('%s : trimming only supported on Unix',mfilename))
     end
     
     
+    
+  
+  % TRANSPAREMCY
+  if isstr(transp)
+      transp_cmd=['-transparent ',transp];
+  else
+      if transp==1
+          transp_cmd=['-transparent white'];
+      else
+          transp_cmd='';
+      end
+  end
+  
+  if trim==1;
+      trim_cmd='-trim';
+  else
+      trim_cmd='';
+  end
+  
+  
+  % MOGRIFY PNG FILE
+  if exist(mogrifybin,'file')
+        cmd=sprintf('%s %s %s %s.png',mogrifybin,trim_cmd,transp_cmd,fname);
+        [status,result]=system(cmd);
+        if status~=0; disp(sprintf('%s : %s',mfilename,result));end
+    else
+        disp(sprintf('%s : MOGRIFY binary not found',mfilename))
+    end
+end
