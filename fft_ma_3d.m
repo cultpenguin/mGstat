@@ -92,7 +92,9 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
 end
 
 if ~isfield(options,'fftC');
-    options.fftC=fftn(options.C);
+    [nc1,nc2,nc3]=size(options.C);
+    options.nf=2.^(ceil(log([nc1 nc2 nc3])/log(2)));
+    options.fftC=fftn(options.C,options.nf);
 end
 % normal devaites
 if isfield(options,'z_rand')
@@ -156,8 +158,8 @@ fftw('planner', 'exhaustive');
 
 %fn=fftn(z);
 %out=real(ifftn(sqrt(options.fftC).*fn));
-out=real(ifftn(sqrt(options.fftC).*fftn(z)));
-out=reshape(out,ny_c,nx_c,nz_c);
+out=real(ifftn(sqrt(options.fftC).*fftn(z,options.nf)));
+%out=reshape(out,ny_c,nx_c,nz_c);
 
 % prior likelihood
 logL = -.5*sum(z(:).^2);

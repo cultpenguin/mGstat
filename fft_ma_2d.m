@@ -76,11 +76,14 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     iM=1;
     
     if iM==1
-        x1=dx/2:dx:nx_c*dx-dx/2;
-        y1=dy/2:dy:ny_c*dy-dy/2;
+        %x1=dx/2:dx:nx_c*dx-dx/2;
+        %y1=dy/2:dy:ny_c*dy-dy/2;
+        x1=[0:1:(nx_c-1)].*dx;
+        y1=[0:1:(ny_c-1)].*dy;
         [X Y]=meshgrid(x1,y1);
-        h_x=X-x1(ceil(nx_c/2));
-        h_y=Y-y1(ceil(ny_c/2));
+        h_x=X-x1(ceil(nx_c/2)+1);
+        h_y=Y-y1(ceil(ny_c/2)+1);
+        
         C=precal_cov([0 0],[h_x(:) h_y(:)],Va);
         options.C=reshape(C,ny_c,nx_c);
     else
@@ -131,16 +134,20 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     end
 end
 
+figure_focus(3);imagesc((options.C))
+
 if ~isfield(options,'fftC');
-    options.fftC=fft2(options.C);
+    [nc1,nc2]=size(options.C);
+    options.nf=2.^(ceil(log([nc1 nc2])/log(2)));
+    options.fftC=fft2(options.C,options.nf(1),options.nf(2));
 end
+
 % normal devaites
 if isfield(options,'z_rand')
     z_rand=options.z_rand;
 else
     z_rand=randn(ny_c,nx_c);
     %z_rand=gsingle(z_rand);
-    
 end
 
 %% RESIM
@@ -190,8 +197,10 @@ if isfield(options,'lim');
 end
     
 z=z_rand;
-out=reshape(real(ifft2(sqrt(options.fftC).*fft2(z))),ny_c,nx_c);
-out1_complex=reshape((ifft2(sqrt(options.fftC).*fft2(z))),ny_c,nx_c);
+
+
+out=real(ifft2(sqrt(options.fftC).*fft2(z,options.nf(1),options.nf(2))));
+%out=real(ifft2(ifftshift( sqrt(fftshift(options.fftC)).*fftshift(fft2(z)) )));
 
 % prior likelihood
 logL = -.5*sum(z(:).^2);
