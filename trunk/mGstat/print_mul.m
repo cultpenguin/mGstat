@@ -39,20 +39,20 @@ if nargin<4, res=300;end
 if nargin<2, trim=0;end
 if nargin<3, transp=1;end
 if nargin<5, do_watermark=0;end
-
+save_fig=0;
 
 if do_watermark==1
     watermark(fname);
 end
     
 P{1}.type='-dpng';P{1}.ext='.png';
-P{2}.type='-depsc';P{2}.ext='.eps';
-P{3}.type='-dpdf';P{3}.ext='.pdf';
+%P{2}.type='-depsc';P{2}.ext='.eps';
+%P{3}.type='-dpdf';P{3}.ext='.pdf';
 
 for i=1:length(P)
     res_string=sprintf('-r%d',res);
-    %file_out=[fname,P{i}.ext];
-    file_out=[fname];
+    file_out=[fname,P{i}.ext];
+    %file_out=[fname,'];
     try
         print(gcf, P{i}.type,res_string,file_out  )
     catch
@@ -60,9 +60,9 @@ for i=1:length(P)
     end
 end
 
-
-saveas(gcf,[fname,'.fig'],'fig');
-
+if (save_fig==1)
+    saveas(gcf,[fname,'.fig'],'fig');
+end
 
 % TRIM IMAGE USING MOGRIFY
 
