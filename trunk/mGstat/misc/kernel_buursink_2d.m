@@ -47,7 +47,7 @@ if nargin<7 % no P_omega
 end
 
 if nargin<8
-    useEik=1;
+    useEik=0;
 end
 
 clipOmega=0;
@@ -95,8 +95,8 @@ if useEik==0
     tS=[];
     tR=[];
 else
-    tS=fast_fd_2d(x,z,model,S);
-    tR=fast_fd_2d(x,z,model,R);
+    tS=eikonal(x,z,0,model,S);
+    tR=eikonal(x,z,0,model,R);
     %tS=fast_fd_2d(x,z,model,S);
     %tR=fast_fd_2d(x,z,model,R);
     L = eikonal_raylength(x,z,model,S,R,tS);

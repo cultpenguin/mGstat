@@ -186,9 +186,6 @@ for i=1:size(Sources,1);
         end
     end
     
-    
-    
-    
     % READ OUTPUT
     try
         t=read_bin(fname,o.nx,o.nz,1,'uint16').*o.tmax./32767;
