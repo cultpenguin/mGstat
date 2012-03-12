@@ -44,7 +44,6 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
   z0=z(1);
   dx=x(2)-x(1);
   
-  
   ns=max([size(S,1) size(R,1)]);
   dx=x(2)-x(1);
   dy=y(1)-y(1);
@@ -52,6 +51,9 @@ function [K,RAY,Gk,Gray,tS,tR,raypath_mat,raylength_mat]=kernel_multiple(Vel,x,y
 
   tS=fast_fd_2d(x,y,Vel,S);
   tR=fast_fd_2d(x,y,Vel,R);
+  %itype=1;
+  %tS=eikonal(x,y,0,Vel,S,itype);
+  %tR=eikonal(x,y,0,Vel,R,itype);
 
   if (size(tS,3)==1)*(size(tR,3)>1)
       ttS=tR.*0;
