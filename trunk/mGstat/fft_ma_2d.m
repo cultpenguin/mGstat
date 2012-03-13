@@ -134,7 +134,7 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     end
 end
 
-figure_focus(3);imagesc((options.C))
+%figure_focus(3);imagesc((options.C))
 
 if ~isfield(options,'fftC');
     [nc1,nc2]=size(options.C);

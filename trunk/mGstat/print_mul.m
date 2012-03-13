@@ -41,6 +41,8 @@ if nargin<3, transp=1;end
 if nargin<5, do_watermark=0;end
 save_fig=0;
 
+fname=space2char(fname);
+
 if do_watermark==1
     watermark(fname);
 end
