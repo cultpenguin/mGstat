@@ -19,7 +19,7 @@ if isfield(S.dim,'x');
     try
         S.dim.dx=S.dim.x(2)-S.dim.x(1);
     catch
-        S.dim.dx=0;
+        S.dim.dx=1;
     end
 end
 if isfield(S.dim,'y');
@@ -29,7 +29,7 @@ if isfield(S.dim,'y');
     try
         S.dim.dy=S.dim.y(2)-S.dim.y(1);
     catch
-        S.dim.dy=0;
+        S.dim.dy=1;
     end
 end
 if isfield(S.dim,'z');
@@ -38,7 +38,7 @@ if isfield(S.dim,'z');
     try
         S.dim.dz=S.dim.z(2)-S.dim.z(1);
     catch
-        S.dim.dz=0;
+        S.dim.dz=1;
     end
 end
 

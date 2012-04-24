@@ -156,6 +156,7 @@ if ~isfield(options,'resim_type');
 end
 
 if isfield(options,'lim');
+    % RESIMULATION
     if options.resim_type==1;
         % resom box_type
         x0=dx.*(nx-nx_c)/2;

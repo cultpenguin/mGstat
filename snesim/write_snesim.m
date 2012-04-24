@@ -61,7 +61,9 @@ function obj=write_snesim(obj,parfile)
   fprintf(fid,'%d                    - %s\n',obj.max_cond,txt);
   fprintf(fid,'%d                    - %s\n',obj.max_data_per_oct,txt);
   fprintf(fid,'%d                    - %s\n',obj.max_data_events,txt);
+  txt='n_multiple_grids, n_multiple_grids_w_stree';
   fprintf(fid,'%d %d                    - %s\n',obj.n_mulgrids,obj.n_mulgrids_w_stree,txt);
+  txt='';
   fprintf(fid,'%s                    - %s\n',obj.fti.fname,txt);
   fprintf(fid,'%d %d %d                   - %s\n',obj.nxtr,obj.nytr,obj.nztr,txt);
   fprintf(fid,'%d                    - %s\n',obj.fti.col_var,txt);
