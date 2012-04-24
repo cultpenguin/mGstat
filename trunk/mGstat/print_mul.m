@@ -48,8 +48,8 @@ if do_watermark==1
 end
     
 P{1}.type='-dpng';P{1}.ext='.png';
-%P{2}.type='-depsc';P{2}.ext='.eps';
-%P{3}.type='-dpdf';P{3}.ext='.pdf';
+P{2}.type='-dpdf';P{2}.ext='.pdf';
+%P{3}.type='-depsc';P{3}.ext='.eps';
 
 for i=1:length(P)
     res_string=sprintf('-r%d',res);

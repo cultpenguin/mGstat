@@ -38,18 +38,22 @@ pos(2)=min(S.y)+rand(1)*(max(S.y)-min(S.y));
 pos(3)=min(S.z)+rand(1)*(max(S.z)-min(S.z));
 
 
-
 [xx,yy,zz]=meshgrid(S.x,S.y,S.z);
 
 if resim_type==2;
-    nn=prod(size(xx));
-    %ih=unique(ceil(nn*rand(1,lim(1)*nn)));
-    ih_inv=unique(ceil(nn*rand(1,ceil(lim(1)*nn))));
-    n_resim=ceil((1-lim(1))*nn);
-    ih=randomsample(nn,n_resim);
+    % RANDOM SELECTION OF MODEL PARAMETERS FOR RESIM
+    N=prod(size(xx));
+    n_resim=lim(1);
+    if n_resim<=1;
+        % if n_resim is less than one
+        % n_resim defines the fraction of N to use
+        n_resim=ceil(n_resim.*N);
+    end
+    n_cond=N-n_resim;
+    ih=randomsample(N,n_cond);
     d_cond=[xx(ih(:)) yy(ih(:)) zz(ih(:)) D(ih(:))];
-    %    disp(resim_type)
 else
+    % BOX TYPE SELECTION OF MODEL PARAMETERS FOR RESIM
     used=xx.*0+1;
     used(find( (abs(xx-pos(1))<lim(1)) & (abs(yy-pos(2))<lim(2)) ))=0;
     ih=find(used);
