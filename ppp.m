@@ -11,7 +11,7 @@
 %
 
   
-function ppp(lx,ly,Fsize,x1,y1),
+function ppp(lx,ly,Fsize,x1,y1,ax),
   
   
  if nargin==0,
@@ -20,15 +20,27 @@ function ppp(lx,ly,Fsize,x1,y1),
  end
 
 
- if nargin==2,
+ if nargin<3,
    Fsize=12;
-   x1=2;y1=2;
  end
- if nargin==3,
-   x1=2;y1=2;
- end
-  
-
- set(gca,'units','Centimeters')
- set(gca,'Position',[x1 y1 lx ly])
  
+ if nargin<4;
+     PS=get(gcf,'PaperSize');
+     x1=(PS(1)-lx)/2;
+     %x1=0;
+ end
+ if nargin<5;
+     PS=get(gcf,'PaperSize');
+     y1=(PS(2)-ly)/2;
+     %y1=0;
+ end
+
+ if nargin<6
+     ax=gca;
+ end
+ 
+ for cax=ax
+     set(cax,'FontSize',Fsize)
+     set(cax,'units','Centimeters')
+     set(cax,'Position',[x1 y1 lx ly])
+ end
