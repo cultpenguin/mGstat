@@ -38,7 +38,7 @@ end
 if nargin<7 % no P_omega
     f0=omega;
     dt=0.02;
-    Nt=1500;
+    Nt=1000;
     wl=rickerwavelet(f0,dt,Nt);
     [A,P,Psmooth,kx]=mspectrum(wl,dt);
     P_omega=A;
