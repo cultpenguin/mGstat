@@ -16,7 +16,11 @@
 %
 % Example:
 %  x=[1:1:50];y=1:1:80;
-%  Va='1  Sph(10,.25,30)';
+%  direction=30; % 30 degrees from north
+%  h_max=10;
+%  h_min=5;
+%  aniso=h_min/h_max;
+%  Va='1  Sph(h_max,direction,aniso)';
 %  [out,z]=fft_ma_2d(x,y,Va);
 %  imagesc(x,y,out);colorbar
 %

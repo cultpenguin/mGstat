@@ -108,6 +108,16 @@ if isfield(S,'f_obs');
     try;if isempty(S.XML.parameters.Hard_Data.property)
             S.XML.parameters.Hard_Data.property=O.property_name{1};
     end;end    
+
+    % CONDITIONAL DATA FOR E.G. SISIM
+    try;if isempty(S.XML.parameters.Hard_Data_Grid.value)
+            S.XML.parameters.Hard_Data_Grid.value=O.point_set;
+    end;end
+    try;if isempty(S.XML.parameters.Hard_Data_Property.value)
+            S.XML.parameters.Hard_Data_Property.value=O.property_name{1};
+    end;end
+
+
     if strcmp(S.XML.parameters.algorithm.name,'cokriging');
         S.XML.parameters.Primary_Harddata_Grid.value=O.point_set;
         S.XML.parameters.Primary_Variable.value=O.property_name{1};
