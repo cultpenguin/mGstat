@@ -26,7 +26,7 @@ if nargin<4
 end
 
 xlim=[i_acc(1) max(i_acc)+1e-4];
-close all
+
 plot(i_acc,L_acc,'k.')
 %semilogy(i_acc,L_acc,'k-')
 set(gca,'xlim',xlim)
