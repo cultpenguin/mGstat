@@ -32,10 +32,14 @@
 function [normscore_org,o_nscore]=nscore(d,w1,w2,dmin,dmax,DoPlot)
 
  if nargin<6
-   DoPlot=1;
+   DoPlot=0;
  end
 
-  
+ if nargin<2, w1=1;end 
+ if nargin<3, w2=1;end 
+ if nargin<4, dmin=min(d(:));end 
+ if nargin<5, dmax=max(d(:));end 
+ 
 d_in=d;  
   
   
