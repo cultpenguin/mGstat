@@ -15,7 +15,6 @@ if ~isfield(S,'dim'), S.dim.null=0;end
 if isfield(S.dim,'x');
     S.dim.nx=length(S.dim.x);
     S.dim.x0=S.dim.x(1);
-    S.dim.dx=S.dim.x(2)-S.dim.x(1);
     try
         S.dim.dx=S.dim.x(2)-S.dim.x(1);
     catch
@@ -25,7 +24,6 @@ end
 if isfield(S.dim,'y');
     S.dim.ny=length(S.dim.y);
     S.dim.y0=S.dim.y(1);
-    S.dim.dy=S.dim.y(2)-S.dim.y(1);
     try
         S.dim.dy=S.dim.y(2)-S.dim.y(1);
     catch
