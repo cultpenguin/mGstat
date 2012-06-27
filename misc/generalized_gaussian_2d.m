@@ -4,32 +4,51 @@
 %
 %    generalized_gaussian_2d(x,y,pos0,sigma,p,ang,do_log);
 %
+% Example
+%
+%  x= [-10:.1:10];
+%  y= [-11:.1:11];
+%  pos_center = [5 0];
+%  sigma = [8 3];
+%  p = 4;
+%  ang =30;
+%  [f,x,y] = generalized_gaussian_2d(x,y,pos_center,sigma,p,ang);
+%  imagesc(x,y,f);
+%  axis image;
+%  colorbar
+%
 
-function f = generalized_gaussian_2d(x,y,pos0,sigma,p,ang,do_log);
+function [f,x,y] = generalized_gaussian_2d(x,y,pos0,sigma,p,ang,do_log);
 if nargin==0
-     [x,y]=meshgrid(-30:.1:30,-30:.1:30);
+     x=-10:.1:10;
+     y=-10:.2:10;
 end
 if nargin<3, pos0=[0 0]; end
-if nargin<4, sigma=[1]; end
-if nargin<5, p=[10]; end
-if nargin<6, ang=30; end
+if nargin<4, sigma=[1 1]; end
+if length(sigma)==1;
+    sigma(2)=sigma(1);
+end
+if nargin<5, p=[2]; end
+if nargin<6, ang=0; end
 if nargin<7, do_log=0; end
+[xx,yy]=meshgrid(x,y);
 
 
 % ROTATIION
-d=sqrt( ((x-pos0(1))./sigma(1)).^2+((y-pos0(2))./sigma(2)).^2);
-angle = atan2( (y-pos0(2)) , (x-pos0(1)) );
+rang=ang*pi/180;
+R = [cos(rang) -sin(rang) ; sin(rang) cos(rang) ];
+pos=[xx(:),yy(:)]*R;
 
-x_new=pos0(1) + cos( ang*pi/180 + angle ).*d;
-y_new=pos0(2) + sin( ang*pi/180 + angle ).*d;
-
+d=sqrt( ((pos(:,1)-pos0(1))./sigma(1)).^2+((pos(:,2)-pos0(2))./sigma(2)).^2);
 
 % COMPUTE LIKELIHOOD
 if do_log==1;
-    f = log (p^(1-1/p) ./ (2*sigma(1)*gamma(1/p))) +   ((-1/p)* abs(x_new-pos0(1)).^p ./ (sigma(1)^p(1)));
+    f = log (p^(1-1/p) ./ (2*gamma(1/p))) +   ((-1/p)* abs(d).^p ./ (1^p(1)));
 else
-    f = p^(1-1/p) ./ (2*sigma(1)*gamma(1/p)) * exp((-1/p)* abs(x_new-pos0(1)).^p ./ (sigma^p));
+    f = p^(1-1/p) ./ (2*gamma(1/p)) * exp((-1/p)* abs(d).^p ./ (1^p));
 end
+f=reshape(f,length(y),length(x));
 
-
-% Make linear adjtustment to make 2D Gaussian
+if nargin<0
+    imagesc(f)
+end
