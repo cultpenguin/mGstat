@@ -88,16 +88,15 @@ ny=length(y);
 if nx>1; dx=x(2)-x(1);  else dx=1; end
 if ny>1; dy=y(2)-y(1);  else dy=1; end
 if isfield(options,'pad');
-    try;options.pad_x=pad(1);end
-    try;options.pad_y=pad(2);end
+    try;options.pad_x=options.pad(1);end
+    try;options.pad_y=options.pad(2);end
 end
 if ~isfield(options,'pad_x');options.pad_x=nx-1;end
 if ~isfield(options,'pad_y');options.pad_y=ny-1;end
 if isfield(options,'w');
-    try;options.wx=w(1);end
-    try;options.wy=w(2);end
+    try;options.wx=options.w(1);end
+    try;options.wy=options.w(2);end
 end
-
 if ~isfield(options,'wx');
     options.wx = 2*ceil(max([Va.par2])./dx);
 end
@@ -175,8 +174,6 @@ if isfield(options,'lim');
     
     % use a border zone correspoding to twice the size of the
     % maximum range
-    %options.wx = 2*ceil(max([Va.par2])./dx);
-    %options.wy = 2*ceil(max([Va.par2])./dy);
     
     % make sure we only pad around simulation
     % box, if needed
@@ -268,14 +265,14 @@ end
    
 % Inverse FFT
 out=(ifft2( sqrt((options.fftC)).*fft2(z_rand,options.nf(1),options.nf(2)) ));
-
-% prior likelihood
-logL = -.5*sum(z_rand(:).^2);
+options.out=out;
 
 out=real(out(1:ny,1:nx))+options.gmean;
-
 if org.nx==1; out=out(:,1); end
 if org.ny==1; out=out(1,:); end
+
+% Prior Likelihood
+logL = -.5*sum(z_rand(:).^2);
 
 options.nx=nx;
 options.ny=ny;

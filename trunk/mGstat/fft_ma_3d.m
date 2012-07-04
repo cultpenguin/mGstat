@@ -100,17 +100,17 @@ if nx>1; dx=x(2)-x(1);  else dx=1; end
 if ny>1; dy=y(2)-y(1);  else dy=1; end
 if nz>1; dz=z(2)-z(1);  else dz=1; end
 if isfield(options,'pad');
-    try;options.pad_x=pad(1);end
-    try;options.pad_y=pad(2);end
-    try;options.pad_z=pad(3);end
+    try;options.pad_x=options.pad(1);end
+    try;options.pad_y=options.pad(2);end
+    try;options.pad_z=options.pad(3);end
 end
 if ~isfield(options,'pad_x');options.pad_x=nx-1;end
 if ~isfield(options,'pad_y');options.pad_y=ny-1;end
 if ~isfield(options,'pad_z');options.pad_z=nz-1;end
 if isfield(options,'w');
-    try;options.wx=w(1);end
-    try;options.wy=w(2);end
-    try;options.wz=w(3);end
+    try;options.wx=options.w(1);end
+    try;options.wy=options.w(2);end
+    try;options.wz=options.w(3);end
 end
 if ~isfield(options,'wx');
     options.wx = 2*ceil(max([Va.par2])./dx);
@@ -295,6 +295,7 @@ end
     
 % inverse FFT
 out=(ifftn( sqrt((options.fftC)).*fftn(z_rand,options.nf) ));
+options.out=out;
 
 out=real(out(1:ny,1:nx,1:nz))+options.gmean;
 if org.nx==1; out=out(:,1,:); end
