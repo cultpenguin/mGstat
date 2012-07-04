@@ -87,8 +87,17 @@ nx=length(x);
 ny=length(y);
 if nx>1; dx=x(2)-x(1);  else dx=1; end
 if ny>1; dy=y(2)-y(1);  else dy=1; end
-if ~isfield(options,'pad_x');options.pad_x=nx;end
-if ~isfield(options,'pad_y');options.pad_y=ny;end
+if isfield(options,'pad');
+    try;options.pad_x=pad(1);end
+    try;options.pad_y=pad(2);end
+end
+if ~isfield(options,'pad_x');options.pad_x=nx-1;end
+if ~isfield(options,'pad_y');options.pad_y=ny-1;end
+if isfield(options,'w');
+    try;options.wx=w(1);end
+    try;options.wy=w(2);end
+end
+
 if ~isfield(options,'wx');
     options.wx = 2*ceil(max([Va.par2])./dx);
 end
@@ -125,51 +134,6 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
         C=precal_cov([0 0],[h_x(:) h_y(:)],Va);
         %keyboard
         options.C=reshape(C,ny_c,nx_c);
-    else
-        for iv=1:length(Va);
-            
-            % GET HMAX AND HMIN FROM SEMIVARIOGRAM MODEL
-            % ONLY WORKS FOR ONE SEMIVRAIOHGRAM MODEL !!
-            par2=Va(iv).par2;
-            h_max=par2(1);
-            if length(par2)>1
-                h_min=h_max*par2(3);
-                ang=par2(2);
-            else
-                h_min=h_max;
-                ang=0;
-            end
-            try
-                aniso=Va(iv).par2(3);
-            catch
-                aniso=1;
-            end
-            ang1=ang*(pi/180);
-            
-            
-            x=dx/2:dx:nx_c*dx-dx/2;
-            y=dy/2:dy:ny_c*dy-dy/2;
-            [X Y]=meshgrid(x,y);
-            h_x=X-x(ceil(nx_c/2));
-            h_y=Y-y(ceil(ny_c/2));
-            
-            % Transform into rotated coordinates:
-            h_min=h_x*cos(ang1)-h_y*sin(ang1);
-            h_max=h_x*sin(ang1)+h_y*cos(ang1);
-            
-            % Rescale the ellipse:
-            h_min_rs=h_min;
-            h_max_rs=aniso*h_max;
-            dist=sqrt(h_min_rs.^2+h_max_rs.^2);
-            
-            % calc semiavriogram
-            Va2=Va(iv);
-            try
-                Va2.par2=Va(iv).par2(1)*Va(iv).par2(3);
-            end
-            options.C=options.C+semivar_synth(Va2,dist);
-        end
-        options.C=options.gvar-options.C;
     end
 end
 
@@ -180,10 +144,15 @@ if ~isfield(options,'fftC');
     % manally pad covariance model to avoid numerical artefacts
     npad_y=options.nf(1)-ny_c;
     npad_x=options.nf(2)-nx_c;
+    C_pad=options.C;
+    if npad_x>0
     C_pad=padarray(options.C,[0 ceil(npad_x/2)],'replicate','pre');
     C_pad=padarray(C_pad,[0 floor(npad_x/2)],'replicate','post');
+    end
+    if npad_y>0;
     C_pad=padarray(C_pad,[ceil(npad_y/2) 0],'replicate','pre');
     C_pad=padarray(C_pad,[floor(npad_y/2) 0],'replicate','post');
+    end
     options.C=C_pad;
     options.fftC=fft2(fftshift(options.C),options.nf(1),options.nf(2));
 end
@@ -296,18 +265,14 @@ if isfield(options,'lim');
         end
     end
 end
-    
-z=z_rand;
-
-options.prod=sqrt((options.fftC)).*fft2(z,options.nf(1),options.nf(2));
-out=(ifft2(options.prod));
-%out=real(ifft2(sqrt(options.fftC).*fft2(z,options.nf(1),options.nf(2))));
+   
+% Inverse FFT
+out=(ifft2( sqrt((options.fftC)).*fft2(z_rand,options.nf(1),options.nf(2)) ));
 
 % prior likelihood
-logL = -.5*sum(z(:).^2);
+logL = -.5*sum(z_rand(:).^2);
 
-options.out=out;
-out=out(1:ny,1:nx)+options.gmean;
+out=real(out(1:ny,1:nx))+options.gmean;
 
 if org.nx==1; out=out(:,1); end
 if org.ny==1; out=out(1,:); end
