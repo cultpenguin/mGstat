@@ -6,6 +6,14 @@
 %    y: array, ex : y=1:1:50:
 %    Va: variogram def, ex : Va="1 Sph (10,30,.25)";
 %
+%    options.gmean
+%    options.gvar
+%    options.pad_x : Padding in x-direction (number of pixels [def=nx])
+%    options.pad_y : Padding in y-direction (number of pixels [def=ny])
+%    options.wx,options.wx : wraparound padding around the simulation area
+%       when using sequential Gibbs simulation.
+%       [def, options.wx=max(range)/dx,options.wy=max(range)/dy]
+%
 %
 % "
 %   Ravalec, M.L. and Noetinger, B. and Hu, L.Y.},
@@ -54,21 +62,38 @@
 %
 function [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options)
 
+if nargin==0
+ x=[1:1:50];y=1:1:80;
+ Va='1  Sph(10,30,.25)';
+ [out1,z_rand]=fft_ma_2d(x,y,Va);
+ ii=1:(prod(size(z_rand))/4);
+ z_rand(ii)=randn(size(z_rand(ii)));
+ options.z_rand=z_rand;
+ options.pad_x=0;
+ options.pad_y=0;
+ [out2,z_rand2,options]=fft_ma_2d(x,y,Va,options);
+ subplot(1,3,1),imagesc(x,y,[out1]);colorbar;axis image;cax=caxis;
+ subplot(1,3,2),imagesc(x,y,[out2]);caxis(cax);colorbar;axis image
+ subplot(1,3,3),imagesc(x,y,[out2-out1]);colorbar;axis image
+ out=out2;
+ return
+end    
+
 options.null='';
 if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'gmean');options.gmean=0;end
 if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
-if ~isfield(options,'fac_x');options.fac_x=1;end
-if ~isfield(options,'fac_y');options.fac_y=options.fac_x;end
 nx=length(x);
 ny=length(y);
 if nx>1; dx=x(2)-x(1);  else dx=1; end
 if ny>1; dy=y(2)-y(1);  else dy=1; end
+if ~isfield(options,'pad_x');options.pad_x=nx;end
+if ~isfield(options,'pad_y');options.pad_y=ny;end
 if ~isfield(options,'wx');
     options.wx = 2*ceil(max([Va.par2])./dx);
 end
 if ~isfield(options,'wy');
-    wy = 2*ceil(max([Va.par2])./dy);
+    options.wy = 2*ceil(max([Va.par2])./dy);
 end
 
 if length(x)==1; x=[x x+.0001]; end
@@ -77,8 +102,8 @@ if length(y)==1; y=[y y+.0001]; end
 org.nx=nx;
 org.ny=ny;
 
-ny_c=ny*options.fac_y;
-nx_c=nx*options.fac_x;
+ny_c=ny+options.pad_y;
+nx_c=nx+options.pad_x;
 
 %% SETUP  COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
@@ -179,21 +204,16 @@ end
 
 if isfield(options,'lim');
     
-     % manually set a border zone
-            wx=20; % padding in number of pixels
-            wy=20; % padding in number of pixels
-            
-            % use a border zone correspoding to twice the size of the 
-            % maximum range
-            wx = 2*ceil(max([Va.par2])./dx);
-            wy = 2*ceil(max([Va.par2])./dy);
-            
-            % make sure we only pad around simulation
-            % box, if needed
-            if wx > (size(z_rand,2)-nx);wx=0;end
-            if wy > (size(z_rand,1)-ny);wy=0;end
-           
+    % use a border zone correspoding to twice the size of the
+    % maximum range
+    %options.wx = 2*ceil(max([Va.par2])./dx);
+    %options.wy = 2*ceil(max([Va.par2])./dy);
     
+    % make sure we only pad around simulation
+    % box, if needed
+    if options.wx > (size(z_rand,2)-nx);options.wx=0;end
+    if options.wy > (size(z_rand,1)-ny);options.wy=0;end
+           
     if options.resim_type==1;
         % BOX TYPE RESIMULATION 
         x0=dx.*(nx-nx_c)/2;
@@ -212,8 +232,8 @@ if isfield(options,'lim');
             % nodes at the edge of the simulation error are allowe to vary.
             
             
-            x0=ceil((rand(1)*(nx+wx)))-ceil(wx/2);
-            y0=ceil((rand(1)*(ny+wy)))-ceil(wy/2);
+            x0=ceil((rand(1)*(nx+options.wx)))-ceil(options.wx/2);
+            y0=ceil((rand(1)*(ny+options.wy)))-ceil(options.wy/2);
             
             if x0<1; x0=size(z_rand,2)+x0;end
             if y0<1; y0=size(z_rand,1)+y0;end
@@ -253,15 +273,26 @@ if isfield(options,'lim');
         
         N_all=(nx)*(ny);
         % ADD PADDING !!!!
-        %N_all=(nx+wx)*(ny+wy);
+        N_all=(nx+options.wx)*(ny+options.wy);
         
         n_resim = min([n_resim N_all]);
         
         ii=randomsample(N_all,n_resim);
+        
+       
         z_rand_new=randn(size(z_rand(ii)));
-        [ix,iy]=ind2sub([ny,nx],ii);
+        [ix,iy]=ind2sub([ny+options.wy,nx+options.wx],ii);
         for k=1:length(ii);
-            z_rand(iy(k),ix(k))=z_rand_new(k);
+            
+            x0=ix(k)-ceil(options.wx/2);
+            y0=iy(k)-ceil(options.wx/2);
+            
+            if x0<1; x0=size(z_rand,2)+x0;end
+            if y0<1; y0=size(z_rand,1)+y0;end
+            if x0>size(z_rand,2); x0=x0-size(z_rand,2);end
+            if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
+            
+            z_rand(y0,x0)=z_rand_new(k);
         end
     end
 end
