@@ -4,7 +4,7 @@
 %
 %    x: array, ex : x=1:1:80:
 %    y: array, ex : y=1:1:50:
-%    Va: variogram def, ex : Va="1 Sph (10,30,4)";
+%    Va: variogram def, ex : Va="1 Sph (10,30,.25)";
 %
 %
 % "
@@ -14,13 +14,20 @@
 %   method for generating and conditioning Gaussian simulations
 % "
 %
-% Example:
+% Examples:
+% % 1D
+%  x=1:1:512;y=1;
+%  Va='1 Gau(20)';
+%  [out,z]=fft_ma_2d(x,y,Va);
+%  plot(x,out);colorbar
+%
+% % 2D
 %  x=[1:1:50];y=1:1:80;
 %  direction=30; % 30 degrees from north
 %  h_max=10;
 %  h_min=5;
 %  aniso=h_min/h_max;
-%  Va='1  Sph(h_max,direction,aniso)';
+%  Va='1  Sph(10,30,5/10)';
 %  [out,z]=fft_ma_2d(x,y,Va);
 %  imagesc(x,y,out);colorbar
 %
@@ -28,7 +35,7 @@
 %  x=[1:1:50];y=1:1:80;
 %  Va='1  Sph(10,30,.25)';
 %  [out1,z_rand]=fft_ma_2d(x,y,Va);
-%  ii=300:350;
+%  ii=10000:20000;
 %  z_rand(ii)=randn(size(z_rand(ii)));
 %  options.z_rand=z_rand;
 %  [out2,z_rand2]=fft_ma_2d(x,y,Va,options);
@@ -42,7 +49,6 @@
 % Jan Frydendall (April, 2011) Zero padding
 
 
-% UPDATE TO WORK IN 1D   
 % UPDATE TO WORK WITH RESIM
 
 %
@@ -52,26 +58,29 @@ options.null='';
 if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'gmean');options.gmean=0;end
 if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
-if ~isfield(options,'fac_x');options.fac_x=4;end
+if ~isfield(options,'fac_x');options.fac_x=1;end
 if ~isfield(options,'fac_y');options.fac_y=options.fac_x;end
-
-org.nx=length(x);
-org.ny=length(y);
+nx=length(x);
+ny=length(y);
+if nx>1; dx=x(2)-x(1);  else dx=1; end
+if ny>1; dy=y(2)-y(1);  else dy=1; end
+if ~isfield(options,'wx');
+    options.wx = 2*ceil(max([Va.par2])./dx);
+end
+if ~isfield(options,'wy');
+    wy = 2*ceil(max([Va.par2])./dy);
+end
 
 if length(x)==1; x=[x x+.0001]; end
 if length(y)==1; y=[y y+.0001]; end
 
-
-nx=length(x);
-ny=length(y);
-cell=1;
-if nx>1; dx=x(2)-x(1); cell=dx; else dx=1; end
-if ny>1; dy=y(2)-y(1); cell=dy; else dy=1; end
+org.nx=nx;
+org.ny=ny;
 
 ny_c=ny*options.fac_y;
 nx_c=nx*options.fac_x;
-%%
-% COVARIANCE MODEL
+
+%% SETUP  COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     
     
@@ -89,6 +98,7 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
         h_y=Y-y1(ceil(ny_c/2)+1);
         
         C=precal_cov([0 0],[h_x(:) h_y(:)],Va);
+        %keyboard
         options.C=reshape(C,ny_c,nx_c);
     else
         for iv=1:length(Va);
@@ -138,51 +148,93 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     end
 end
 
-%figure_focus(3);imagesc((options.C))
-
+%% COMPUTE FFT and PAD
 if ~isfield(options,'fftC');
     [nc1,nc2]=size(options.C);
     options.nf=2.^(ceil(log([nc1 nc2])/log(2)));
-    options.fftC=fft2(options.C,options.nf(1),options.nf(2));
+    % manally pad covariance model to avoid numerical artefacts
+    npad_y=options.nf(1)-ny_c;
+    npad_x=options.nf(2)-nx_c;
+    C_pad=padarray(options.C,[0 ceil(npad_x/2)],'replicate','pre');
+    C_pad=padarray(C_pad,[0 floor(npad_x/2)],'replicate','post');
+    C_pad=padarray(C_pad,[ceil(npad_y/2) 0],'replicate','pre');
+    C_pad=padarray(C_pad,[floor(npad_y/2) 0],'replicate','post');
+    options.C=C_pad;
+    options.fftC=fft2(fftshift(options.C),options.nf(1),options.nf(2));
 end
 
-% normal devaites
+%% normal deviates
 if isfield(options,'z_rand')
+    % use given set
     z_rand=options.z_rand;
 else
-    z_rand=randn(ny_c,nx_c);
-    %z_rand=gsingle(z_rand);
+    % create a new set
+    z_rand=randn(size(options.fftC));
 end
 
-%% RESIM
+%% RESIMULATION
 if ~isfield(options,'resim_type');
     options.resim_type=2;
 end
 
 if isfield(options,'lim');
-    % RESIMULATION
+    
+     % manually set a border zone
+            wx=20; % padding in number of pixels
+            wy=20; % padding in number of pixels
+            
+            % use a border zone correspoding to twice the size of the 
+            % maximum range
+            wx = 2*ceil(max([Va.par2])./dx);
+            wy = 2*ceil(max([Va.par2])./dy);
+            
+            % make sure we only pad around simulation
+            % box, if needed
+            if wx > (size(z_rand,2)-nx);wx=0;end
+            if wy > (size(z_rand,1)-ny);wy=0;end
+           
+    
     if options.resim_type==1;
-        % resom box_type
+        % BOX TYPE RESIMULATION 
         x0=dx.*(nx-nx_c)/2;
         y0=dy.*(ny-ny_c)/2;
         x0=0;y0=0;
         options.wrap_around=1;
         
         if isfield(options,'pos');
+            % NEXT LINE MAY BE PROBLEMATIC USING NEIGHBORHOODS
             [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
         else
-            x0=dx*ceil(rand(1)*nx_c); y0=dy*ceil(rand(1)*ny_c);
-            %disp(sprintf('x0=%5g %5g  y0=%5g %5g',x0,nx_c*dx,y0,ny_c*dy))
-            %x0=cell*ceil(rand(1)*nx); y0=cell*ceil(rand(1)*ny);
+            % CHOOSE CENTER OF BOX AUTOMATICALLY
+            
+            % wx, wy, allow selecting from the center also in a area just
+            % outside the simulation area, the border zone. This is done to ensure that
+            % nodes at the edge of the simulation error are allowe to vary.
+            
+            
+            x0=ceil((rand(1)*(nx+wx)))-ceil(wx/2);
+            y0=ceil((rand(1)*(ny+wy)))-ceil(wy/2);
+            
+            if x0<1; x0=size(z_rand,2)+x0;end
+            if y0<1; y0=size(z_rand,1)+y0;end
+            if x0>size(z_rand,2); x0=x0-size(z_rand,2);end
+            if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
+            
+            x0=dx*x0; 
+            y0=dy*y0;
+          
             options.pos=[x0 y0];
-            [options.used]=set_resim_data([1:nx_c]*dx,[1:ny_c]*dy,z_rand,options.lim,options.pos,options.wrap_around);
+            [options.used]=set_resim_data([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,z_rand,options.lim,options.pos,options.wrap_around);
             
         end
         ii=find(options.used==0);
         z_rand_new=randn(size(z_rand(ii)));
         z_rand(ii) = z_rand_new;
-    else     
-        % resim random locations        
+    else 
+        % RANDOM SET TYPE RESIMULATION 
+        
+        % MAKE SURE ONLY TO SELECT RESIM DATA
+        % WITHIN (and close to) SIMULATION AREA
         
         n_resim=options.lim(1);
         if n_resim<=1
@@ -192,27 +244,39 @@ if isfield(options,'lim');
         n_resim=ceil(n_resim);
         
         n_resim = min([n_resim prod(size(z_rand))]);
-        N_all=prod(size(z_rand));
+        
         % find random sample of size 'n_resim'
+        %N_all=prod(size(z_rand));
+        %ii=randomsample(N_all,n_resim);
+        %z_rand_new=randn(size(z_rand(ii)));
+        %z_rand(ii) = z_rand_new;
+        
+        N_all=(nx)*(ny);
+        % ADD PADDING !!!!
+        %N_all=(nx+wx)*(ny+wy);
+        
+        n_resim = min([n_resim N_all]);
+        
         ii=randomsample(N_all,n_resim);
-                
         z_rand_new=randn(size(z_rand(ii)));
-        z_rand(ii) = z_rand_new;
+        [ix,iy]=ind2sub([ny,nx],ii);
+        for k=1:length(ii);
+            z_rand(iy(k),ix(k))=z_rand_new(k);
+        end
     end
 end
     
 z=z_rand;
 
-
-out=real(ifft2(sqrt(options.fftC).*fft2(z,options.nf(1),options.nf(2))));
-%out=real(ifft2(ifftshift( sqrt(fftshift(options.fftC)).*fftshift(fft2(z)) )));
+options.prod=sqrt((options.fftC)).*fft2(z,options.nf(1),options.nf(2));
+out=(ifft2(options.prod));
+%out=real(ifft2(sqrt(options.fftC).*fft2(z,options.nf(1),options.nf(2))));
 
 % prior likelihood
 logL = -.5*sum(z(:).^2);
 
-
+options.out=out;
 out=out(1:ny,1:nx)+options.gmean;
-%out=options.out1(1:ny,1:nx).*sqrt(options.gvar)+options.gmean;
 
 if org.nx==1; out=out(:,1); end
 if org.ny==1; out=out(1,:); end
