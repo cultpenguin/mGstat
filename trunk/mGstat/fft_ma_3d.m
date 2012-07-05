@@ -209,28 +209,27 @@ if isfield(options,'lim');
         
         if isfield(options,'pos');
             % NEXT LINE MAY BE PROBLEMATIC USING NEIGHBORHOODS
-            [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
+            [options.used]=set_resim_data_3d(x,y,z,z_rand,options.lim,options.pos+[x0 y0 z0],options.wrap_around);
         else
             % CHOOSE CENTER OF BOX AUTOMATICALLY
             
-            % wx, wy, allow selecting from the center also in a area just
-            % outside the simulation area, the border zone. This is done to ensure that
-            % nodes at the edge of the simulation error are allowe to vary.
-            
-            
             x0=ceil((rand(1)*(nx+options.wx)))-ceil(options.wx/2);
             y0=ceil((rand(1)*(ny+options.wy)))-ceil(options.wy/2);
+            z0=ceil((rand(1)*(nz+options.wz)))-ceil(options.wz/2);
             
             if x0<1; x0=size(z_rand,2)+x0;end
             if y0<1; y0=size(z_rand,1)+y0;end
+            if z0<1; z0=size(z_rand,3)+z0;end
             if x0>size(z_rand,2); x0=x0-size(z_rand,2);end
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
+            if z0>size(z_rand,3); z0=z0-size(z_rand,3);end
             
             x0=dx*x0; 
             y0=dy*y0;
+            z0=dz*z0;
           
-            options.pos=[x0 y0];
-            [options.used]=set_resim_data([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,z_rand,options.lim,options.pos,options.wrap_around);
+            options.pos=[x0 y0 z0];
+            [options.used]=set_resim_data_3d([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,[1:size(z_rand,3)]*dz,z_rand,options.lim,options.pos,options.wrap_around);
             
         end
         ii=find(options.used==0);
@@ -248,11 +247,8 @@ if isfield(options,'lim');
             n_resim=n_resim.*prod(size(z_rand));
         end
         n_resim=ceil(n_resim);
-        
         n_resim = min([n_resim prod(size(z_rand))]);
         
-        N_all=(nx)*(ny);
-        % ADD PADDING !!!!
         N_all=(nx+options.wx)*(ny+options.wy)*(nz+options.wz);
         
         n_resim = min([n_resim N_all]);
@@ -274,8 +270,6 @@ if isfield(options,'lim');
             if x0>size(z_rand,2); x0=x0-size(z_rand,2);end
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
             if z0>size(z_rand,3); z0=z0-size(z_rand,3);end
-            
-            disp(sprintf('[%g,%g,%g]',x0,y0,z0))
             
             z_rand(y0,x0,z0)=z_rand_new(k);
         end
