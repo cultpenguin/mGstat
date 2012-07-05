@@ -63,21 +63,21 @@
 function [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options)
 
 if nargin==0
- x=[1:1:50];y=1:1:80;
- Va='1  Sph(10,30,.25)';
- [out1,z_rand]=fft_ma_2d(x,y,Va);
- ii=1:(prod(size(z_rand))/4);
- z_rand(ii)=randn(size(z_rand(ii)));
- options.z_rand=z_rand;
- options.pad_x=0;
- options.pad_y=0;
- [out2,z_rand2,options]=fft_ma_2d(x,y,Va,options);
- subplot(1,3,1),imagesc(x,y,[out1]);colorbar;axis image;cax=caxis;
- subplot(1,3,2),imagesc(x,y,[out2]);caxis(cax);colorbar;axis image
- subplot(1,3,3),imagesc(x,y,[out2-out1]);colorbar;axis image
- out=out2;
- return
-end    
+    x=[1:1:50];y=1:1:80;
+    Va='1  Sph(10,30,.25)';
+    [out1,z_rand]=fft_ma_2d(x,y,Va);
+    ii=1:(prod(size(z_rand))/4);
+    z_rand(ii)=randn(size(z_rand(ii)));
+    options.z_rand=z_rand;
+    options.pad_x=0;
+    options.pad_y=0;
+    [out2,z_rand2,options]=fft_ma_2d(x,y,Va,options);
+    subplot(1,3,1),imagesc(x,y,[out1]);colorbar;axis image;cax=caxis;
+    subplot(1,3,2),imagesc(x,y,[out2]);caxis(cax);colorbar;axis image
+    subplot(1,3,3),imagesc(x,y,[out2-out1]);colorbar;axis image
+    out=out2;
+    return
+end
 
 options.null='';
 if ~isstruct(Va);Va=deformat_variogram(Va);end
@@ -88,12 +88,15 @@ ny=length(y);
 if nx>1; dx=x(2)-x(1);  else dx=1; end
 if ny>1; dy=y(2)-y(1);  else dy=1; end
 if isfield(options,'pad');
+    if length(options.pad)==1, options.pad=[1 1].*options.pad;end
     try;options.pad_x=options.pad(1);end
     try;options.pad_y=options.pad(2);end
 end
 if ~isfield(options,'pad_x');options.pad_x=nx-1;end
 if ~isfield(options,'pad_y');options.pad_y=ny-1;end
+if ~isfield(options,'padpow2');options.padpow2=1;end
 if isfield(options,'w');
+    if length(options.w)==1, options.w=[1 1].*options.w;end
     try;options.wx=options.w(1);end
     try;options.wy=options.w(2);end
 end
@@ -116,44 +119,27 @@ nx_c=nx+options.pad_x;
 %% SETUP  COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     
-    
-    options.C=zeros(ny_c,nx_c);
-    
-    iM=1;
-    
-    if iM==1
-        %x1=dx/2:dx:nx_c*dx-dx/2;
-        %y1=dy/2:dy:ny_c*dy-dy/2;
-        x1=[0:1:(nx_c-1)].*dx;
-        y1=[0:1:(ny_c-1)].*dy;
-        [X Y]=meshgrid(x1,y1);
-        h_x=X-x1(ceil(nx_c/2)+1);
-        h_y=Y-y1(ceil(ny_c/2)+1);
-        
-        C=precal_cov([0 0],[h_x(:) h_y(:)],Va);
-        %keyboard
-        options.C=reshape(C,ny_c,nx_c);
+    if (options.padpow2==1)
+        nx_c=2.^nextpow2(nx_c);
+        ny_c=2.^nextpow2(ny_c);
     end
+    
+    x1=[0:1:(nx_c-1)].*dx;
+    y1=[0:1:(ny_c-1)].*dy;
+    
+    [X Y]=meshgrid(x1,y1);
+    
+    h_x=X-x1(ceil(nx_c/2)+1);
+    h_y=Y-y1(ceil(ny_c/2)+1);
+    
+    C=precal_cov([0 0],[h_x(:) h_y(:)],Va);
+    options.C=reshape(C,ny_c,nx_c);
+    
 end
 
 %% COMPUTE FFT and PAD
 if ~isfield(options,'fftC');
-    [nc1,nc2]=size(options.C);
-    options.nf=2.^(ceil(log([nc1 nc2])/log(2)));
-    % manally pad covariance model to avoid numerical artefacts
-    npad_y=options.nf(1)-ny_c;
-    npad_x=options.nf(2)-nx_c;
-    C_pad=options.C;
-    if npad_x>0
-    C_pad=padarray(options.C,[0 ceil(npad_x/2)],'replicate','pre');
-    C_pad=padarray(C_pad,[0 floor(npad_x/2)],'replicate','post');
-    end
-    if npad_y>0;
-    C_pad=padarray(C_pad,[ceil(npad_y/2) 0],'replicate','pre');
-    C_pad=padarray(C_pad,[floor(npad_y/2) 0],'replicate','post');
-    end
-    options.C=C_pad;
-    options.fftC=fft2(fftshift(options.C),options.nf(1),options.nf(2));
+    options.fftC=fft2(fftshift(options.C));
 end
 
 %% normal deviates
@@ -179,9 +165,9 @@ if isfield(options,'lim');
     % box, if needed
     if options.wx > (size(z_rand,2)-nx);options.wx=0;end
     if options.wy > (size(z_rand,1)-ny);options.wy=0;end
-           
+    
     if options.resim_type==1;
-        % BOX TYPE RESIMULATION 
+        % BOX TYPE RESIMULATION
         x0=dx.*(nx-nx_c)/2;
         y0=dy.*(ny-ny_c)/2;
         x0=0;y0=0;
@@ -206,9 +192,9 @@ if isfield(options,'lim');
             if x0>size(z_rand,2); x0=x0-size(z_rand,2);end
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
             
-            x0=dx*x0; 
+            x0=dx*x0;
             y0=dy*y0;
-          
+            
             options.pos=[x0 y0];
             [options.used]=set_resim_data([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,z_rand,options.lim,options.pos,options.wrap_around);
             
@@ -216,8 +202,8 @@ if isfield(options,'lim');
         ii=find(options.used==0);
         z_rand_new=randn(size(z_rand(ii)));
         z_rand(ii) = z_rand_new;
-    else 
-        % RANDOM SET TYPE RESIMULATION 
+    else
+        % RANDOM SET TYPE RESIMULATION
         
         % MAKE SURE ONLY TO SELECT RESIM DATA
         % WITHIN (and close to) SIMULATION AREA
@@ -231,12 +217,6 @@ if isfield(options,'lim');
         
         n_resim = min([n_resim prod(size(z_rand))]);
         
-        % find random sample of size 'n_resim'
-        %N_all=prod(size(z_rand));
-        %ii=randomsample(N_all,n_resim);
-        %z_rand_new=randn(size(z_rand(ii)));
-        %z_rand(ii) = z_rand_new;
-        
         N_all=(nx)*(ny);
         % ADD PADDING !!!!
         N_all=(nx+options.wx)*(ny+options.wy);
@@ -245,13 +225,13 @@ if isfield(options,'lim');
         
         ii=randomsample(N_all,n_resim);
         
-       
+        
         z_rand_new=randn(size(z_rand(ii)));
         [ix,iy]=ind2sub([ny+options.wy,nx+options.wx],ii);
         for k=1:length(ii);
             
-            x0=ix(k)-ceil(options.wx/2);
-            y0=iy(k)-ceil(options.wx/2);
+            x0=round(ix(k))-ceil(options.wx/2);
+            y0=round(iy(k))-ceil(options.wx/2);
             
             if x0<1; x0=size(z_rand,2)+x0;end
             if y0<1; y0=size(z_rand,1)+y0;end
@@ -259,12 +239,14 @@ if isfield(options,'lim');
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
             
             z_rand(y0,x0)=z_rand_new(k);
+        
         end
     end
 end
-   
+
 % Inverse FFT
-out=(ifft2( sqrt((options.fftC)).*fft2(z_rand,options.nf(1),options.nf(2)) ));
+%out=(ifft2( sqrt((options.fftC)).*fft2(z_rand,options.nf(1),options.nf(2)) ));
+out=(ifft2( sqrt((options.fftC)).*fft2(z_rand) ));
 options.out=out;
 
 out=real(out(1:ny,1:nx))+options.gmean;
