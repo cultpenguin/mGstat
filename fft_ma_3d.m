@@ -91,6 +91,7 @@ end
 
 options.null='';
 if ~isstruct(Va);Va=deformat_variogram(Va);end
+if ~isfield(options,'wrap_around');options.wrap_around=1;end
 if ~isfield(options,'gmean');options.gmean=0;end
 if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
 nx=length(x);
@@ -151,11 +152,11 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     y1=[0:1:(ny_c-1)].*dy;
     z1=[0:1:(nz_c-1)].*dz;
         
-    [X Y Z]=meshgrid(x1,y1,z1);
+    [options.X options.Y options.Z]=meshgrid(x1,y1,z1);
    
-    if nx>1, h_x=X-x1(ceil(nx_c/2)+1);else;h_x=X;end
-    if ny>1, h_y=Y-y1(ceil(ny_c/2)+1);else;h_y=Y;end
-    if nz>1, h_z=Z-z1(ceil(nz_c/2)+1);else;h_z=Z;end
+    if nx>1, h_x=options.X-x1(ceil(nx_c/2)+1);else;h_x=options.X;end
+    if ny>1, h_y=options.Y-y1(ceil(ny_c/2)+1);else;h_y=options.Y;end
+    if nz>1, h_z=options.Z-z1(ceil(nz_c/2)+1);else;h_z=options.Z;end
     
     if nz==1;
         C=precal_cov([0 0],[h_x(:) h_y(:)],Va);
@@ -199,16 +200,17 @@ if isfield(options,'lim');
     % box, if needed
     if options.wx > (size(z_rand,2)-nx);options.wx=0;end
     if options.wy > (size(z_rand,1)-ny);options.wy=0;end
+    if options.wz > (size(z_rand,3)-nz);options.wz=0;end
            
     if options.resim_type==1;
         % BOX TYPE RESIMULATION 
-        x0=dx.*(nx-nx_c)/2;
-        y0=dy.*(ny-ny_c)/2;
-        x0=0;y0=0;
-        options.wrap_around=1;
-        
         if isfield(options,'pos');
             % NEXT LINE MAY BE PROBLEMATIC USING NEIGHBORHOODS
+            x0=dx.*(nx-nx_c)/2;
+            y0=dy.*(ny-ny_c)/2;
+            z0=dy.*(nz-nz_c)/2;
+            x0=0;y0=0;z0=0;
+            %           options.wrap_around=1;
             [options.used]=set_resim_data_3d(x,y,z,z_rand,options.lim,options.pos+[x0 y0 z0],options.wrap_around);
         else
             % CHOOSE CENTER OF BOX AUTOMATICALLY
@@ -229,7 +231,7 @@ if isfield(options,'lim');
             z0=dz*z0;
           
             options.pos=[x0 y0 z0];
-            [options.used]=set_resim_data_3d([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,[1:size(z_rand,3)]*dz,z_rand,options.lim,options.pos,options.wrap_around);
+            [options.used]=set_resim_data_3d([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,[1:size(z_rand,3)]*dz,z_rand,options.lim,options.pos,options.wrap_around,options.X,options.Y,options.Z);
             
         end
         ii=find(options.used==0);
@@ -253,6 +255,7 @@ if isfield(options,'lim');
         
         n_resim = min([n_resim N_all]);
         
+        % Select random set of nodes within simulation grid !
         ii=randomsample(N_all,n_resim);
         
         z_rand_new=randn(size(z_rand(ii)));
