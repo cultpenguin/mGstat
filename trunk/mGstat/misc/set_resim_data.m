@@ -11,7 +11,10 @@
 %    wrap_around : [0]: no wrapping default, 
 %                  [1]: wrapping (use with e.g. fft_ma_2d);
 %
-function [used d_cond]=set_resim_data(x,y,D,lim,pos,wrap_around)
+% 
+% See also: set_resim_data_3d
+%
+function [used d_cond]=set_resim_data(x,y,D,lim,pos,wrap_around,xx,yy)
 
 
 if nargin<4
@@ -32,8 +35,9 @@ if length(pos)==1;
     pos(2)=S.y(1);
 end
 
-
-[xx,yy]=meshgrid(x,y);
+if nargin<7
+    [xx,yy]=meshgrid(x,y);
+end
 used=ones(size(xx));
 used(find(abs(xx-pos(1))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
 

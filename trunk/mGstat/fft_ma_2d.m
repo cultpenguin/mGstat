@@ -81,6 +81,7 @@ end
 
 options.null='';
 if ~isstruct(Va);Va=deformat_variogram(Va);end
+if ~isfield(options,'wrap_around');options.wrap_around=1;end
 if ~isfield(options,'gmean');options.gmean=0;end
 if ~isfield(options,'gvar');options.gvar=sum([Va.par1]);end
 nx=length(x);
@@ -168,14 +169,10 @@ if isfield(options,'lim');
     
     if options.resim_type==1;
         % BOX TYPE RESIMULATION
-        x0=dx.*(nx-nx_c)/2;
-        y0=dy.*(ny-ny_c)/2;
-        x0=0;y0=0;
-        options.wrap_around=1;
         
         if isfield(options,'pos');
             % NEXT LINE MAY BE PROBLEMATIC USING NEIGHBORHOODS
-            [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos+[x0 y0],options.wrap_around);
+            [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos,options.wrap_around);
         else
             % CHOOSE CENTER OF BOX AUTOMATICALLY
             
@@ -217,14 +214,12 @@ if isfield(options,'lim');
         
         n_resim = min([n_resim prod(size(z_rand))]);
         
-        N_all=(nx)*(ny);
         % ADD PADDING !!!!
         N_all=(nx+options.wx)*(ny+options.wy);
         
         n_resim = min([n_resim N_all]);
         
         ii=randomsample(N_all,n_resim);
-        
         
         z_rand_new=randn(size(z_rand(ii)));
         [ix,iy]=ind2sub([ny+options.wy,nx+options.wx],ii);
