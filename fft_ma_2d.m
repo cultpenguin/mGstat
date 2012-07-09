@@ -127,11 +127,15 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     
     x1=[0:1:(nx_c-1)].*dx;
     y1=[0:1:(ny_c-1)].*dy;
-    
-    [X Y]=meshgrid(x1,y1);
-    
-    h_x=X-x1(ceil(nx_c/2)+1);
-    h_y=Y-y1(ceil(ny_c/2)+1);
+       
+    if (~isfield(options,'X'))|(~isfield(options,'Y'));
+        [options.X options.Y]=meshgrid(x1,y1);
+    end
+    if nx>1, h_x=options.X-x1(ceil(nx_c/2)+1);else;h_x=options.X;end
+    if ny>1, h_y=options.Y-y1(ceil(ny_c/2)+1);else;h_y=options.Y;end
+  
+  %  h_x=X-x1(ceil(nx_c/2)+1);
+  %  h_y=Y-y1(ceil(ny_c/2)+1);
     
     C=precal_cov([0 0],[h_x(:) h_y(:)],Va);
     options.C=reshape(C,ny_c,nx_c);

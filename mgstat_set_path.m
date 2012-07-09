@@ -22,13 +22,13 @@ ip=ip+1;P{ip}='cwp';
 
 for ip=1:length(P);
     pa=[mgstat_dir,filesep,P{ip}];
-    mgstat_verbose(sprintf('%s : Adding path to ''%s''',mfilename,pa),10)
+    mgstat_verbose(sprintf('%s : Adding path to ''%s''',mfilename,pa),0)
     addpath(pa);
 end
 
 succ=savepath;
 if succ==0
-    mgstat_verbose(sprintf('%s : saved path for later session',mfilename),10)
+    mgstat_verbose(sprintf('%s : saved path for later session',mfilename),0)
 else
-    mgstat_verbose(sprintf('%s : COULD NOT SAVE PATH for later session',mfilename),10)
+    mgstat_verbose(sprintf('%s : COULD NOT SAVE PATH for later session',mfilename),0)
 end
