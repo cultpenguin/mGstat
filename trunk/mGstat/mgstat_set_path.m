@@ -1,6 +1,7 @@
 % mgstat_set_path : set path to all mGstat 
 %
 %   set path to : 
+%     mGstat_Install_Dir/gstat
 %     mGstat_Install_Dir/snesim
 %     mGstat_Install_Dir/visim
 %     mGstat_Install_Dir/sgems
@@ -11,6 +12,7 @@
 function mgstat_set_path;
 ip=0;
 ip=ip+1;P{ip}='';
+ip=ip+1;P{ip}='gstat';
 ip=ip+1;P{ip}='snesim';
 ip=ip+1;P{ip}='visim';
 ip=ip+1;P{ip}='sgems';
