@@ -151,9 +151,11 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     x1=[0:1:(nx_c-1)].*dx;
     y1=[0:1:(ny_c-1)].*dy;
     z1=[0:1:(nz_c-1)].*dz;
-        
-    [options.X options.Y options.Z]=meshgrid(x1,y1,z1);
-   
+       
+    if (~isfield(options,'X'))|(~isfield(options,'Y'))|(~isfield(options,'Z'));
+        [options.X options.Y options.Z]=meshgrid(x1,y1,z1);
+    end
+    
     if nx>1, h_x=options.X-x1(ceil(nx_c/2)+1);else;h_x=options.X;end
     if ny>1, h_y=options.Y-y1(ceil(ny_c/2)+1);else;h_y=options.Y;end
     if nz>1, h_z=options.Z-z1(ceil(nz_c/2)+1);else;h_z=options.Z;end

@@ -7,21 +7,18 @@
 % example :
 % d=peaks(200);
 % d(find(d<0))=NaN;
-% figure(1);imagesc(d);
+% figure(1);
+% im=imagesc(d);
 % colormap(hot);
-% colormap_nan;
+% colormap_nan(im);
 % drawnow;
-% pause(2)
 %
 % 
-% figure(2);imagesc(d);
-% colormap_nan(jet,[.2 .9 .1]);
+% figure(2);
+% im=imagesc(d);
+% colormap(jet);
+% colormap_nan(im,[.2 .9 .1]);
 % colorbar;drawnow;
-% pause(2);
-%
-% figure(3);imagesc(d);
-% colormap_nan(jet(1000),[.2 .9 .1]);
-% colorbar
 %
 %
 %

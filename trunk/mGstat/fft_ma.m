@@ -16,8 +16,8 @@
 % "
 %
 % Example:
-%  x=[1:1:50];y=1:1:80;z=1:30;
-%  Va='1  Sph(10,.25,30)';
+%  x=[1:1:40];y=1:1:35;z=1:30;
+%  Va='1  Sph(10,30,.5)';
 %  [out,z]=fft_ma(x,Va); % 1D
 %  [out,z]=fft_ma(x,y,Va); % 2D
 %  [out,z]=fft_ma(x,y,z,Va); %3D
@@ -35,10 +35,11 @@ function [out,z_rand,options,logL]=fft_ma(x,y,z,Va,options)
 if nargin>1,
     if (isstr(y)|isstruct(y))
         Va=y;
+        y=1;
         % 1D
         if nargin==3, options=z; else; options.null='';end
-        Va=y;
-        [out,z_rand,options,logL]=fft_ma_2d(x,Va,options);
+        y=1;
+        [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options);
         return
     end
 end
