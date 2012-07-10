@@ -197,7 +197,7 @@ if isfield(S,'ti');
     disp('Setting TRAINING image from data')
     [ny nx nz]=size(S.ti);
     fname='ti.sgems';
-    sgems_write_grid(1:1:nx,1:1:ny,1:1:nz,S.ti(:),fname,'ti','property');
+    sgems_write_grid(1:1:ny,1:1:nx,1:1:nz,S.ti(:),fname,'ti','property');
     S.ti_file=fname;
     S=rmfield(S,'ti');
 end
