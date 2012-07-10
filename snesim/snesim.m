@@ -50,9 +50,11 @@ function V=snesim(parfile);
     
   %unix(space2char(sprintf('%s %s',snesim_bin,parfile),'\\ '));
   if isunix==1
-      unix(sprintf('%s < %s',snesim_bin,parfile));
+      cmd=sprintf('%s < %s',snesim_bin,parfile);
+      unix(cmd);
   else
-      dos(sprintf('"%s" < %s',snesim_bin,parfile));
+      cmd=sprintf('"%s" < %s',snesim_bin,parfile)
+      dos(cmd);
   end
   V=read_snesim(parfile);
   V.time=toc;
