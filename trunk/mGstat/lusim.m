@@ -6,6 +6,21 @@
 % 
 %   EAMPLES
 %   
+%   %% Load Jura Data
+%   [d_prediction,d_transect,d_validation,h_prediction,h_transect,h_validation,x,y,pos]=jura(.1);
+%   Va = '1 Sph(8)';
+%   pos_known = d_prediction(:,1:2);
+%   val_known = d_prediction(:,5);
+%   options.nsim=9;
+%   [sim_data,m_est,Cm_est]=lusim(pos_known,val_known,pos,Va,options);
+%   for i=1:options.nsim;
+%      subplot(3,3,i);
+%      %scatter(pos(:,1),pos(:,2),10,sim_data(:,i),'filled');
+%      imagesc(x,y,reshape(sim_data(:,i),length(y),length(x)));%axis image;caxis([-2 2])
+%      axis image;
+%   end
+%
+%   %%
 %   x=[1:1:10];y=[1:1:20];nx=length(x);ny=length(y);
 %   [xx,yy]=meshgrid(x,y);
 %   pos_sim=[xx(:) yy(:)];
@@ -36,8 +51,9 @@
 %
 %   TMH/2011
 %
-%%
-% see also: lusim
+%
+% see also: gaussian_simulation_cholesky
+%
 
 function [sim_mul,m_est,Cm_est]=lusim(pos_known,val_known,pos_sim,V,options);%
 
