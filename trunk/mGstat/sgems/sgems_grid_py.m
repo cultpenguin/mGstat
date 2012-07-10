@@ -192,7 +192,39 @@ if (strcmp(S.XML.parameters.algorithm.name,'tiGenerator'))
     property_name=S.XML.parameters.Ti_prop_name.value;
 end
 
+% TRAINING IMAGE GRID PROPERTIES
+if isfield(S,'ti');
+    disp('Setting TRAINING image from data')
+    [ny nx nz]=size(S.ti);
+    fname='ti.sgems';
+    sgems_write_grid(1:1:nx,1:1:ny,1:1:nz,S.ti(:),fname,'ti','property');
+    S.ti_file=fname;
+    S=rmfield(S,'ti');
+end
+         
 
+if exist(S.ti_file,'file')==2;
+    O_sgems=sgems_read(S.ti_file);
+    if ~isfield(S,'ti_property_id');S.ti_property_id=1;end
+    S.XML.parameters.PropertySelector_Training.grid=O_sgems.grid_name;
+    S.XML.parameters.PropertySelector_Training.property=O_sgems.property{S.ti_property_id};
+end    
+
+
+% update marginal PDF for SNESIM if not set by user
+if strcmp(lower(S.XML.parameters.algorithm.name),'snesim_std');
+    if ~isfield(S,'marginal_pdf');
+        O_sgems=sgems_read(S.ti_file);
+        d_ti=O_sgems.D(:,:,:,S.ti_property_id);
+        ind=sort(unique(d_ti(:)));
+        for j=1:length(ind);
+            N(j)=length(find(d_ti==ind(j)));
+        end
+        S.marginal_pdf=N./sum(N);
+    end
+    S.XML.parameters.Marginal_Cdf.value=S.marginal_pdf;
+    S.XML.parameters.Nb_Facies.value=length(S.XML.parameters.Marginal_Cdf.value);
+end
 
 %% Write XML file to disk
 sgems_write_xml(S.XML,S.xml_file);
@@ -238,6 +270,10 @@ if isfield(S,'f_obs_sec')
 end
 if isfield(S,'ti_file')
     if exist(S.ti_file,'file')==2;
+        %O_sgems=sgems_read(S.ti_file);
+        %if ~isfield(S,'ti_property_id');S.ti_property_id=1;end
+        %S.XML.parameters.PropertySelector_Training.grid=O_sgems.grid_name;
+        %S.XML.parameters.PropertySelector_Training.property=O_sgems.property{S.ti_property_id};
         i=i+1;sgems_cmd{i}=sprintf('sgems.execute(''LoadObjectFromFile %s::All'')',S.ti_file);
     else
         mgstat_verbose(sprintf('%s : Could not load %s',mfilename,S.ti_file))
