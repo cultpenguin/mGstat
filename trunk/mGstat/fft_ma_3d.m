@@ -117,13 +117,13 @@ if isfield(options,'w');
     try;options.wz=options.w(3);end
 end
 if ~isfield(options,'wx');
-    options.wx = 2*ceil(max([Va.par2])./dx);
+    options.wx = 2*ceil(semivar_get_max_range(Va)./dx);
 end
 if ~isfield(options,'wy');
-    options.wy = 2*ceil(max([Va.par2])./dy);
+    options.wy = 2*ceil(semivar_get_max_range(Va)./dy);
 end
 if ~isfield(options,'wz');
-    options.wz = 2*ceil(max([Va.par2])./dz);
+    options.wz = 2*ceil(semivar_get_max_range(Va)./dz);
 end
 
 if length(x)==1; x=[x x+.0001]; end

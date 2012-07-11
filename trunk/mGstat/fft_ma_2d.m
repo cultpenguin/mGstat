@@ -95,17 +95,18 @@ if isfield(options,'pad');
 end
 if ~isfield(options,'pad_x');options.pad_x=nx-1;end
 if ~isfield(options,'pad_y');options.pad_y=ny-1;end
-if ~isfield(options,'padpow2');options.padpow2=1;end
+if ~isfield(options,'padpow2');options.padpow2=0;end
 if isfield(options,'w');
     if length(options.w)==1, options.w=[1 1].*options.w;end
     try;options.wx=options.w(1);end
     try;options.wy=options.w(2);end
 end
+keyboard
 if ~isfield(options,'wx');
-    options.wx = 2*ceil(max([Va.par2])./dx);
+    options.wx = 2*ceil(semivar_get_max_range(Va)./dx);
 end
 if ~isfield(options,'wy');
-    options.wy = 2*ceil(max([Va.par2])./dy);
+    options.wy = 2*ceil(semivar_get_max_range(Va)./dy);
 end
 
 if length(x)==1; x=[x x+.0001]; end
@@ -208,7 +209,7 @@ if isfield(options,'lim');
         
         % MAKE SURE ONLY TO SELECT RESIM DATA
         % WITHIN (and close to) SIMULATION AREA
-        
+      
         n_resim=options.lim(1);
         if n_resim<=1
             % use n_resim as a proportion of all random deviates
@@ -226,7 +227,7 @@ if isfield(options,'lim');
         ii=randomsample(N_all,n_resim);
         
         z_rand_new=randn(size(z_rand(ii)));
-        [ix,iy]=ind2sub([ny+options.wy,nx+options.wx],ii);
+        [iy,ix]=ind2sub([ny+options.wy,nx+options.wx],ii);
         for k=1:length(ii);
             
             x0=round(ix(k))-ceil(options.wx/2);
