@@ -200,9 +200,12 @@ if isfield(options,'lim');
     
     % make sure we only pad around simulation
     % box, if needed
-    if options.wx > (size(z_rand,2)-nx);options.wx=0;end
-    if options.wy > (size(z_rand,1)-ny);options.wy=0;end
-    if options.wz > (size(z_rand,3)-nz);options.wz=0;end
+    %if options.wx > (size(z_rand,2)-nx);options.wx=0;end
+    %if options.wy > (size(z_rand,1)-ny);options.wy=0;end
+    %if options.wz > (size(z_rand,3)-nz);options.wz=0;end
+    if options.wx > (size(z_rand,2)-nx);options.wx=size(z_rand,2)-nx;end
+    if options.wy > (size(z_rand,1)-ny);options.wy=size(z_rand,1)-ny;end
+    if options.wz > (size(z_rand,3)-nz);options.wz=size(z_rand,3)-nz;end
            
     if options.resim_type==1;
         % BOX TYPE RESIMULATION 

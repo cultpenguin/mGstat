@@ -6,6 +6,6 @@ end
 
 max_r=0;
 for i=1:length(Va);
-   max_r=max([max_r Va(2).par2(1)]);
+   max_r=max([max_r Va(i).par2(1)]);
 end
 

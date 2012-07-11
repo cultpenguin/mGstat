@@ -61,7 +61,6 @@
 
 %
 function [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options)
-
 if nargin==0
     x=[1:1:50];y=1:1:80;
     Va='1  Sph(10,30,.25)';
@@ -101,7 +100,6 @@ if isfield(options,'w');
     try;options.wx=options.w(1);end
     try;options.wy=options.w(2);end
 end
-keyboard
 if ~isfield(options,'wx');
     options.wx = 2*ceil(semivar_get_max_range(Va)./dx);
 end
@@ -169,8 +167,10 @@ if isfield(options,'lim');
     
     % make sure we only pad around simulation
     % box, if needed
-    if options.wx > (size(z_rand,2)-nx);options.wx=0;end
-    if options.wy > (size(z_rand,1)-ny);options.wy=0;end
+    %if options.wx > (size(z_rand,2)-nx);options.wx=0,end
+    %if options.wy > (size(z_rand,1)-ny);options.wy=0;end
+    if options.wx > (size(z_rand,2)-nx);options.wx=(size(z_rand,2)-nx);end
+    if options.wy > (size(z_rand,1)-ny);options.wy=(size(z_rand,1)-ny);end
     
     if options.resim_type==1;
         % BOX TYPE RESIMULATION
