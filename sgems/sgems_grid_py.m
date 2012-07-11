@@ -195,6 +195,11 @@ end
 % TRAINING IMAGE GRID PROPERTIES
 if isfield(S,'ti');
     disp('Setting TRAINING image from data')
+    try
+        S.ti=S.ti';
+    catch
+        disp(sprintf('%s : fix for 3D TI ....',mfilename));
+    end
     [ny nx nz]=size(S.ti);
     fname='ti.sgems';
     sgems_write_grid(1:1:ny,1:1:nx,1:1:nz,S.ti(:),fname,'ti','property');
