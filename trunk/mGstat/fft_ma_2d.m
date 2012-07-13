@@ -115,6 +115,9 @@ org.ny=ny;
 
 ny_c=ny+options.pad_y;
 nx_c=nx+options.pad_x;
+x_all=[0:1:(nx_c-1)].*dx+x(1);
+y_all=[0:1:(ny_c-1)].*dy+y(1);
+    
 
 %% SETUP  COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
@@ -126,16 +129,13 @@ if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     
     x1=[0:1:(nx_c-1)].*dx;
     y1=[0:1:(ny_c-1)].*dy;
-       
+           
     if (~isfield(options,'X'))|(~isfield(options,'Y'));
         [options.X options.Y]=meshgrid(x1,y1);
     end
     if nx>1, h_x=options.X-x1(ceil(nx_c/2)+1);else;h_x=options.X;end
     if ny>1, h_y=options.Y-y1(ceil(ny_c/2)+1);else;h_y=options.Y;end
   
-  %  h_x=X-x1(ceil(nx_c/2)+1);
-  %  h_y=Y-y1(ceil(ny_c/2)+1);
-    
     C=precal_cov([0 0],[h_x(:) h_y(:)],Va);
     options.C=reshape(C,ny_c,nx_c);
     
@@ -169,15 +169,17 @@ if isfield(options,'lim');
     % box, if needed
     %if options.wx > (size(z_rand,2)-nx);options.wx=0,end
     %if options.wy > (size(z_rand,1)-ny);options.wy=0;end
-    if options.wx > (size(z_rand,2)-nx);options.wx=(size(z_rand,2)-nx);end
-    if options.wy > (size(z_rand,1)-ny);options.wy=(size(z_rand,1)-ny);end
-    
+    %keyboard
+    if options.wx > (size(z_rand,2)-nx);options.wx=(size(z_rand,2)-nx),end
+    if options.wy > (size(z_rand,1)-ny);options.wy=(size(z_rand,1)-ny),end
     if options.resim_type==1;
         % BOX TYPE RESIMULATION
         
+        %% CHECK 
+        
         if isfield(options,'pos');
             % NEXT LINE MAY BE PROBLEMATIC USING NEIGHBORHOODS
-            [options.used]=set_resim_data(x,y,z_rand,options.lim,options.pos,options.wrap_around);
+            [options.used]=set_resim_data(x_all,y_all,z_rand,options.lim,options.pos,options.wrap_around);
         else
             % CHOOSE CENTER OF BOX AUTOMATICALLY
             
@@ -185,19 +187,16 @@ if isfield(options,'lim');
             % outside the simulation area, the border zone. This is done to ensure that
             % nodes at the edge of the simulation error are allowe to vary.
             
-            
-            x0=ceil((rand(1)*(nx+options.wx)))-ceil(options.wx/2);
-            y0=ceil((rand(1)*(ny+options.wy)))-ceil(options.wy/2);
-            
+            x0=ceil((rand(1)*(nx+2*options.wx)))-ceil(options.wx);
+            y0=ceil((rand(1)*(ny+2*options.wy)))-ceil(options.wy);
             if x0<1; x0=size(z_rand,2)+x0;end
             if y0<1; y0=size(z_rand,1)+y0;end
             if x0>size(z_rand,2); x0=x0-size(z_rand,2);end
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
-            
-            x0=dx*x0;
-            y0=dy*y0;
-            
-            options.pos=[x0 y0];
+             
+            options.pos=[x_all(x0) y_all(y0)];    
+            %disp(sprintf('x0,y0=%4d,%4d',x0,y0))
+            %disp(sprintf('pos=%g,%g',options.pos))
             [options.used]=set_resim_data([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,z_rand,options.lim,options.pos,options.wrap_around);
             
         end
