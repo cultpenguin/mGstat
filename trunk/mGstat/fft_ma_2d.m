@@ -79,6 +79,7 @@ if nargin==0
 end
 
 options.null='';
+if ~isfield(options,'resim_type'); options.resim_type=2;end
 if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'wrap_around');options.wrap_around=1;end
 if ~isfield(options,'gmean');options.gmean=0;end
@@ -95,16 +96,24 @@ end
 if ~isfield(options,'pad_x');options.pad_x=nx-1;end
 if ~isfield(options,'pad_y');options.pad_y=ny-1;end
 if ~isfield(options,'padpow2');options.padpow2=0;end
-if isfield(options,'w');
+if isfield(options,'w');    
     if length(options.w)==1, options.w=[1 1].*options.w;end
     try;options.wx=options.w(1);end
     try;options.wy=options.w(2);end
 end
 if ~isfield(options,'wx');
-    options.wx = 2*ceil(semivar_get_max_range(Va)./dx);
+    if options.resim_type==1
+        options.wx=0;
+    else
+        options.wx = 2*ceil(semivar_get_max_range(Va)./dx);
+    end
 end
 if ~isfield(options,'wy');
-    options.wy = 2*ceil(semivar_get_max_range(Va)./dy);
+    if options.resim_type==1
+        options.wy=0;
+    else
+        options.wy = 2*ceil(semivar_get_max_range(Va)./dy);
+    end
 end
 
 if length(x)==1; x=[x x+.0001]; end
@@ -156,9 +165,6 @@ else
 end
 
 %% RESIMULATION
-if ~isfield(options,'resim_type');
-    options.resim_type=2;
-end
 
 if isfield(options,'lim');
     
@@ -178,7 +184,6 @@ if isfield(options,'lim');
         %% CHECK 
         
         if isfield(options,'pos');
-            % NEXT LINE MAY BE PROBLEMATIC USING NEIGHBORHOODS
             [options.used]=set_resim_data(x_all,y_all,z_rand,options.lim,options.pos,options.wrap_around);
         else
             % CHOOSE CENTER OF BOX AUTOMATICALLY
@@ -195,8 +200,7 @@ if isfield(options,'lim');
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
              
             options.pos=[x_all(x0) y_all(y0)];    
-            %disp(sprintf('x0,y0=%4d,%4d',x0,y0))
-            %disp(sprintf('pos=%g,%g',options.pos))
+
             [options.used]=set_resim_data([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,z_rand,options.lim,options.pos,options.wrap_around);
             
         end
