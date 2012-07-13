@@ -90,6 +90,8 @@ if nargin==0
 end    
 
 options.null='';
+if ~isfield(options,'resim_type');options.resim_type=2;end
+end
 if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'wrap_around');options.wrap_around=1;end
 if ~isfield(options,'gmean');options.gmean=0;end
@@ -117,13 +119,25 @@ if isfield(options,'w');
     try;options.wz=options.w(3);end
 end
 if ~isfield(options,'wx');
-    options.wx = 2*ceil(semivar_get_max_range(Va)./dx);
+    if options.resim_type==1
+        options.wx=0;
+    else
+        options.wx = 2*ceil(semivar_get_max_range(Va)./dx);
+    end
 end
 if ~isfield(options,'wy');
-    options.wy = 2*ceil(semivar_get_max_range(Va)./dy);
+    if options.resim_type==1
+        options.wy=0;
+    else
+        options.wy = 2*ceil(semivar_get_max_range(Va)./dy);
+    end
 end
 if ~isfield(options,'wz');
-    options.wz = 2*ceil(semivar_get_max_range(Va)./dz);
+    if options.resim_type==1
+        options.wz=0;
+    else
+        options.wz = 2*ceil(semivar_get_max_range(Va)./dz);
+    end
 end
 
 if length(x)==1; x=[x x+.0001]; end
@@ -191,10 +205,6 @@ else
 end
 
 %% RESIMULATION
-if ~isfield(options,'resim_type');
-    options.resim_type=2;
-end
-
 if isfield(options,'lim');
     
 
@@ -206,18 +216,13 @@ if isfield(options,'lim');
         % BOX TYPE RESIMULATION 
         if isfield(options,'pos');
             % NEXT LINE MAY BE PROBLEMATIC USING NEIGHBORHOODS
-            x0=dx.*(nx-nx_c)/2;
-            y0=dy.*(ny-ny_c)/2;
-            z0=dy.*(nz-nz_c)/2;
-            x0=0;y0=0;z0=0;
-            %           options.wrap_around=1;
-            [options.used]=set_resim_data_3d(x_all,y_all,z_all,z_rand,options.lim,options.pos+[x0 y0 z0],options.wrap_around);
+            [options.used]=set_resim_data_3d(x_all,y_all,z_all,z_rand,options.lim,options.pos,options.wrap_around);
         else
             % CHOOSE CENTER OF BOX AUTOMATICALLY
             
-            x0=ceil((rand(1)*(nx+options.wx)))-ceil(options.wx/2);
-            y0=ceil((rand(1)*(ny+options.wy)))-ceil(options.wy/2);
-            z0=ceil((rand(1)*(nz+options.wz)))-ceil(options.wz/2);
+            x0=ceil((rand(1)*(nx+2*options.wx)))-ceil(options.wx);
+            y0=ceil((rand(1)*(ny+2*options.wy)))-ceil(options.wy);
+            z0=ceil((rand(1)*(nz+2*options.wz)))-ceil(options.wz);
             
             if x0<1; x0=size(z_rand,2)+x0;end
             if y0<1; y0=size(z_rand,1)+y0;end
@@ -226,11 +231,8 @@ if isfield(options,'lim');
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
             if z0>size(z_rand,3); z0=z0-size(z_rand,3);end
             
-            x0=dx*x0; 
-            y0=dy*y0;
-            z0=dz*z0;
-          
-            options.pos=[x0 y0 z0];
+            options.pos=[x_all(x0) y_all(y0) z_all(y0)];
+            
             [options.used]=set_resim_data_3d([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,[1:size(z_rand,3)]*dz,z_rand,options.lim,options.pos,options.wrap_around,options.X,options.Y,options.Z);
             
         end
