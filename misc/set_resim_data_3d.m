@@ -82,6 +82,8 @@ if wrap_around==1
         used(find( abs(xx-pos(1))<lim(1) & abs(yy-pos(2))<lim(2) & lz-abs(zz-pos(3))<lim(3)   ))=0;
     end
    
+    %% MORE ..
+    
 end
 if nargout>1
     ih=find(used);
