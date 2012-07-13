@@ -42,9 +42,25 @@ used=ones(size(xx));
 used(find(abs(xx-pos(1))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
 
 if wrap_around==1
+    % upper x
+    used(find(abs(xx-(pos(1)-max(x)))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
+    % upper y
+    used(find(abs(xx-pos(1))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
+    % upper x&y
+    used(find(abs(xx-(pos(1)-max(x)))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
+    % lower x
     used(find(abs(fliplr(xx)+pos(1))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
+    % lower x, lower y
     used(find(abs(fliplr(xx)+pos(1))<lim(1) & abs(flipud(yy)+pos(2))<lim(2)))=0;
+    % lower y
     used(find(abs(xx-pos(1))<lim(1) & abs(flipud(yy)+pos(2))<lim(2)))=0;
+    
+    % upper x, lower y 
+    used(find(abs(xx-( pos(1)- max(x) ))<lim(1) & abs(flipud(yy)+pos(2))<lim(2)))=0;
+    
+    % lower x, upper y 
+    used(find(abs(fliplr(xx)+pos(1))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
+        
 end
 if nargout>1
     ih=find(used);

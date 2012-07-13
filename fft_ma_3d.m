@@ -139,6 +139,10 @@ nx_c=nx+options.pad_x;
 ny_c=ny+options.pad_y;
 nz_c=nz+options.pad_z;
 
+x_all=[0:1:(nx_c-1)].*dx;
+y_all=[0:1:(ny_c-1)].*dy;
+z_all=[0:1:(nz_c-1)].*dz;
+
 %% SETUP  COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     
@@ -193,16 +197,7 @@ end
 
 if isfield(options,'lim');
     
-    % use a border zone correspoding to twice the size of the
-    % maximum range
-    %options.wx = 2*ceil(max([Va.par2])./dx);
-    %options.wy = 2*ceil(max([Va.par2])./dy);
-    
-    % make sure we only pad around simulation
-    % box, if needed
-    %if options.wx > (size(z_rand,2)-nx);options.wx=0;end
-    %if options.wy > (size(z_rand,1)-ny);options.wy=0;end
-    %if options.wz > (size(z_rand,3)-nz);options.wz=0;end
+
     if options.wx > (size(z_rand,2)-nx);options.wx=size(z_rand,2)-nx;end
     if options.wy > (size(z_rand,1)-ny);options.wy=size(z_rand,1)-ny;end
     if options.wz > (size(z_rand,3)-nz);options.wz=size(z_rand,3)-nz;end
@@ -216,7 +211,7 @@ if isfield(options,'lim');
             z0=dy.*(nz-nz_c)/2;
             x0=0;y0=0;z0=0;
             %           options.wrap_around=1;
-            [options.used]=set_resim_data_3d(x,y,z,z_rand,options.lim,options.pos+[x0 y0 z0],options.wrap_around);
+            [options.used]=set_resim_data_3d(x_all,y_all,z_all,z_rand,options.lim,options.pos+[x0 y0 z0],options.wrap_around);
         else
             % CHOOSE CENTER OF BOX AUTOMATICALLY
             
