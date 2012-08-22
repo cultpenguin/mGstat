@@ -61,6 +61,7 @@
 
 %
 function [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options)
+
 if nargin==0
     x=[1:1:50];y=1:1:80;
     Va='1  Sph(10,30,.25)';
@@ -77,7 +78,6 @@ if nargin==0
     out=out2;
     return
 end
-
 options.null='';
 if ~isfield(options,'resim_type'); options.resim_type=2;end
 if ~isstruct(Va);Va=deformat_variogram(Va);end
@@ -167,8 +167,7 @@ end
 %% RESIMULATION
 
 if isfield(options,'lim');
-    
-    % use a border zone correspoding to twice the size of the
+     % use a border zone correspoding to twice the size of the
     % maximum range
     
     % make sure we only pad around simulation
@@ -176,16 +175,15 @@ if isfield(options,'lim');
     %if options.wx > (size(z_rand,2)-nx);options.wx=0,end
     %if options.wy > (size(z_rand,1)-ny);options.wy=0;end
     %keyboard
-    if options.wx > (size(z_rand,2)-nx);options.wx=(size(z_rand,2)-nx),end
-    if options.wy > (size(z_rand,1)-ny);options.wy=(size(z_rand,1)-ny),end
-    if options.resim_type==1;
+    if options.wx > (size(z_rand,2)-nx);options.wx=(size(z_rand,2)-nx);end
+    if options.wy > (size(z_rand,1)-ny);options.wy=(size(z_rand,1)-ny);end
+    if (options.resim_type==1)|(options.resim_type==3)
         % BOX TYPE RESIMULATION
-        
-        %% CHECK 
         
         if isfield(options,'pos');
             [options.used]=set_resim_data(x_all,y_all,z_rand,options.lim,options.pos,options.wrap_around);
         else
+
             % CHOOSE CENTER OF BOX AUTOMATICALLY
             
             % wx, wy, allow selecting from the center also in a area just
@@ -199,20 +197,32 @@ if isfield(options,'lim');
             if x0>size(z_rand,2); x0=x0-size(z_rand,2);end
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
              
-            options.pos=[x_all(x0) y_all(y0)];    
+            % we do not use options.pos, but options.pos_used, such that 
+            % opions.pos is not fixed for for subsequent calls top fft_ma
+            options.pos_used=[x_all(x0) y_all(y0)];    
 
-            [options.used]=set_resim_data([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,z_rand,options.lim,options.pos,options.wrap_around);
+            [options.used]=set_resim_data([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,z_rand,options.lim,options.pos_used,options.wrap_around);
+
+            %% random selection within box
+            if options.resim_type==3;
+                ii=find(options.used==0);
+                nii=length(ii);
+                
+                pert_proc_in_box=0.1; %numbe of hard data in box to perturb
+                i_random=randomsample(nii,ceil(pert_proc_in_box*nii));
+                options.used(ii(i_random))=1;
+                
+            end
+            
             
         end
         ii=find(options.used==0);
         z_rand_new=randn(size(z_rand(ii)));
         z_rand(ii) = z_rand_new;
+        
     else
         % RANDOM SET TYPE RESIMULATION
         
-        % MAKE SURE ONLY TO SELECT RESIM DATA
-        % WITHIN (and close to) SIMULATION AREA
-      
         n_resim=options.lim(1);
         if n_resim<=1
             % use n_resim as a proportion of all random deviates

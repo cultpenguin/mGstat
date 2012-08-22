@@ -231,9 +231,9 @@ if isfield(options,'lim');
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
             if z0>size(z_rand,3); z0=z0-size(z_rand,3);end
             
-            options.pos=[x_all(x0) y_all(y0) z_all(y0)];
+            options.pos_use=[x_all(x0) y_all(y0) z_all(y0)];
             
-            [options.used]=set_resim_data_3d([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,[1:size(z_rand,3)]*dz,z_rand,options.lim,options.pos,options.wrap_around,options.X,options.Y,options.Z);
+            [options.used]=set_resim_data_3d([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,[1:size(z_rand,3)]*dz,z_rand,options.lim,options.pos_use,options.wrap_around,options.X,options.Y,options.Z);
             
         end
         ii=find(options.used==0);
