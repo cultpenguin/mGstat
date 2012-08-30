@@ -157,6 +157,14 @@ x_all=[0:1:(nx_c-1)].*dx;
 y_all=[0:1:(ny_c-1)].*dy;
 z_all=[0:1:(nz_c-1)].*dz;
 
+%% REMOVE OLD COVARIANCE OF options.constant_C=0
+if (isfield(options,'constant_C'));
+    if options.constant_C==0;
+        try;options=rmfield(options,'C');end
+        try;options=rmfield(options,'fftC');end
+    end
+end
+
 %% SETUP  COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     

@@ -204,16 +204,18 @@ if isfield(S,'ti');
     fname='ti.sgems';
     sgems_write_grid(1:1:ny,1:1:nx,1:1:nz,S.ti(:),fname,'ti','property');
     S.ti_file=fname;
-    S=rmfield(S,'ti');
+    S=rmfield(S,'ti');    
 end
          
+if isfield(S,'ti_file');
+    if exist(S.ti_file,'file')==2;
+        O_sgems=sgems_read(S.ti_file);
+        if ~isfield(S,'ti_property_id');S.ti_property_id=1;end
+        S.XML.parameters.PropertySelector_Training.grid=O_sgems.grid_name;
+        S.XML.parameters.PropertySelector_Training.property=O_sgems.property{S.ti_property_id};
+    end
+end
 
-if exist(S.ti_file,'file')==2;
-    O_sgems=sgems_read(S.ti_file);
-    if ~isfield(S,'ti_property_id');S.ti_property_id=1;end
-    S.XML.parameters.PropertySelector_Training.grid=O_sgems.grid_name;
-    S.XML.parameters.PropertySelector_Training.property=O_sgems.property{S.ti_property_id};
-end    
 
 
 % update marginal PDF for SNESIM if not set by user

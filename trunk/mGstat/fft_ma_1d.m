@@ -56,7 +56,17 @@ dx=x(2)-x(1); cell=dx;
 
 nx_c=nx*options.fac_x;
 
-% COVARIANCE MODEL
+
+
+%% REMOVE OLD COVARIANCE OF options.constant_C=0
+if (isfield(options,'constant_C'));
+    if options.constant_C==0;
+        try;options=rmfield(options,'C');end
+        try;options=rmfield(options,'fftC');end
+    end
+end
+
+%% COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     options.C=zeros(1,nx_c);
     
