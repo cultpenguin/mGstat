@@ -37,16 +37,8 @@ else
     Cm=precal_cov(pos_known,pos_known,V,options);
     %Cm=precal_cov(pos_known,pos_known,V);
 end
-% TMH 05/05/2009 :
-% CM IS NOT RIGHT IN CASE OF A NUGGET
-% Cm=precal_cov(pos_known,pos_known,V)
-% NUGGET IS NOT PRESENT
-
 
 dm=val_known(:,1)-m0;
-
-
-
 
 if method==1
     mgstat_verbose(sprintf('%s : Pardo-Iguzquiza likelihood',mfilename),1);
@@ -55,15 +47,12 @@ if method==1
     sample_size=nknown;
     sill=sum([V.par1]);
 
-    %Cd=eye(size(Cm))+0.00001*sill; % FOR BETTER PERFORMANCE
-    %Cd=eye(size(Cm)).*0.00001*sill; % FOR BETTER PERFORMANCE
     Cd=eye(size(Cm)).*0.001*sill; % FOR BETTER PERFORMANCE
     Cm=Cm+Cd;
     
     Q=Cm./sill;
     d_val=val_known(:,1)-mean(val_known(:,1));
-    %iQ=inv(Q);
-    iQ=inv(Q+0.00000001*eye(size(Q,1))); % NEEDED FOR SOM UNSTABLE MATRIX INVERSION
+    iQ=inv(Q); % 
     try
         logdetQ=logdet(Q);
     catch
@@ -102,9 +91,10 @@ elseif method==2
     sigma2_est=0;
 elseif method==3,
     mgstat_verbose(sprintf('%s : gauss likelihood',mfilename),-1);
-    %L=(-.5*dm'*inv(Cm)*dm);    
-    %logL = logdet(Cm)
-    L = 0.5*logdet(Cm) + (-.5*dm'*inv(Cm)*dm);
     
+    f1 = -.5*log(2*pi^nknown);
+    f2 = -0.5*logdet(Cm);
+    f3 = (-.5*dm'*inv(Cm)*dm); 
+    L = f1 + f2 +f3;
     sigma2_est=0;
 end

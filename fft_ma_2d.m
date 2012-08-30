@@ -126,7 +126,14 @@ ny_c=ny+options.pad_y;
 nx_c=nx+options.pad_x;
 x_all=[0:1:(nx_c-1)].*dx+x(1);
 y_all=[0:1:(ny_c-1)].*dy+y(1);
-    
+
+%% REMOVE OLD COVARIANCE OF options.constant_C=0
+if (isfield(options,'constant_C'));
+    if options.constant_C==0;
+        try;options=rmfield(options,'C');end
+        try;options=rmfield(options,'fftC');end
+    end
+end
 
 %% SETUP  COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
