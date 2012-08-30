@@ -46,6 +46,8 @@ end
 dm=val_known(:,1)-m0;
 
 
+
+
 if method==1
     mgstat_verbose(sprintf('%s : Pardo-Iguzquiza likelihood',mfilename),1);
     % FROM Pardo-Iguzquiza, 1998, Math Geol, 30(1), EQN 8.
@@ -53,17 +55,23 @@ if method==1
     sample_size=nknown;
     sill=sum([V.par1]);
 
-    Cd=eye(size(Cm))+0.00001*sill; % FOR BETTER PERFORMANCE
+    %Cd=eye(size(Cm))+0.00001*sill; % FOR BETTER PERFORMANCE
+    %Cd=eye(size(Cm)).*0.00001*sill; % FOR BETTER PERFORMANCE
+    Cd=eye(size(Cm)).*0.001*sill; % FOR BETTER PERFORMANCE
     Cm=Cm+Cd;
     
     Q=Cm./sill;
     d_val=val_known(:,1)-mean(val_known(:,1));
     %iQ=inv(Q);
     iQ=inv(Q+0.00000001*eye(size(Q,1))); % NEEDED FOR SOM UNSTABLE MATRIX INVERSION
-    detQ=det(Q);
+    try
+        logdetQ=logdet(Q);
+    catch
+        logdetQ=log(det(Q));
+    end
     FAC1=(sample_size/2)*(log(2*pi)+1-log(sample_size));
     dQd=d_val'*iQ*d_val;
-    L_nllf=FAC1+.5*log(detQ)+(sample_size/2)*log(dQd);
+    L_nllf=FAC1+.5*logdetQ+(sample_size/2)*log(dQd);
     %L_nllf=(sample_size/2)*(log(2*pi)+1-log(sample_size))+.5*log(detQ)+(sample_size/2)*log(d_val'*iQ*d_val);
     if nargout > 1
         sigma2_est=(1/sample_size)*(dQd);
@@ -91,8 +99,12 @@ elseif method==2
     %    L=-1.*L_nllf;
     %    
     %end
+    sigma2_est=0;
 elseif method==3,
     mgstat_verbose(sprintf('%s : gauss likelihood',mfilename),-1);
-    L=(-.5*dm'*inv(Cm)*dm);
+    %L=(-.5*dm'*inv(Cm)*dm);    
+    %logL = logdet(Cm)
+    L = 0.5*logdet(Cm) + (-.5*dm'*inv(Cm)*dm);
+    
     sigma2_est=0;
 end
