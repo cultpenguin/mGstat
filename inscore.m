@@ -21,14 +21,17 @@ function d_out=inscore(d_normal,o_nscore)
   
   
   % use only non NAN data
-  id=find(~isnan(o_nscore.normscore));
+  id=find(~isnan(o_nscore.normscore)&~isinf(o_nscore.normscore));
   
   s_origdata=sort(o_nscore.d);
              
   % INTERPOLATE BETWEEN KNOWN DATA
   % 'help interp1' to see list of interpolation options.
+  try
   d_out=interp1(o_nscore.normscore(id),s_origdata(id),d_normal,style);
-  
+  catch
+      keyboard
+  end
   doPlot=0;
   if doPlot==1;
      plot(o_nscore.normscore(id),s_origdata(id),'k-*',d_normal,d_out,'go')
