@@ -5,7 +5,6 @@
 %     mGstat_Install_Dir/snesim
 %     mGstat_Install_Dir/visim
 %     mGstat_Install_Dir/sgems
-%     mGstat_Install_Dir/fast
 %     mGstat_Install_Dir/misc
 %
 
@@ -16,9 +15,7 @@ ip=ip+1;P{ip}='gstat';
 ip=ip+1;P{ip}='snesim';
 ip=ip+1;P{ip}='visim';
 ip=ip+1;P{ip}='sgems';
-ip=ip+1;P{ip}='fast';
 ip=ip+1;P{ip}='misc';
-ip=ip+1;P{ip}='cwp';
 
 for ip=1:length(P);
     pa=[mgstat_dir,filesep,P{ip}];
