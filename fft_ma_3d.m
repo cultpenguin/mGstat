@@ -72,7 +72,7 @@
 % UPDATE TO WORK WITH RESIM
 
 %
-function [out,z_rand,options,logL]=fft_ma_3d_news(x,y,z,Va,options)
+function [out,z_rand,options,logL]=fft_ma_3d(x,y,z,Va,options)
 
 if nargin==0
     x=[1:1:32];y=1:1:32;z=1:32;
@@ -91,7 +91,6 @@ end
 
 options.null='';
 if ~isfield(options,'resim_type');options.resim_type=2;end
-end
 if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'wrap_around');options.wrap_around=1;end
 if ~isfield(options,'gmean');options.gmean=0;end
