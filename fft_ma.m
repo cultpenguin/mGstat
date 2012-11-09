@@ -32,6 +32,12 @@
 %
 function [out,z_rand,options,logL]=fft_ma(x,y,z,Va,options)
 
+%try
+%    disp(format_variogram(Va));
+%catch
+%    disp(Va);
+%end
+
 if nargin>1,
     if (isstr(y)|isstruct(y))
         Va=y;
