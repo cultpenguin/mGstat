@@ -46,13 +46,12 @@ fname=space2char(fname);
 if do_watermark==1
     watermark(fname);
 end
-
 fname=space2char(fname);
 
 i=0;
 i=i+1;P{i}.type='-dpng';P{i}.ext='.png';
 %i=i+1;P{i}.type='-depsc';P{i}.ext='.eps';
-i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';
+%i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';
 
 for i=1:length(P)
     res_string=sprintf('-r%d',res);

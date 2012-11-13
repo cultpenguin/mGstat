@@ -60,6 +60,18 @@ if nargin>2,
     end
 end
 
+
 options.null='';
+if (length(z)==1)&(length(y)==1)
+    [out,z_rand,options,logL]=fft_ma_1d(x,Va,options);
+elseif (length(z)==1)
+    [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options);
+else
+    [out,z_rand,options,logL]=fft_ma_3d(x,y,z,Va,options);
+end
+out=squeeze(out);
+
+
+return
 [out,z_rand,options,logL]=fft_ma_3d(x,y,z,Va,options);
 out=squeeze(out);
