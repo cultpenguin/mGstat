@@ -257,7 +257,7 @@ if isfield(options,'lim');
             if y0<1; y0=size(z_rand,1)+y0;end
             if x0>size(z_rand,2); x0=x0-size(z_rand,2);end
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
-            
+
             z_rand(y0,x0)=z_rand_new(k);
         
         end

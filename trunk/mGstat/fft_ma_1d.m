@@ -40,7 +40,7 @@
 
 
 %
-function [out,z_rand,options]=fft_ma_1d(x,Va,options);
+function [out,z_rand,options,logL]=fft_ma_1d(x,Va,options);
 
 
 options.null='';
@@ -69,48 +69,11 @@ end
 %% COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     options.C=zeros(1,nx_c);
+        
+    x=dx/2:dx:nx_c*dx-dx/2;
+    h_x=x-x(ceil(nx_c/2));
+    options.C=precal_cov([0],[h_x(:)],Va);
     
-    for iv=1:length(Va);
-        
-        % GET HMAX AND HMIN FROM SEMIVARIOGRAM MODEL
-        % ONLY WORKS FOR ONE SEMIVRAIOHGRAM MODEL !!
-        par2=Va(iv).par2;
-        h_max=par2(1);
-        if length(par2)>1
-            h_min=h_max*par2(2);
-            ang=par2(3);
-        else
-            h_min=h_max;
-            ang=0;
-        end
-        try
-            aniso=Va(iv).par2(2);
-        catch
-            aniso=1;
-        end
-        ang1=ang*(pi/180);
-        
-        
-        x=dx/2:dx:nx_c*dx-dx/2;
-        h_x=x-x(ceil(nx_c/2));
-        
-        % Transform into rotated coordinates:
-        h_min=h_x*cos(ang1);
-        h_max=h_x*sin(ang1);
-        
-        % Rescale the ellipse:
-        h_min_rs=h_min;
-        h_max_rs=aniso*h_max;
-        dist=sqrt(h_min_rs.^2+h_max_rs.^2);
-        
-        % calc semivariogram
-        Va2=Va(iv);
-        try
-            Va2.par2=Va(iv).par2(1)*Va(iv).par2(2);
-        end
-        options.C=options.C+semivar_synth(Va2,dist);
-    end
-    options.C=options.gvar-options.C;
 end
 
 
@@ -174,6 +137,8 @@ z=z_rand;
 out=reshape(real(ifft2(sqrt(options.fftC).*fft2(z))),1,nx_c);
 
 out=out(1,1:nx)+options.gmean;
+
+logL = -.5*sum(z_rand(:).^2);
 
 return
 
