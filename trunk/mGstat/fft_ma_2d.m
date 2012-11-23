@@ -251,7 +251,7 @@ if isfield(options,'lim');
         for k=1:length(ii);
             
             x0=round(ix(k))-ceil(options.wx/2);
-            y0=round(iy(k))-ceil(options.wx/2);
+            y0=round(iy(k))-ceil(options.wy/2);
             
             if x0<1; x0=size(z_rand,2)+x0;end
             if y0<1; y0=size(z_rand,1)+y0;end

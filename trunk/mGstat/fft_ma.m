@@ -63,7 +63,13 @@ end
 
 options.null='';
 if (length(z)==1)&(length(y)==1)
-    [out,z_rand,options,logL]=fft_ma_1d(x,Va,options);
+    % [out,z_rand,options,logL]=fft_ma_1d(x,Va,options);
+    % Maybe there is a problem with fft_ma_1d for resim...!
+    try
+    [out,z_rand,options,logL]=fft_ma_2d(x,0,Va,options);
+    catch
+        keyboard
+    end
 elseif (length(z)==1)
     [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options);
 else
