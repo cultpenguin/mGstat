@@ -70,8 +70,10 @@ end
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     options.C=zeros(1,nx_c);
         
-    x=dx/2:dx:nx_c*dx-dx/2;
-    h_x=x-x(ceil(nx_c/2));
+    
+    h_x=[0:1:(nx_c-1)].*dx;
+    x=dx/2:dx:nx_c*dx-dx/2;h_x=x-x(ceil(nx_c/2));
+    %h_x=x;
     options.C=precal_cov([0],[h_x(:)],Va);
     
 end
@@ -132,9 +134,7 @@ if isfield(options,'lim');
     
 end
 
-
-z=z_rand;
-out=reshape(real(ifft2(sqrt(options.fftC).*fft2(z))),1,nx_c);
+out=reshape(real(ifft2(sqrt(options.fftC).*fft2(z_rand))),1,nx_c);
 
 out=out(1,1:nx)+options.gmean;
 
