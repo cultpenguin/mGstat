@@ -8,7 +8,7 @@
 %   V=visim_set_variogram(V,'1 Sph(30)');
 %
 %
-function [V,Va]=visim_format_variogram(V,Va);
+function [V,Va]=visim_set_variogram(V,Va);
   
 if isstr(Va);
     Va=deformat_variogram(Va);
@@ -53,6 +53,7 @@ for i=1:length(Va);
             
         
     end
+    V.gvar=sum([Va.par1]);
 end
 
 
