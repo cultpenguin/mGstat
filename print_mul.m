@@ -107,6 +107,6 @@ if (trim==1)|(transp~=0)
         [status,result]=system(cmd);
         if status~=0; disp(sprintf('%s : %s',mfilename,result));end
     else
-        disp(sprintf('%s : MOGRIFY binary not found',mfilename))
+        % disp(sprintf('%s : MOGRIFY binary not found',mfilename))
     end
 end
