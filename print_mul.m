@@ -53,7 +53,7 @@ fname=space2char(fname);
 
 i=0;
 i=i+1;P{i}.type='-dpng';P{i}.ext='.png';
-%i=i+1;P{i}.type='-depsc';P{i}.ext='.eps';
+i=i+1;P{i}.type='-depsc';P{i}.ext='.eps';
 %i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';
 
 for i=1:length(P)
