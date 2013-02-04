@@ -93,7 +93,6 @@ for iV=1:length(V)
             p1=repmat(pos1(i,:),length(jj),1);
             p2=pos1(jj,:);
         end
-        disp(sprintf('%d %d',size(p1,1),size(p2,1)))
         dd=edist(p1,p2,V(iV).par2,isorange);
         %d(i,:)=dd;
         d(i,jj)=dd;
