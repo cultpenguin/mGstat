@@ -1,10 +1,9 @@
 % precal_cov : Precalculate covariance matrix
 %
 % CALL :
-%   cov=precal_cov(pos1,pos2,V,options);
+%   cov=precal_cov_auto(pos1,pos2,V,options);
 %
 % pos1   [ndata1,ndims] : Location of data to be estimated
-% pos2   [ndata2,ndims] : Location of data to be estimated
 % V [struct] : Variogram structure
 %
 % cov [ndata1,ndata1] : Covariance matrix
@@ -14,7 +13,7 @@
 %     x=[1:.5:10];nx=length(x);
 %     y=[1:.5:20];ny=length(y);
 %     [xx,yy]=meshgrid(x,y);
-%     cov=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(5,30,.5)');
+%     cov=precal_cov_auto([xx(:) yy(:)]],'1 Sph(5,30,.5)');
 %     subplot(2,1,1);imagesc(cov);axis image;colorbar
 %     
 %     % generate some unconditional realizations
@@ -28,7 +27,7 @@
 %
 %
 
-function [cov,d]=precal_cov(pos1,pos2,V,options)
+function [cov,d]=precal_cov(pos1,V,options)
 options.dummy='';
 if ~isfield(options,'verbose'), options.verbose=0;end
 
@@ -39,7 +38,7 @@ if nargin==0
     x=1:.25:10;nx=length(x);
     y=1:.25:20;ny=length(y);
     [xx,yy]=meshgrid(x,y);
-    cov=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(5,30,.5)');
+    cov=precal_cov_ati([xx(:) yy(:)],'1 Sph(5,30,.5)');
     subplot(2,1,1);imagesc(cov);axis image;colorbar
     
     % generate som unconditional realizations
@@ -64,12 +63,9 @@ if ~isstruct(V);
 end
 
 n_est1=size(pos1,1);
-n_est2=size(pos2,1);
 
 n_dim1=size(pos1,2);
-%n_dim2=size(pos2,2);
-%cov=zeros(n_est1,n_est2);
-d=zeros(n_est1,n_est2);
+d=zeros(n_est1,n_est1);
 mgstat_verbose([mfilename,' : Setting up covariance'],2);
 
 gvar=sum([V.par1]);
@@ -89,16 +85,20 @@ for iV=1:length(V)
         end
 
         % FAST VECTORIZED APPROACH
-        jj=1:n_est2;            
+        jj=i:n_est1;            
         if n_dim1==1
             p1=ones(n_est1,1).*pos1(i);
-            p2=pos2;
+            p2=pos1;
         else
             p1=repmat(pos1(i,:),length(jj),1);
-            p2=pos2(jj,:);
+            p2=pos1(jj,:);
         end
+        disp(sprintf('%d %d',size(p1,1),size(p2,1)))
         dd=edist(p1,p2,V(iV).par2,isorange);
-        d(i,:)=dd;
+        %d(i,:)=dd;
+        d(i,jj)=dd;
+        d(jj,i)=dd';
+        
         
         % SLOW ITERATIVE APPROACH
         %for j=1:n_est2;
