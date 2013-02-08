@@ -38,8 +38,8 @@ if nargin<1, fname='test';end
 if nargin<4, res=300;end
 if nargin<2, trim=1;end
 if nargin<3, 
-    %transp=1;
-    transp=0;
+    transp=1;
+    %transp=0;
 end
 if nargin<5, do_watermark=0;end
 save_fig=0;
@@ -53,8 +53,8 @@ fname=space2char(fname);
 
 i=0;
 i=i+1;P{i}.type='-dpng';P{i}.ext='.png';
-i=i+1;P{i}.type='-depsc';P{i}.ext='.eps';
-%i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';
+%i=i+1;P{i}.type='-depsc';P{i}.ext='.eps';
+i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';
 
 for i=1:length(P)
     res_string=sprintf('-r%d',res);
