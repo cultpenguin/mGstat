@@ -72,17 +72,19 @@ S.dim=dim;
 %%
 % UNCONDITIONAL SIMULATION!!!
 S=sgems_grid(S);
-
 %%
 % CONDITIONAL SIMULATION!!!
 Sc=S;
 
 % conditional data
 
-%header{1}='X';header{2}='Y';header{3}='Z';
-%header{4}='DATA';
-%Sc.f_obs='obs.sgems';
-%O=sgems_write_pointset(Sc.f_obs,d_obs,header,'OBS');
+header{1}='X';header{2}='Y';header{3}='Z';
+header{4}='DATA';
+d_obs=[10,10,0,1;15,10,0,1;20,10,0,1; 10,22,0,1;15,22,0,1;20,22,0,1; 40 13 0 1; 40 2 0 0 ; 40 18 0 0 ; 10 2 0 0; 10 18 0 0 ];
+Sc.f_obs='obs.sgems';
+
+O=sgems_write_pointset(Sc.f_obs,d_obs,header,'OBS');
+Sc.d_obs=d_obs;
 
 save Sc Sc
 % conditional simulation
