@@ -38,8 +38,8 @@ if nargin<1, fname='test';end
 if nargin<4, res=300;end
 if nargin<2, trim=1;end
 if nargin<3, 
+    %transp=1;
     transp=1;
-    %transp=0;
 end
 if nargin<5, do_watermark=0;end
 save_fig=0;
