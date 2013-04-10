@@ -1,7 +1,7 @@
 % precal_cov : Precalculate covariance matrix
 %
 % CALL :
-%   cov=precal_cov_auto(pos1,pos2,V,options);
+%   cov=precal_cov_auto(pos1,V,options);
 %
 % pos1   [ndata1,ndims] : Location of data to be estimated
 % V [struct] : Variogram structure
@@ -27,7 +27,7 @@
 %
 %
 
-function [cov,d]=precal_cov(pos1,V,options)
+function [cov,d]=precal_cov_auto(pos1,V,options)
 options.dummy='';
 if ~isfield(options,'verbose'), options.verbose=0;end
 
