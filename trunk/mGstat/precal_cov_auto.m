@@ -13,7 +13,7 @@
 %     x=[1:.5:10];nx=length(x);
 %     y=[1:.5:20];ny=length(y);
 %     [xx,yy]=meshgrid(x,y);
-%     cov=precal_cov_auto([xx(:) yy(:)]],'1 Sph(5,30,.5)');
+%     cov=precal_cov_auto([xx(:) yy(:)],'1 Sph(5,30,.5)');
 %     subplot(2,1,1);imagesc(cov);axis image;colorbar
 %     
 %     % generate some unconditional realizations
@@ -38,7 +38,7 @@ if nargin==0
     x=1:.25:10;nx=length(x);
     y=1:.25:20;ny=length(y);
     [xx,yy]=meshgrid(x,y);
-    cov=precal_cov_ati([xx(:) yy(:)],'1 Sph(5,30,.5)');
+    cov=precal_cov_auto([xx(:) yy(:)],'1 Sph(5,30,.5)');
     subplot(2,1,1);imagesc(cov);axis image;colorbar
     
     % generate som unconditional realizations
