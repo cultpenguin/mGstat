@@ -40,6 +40,6 @@ function d_out=inscore(d_normal,o_nscore)
   % THERE IS SOME TROUBLE AT THE TAILS, FOR SOME VERSION OF MATLAB ... -->
   ibad=find(isnan(d_out));
   if ~isempty(ibad);
-    d_out(ibad)=interp1(o_nscore.normscore(id),s_origdata(id),d_normal(ibad),'nearest');
+    d_out(ibad)=interp1(o_nscore.normscore(id),s_origdata(id),d_normal(ibad),'nearest','extrap');
   end
   
