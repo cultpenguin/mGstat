@@ -49,7 +49,7 @@ function write_eas(filename,data,header,line1,nanValue);
   % replace NAN values
   data(find(isnan(data)))=nanValue;
   
-  fid=fopen(filename,'w');
+  fid=fopen(filename,'wt');
   
   fprintf(fid,'%s\n',line1);
   fprintf(fid,'%d\n',nd);

@@ -43,7 +43,7 @@ c
       integer MAXNST, MAXREF, MAXCAT, MV, MAXVOLS, MAXDINVOL
       integer MAXQUAN,MAXMVLOOK
 
-      parameter(MAXX   =   801, MAXY   = 801, MAXZ   = 1,
+      parameter(MAXX   =   61, MAXY   = 61, MAXZ   = 131,
      +          MAXCTX =  MAXX, MAXCTY =MAXY, MAXCTZ =MAXZ,
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
      +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,
