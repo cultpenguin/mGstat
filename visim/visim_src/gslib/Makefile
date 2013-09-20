@@ -2,12 +2,8 @@
 # Makefile for generating "libgs.a"
 #
 
-#COMP = ifort
-#FFLAGS = -c -O
-
 COMP = gfortran
-FFLAGS = -c -m32 -O
-FFLAGS = -c -O
+FFLAGS = -c -O3 -static
 
 
 #FFLAGS =  -march=i386 -c -O2 

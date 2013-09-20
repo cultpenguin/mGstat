@@ -10,14 +10,8 @@ progname=visim
 PROG   = $(progname)
 PROG = visim
 
-COMP = ifort
-FFLAGS = -O
-#FFLAGS = -fdefault-real-8 -fdefault-double-8 -O
-
-
 COMP = gfortran
-FFLAGS = -m32 -O
-FFLAGS = -O
+FFLAGS = -O3 -static
 
 SRCS   =  $(progname).f visim_krige.f visim_krige_volume.f \
                         visim_randpath.f visim_nhoodvol.f \
@@ -47,7 +41,7 @@ LIBS   = libgs.a
 
 all:$(PROG) 
 $(PROG):$(OBJS)
-	$(COMP) -o $@ $(OBJS) $(LIBS)
+	$(COMP) -static -o $@ $(OBJS) $(LIBS)
 
 .f.o:
 	$(COMP) -c $(FFLAGS) $<
