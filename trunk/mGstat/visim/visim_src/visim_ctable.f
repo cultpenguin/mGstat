@@ -50,7 +50,8 @@ c
 c
 c
 c-----------------------------------------------------------------------
-      parameter(TINY=1.0e-10)
+      use geostat_allocate
+	  parameter(TINY=1.0e-10)
       include  'visim.inc'
       real*8    hsqd,sqdist
       logical   first

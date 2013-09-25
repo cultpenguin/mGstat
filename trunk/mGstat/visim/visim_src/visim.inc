@@ -39,17 +39,18 @@ c
 c User Adjustable Parameters:
 c
       integer MAXX, MAXY, MAXZ, MAXCTX, MAXCTY, MAXCTZ
-      integer MAXSBX, MAXSBY, MAXSBZ, MAXDAT, MAXNOD, MAXSAM
-      integer MAXNST, MAXREF, MAXCAT, MV, MAXVOLS, MAXDINVOL
-      integer MAXQUAN,MAXMVLOOK
+      integer MAXSBX, MAXSBY, MAXSBZ, MAXNOD, MAXSAM
+      integer MAXNST, MAXREF, MAMAXXXCAT, MV, MAXVOLS, MAXDINVOL
+      integer MAXDAT
 
-      parameter(MAXX   =   61, MAXY   = 61, MAXZ   = 131,
+      parameter(MAXX   =   55, MAXY   = 55, MAXZ   = 125,
      +          MAXCTX =  MAXX, MAXCTY =MAXY, MAXCTZ =MAXZ,
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
-     +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,
+     +          MAXNOD =  1448, MAXSAM = 148,
      +          MAXNST =     4, MAXREF=10000,MAXCAT=24, 
-     +          MV=20         , MAXVOLS=1 , MAXDINVOL=1,
+     +          MV=20         , MAXVOLS=100 , MAXDINVOL=199,
      +		MAXQUAN=501,MAXMVLOOK=201)
+      parameter(MAXDAT  = 50000)
 c
 c Fixed Parameters:
 c
@@ -70,9 +71,18 @@ c
 c
 c Variable Declaration:
 c
+
+C MAXDAT RELATED PARS
+C
+C Seperate these and then make them allocatable
+C Make a function that allocated variables accroding to MAXDAT
+C and also MXYZ , and MAXCOLS!!!
+C
       real      x(MAXDAT),y(MAXDAT),z(MAXDAT),vr(MAXDAT),wt(MAXDAT),
-     +          vrtr(MAXDAT),vrgtr(MAXDAT),close(MAXDAT),sec(MAXDAT),
-     +          sim(MXYZ),lvm(MXYZ),tmp(MXYZ),order(MXYZ),
+     +          vrtr(MAXDAT),vrgtr(MAXDAT),close(MAXDAT),sec(MAXDAT)
+
+
+      real      sim(MXYZ),lvm(MXYZ),tmp(MXYZ),order(MXYZ),
      +          c0(1),cc(MAXNST),aa(MAXNST),ang1(MAXNST),ang2(MAXNST),
      +          ang3(MAXNST),anis1(MAXNST),anis2(MAXNST),
      +          covtab(MAXCTX,MAXCTY,MAXCTZ), avepor(MAXX,MAXY),
@@ -130,20 +140,6 @@ c FOR Histrogram Reproduction ..
 c 	estimation/simulation
       integer doestimation
 
-      integer idbg, ldbg, idum, lin, lout, ivrr, iwtr
-      integer icoll, icond, icollvm
-      integer itrans, ivrd, iwtd, ktype, noct
-      integer nodmax
-      integer nsim
-      integer ntr  
-
-      integer nctx,ncty,nctz
-
-
-
-
-      integer nlooku,ncnode
-
 c
 c The matrices below are covariance lookup tables. 
 C they can optionally be excluded
@@ -151,9 +147,6 @@ c
 	real*8      cv2v(MAXVOLS,MAXVOLS)
         real*8      cd2v(MXYZ,MAXVOLS)
       	integer read_covtable, read_lambda, read_volnh, read_randpath
-        real cmax
-
-        
 
 c
 c Common Blocks:
@@ -168,8 +161,10 @@ c      common /iaco/   ixv(MAXOP1), itr(MAXOP1)
 
       common /iaco2/   ixv2, itr2
 
+
+c     +                nd,x,y,z,vr,wt,ntr,vrtr,vrgtr,sec,idbg,
       common /generl/ nx,ny,nz,xsiz,ysiz,zsiz,xmn,ymn,zmn,nxy,nxyz,
-     +                nd,x,y,z,vr,wt,ntr,vrtr,vrgtr,sec,idbg,
+     +                nd,vr,wt,ntr,vrtr,vrgtr,sec,idbg,
      +                lin,lout,ldbg,llvm,lkv,icollvm,nvaril,ktype,
      +                colocorr, ivar,  
      +                ltail,ltpar,utail,utpar,zmin,zmax,varred,skgmean,
@@ -212,4 +207,5 @@ c      common /iaco/   ixv(MAXOP1), itr(MAXOP1)
      +               condlookup_cpdf,n_mean,n_var,n_monte,
      + 	             discrete,n_q,
      +               min_Gmean, max_Gmean, n_Gmean, 
-     +               min_Gvar, max_Gvar, n_Gvar, x_quan
+     +               min_Gvar, max_Gvar, n_Gvar,
+     +               x_quan

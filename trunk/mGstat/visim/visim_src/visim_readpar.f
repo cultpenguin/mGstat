@@ -25,6 +25,7 @@ c
 c
 c
 c-----------------------------------------------------------------------
+      use geostat_allocate
       include  'visim.inc'
       real      var(50)
       real*8    p,acorni,cp,oldcp,w
@@ -33,6 +34,7 @@ c-----------------------------------------------------------------------
       character volgeomfl*40,volsumfl*40,datacovfl*40
       character maskfl*40
       logical   testfl
+      integer   test
       integer   ix1,iy1,iz1
       integer   ndinv,ivol,iv,ivol_new,nvoldata,IntVar
       real      ivolx,ivoly,ivolz,ivoll,cumsum,vvtmp,realtmp
@@ -231,6 +233,18 @@ c     1     in nscore space = ',n_monte
       nxy  = nx*ny
       nxyz = nx*ny*nz
 
+c     ALLOCATE X,Y,Z
+       allocate(xxx(nx),stat = test)
+       allocate(xxx(2*nx),stat = test)
+c       allocate(y(ny),stat = test)
+c       allocate(z(nz),stat = test)
+c       if(test.ne.0)then
+c          write(*,*)'ERROR 1: Allocation of x failed',
+c     +         ' due to insufficient memory.'
+c          stop
+c       end if
+      
+
       read(lin,*,err=98) ixv(1)
       if (idbg.gt.0) write(*,*) ' random number seed = ',ixv(1)
       ixv2(1)=ixv(1)
@@ -410,6 +424,7 @@ c
      1           nx,ny,nz
             testfl = .true.
       end if
+
       if(itrans.eq.1) then 
         if(ltail.ne.1.and.ltail.ne.2) then
             if (idbg.gt.-1) write(*,*) 'ERROR invalid lower tail 
@@ -494,6 +509,31 @@ c     Condition to VOLUME data only
          ndmax  = 0
          sstrat = 1
       endif 
+
+c
+c FIND NUMBER OF CONDITIONAL DATA
+c
+c$$$      MAXDAT1 = 100
+c$$$      inquire(file=datafl,exist=testfl)
+c$$$      if(testfl)then
+c$$$            open(lin,file=datafl,status='UNKNOWN')
+c$$$            read(lin,*,err=98)
+c$$$            read(lin,*,err=99) nvari
+c$$$            do i=1,nvari
+c$$$                  read(lin,*)
+c$$$            end do
+c$$$            MAXDAT1 = 0
+c$$$ 33         read(lin,*,end=34,err=98)(var(j),j=1,nvari)
+c$$$            MAXDAT1 = MAXDAT1 + 1
+c$$$            go to 33
+c$$$ 34         continue
+c$$$            rewind(lin)
+c$$$            close(lin)
+c$$$      end if
+c$$$      write(*,*) MAXDAT1
+c      stop
+
+      
 c
 c Read in the conditioning data for the simulation: 
 c 
@@ -505,6 +545,9 @@ c
       
       inquire(file=datafl,exist=testfl)
       if (testfl.and.((icond.eq.1).OR.(icond.eq.2))) then
+
+c     FIRST READ THE NUMBER OF DATA  IN THE 
+
          if (idbg.gt.0) write(*,*) 'Reading input data'
          open(lin,file=datafl,status='OLD')
          read(lin,*,err=99)

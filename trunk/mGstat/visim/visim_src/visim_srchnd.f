@@ -45,7 +45,8 @@ c
 c
 c
 c-----------------------------------------------------------------------
-      include  'visim.inc'
+      use geostat_allocate
+	  include  'visim.inc'
       integer   ninoct(8)
 c
 c Consider all the nearby nodes until enough have been found:

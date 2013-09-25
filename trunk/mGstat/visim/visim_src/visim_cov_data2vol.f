@@ -35,7 +35,8 @@ c
 c     TODO : Use either lookup table in RAM or a lookup table on disk 
 c
 c-----------------------------------------------------------------------
-      include 'visim.inc'
+      use geostat_allocate
+	  include 'visim.inc'
       real vvcov,ddcov
       integer i,j,k,ivol_temp,index
       integer ix,iy,iz

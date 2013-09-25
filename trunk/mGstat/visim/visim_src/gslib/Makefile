@@ -3,10 +3,8 @@
 #
 
 COMP = gfortran
+#FFLAGS = -c -m32 -O
 FFLAGS = -c -O3 -static
-
-
-#FFLAGS =  -march=i386 -c -O2 
 
 LIBGS = ../libgs.a
 SRCS = acorni.f acorni2.f backtr.f beyond.f blue.f chknam.f chktitle.f cova3.f \

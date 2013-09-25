@@ -29,7 +29,8 @@ c
 c
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-      include 'visim.inc'
+      use geostat_allocate
+	  include 'visim.inc'
       real var(50) 
       logical testfl
       
@@ -190,7 +191,8 @@ c
 c
 c-----------------------------------------------------------------------
 
-      include 'visim.inc'
+      use geostat_allocate
+	  include 'visim.inc'
  
       character str*40
       real var(20)
