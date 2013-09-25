@@ -20,7 +20,8 @@ c     the value simu. The drawing depends on the type of local distribution
 c     specified in idrawopt
 c     
       
-      include  'visim.inc'
+      use geostat_allocate
+	  include  'visim.inc'
       real*8   acorni 
       real p  
       real cmean1, cstdev1

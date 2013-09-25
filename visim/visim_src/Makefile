@@ -11,7 +11,7 @@ PROG   = $(progname)
 PROG = visim
 
 COMP = gfortran
-FFLAGS = -O3 -static
+FFLAGS = -static -O3
 
 SRCS   =  $(progname).f visim_krige.f visim_krige_volume.f \
                         visim_randpath.f visim_nhoodvol.f \
@@ -55,4 +55,4 @@ $(LIBGS): $(OBJS_LIBGS)
 
 clean:
 	/bin/rm -rf $(OBJS) $(PROG)
-	/bin/rm -rf $(OBJS_LIBGS) $(LIBS)
+#	/bin/rm -rf $(OBJS_LIBGS) $(LIBS)

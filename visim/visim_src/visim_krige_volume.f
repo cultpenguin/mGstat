@@ -50,7 +50,8 @@ c     ORIGINAL: C.V. Deutsch                               DATE: August 1990
 c     REVISION : Thomas Mejer Hansen                       DATE: June 2004
 c     including volume average data
 c-----------------------------------------------------------------------
-      include 'visim.inc'
+      use geostat_allocate
+	  include 'visim.inc'
       logical first
       real	spos(MAXKR1)
       real covsum

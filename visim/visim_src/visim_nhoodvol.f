@@ -42,7 +42,8 @@ c
 c ORIGINAL: Thomas Mejer Hansen, Yongshe Liu  DATE: June, 2004
 c Update to account for correlated data errors : TMH, 06/2007.
 c-----------------------------------------------------------------------
-      include 'visim.inc'
+      use geostat_allocate
+	  include 'visim.inc'
       integer volindex
       integer sim_index
       integer vol
