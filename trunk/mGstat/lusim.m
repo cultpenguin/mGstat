@@ -68,6 +68,7 @@ if (isempty(pos_known)&isempty(val_known))
     %% DO UNCONDITIONAL SIMULATION
     if ~isfield(options,'mean'); options.mean=0;end
     Cm=precal_cov(pos_sim,pos_sim,V);
+    Cm_est=Cm;
     [sim_mul]=gaussian_simulation_cholesky(options.mean,Cm,options.nsim);    
 else 
     %% CONDITIONAL SIMULATION%
