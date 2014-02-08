@@ -208,7 +208,7 @@ if isfield(options,'lim');
             % opions.pos is not fixed for for subsequent calls top fft_ma
             options.pos_used=[x_all(x0) y_all(y0)];    
 
-            [options.used]=set_resim_data([1:size(z_rand,2)]*dx,[1:size(z_rand,1)]*dy,z_rand,options.lim,options.pos_used,options.wrap_around);
+            [options.used]=set_resim_data(x(1)+[0:(size(z_rand,2)-1)]*dx,y(1)+[0:(size(z_rand,1)-1)]*dy,z_rand,options.lim,options.pos_used,options.wrap_around);
 
             %% random selection within box
             if options.resim_type==3;
