@@ -22,10 +22,13 @@ function [cmap,levels]=cmap_linear(colors,levels,n)
 if nargin<3, n=1*64;end
 if nargin<1, colors=[1 0 0;1 1 1;0 0 1];end
 
+
 nc=size(colors,1);
-if nargin<2,
+if nargin<2,levels=[];end
+if isempty(levels);
     levels=linspace(1/n,1,nc);
 end
+
 
 if (levels(1)<1/n); levels(1)=1/n; end
 
