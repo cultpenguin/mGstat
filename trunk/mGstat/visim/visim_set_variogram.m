@@ -9,7 +9,7 @@
 %
 %
 function [V,Va]=visim_set_variogram(V,Va);
-  
+
 if isstr(Va);
     Va=deformat_variogram(Va);
 end
@@ -36,14 +36,14 @@ for i=1:length(Va);
             V.Va.ang2=0;
             V.Va.ang3=0;
         elseif length(Va(i).par2)==3;
-            V.Va.a_hmax(iv)=Va(i).par2(1)
+            V.Va.a_hmax(iv)=Va(i).par2(1);
             V.Va.a_hmin(iv)=Va(i).par2(1)*Va(i).par2(3);
             V.Va.a_vert(iv)=0;
             V.Va.ang1=Va(i).par2(2);
             V.Va.ang2=0;
             V.Va.ang3=0;
         elseif length(Va(i).par2)==6;
-            V.Va.a_hmax(iv)=Va(i).par2(1)
+            V.Va.a_hmax(iv)=Va(i).par2(1);
             V.Va.a_hmin(iv)=Va(i).par2(1)*Va(i).par2(5);
             V.Va.a_vert(iv)=Va(i).par2(1)*Va(i).par2(6);
             V.Va.ang1=Va(i).par2(2);

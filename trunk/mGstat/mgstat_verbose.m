@@ -25,7 +25,7 @@
 function mgstat_verbose(txt,verbose)
   
 
-  vlevel=20; % SHOW ALL VERBOSE INFO WITH 'VERBOSE' ABOVE 'VLEVEL'
+  vlevel=0; % SHOW ALL VERBOSE INFO WITH 'VERBOSE' ABOVE 'VLEVEL'
   try
       % GET VERBOSE LEVEL FROM SYSTEM VARIABLE IF SET
       tmp=str2num(getenv('MGSTAT_VERBOSE_LEVEL'));
