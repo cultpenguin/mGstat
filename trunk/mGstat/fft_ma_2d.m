@@ -61,7 +61,6 @@
 
 %
 function [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options)
-
 if nargin==0
     x=[1:1:50];y=1:1:80;
     Va='1  Sph(10,30,.25)';
@@ -79,6 +78,7 @@ if nargin==0
     return
 end
 options.null='';
+%if (isfield(options,'constant_C'));disp(options.constant_C);end
 if ~isfield(options,'resim_type'); options.resim_type=2;end
 if ~isstruct(Va);Va=deformat_variogram(Va);end
 if ~isfield(options,'wrap_around');options.wrap_around=1;end
@@ -134,7 +134,6 @@ if (isfield(options,'constant_C'));
         try;options=rmfield(options,'fftC');end
     end
 end
-
 %% SETUP  COVARIANCE MODEL
 if (~isfield(options,'C'))&(~isfield(options,'fftC'));
     

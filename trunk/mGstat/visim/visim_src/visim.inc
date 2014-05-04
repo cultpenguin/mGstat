@@ -39,18 +39,16 @@ c
 c User Adjustable Parameters:
 c
       integer MAXX, MAXY, MAXZ, MAXCTX, MAXCTY, MAXCTZ
-      integer MAXSBX, MAXSBY, MAXSBZ, MAXNOD, MAXSAM
-      integer MAXNST, MAXREF, MAMAXXXCAT, MV, MAXVOLS, MAXDINVOL
-      integer MAXDAT
+      integer MAXSBX, MAXSBY, MAXSBZ, MAXDAT, MAXNOD, MAXSAM
+      integer MAXNST, MAXREF, MAXCAT, MV, MAXVOLS, MAXDINVOL
 
-      parameter(MAXX   =   55, MAXY   = 55, MAXZ   = 125,
+      parameter(MAXX   =   801, MAXY   = 801, MAXZ   = 1,
      +          MAXCTX =  MAXX, MAXCTY =MAXY, MAXCTZ =MAXZ,
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
-     +          MAXNOD =  1448, MAXSAM = 148,
+     +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,
      +          MAXNST =     4, MAXREF=10000,MAXCAT=24, 
-     +          MV=20         , MAXVOLS=100 , MAXDINVOL=199,
+     +          MV=20         , MAXVOLS=1 , MAXDINVOL=1,
      +		MAXQUAN=501,MAXMVLOOK=201)
-      parameter(MAXDAT  = 50000)
 c
 c Fixed Parameters:
 c
@@ -71,18 +69,9 @@ c
 c
 c Variable Declaration:
 c
-
-C MAXDAT RELATED PARS
-C
-C Seperate these and then make them allocatable
-C Make a function that allocated variables accroding to MAXDAT
-C and also MXYZ , and MAXCOLS!!!
-C
       real      x(MAXDAT),y(MAXDAT),z(MAXDAT),vr(MAXDAT),wt(MAXDAT),
-     +          vrtr(MAXDAT),vrgtr(MAXDAT),close(MAXDAT),sec(MAXDAT)
-
-
-      real      sim(MXYZ),lvm(MXYZ),tmp(MXYZ),order(MXYZ),
+     +          vrtr(MAXDAT),vrgtr(MAXDAT),close(MAXDAT),sec(MAXDAT),
+     +          sim(MXYZ),lvm(MXYZ),tmp(MXYZ),order(MXYZ),
      +          c0(1),cc(MAXNST),aa(MAXNST),ang1(MAXNST),ang2(MAXNST),
      +          ang3(MAXNST),anis1(MAXNST),anis2(MAXNST),
      +          covtab(MAXCTX,MAXCTY,MAXCTZ), avepor(MAXX,MAXY),
@@ -161,10 +150,8 @@ c      common /iaco/   ixv(MAXOP1), itr(MAXOP1)
 
       common /iaco2/   ixv2, itr2
 
-
-c     +                nd,x,y,z,vr,wt,ntr,vrtr,vrgtr,sec,idbg,
       common /generl/ nx,ny,nz,xsiz,ysiz,zsiz,xmn,ymn,zmn,nxy,nxyz,
-     +                nd,vr,wt,ntr,vrtr,vrgtr,sec,idbg,
+     +                nd,x,y,z,vr,wt,ntr,vrtr,vrgtr,sec,idbg,
      +                lin,lout,ldbg,llvm,lkv,icollvm,nvaril,ktype,
      +                colocorr, ivar,  
      +                ltail,ltpar,utail,utpar,zmin,zmax,varred,skgmean,

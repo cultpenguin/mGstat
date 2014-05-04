@@ -11,6 +11,8 @@
 %   V.nsim=10;
 %   snesim(V)
 %
+% See also snesim_init
+%
 function V=snesim(parfile);
  
   % FIRST TRY TO FIND THE snesim BINARY IN THE mGstat/bin/ DIRECTORY
@@ -48,12 +50,11 @@ function V=snesim(parfile);
   end
   tic
     
-  %unix(space2char(sprintf('%s %s',snesim_bin,parfile),'\\ '));
   if isunix==1
       cmd=sprintf('%s < %s',snesim_bin,parfile);
       unix(cmd);
   else
-      cmd=sprintf('"%s" < %s',snesim_bin,parfile)
+      cmd=sprintf('"%s" < %s',snesim_bin,parfile);
       dos(cmd);
   end
   V=read_snesim(parfile);
