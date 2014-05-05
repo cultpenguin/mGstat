@@ -150,7 +150,7 @@ try
         obj.out.header=header;
         obj.out.fname=fname;
     else
-        disp(['Output file : ',fname,' does not exists'])
+        mgstat_verbose(['Output file : ',fname,' does not exists'],10)
     end
 catch
     disp(sprintf('%s  : Could not read %s',mfilename,fname))
