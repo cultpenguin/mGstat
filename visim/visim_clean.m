@@ -44,7 +44,7 @@ function visim_clean(V,del_out)
             end
         catch
             if ~isstruct(V)
-                disp(sprintf('Could not read/clean %s',V))
+                %disp(sprintf('Could not read/clean %s',V))
             else
                 disp(sprintf('Could not read/clean %s',V.parfile))
             end

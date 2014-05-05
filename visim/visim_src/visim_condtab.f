@@ -357,7 +357,7 @@ c      index_cdf = 1 + int(p*n_q)
       drawfrom_condtab = draw
 
 
-      write(*,*) 'DEBUG8 draw=',drawfrom_condtab
+c      write(*,*) 'DEBUG8 draw=',drawfrom_condtab
          
 
 c     CORRECTION ACCORDING TO Oz et al, 2003
@@ -386,7 +386,7 @@ c     local cpdf based on closeness to lookup table
 
       endif
 
-      write(*,*) 'DEBUG8 draw=',drawfrom_condtab
+c      write(*,*) 'DEBUG8 draw=',drawfrom_condtab
             
 
       return 
