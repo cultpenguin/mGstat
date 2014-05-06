@@ -15,10 +15,10 @@ if nargin<5, w2=2; end
 [d_nscore,o_nscore]=nscore(d,2,2,d_min,d_max);
 
 %%
-nm=100;
-nv=100;
+nm=51;
+nv=31;
 n_mc=10000;
-Nq=170;
+Nq=21;
 
 ns_mean_arr=linspace(-3.5,3.5,nm);
 ns_var_arr=linspace(0,2,nv);
