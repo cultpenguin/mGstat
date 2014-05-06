@@ -297,16 +297,17 @@ c      write(lout_krig,86) cmean, cvar,m_sel,v_sel
 c 86   format(f12.6,f15.9,f12.6,f15.9)  
       
 
-
+C     PROBLEMS WITH ACORNI - THEREFORE REMOVED
 c     NOW DRAW FROM LOCAL CPDF
 c     (WITHOUT THIS,,, STRANGE SMALL NUMBER ARE GENERATED FROM acorni2
-      do i=1,101
-         p = acorni2(idum) 
-      enddo
+c      do i=1,101
+c         p = acorni2(idum) 
+c      enddo
 
 c select random quantile
-      p = acorni2(idum) 
-
+c      p = acorni2(idum) 
+c CONSIDER USING RANDOM_SEED INSTEAD
+      p = rand()
 
 c locate quantile      
       do i=1,(n_q);
