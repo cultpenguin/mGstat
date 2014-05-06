@@ -291,19 +291,18 @@ C     WORSE MATCH TO HISTOGRAM THAN ABOVE
 	write(*,*) 'v_sel=',v_sel,iv_sel
       endif
 
-
 c     CHANGED FROM lout_krig=59, on Nov 9, 2009 by TMH
-      lout_krig=60
-      write(lout_krig,86) cmean, cvar,m_sel,v_sel
- 86   format(f12.6,f15.9,f12.6,f15.9)  
+c      lout_krig=60
+c      write(lout_krig,86) cmean, cvar,m_sel,v_sel
+c 86   format(f12.6,f15.9,f12.6,f15.9)  
       
 
 
 c     NOW DRAW FROM LOCAL CPDF
-c     (ARE THE FIRST TENS OF RESULTS FROM acorni2 CORRELATED 
-c      do i=1,101
-c         p = acorni2(idum) 
-c      enddo
+c     (WITHOUT THIS,,, STRANGE SMALL NUMBER ARE GENERATED FROM acorni2
+      do i=1,101
+         p = acorni2(idum) 
+      enddo
 
 c select random quantile
       p = acorni2(idum) 
@@ -334,12 +333,19 @@ c      ASSUME CONTINIOUS TARGET HISTOGRAM
 c interpolate
          draw_h = condlookup_cpdf(im_sel,iv_sel,index_cdf) 
          draw_l = condlookup_cpdf(im_sel,iv_sel,index_cdf-1) 
+
+c
+c         write(*,*) 'DEBUG p,index_cdf',p,index_cdf
+c         write(*,*) 'DEBUG ',im_sel, iv_sel,draw_h,draw_l
+
          
          h=x_quan(index_cdf)-x_quan(index_cdf-1)
          draw_a = draw_h*(x_quan(index_cdf)-p)/h 
          draw_b = draw_l*(p-x_quan(index_cdf-1))/h 
 
          draw = draw_a + draw_b
+
+c         write(*,*) 'draw=',draw
 
 c handle tails
          if (p.lt.x_quan(1)) then
