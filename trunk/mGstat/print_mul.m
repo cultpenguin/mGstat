@@ -45,6 +45,7 @@ if nargin<5, do_watermark=0;end
 save_fig=0;
 
 fname=space2char(fname);
+fname=space2char(fname,'_','\.');
 
 if do_watermark==1
     watermark(fname);
