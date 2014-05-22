@@ -95,6 +95,8 @@ function V=deformat_variogram(txt);
 			itype=10;
 		elseif (strcmp(type,'Thi'))
 			itype=11;
+		elseif (strcmp(type,'Mat'))
+            itype=12;
         elseif (isempty(type))
             itype=-1;
         else 
@@ -103,6 +105,19 @@ function V=deformat_variogram(txt);
 		end
 		
 		% disp(sprintf('par1=%5.1f par2=%5.1f type=%4s itype=%d',par1,par2,type,itype))
+    
+    if length(par2)==2, 
+        V(ivar).nu=par2(2);
+        par2=par2(1);     
+    end
+    if length(par2)==4, 
+        V(ivar).nu=par2(4);
+        par2=par2(1:3);       
+    end
+    if length(par2)==7, 
+        V(ivar).nu=par2(7);
+        par2=par2(1:6);       
+    end
     
     V(ivar).par1=par1;
     V(ivar).par2=par2;
