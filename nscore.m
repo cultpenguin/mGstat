@@ -103,11 +103,16 @@ if exist('w1')
   end
   d1=min(d); 
   
-  nbin=10;
+  if abs(min(d)-dmin)/dmin<1e-9
+      nbin=0;
+  else
+      nbin=10;
+  end
+  
   pk1=min(pk);
   
   dlow=linspace(dmin,d1,nbin+1);
-  dlow=dlow(1:10);
+  dlow=dlow(1:nbin);
   pklow=pk1.*((dlow-dmin)./(d1-dmin)).^(w1);
   
   d=[dlow(:);d];
@@ -128,8 +133,13 @@ if exist('w2')
     dmax=max(d)+1e-9;
   end
   
+  if abs(max(d)-dmax)/dmax<1e-9
+      nbin=0;
+  else
+      nbin=10;
+  end
+  
   dk=max(d);
-  nbin=10;
   pkk=max(pk);
   dhigh=linspace(dk,dmax,nbin+1);
   dhigh=dhigh(2:(nbin+1));

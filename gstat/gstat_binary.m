@@ -29,7 +29,7 @@ if isempty(gstat)
         gstat='gstat.exe';
     end
     
-    end
+end
 if ~exist(gstat,'file'),
     gstat='';
 end
@@ -46,10 +46,12 @@ if isempty(gstat)
         end
     else
         gstat=sprintf('%s%sbin%sgstat.exe',p,filesep,filesep);
-    end    
+    end
 end
 if ~exist(gstat,'file'),
     gstat='';
+else
+    gstat=which(gstat);
 end
 
 
