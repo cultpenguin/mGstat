@@ -51,7 +51,14 @@ end
 if ~exist(gstat,'file'),
     gstat='';
 else
-    gstat=which(gstat);
+    
+    % just in case the user has set a path to the bin folder ( not
+    % recommended)
+    gstat_tmp=which(gstat);
+    if ~isempty(gstat_tmp)
+      gstat=gstat_tmp;
+    end
+    
 end
 
 
