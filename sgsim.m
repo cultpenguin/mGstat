@@ -18,7 +18,7 @@ function [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);%
 
 if nargin==0;
     
-    use_ex=1;
+    use_ex=4;
     if use_ex==1
         pos_known=[1 2 4.5]';
         val_known=[-1 .5 -.5]';
@@ -63,7 +63,30 @@ if nargin==0;
             subplot(2,ceil(options.nsim/2),i);
             scatter(pos_sim(:,1),pos_sim(:,2),10,sim_mul(:,i),'filled');axis image
         end
+    elseif use_ex==4
+        % Example of chaging the variogram locally
+        pos_known=[];
+        val_known=[];
+        x_est=[0:.25:50];
+        pos_sim=x_est(:);
+        for i_pos=1:size(pos_sim,1)
+            range(i_pos)=i_pos/20;
+            V{i_pos}=sprintf('0.0001 Nug(0) + 1 Gau(%3.1f)',range(i_pos));
+        end
+        options.max=10;
+        options.nsim=1;
+        options.mean=0;
+        [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);
+        subplot(2,1,1);
+        plot(x_est,range,'k-')
+        ylabel('range')
+        subplot(2,1,2);
+        plot(x_est,sim_mul,'k-')
+        ylabel('sgsim val')
+      
+        
     end
+    
     return
 end
 
