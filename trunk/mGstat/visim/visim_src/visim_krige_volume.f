@@ -67,7 +67,6 @@ c-----------------------------------------------------------------------
          write (*,*) 'VISIM CURRENTLY ONLY WORKS FOR SIMPLE KRIGING'
          stop
       end if
-
       
 c     
 c     calculate reference volume averages
@@ -178,10 +177,12 @@ c
 c     Now, get the covariance value:
 c     
             in = in + 1
+            
 
             call cova3(x1,y1,z1,x2,y2,z2,1,nst,MAXNST,
      +           c0,it,cc,aa,1,MAXROT,rotmat,cmax,cov)
             a(in) = dble(cov)
+
 
             if (i.eq.j) then
 c                  This where oné should add uncertainty of POINT DATA
@@ -191,12 +192,24 @@ c                  a(in)=a(in)+0.1
 
          end do
 c     
-c     Get the RHS value (possibly with covariance look-up table):
-c     
+c     Get the RHS value (possibly with covariance look-up table):c
+c
+ 
+         
+         
          call cova3(xx,yy,zz,x1,y1,z1,1,nst,MAXNST,c0,it,
      +        cc,aa,1,MAXROT,rotmat,cmax,cov)
          r(j) = dble(cov)
          rr(j) = r(j)
+
+c         write(*,*) 'rotmat2=',rotmat(1,1,1),cov
+c         rotmat(1,1,1)=0.05;
+c         call cova3(xx,yy,zz,x1,y1,z1,1,nst,MAXNST,c0,it,
+c     +        cc,aa,1,MAXROT,rotmat,cmax,cov)
+c         write(*,*) 'rotmat=',rotmat(1,1,1),cov
+c         stop
+
+         
 
          
       end do 

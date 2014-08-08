@@ -31,7 +31,7 @@
 %
 
 
-function [z,D,L]=gaussian_simulation_cholesky(m,L,nsim,is_chol);
+function [z,D,L,z_rand]=gaussian_simulation_cholesky(m,L,nsim,is_chol,z_rand);
 
 if nargin<4,is_chol=0;end
 if nargin<3,nsim=1;end
@@ -50,6 +50,10 @@ if size(m,2)>1
     m=m(:);
 end
 
+if nargin<5
+    z_rand=randn(length(m),1);
+end
+
 t0=now;
 if is_chol==0
     L=chol(L);
@@ -65,7 +69,7 @@ for i=1:nsim
             progress_txt(i,nsim);
         end
     end
-    z(:,i)=m+L'*randn(length(m),1);
+    z(:,i)=m+L'*z_rand;
 end
 t2=now;
 mgstat_verbose(sprintf('%s : cholesky   : Elapsed time : %6.1fs',mfilename,(t1-t0).*(24*3600)),1);

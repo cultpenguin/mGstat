@@ -29,7 +29,7 @@ for i=1:nknown
   used=find(pos~=i);
   
   options.d2u=d2u(used,i);
-  options.d2d=d2u(used,used);
+  options.d2d=d2d(used,used);
   
   %[d_est(i),d_var(i)]=krig(pos_known(used,:),val_known(used,:),...
   %                  pos_known(i,:),V,options);

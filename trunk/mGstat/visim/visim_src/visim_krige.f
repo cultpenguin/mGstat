@@ -61,6 +61,7 @@ c
 c
 c Set up kriging matrices:
 c
+		
       in=0
       do j=1,na
 c

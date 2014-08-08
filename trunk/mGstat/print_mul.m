@@ -36,10 +36,10 @@ function print_mul(fname,trim,transp,res,do_watermark);
 
 if nargin<1, fname='test';end
 if nargin<4, res=300;end
-if nargin<2, trim=1;end
+if nargin<2, trim=0;end
 if nargin<3, 
     %transp=1;
-    transp=1;
+    transp=0;
 end
 if nargin<5, do_watermark=0;end
 save_fig=0;
@@ -53,10 +53,9 @@ end
 fname=space2char(fname);
 
 i=0;
-i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';trim=0;
-i=i+1;P{i}.type='-dpng';P{i}.ext='.png';trim=1;
-%i=i+1;P{i}.type='-djpeg';P{i}.ext='.jpg';trim=1;
-if i==0; return;end
+i=i+1;P{i}.type='-dpng';P{i}.ext='.png';
+%i=i+1;P{i}.type='-depsc';P{i}.ext='.eps';
+%i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';
 
 for i=1:length(P)
     res_string=sprintf('-r%d',res);
