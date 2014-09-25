@@ -37,7 +37,6 @@ function [out,z_rand,options,logL]=fft_ma(x,y,z,Va,options)
 %catch
 %    disp(Va);
 %end
-
 if nargin>1,
     if (isstr(y)|isstruct(y))
         Va=y;
@@ -52,7 +51,7 @@ end
 
 if nargin>2,
     if (isstr(z)|isstruct(z))
-        % 2D 
+        % 2D
         if nargin==4,options=Va; else; options.null='';end
         Va=z;
         [out,z_rand,options,logL]=fft_ma_2d(x,y,Va,options);
@@ -66,7 +65,7 @@ if (length(z)==1)&(length(y)==1)
     % [out,z_rand,options,logL]=fft_ma_1d(x,Va,options);
     % Maybe there is a problem with fft_ma_1d for resim...!
     try
-    [out,z_rand,options,logL]=fft_ma_2d(x,0,Va,options);
+        [out,z_rand,options,logL]=fft_ma_2d(x,0,Va,options);
     catch
         keyboard
     end
@@ -78,6 +77,3 @@ end
 out=squeeze(out);
 
 
-return
-[out,z_rand,options,logL]=fft_ma_3d(x,y,z,Va,options);
-out=squeeze(out);
