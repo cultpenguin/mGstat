@@ -50,9 +50,6 @@ if size(m,2)>1
     m=m(:);
 end
 
-if nargin<5
-    z_rand=randn(length(m),1);
-end
 
 t0=now;
 if is_chol==0
@@ -68,6 +65,9 @@ for i=1:nsim
         if ((i/di)==round(i/di))
             progress_txt(i,nsim);
         end
+    end
+    if nargin<5
+        z_rand=randn(length(m),1);
     end
     z(:,i)=m+L'*z_rand;
 end
