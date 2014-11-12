@@ -13,7 +13,8 @@
 %   sgems_image2ti;
 %
 %
-function [file_out,lims]=sgems_image2ti(filename_img,lims);
+function [file_out,data,lims]=sgems_image2ti(filename_img,lims);
+
 
 file_out=[];
 
@@ -32,7 +33,7 @@ if length(d_img)==0
 end
 
 for i=1:length(d_img)
-    [p,filename]=fileparts(d_img(1).name);
+    [p,filename]=fileparts(d_img(i).name);
     IM=imread(d_img(i).name);
     
     IM=double(IM(:,:,1));
@@ -71,7 +72,7 @@ for i=1:length(d_img)
         else
             
             for icat=2:5;
-                cont_method=2;
+                cont_method=1;
                 if cont_method==1;
                     lims=linspace(0,255,icat+1);
                 else
