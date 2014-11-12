@@ -13,7 +13,7 @@
 %   sgems_image2ti;
 %
 %
-function file_out=sgems_image2ti(filename_img,lims);
+function [file_out,lims]=sgems_image2ti(filename_img,lims);
 
 file_out=[];
 

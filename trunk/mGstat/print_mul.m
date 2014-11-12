@@ -1,9 +1,16 @@
-% print_mul : prints both EPS and PNG figures of current plot
+% print_mul : prints both EPS, PNG, and PDF figures of current plot
 %
 % CALL :
-%    print_mul(fname,trim,transp,res,do_watermark);
+%    print_mul(fname,types,trim,transp,res,do_watermark);
 %    fname : filename
 %            ['test'] (def)
+%    types : type of output files
+%            [0] no hardcopy
+%            [1] png
+%            [2] pdf
+%            [3] eps
+%            [4] png,pdf
+%            [5] png,pdf,eps
 %    trim  : trim PNG image (remove borders - requires mogrify)
 %            [0]: no trimminf (def)
 %            [1]: trimming
@@ -31,17 +38,21 @@
 %% /TMH 2005-2012
 %
 
-function print_mul(fname,trim,transp,res,do_watermark);
+function print_mul(fname,types,trim,transp,res,do_watermark);
 
 
 if nargin<1, fname='test';end
-if nargin<4, res=300;end
-if nargin<2, trim=0;end
-if nargin<3, 
+if nargin<2, types=1;end
+if types==0; return;end
+if nargin<5, res=300;end
+if nargin<3, trim=0;end
+if nargin<4, 
     %transp=1;
     transp=0;
 end
-if nargin<5, do_watermark=0;end
+if nargin<6, do_watermark=0;end
+
+
 save_fig=0;
 
 fname=space2char(fname);
@@ -53,9 +64,15 @@ end
 fname=space2char(fname);
 
 i=0;
-i=i+1;P{i}.type='-dpng';P{i}.ext='.png';
-%i=i+1;P{i}.type='-depsc';P{i}.ext='.eps';
-i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';
+if ((types==1)|(types==4)|(types==5))
+    i=i+1;P{i}.type='-dpng';P{i}.ext='.png';
+end
+if ((types==2)|(types==4))
+    i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';
+end
+if ((types==3)|(types==5))
+    i=i+1;P{i}.type='-depsc';P{i}.ext='.eps';
+end
 
 for i=1:length(P)
     res_string=sprintf('-r%d',res);
