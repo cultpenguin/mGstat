@@ -20,7 +20,7 @@
 % x=[1:1:40];
 % y=[1:1:40];
 % [xx,yy]=meshgrid(x,y);
-% Cm=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(45,.1,30)');
+% Cm=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(45,30,.1)');
 % m0=xx.*0;
 % nsim=12;
 % [z_uncond,D]=gaussian_simulation_cholesky(m0,Cm,nsim);
