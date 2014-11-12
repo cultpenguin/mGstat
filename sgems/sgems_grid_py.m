@@ -124,7 +124,7 @@ if isfield(S,'f_obs');
     end    
 end
 
-% SECONDARY DATA
+%% SECONDARY DATA
 if isfield(S,'d_obs_sec');
     header{1}='X';
     header{2}='Y';
@@ -145,9 +145,18 @@ if isfield(S,'f_obs_sec');
 end
 
 
-
-% USING PROBABILITY FIELDS FOR SNESIM/FILTERSIM
+%% USING PROBABILITY FIELDS FOR SNESIM/FILTERSIM
+% tmh:09/2014: This currently does not work, as it requires the
+% simulation grid to be the same as the grid holding the probability
+% fields.
+% Thus, one should first load the probability fields, and then set the
+% simulation grid to the object with the probability fields, when setting
+% up the python script.
+%
 try
+    if isfield(S,'d_probfield');
+    end
+    
     % only valid/available for snesim/filtersim
     if isfield(S,'f_probfield');
         S.XML.parameters.Use_ProbField.value=1;
@@ -179,7 +188,7 @@ if (strcmp(S.XML.parameters.algorithm.name,'tiGenerator'))
     grid_name=S.XML.parameters.Ti_grid.value;
 end
 
-% GRID PROPERTY
+%% GRID PROPERTY
 try
     % sgsim, dssim, LU_sim
     property_name=S.XML.parameters.Property_Name.value;
@@ -192,7 +201,7 @@ if (strcmp(S.XML.parameters.algorithm.name,'tiGenerator'))
     property_name=S.XML.parameters.Ti_prop_name.value;
 end
 
-% TRAINING IMAGE GRID PROPERTIES
+%% TRAINING IMAGE GRID PROPERTIES
 if isfield(S,'ti');
     disp('Setting TRAINING image from data')
     try
@@ -218,7 +227,7 @@ end
 
 
 
-% update marginal PDF for SNESIM if not set by user
+%% update marginal PDF for SNESIM if not set by user
 if strcmp(lower(S.XML.parameters.algorithm.name),'snesim_std');
     if ~isfield(S,'marginal_pdf');
         O_sgems=sgems_read(S.ti_file);
