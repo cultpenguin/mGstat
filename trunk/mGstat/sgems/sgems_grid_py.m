@@ -203,7 +203,7 @@ end
 
 %% TRAINING IMAGE GRID PROPERTIES
 if isfield(S,'ti');
-    disp('Setting TRAINING image from data')
+    mgstat_verbose(sprintf('%s : Setting TRAINING image from data',mfilename),2)
     try
         S.ti=S.ti';
     catch
