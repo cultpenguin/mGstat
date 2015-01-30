@@ -1,6 +1,6 @@
 % dsim: Direct simulation
 %
-% VERY simple implementatino of Direct Simulation
+% VERY simple implementation of Direct Simulation
 % Currently only works for relatively small simulations grids, and
 % categorical TI
 % See Mariethoz et al. (2010) for details
@@ -16,7 +16,7 @@
 %  options.n_max_ite [int]: number of maximum iterations through the TI for matching patterns (def=200)
 %
 %  options.plot    [int]: [0]:none, [1]:plot cond, [2]:storing movie (def=0)
-%  options.verbose [int]: [0] no infor to screen, [1]:some info (def=1)
+%  options.verbose [int]: [0] no info to screen, [1]:some info (def=1)
 %
 %
 function [out,options]=dsim(TI_data,SIM_data,options)
