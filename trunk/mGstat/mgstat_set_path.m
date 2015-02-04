@@ -17,6 +17,7 @@ ip=ip+1;P{ip}='visim';
 ip=ip+1;P{ip}='sgems';
 ip=ip+1;P{ip}='mp';
 ip=ip+1;P{ip}='misc';
+ip=ip+1;P{ip}='mps';
 
 for ip=1:length(P);
     pa=[mgstat_dir,filesep,P{ip}];

@@ -54,6 +54,7 @@ N_SIM=numel(SIM.D);
 
 
 options.E=SIM.D.*0.*NaN;
+options.N=SIM.D.*0.*NaN;
 options.N_DROPPED=SIM.D.*0.*NaN;
     
 
@@ -141,6 +142,8 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         end
     end
     options.E(iy,ix)=entropy(C_PDF);
+    options.N(iy,ix)=N_PDF;
+    
     
     %% DRAW REALIZARTION FROM C_PDF
     sim_val=min(find(cumsum(C_PDF)>rand(1)))-1;

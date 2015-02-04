@@ -37,7 +37,7 @@ for i=1:length(d_img)
     IM=imread(d_img(i).name);
     
     IM=double(IM(:,:,1));
-    [ny,nx]=size(IM);
+    [ny,nx]=size(IM)
 
     x=1:1:nx;
     y=1:1:ny;

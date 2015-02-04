@@ -83,8 +83,9 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     
     if options.verbose>0
         if ((i/100)==round(i/100))&(options.plot>-1)
-            progress_txt(i,N_SIM,mfilename);
-            progress_txt(i,N_PATH,mfilename);
+            %progress_txt(i,N_SIM,mfilename);
+            %progress_txt(i,N_PATH,mfilename);
+            disp(sprintf('%s: %03d/%02d',mfilename,i,N_PATH))
         end
     end
     
@@ -118,78 +119,18 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         end
         
     end
+    N_COND=length(V);
     
     
-    
-    % LOOP OVER TI,
-    % choose random starting point
-    j_start=ceil(rand(1)*N_TI);
-    j_arr(1:(N_TI-j_start+1))=j_start:1:N_TI;
-    j_arr((N_TI-j_start+2):N_TI)=1:(j_start-1);
-    
-    ij=0;
-    DIS_MIN=1e+5;
-    for j=j_arr %
-        ij=ij+1;
-        [iy_ti,ix_ti]=ind2sub_2d([TI.ny,TI.nx],j);
-        if i==1;
-            iy_ti_min=iy_ti;
-            ix_ti_min=ix_ti;
-            %SIM.D(iy,ix)=TI.D(iy_ti,ix_ti);
-            break
-        else
-            % GET INDEX CENTER INDEX IN TI
-            %P=repmat([iy_ti ix_ti],size(L,1),1);
-            
-            % COMPUTE DISTANCE
-            DIS=0;
-            for k=1:size(L,1);
-                iy_test=L(k,1)+iy_ti;
-                ix_test=L(k,2)+ix_ti;
-                
-                if ((iy_test>0)&&(iy_test<=TI.ny)&&(ix_test>0)&(ix_test<=TI.nx))
-                    if TI.D(iy_test,ix_test)==V(k);
-                        DIS=DIS+0;
-                    else
-                        DIS=DIS+1;
-                    end
-                else
-                    DIS=DIS+1;
-                end
-            end
-            
-            %% keep track of the pattern with the smallesty dist so far
-            if DIS<DIS_MIN
-                DIS_MIN=DIS;
-                iy_ti_min=iy_ti;
-                ix_ti_min=ix_ti;
-            end
-            
-            % store how many iteration in the TI is performed
-            options.C(iy,ix)=ij;
-            
-            %% STOP, if perfect match has been reached
-            if DIS==0
-                iy_ti_min=iy_ti;
-                ix_ti_min=ix_ti;
-                %SIM.D(iy,ix)=TI.D(iy_ti,ix_ti);
-                
-                break
-            end
-            
-            %% STOP, if maximum number of allowed iterations have been reached
-            if ij>=options.n_max_ite;
-                %SIM.D(iy,ix)=TI.D(iy_ti_min,ix_ti_min);
-                break;
-            end
-            
-            
-        end
+    %% GET REALIZATION FROM TI
+    if N_COND==0
+        [sim_val,options.C(iy,ix)]=mps_get_realization_from_template(TI,[],[],options);
+    else
+        [sim_val,options.C(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);
     end
-    % UPDATE SIM GRID WITH CONDITIONAL VALAUE
-    SIM.D(iy,ix)=TI.D(iy_ti_min,ix_ti_min);
-    
-    % GET FULL CONDITIONAL TO COMPUTE ENTROPY
+    SIM.D(iy,ix)=sim_val;
+  
+    %% GET FULL CONDITIONAL TO COMPUTE ENTROPY
     options.compute_entropy=0;
     if options.compute_entropy==1;
         [C_PDF,TI]=mp_get_conditional_from_template(TI,V,L);
