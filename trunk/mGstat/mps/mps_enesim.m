@@ -55,10 +55,8 @@ N_SIM=numel(SIM.D);
 
 options.E=SIM.D.*0.*NaN;
 options.N=SIM.D.*0.*NaN;
-options.N_DROPPED=SIM.D.*0.*NaN;
+options.N_DROPPED=SIM.D.*0;
     
-
-
 if options.plot>2
     writerObj = VideoWriter('enesim');
     writerObj.FrameRate=30;
@@ -95,9 +93,9 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     % find index of the current node
     i_node=i_path(i);
     [iy,ix]=ind2sub_2d([SIM.ny,SIM.nx],i_node);
-    if options.verbose>1
-        fprintf('At node iy,ix=[%d,%d]\n',iy,ix);
-    end
+    %if options.verbose>1
+    %    fprintf('At node iy,ix=[%d,%d]\n',iy,ix);
+    %end
     
     
      
@@ -144,7 +142,6 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     options.E(iy,ix)=entropy(C_PDF);
     options.N(iy,ix)=N_PDF;
     
-    
     %% DRAW REALIZARTION FROM C_PDF
     sim_val=min(find(cumsum(C_PDF)>rand(1)))-1;
     try
@@ -157,7 +154,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     %% PLOT START
     if options.plot>0
         if ~exist('im')
-            figure_focus(2);
+            figure_focus(1);
             subplot(1,2,1);
             im=imagesc(TI.D);axis image;
             caxis([-1 1]);
@@ -168,7 +165,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                 drawnow;
             end
         else
-            figure_focus(2);
+            figure_focus(1);
             subplot(1,2,2);
             im_sim=imagesc(SIM.D);
             caxis([-1 1]);
@@ -176,9 +173,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             axis image
         end
          if options.plot>1
-              subplot(1,2,2);
-              
-              figure_focus(2);
+              figure_focus(1);
               subplot(1,2,2);
               im_sim=imagesc(SIM.D);
               caxis([-1 1]);
@@ -195,6 +190,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
          end
         
 %         if options.plot>1
+%             figure_focus(1);
 %             subplot(1,2,1);
 %             im=imagesc(TI.D);axis image;
 %             caxis([-1 1]);
@@ -214,7 +210,11 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     end
     %% PLOT END
     
-    %keyboard
+    if options.verbose>1
+        txt=sprintf(' %g ',C_PDF);
+        fprintf('At node iy,ix=[%d,%d]  CPDF=[%s] E=[%f]\n',iy,ix,txt,options.E(iy,ix));
+    end
+    
     
     
 end % END LOOOP OVER PATH
@@ -228,3 +228,7 @@ if options.plot>2
 end
 
 out=SIM.D;
+
+if options.verbose>0
+    disp(sprintf('%s: E=%g',mfilename,sum(options.E(:))));
+end
