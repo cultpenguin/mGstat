@@ -15,7 +15,6 @@ ip=ip+1;P{ip}='gstat';
 ip=ip+1;P{ip}='snesim';
 ip=ip+1;P{ip}='visim';
 ip=ip+1;P{ip}='sgems';
-ip=ip+1;P{ip}='mp';
 ip=ip+1;P{ip}='misc';
 ip=ip+1;P{ip}='mps';
 
