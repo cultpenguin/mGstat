@@ -1,4 +1,4 @@
-function [sim_val,C]=mps_get_realization_from_template(TI,V,L,options)
+function [sim_val,C,ix_ti_min,iy_ti_min]=mps_get_realization_from_template(TI,V,L,options)
 
 C=0;
 N_TI=prod(size(TI.D));
