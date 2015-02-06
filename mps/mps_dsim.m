@@ -124,12 +124,12 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     
     %% GET REALIZATION FROM TI
     if N_COND==0
-        [sim_val,options.C(iy,ix)]=mps_get_realization_from_template(TI,[],[],options);
+        [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min]=mps_get_realization_from_template(TI,[],[],options);
     else
-        [sim_val,options.C(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);
+        [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min]=mps_get_realization_from_template(TI,V,L,options);
     end
     SIM.D(iy,ix)=sim_val;
-  
+    
     %% GET FULL CONDITIONAL TO COMPUTE ENTROPY
     options.compute_entropy=0;
     if options.compute_entropy==1;
@@ -137,7 +137,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         options.E(iy,ix)=entropy(C_PDF);
     end
     
-    %% PLOT START
+    % PLOT START
     if options.plot>0
         if ~exist('im')
             figure_focus(2);
@@ -173,17 +173,18 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             
         end
         
-        %         if options.plot>1
-        %             subplot(1,2,1);
-        %             im=imagesc(TI.D);axis image;
-        %             caxis([-1 1]);
-        %             hold on
-        %             plot(ix_ti_min,iy_ti_min,'go','MarkerSize',12)
-        %             for l=1:size(L,1)
-        %                 plot([ix_ti_min ix_ti_min+L(l,2)],[iy_ti_min iy_ti_min+L(l,1)],'g-')
-        %             end
-        %             hold off
-        %         end
+        if options.plot>1
+            subplot(1,2,1);
+            im=imagesc(TI.D);axis image;
+            caxis([-1 1]);
+            hold on
+            plot(ix_ti_min,iy_ti_min,'go','MarkerSize',12)
+            for l=1:size(L,1)
+                plot([ix_ti_min ix_ti_min+L(l,2)],[iy_ti_min iy_ti_min+L(l,1)],'g-')
+            end
+            hold off
+            %disp('paused - hit keyboard');pause;
+        end
         
         
         if options.plot>2
@@ -192,8 +193,6 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         end
     end
     %% PLOT END
-    
-    %keyboard
     
     
 end % END LOOOP OVER PATH
