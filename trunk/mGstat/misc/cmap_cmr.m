@@ -5,7 +5,7 @@
 % See http://dx.doi.org/10.1109/MAP.2002.1028735
 %
 
-function CMRmap=cmap_cmr;
+function cmap=cmap_cmr;
 
 CMRmap = [
 0.00 0.00 0.00;
@@ -17,5 +17,13 @@ CMRmap = [
 0.90 0.75 0.10;
 0.90 0.90 0.50;
 1.00 1.00 1.00];
+
+
+[nv]=size(CMRmap,1)
+nc=128;
+for i=1:3
+    cmap(:,i)=interp1([1:nv],CMRmap(:,1)',linspace(1,nv,128));
+end
+
 
 cmap=cmap_linear(CMRmap);
