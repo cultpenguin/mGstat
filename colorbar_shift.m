@@ -1,32 +1,33 @@
 % colorbar_shift : Adds a colorbar to the current figure, with no reshaping
-%
-% Before printing to a PS file you may need to set :
-% set(gca,'ActivePositionProperty','Position')
-%
+% of figure. (usefil when using subplots);
 %
 % example : 
 % subplot(2,2,1)
 % imagesc(peaks)
 % subplot(2,2,2)
 % imagesc(peaks)
-% set(gca,'ActivePositionProperty','Position')
 % colorbar_shift;
 %
-function H=colorbar_shift(shift,a)
-  
-  if nargin<2
-    a=gca;
-  end
-  if nargin<1
-    shift=.01;
-  end
-  %APP=get(a,'ActivePositionProperty')
-  set(a,'ActivePositionProperty','Position')
-  
-  pos=get(a,'Position');
-  H=colorbar;    
-  Hpos=get(H,'position');
-  
-  set(H,'position',[pos(1)+pos(3)+shift Hpos(2) Hpos(3) Hpos(4)])
+% Makes use of: plotboxpos 
+%
+% Thomas Mejer Hansen, 2008,2014
+%
+function [hb]=colorbar_shift(shift,ax)
+    
+if nargin<2
+    ax=gca;
+end
+if nargin<1
+    shift=.1;
+end
 
-  %set(a,'ActivePositionProperty',APP)
+% get position of visible axes
+axPos=plotboxpos;
+
+% set positions of colorbar 
+wx=axPos(3);
+x1=axPos(1)+axPos(3)+shift*axPos(3);
+cbPos=[x1,axPos(2),axPos(3)/10,axPos(4)];
+
+% add colorbar
+hb = colorbar('position',cbPos);  
