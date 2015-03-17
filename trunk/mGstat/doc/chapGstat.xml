@@ -1,0 +1,310 @@
+<sect1 id="Gstat"><title>Working with &gstat; and &mgstat;</title>
+    <para>
+    </para>
+
+<sect2><title>The &gstat; parameter file in &mgstat;</title>
+<para>
+&gstat; can be run non-interactively using by parsing a parameter file. It is by reading and writing this printer file that &mgstat; interfaces with &gstat;. Consider the following &gstat; parameter file
+<programlisting>
+#
+# Local simple point kriging on a mask map
+#
+data(ln_zinc): 'zinc.eas', x=1, y=2, v=3, log,
+  min=20, max=40, radius=1000, sk_mean=5.9;
+variogram(ln_zinc): 0.0554 Nug(0) + 0.581 Sph(900);
+mask:                 'mask_map';
+predictions(ln_zinc): 'lzn_skpr';
+variances(ln_zinc):   'lzn_skvr';
+</programlisting>
+using read_gstat_par to read the parameter into the data structure G, gives
+<programlisting>
+>> G=read_gstat_par(par)
+G =
+         mgstat: [1x1 struct]
+           data: {[1x1 struct]}
+      variogram: {[1x1 struct]}
+           mask: {[1x1 struct]}
+    predictions: {[1x1 struct]}
+      variances: {[1x1 struct]}
+
+>> G.mgstat
+ans =
+    parfile: '/home/tmh/RESEARCH/PROGRAMMING/gstat-2.4.4/cmd/ex05.cmd'
+    comment: {'#'  '#Local simple point kriging on a mask map'  '#'}
+
+>> G.data{1}
+ans =
+       data: 'ln_zinc'
+       file: 'zinc.eas'
+          x: 1
+          y: 2
+          v: 3
+        log: ''
+        min: 20
+        max: 40
+     radius: 1000
+    sk_mean: 5.9000
+
+>> G.predictions{1}
+ans =
+    data: 'ln_zinc'
+    file: 'lzn_skpr'
+
+</programlisting>
+The <varname>mgstat</varname> field to the <varname>G</varname> structure, is specific to &mgstat; and stores the comments of the parameter file, and the location on disk of the parameter file.
+</para>
+
+<para>
+The rest of the fields of <varname>G</varname> refers to lines in the &gstat; parameter file. 
+</para>
+
+<sect3><title>'data' field of &gstat; parameter file</title>
+<para>
+Take for example the <varname>data</varname> field as listed above. The field is called data, because this is the identifier (first string) in the parameter file. Filename and data identifiers are always specified using 'data' and 'file' fields. Several options can be specified for the 'data'. This are simply listed as fields of <varname>G.data{1}</varname>. If an option does not supply a value (as the 'log' option) it simply refers to an empty string.
+</para>
+<para>
+In case several data type are listed in the parameter file, they are read into separate structures, as <varname>G.data{1}</varname>, <varname>G.data{2}</varname> ,...
+</para>
+</sect3>
+
+</sect2>
+
+
+<sect2 id="InteractiveGstat"><title>An interactive &gstat; session in &matlab;</title>
+<para>to come</para>
+</sect2>
+
+
+</sect1>
+
+<sect1 id="GstatRef"><title>&gstat;-related m-files</title>
+<para>
+</para>
+
+<sect2><title>gstat</title>
+<para>
+<varname>gstat</varname> is used to call gstat from within &matlab;. It can be called using either a &gstat; command file as :
+<programlisting>
+[pred_mean,pred_var]=gstat('ex06.cmd');
+</programlisting>
+or using a Matlab &mgstat; structure as 
+<programlisting>
+G=read_gstat_par('ex06.cmd');       % read parameter file
+G.G.variogram{1}.V(1).type='Sph';   % change variogram type to Spherical
+[pred_mean,pred_var]=gstat(G);
+</programlisting>
+</para>
+<para>More info at : <xref linkend="gstat"></xref></para>
+
+<sect3><title>output precision</title>
+<para>
+By default the output precision of &gstat; is set to format '%16.8f'. This can be specified manually as : 
+<programlisting>
+G.set.format='%4.2f'
+</programlisting>
+
+</para>
+</sect3>
+</sect2>
+
+
+<sect2><title>gstat_read_par</title>
+<para>
+</para>
+<para>More info at : <xref linkend="read_gstat_par"></xref></para>
+</sect2>
+
+<sect2><title>gstat_write_par</title>
+<para>
+</para>
+<para>More info at : <xref linkend="write_gstat_par"></xref></para>
+</sect2>
+
+
+
+<sect2><title>gstat_krig</title>
+<para>
+<function>gstat_krig</function>  is the equivalent of the native &matlab; command <varname>krig</varname>. It is called in similar fashion to <varname>krig</varname>, but calls &gstat; for kriging as opposed to the &matlab; kriging routines.
+</para>
+<para>More info at : <xref linkend="gstat_krig"></xref></para>
+</sect2>
+
+<sect2><title>gstat_convert</title>
+<para>
+Converts binary formatted data formats to ascii. 
+</para>
+<para>More info at : <xref linkend="gstat_convert"></xref> and <xref linkend="InstallGstat2"></xref></para>
+</sect2>
+
+
+
+<sect2><title>gstat_binary</title>
+<para>
+</para>
+<para>More info at : <xref linkend="gstat_binary"></xref></para>
+</sect2>
+
+
+<sect2><title>semivar_exp_gstat</title>
+<para>
+NB: In the forthcoming releases this m-file will be rename <varname>gstat_semivar_exp</varname>
+</para>
+<para>
+This m-file computes the experimental semivariogram using the same conventions as <xref linkend="semivar_exp"></xref>, but using &gstat; as backend instead of the native Matlab implemention.
+</para>
+<para>
+<xref linkend="semivar_exp_gstat"></xref> is much more CPU efficient that  <xref linkend="semivar_exp"></xref>.
+</para>
+<para>
+An example (from MGSTAT_INSTALL/example/test_gstat_semivar_exp.m)
+<programlisting>
+% GENERATE A REFERENCE DATA SET USING UNCONDITIONAL GAUSSIAN SIMULATION
+x=[0:.05:10];
+y=[0:.05:10];
+V=visim_init(x,y);
+V.rseed=1;
+V.Va.a_hmax=4; % maximum correlation length
+V.Va.a_hmin=.5;  % minumum correlation length
+V.Va.ang1=90-22.5;   % Rotation angle of dip(clockwise from north)
+V.Va.it=1;     % Gaussian semivariogram
+V=visim(V);    % run visim;
+
+[x_obs,y_obs]=meshgrid(x,y);
+d_obs=V.D(:,:,1);
+n_obs=prod(size(d_obs));
+
+
+% CHOOSE SOME DATA FOR SEMIVARIOGRAM ANALYSIS
+n_use=1000;
+i_use=round(rand(1,n_use)*(n_obs-1))+1;
+i_use=unique(i_use);
+
+x_use=x_obs(i_use);
+y_use=y_obs(i_use);
+d_use=d_obs(i_use);
+
+% PLOT DATA
+figure(1);
+imagesc(V.x,V.y,V.D(:,:,1));
+title(visim_format_variogram(V))
+axis image;
+hold on
+plot(x_use,y_use,'w.','MarkerSize',22)
+scatter(x_use,y_use,20,d_use,'filled')
+hold off
+drawnow;
+
+% SEMIVARIOGRAM ANALYSIS ISOTROPIC
+[gamma_iso,hc,np,av_dist]=semivar_exp_gstat([x_use(:) y_use(:)],[d_use(:)]);
+figure(2);
+plot(hc,gamma_iso);
+title('isotropic');xlabel('Distance');ylabel('\gamma')
+
+% SEMIVARIOGRAM ANALYSIS ANISOTROPIC
+ang_array=[0,22.5,45,67.5,90];
+ang_tolerance=10;
+for i_ang=1:length(ang_array);   
+    [gamma_an(:,i_ang),hc,np,av_dist]=semivar_exp_gstat([x_use(:) y_use(:)],[d_use(:)],ang_array(i_ang),ang_tolerance);
+end
+figure(3);
+plot(hc,gamma_an);xlabel('Distance');ylabel('\gamma')
+title('ANisotropic'); 
+legend(num2str(ang_array'))
+ 
+% SYNTHETICAL SEMIVARIOGRAM
+gamma_synth=semivar_synth('0.0001 Nug(0) + 1 Sph(1)',hc);
+figure(4)
+plot(hc,gamma_an,'b-')
+hold on
+plot(hc,gamma_iso,'r-','linewidth',2)
+plot(hc,gamma_synth,'k-','linewidth',2)
+hold off
+;xlabel('Distance');ylabel('\gamma')
+legend(num2str(ang_array'))
+
+</programlisting>
+
+</para>
+
+
+<para>More info at : <xref linkend="semivar_exp_gstat"></xref></para>
+</sect2>
+
+</sect1>
+
+<sect1 id="GstatExamples"><title>&gstat; examples</title>
+<para>
+</para>
+
+
+<!-- ex03 -->
+<sect2 id="gstat_ex_03"><title>&gstat; ex03</title>
+<para>
+</para>
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/gstat_examples/ex03.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</sect2>
+
+<!-- ex04 -->
+<sect2 id="gstat_ex_04"><title>&gstat; ex04</title>
+<para>
+</para>
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/gstat_examples/ex04.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</sect2>
+
+
+<!-- ex05 -->
+<sect2 id="gstat_ex_05"><title>&gstat; ex05</title>
+<para>
+</para>
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/gstat_examples/ex05.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</sect2>
+
+
+<!-- ex06 -->
+<sect2 id="gstat_ex_06"><title>&gstat; ex06</title>
+<para>
+</para>
+<programlisting language="matlab " >
+<xi:include href="../mGstat/examples/gstat_examples/ex06.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</sect2>
+
+
+<!-- ex07 -->
+<sect2 id="gstat_ex_07"><title>&gstat; ex07</title>
+<para>
+</para>
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/gstat_examples/ex07.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</sect2>
+
+
+<!-- ex09 -->
+<sect2 id="gstat_ex_09"><title>&gstat; ex09</title>
+<para>
+</para>
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/gstat_examples/ex09.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</sect2>
+
+
+<!-- ex10 -->
+<sect2 id="gstat_ex_10"><title>&gstat; ex10</title>
+<para>
+</para>
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/gstat_examples/ex10.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</sect2>
+
+
+
+</sect1>

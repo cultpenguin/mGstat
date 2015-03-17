@@ -1,0 +1,84 @@
+<sect2 id="eas2sgems"><title>eas2sgems</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems"><title>sgems</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems2eas"><title>sgems2eas</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_clean"><title>sgems_clean</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_demo"><title>sgems_demo</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_get_par"><title>sgems_get_par</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_grid"><title>sgems_grid</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_grid_py"><title>sgems_grid_py</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_image2ti"><title>sgems_image2ti</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_plot_project"><title>sgems_plot_project</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_plot_structure"><title>sgems_plot_structure</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_ppm"><title>sgems_ppm</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_read"><title>sgems_read</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_read_project"><title>sgems_read_project</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_read_xml"><title>sgems_read_xml</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_set_resim_data"><title>sgems_set_resim_data</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_variogram_xml"><title>sgems_variogram_xml</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_write"><title>sgems_write</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_write_grid"><title>sgems_write_grid</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_write_pointset"><title>sgems_write_pointset</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgems_write_xml"><title>sgems_write_xml</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+

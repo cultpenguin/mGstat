@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE article SYSTEM "/usr/share/xml/docbook/schema/dtd/4.3/docbookx.dtd"[
+<!ENTITY mgstat "mGstat"> 
+<!ENTITY matlab "Matlab"> 
+<!ENTITY gslib "GSLIB"> 
+<!ENTITY gstat "GSTAT"> 
+<!ENTITY chapGstatCommands SYSTEM "chapGstatCommands.xml"> 
+<!ENTITY chapGslibCommands SYSTEM "chapGslibCommands.xml"> 
+<!ENTITY chapNativeMatlab SYSTEM "chapNativeMatlab.xml"> 
+]>
+<article>
+  <articleinfo>
+    <title>mGstat</title>
+        
+    <author>
+      <firstname>Thomas Mejer</firstname>
+      <surname>Hansen</surname>
+      <affiliation>
+        <address><email>cultpenguin@gmail.com</email></address>
+      </affiliation>
+    </author>
+    
+    <copyright>
+      <year>2004-2005</year>
+      <holder role="mailto:thomas@cultpenguin.com">Thomas Mejer Hansen</holder>
+    </copyright>
+  
+    <abstract>
+      <para>mGstat is a geostatistical Matlab toolbox. Both native functions and links to GSLIB and GSTAT functions are provided</para>
+    </abstract>
+  </articleinfo>
+
+
+&chapNativeMatlab;
+
+
+</article>
+      

@@ -1,0 +1,1765 @@
+<sect2 id="Contents"><title>Contents</title>
+<para><programlisting><![CDATA[  mGstat Toolbox
+  Version 0.1 Feb 18, 2004
+ 
+  mGstat COMMANDS
+    mgstat_verbose - display verbose information
+    krig - simple/ordinary/tren kriging
+    precal_covar - precalculate covariance matrix
+    semivar_synth
+    semivar_exp
+    nscore : Normal socre transformation
+    inscore : Normal socre back transformation
+ 
+    sgsim    : Sequential Gaussian Simulation
+    dssim    : Direct sequential simulation
+    dssim-hr : Direct sequential simulation with histogram reprod.
+    etype : E-Type from reaslizations.
+ 
+  GSTAT SPECIFIC COMMANDS
+    gstat         - call gstat with parfile of mat-structure
+    gstat_convert - convert binary GSTAT output to ASCII
+    gstat_krig    - Point kriging
+    --gstat_cokrig  - Point cokriging
+    --gstat_krig2d  - 2D kriging
+    --gstat_cokrig2d- 2D cokriging
+    gstat_binary  - returns the path to the binary gstat
+    gstat_demo    - mGstat demos
+    semivar_exp_gstat - 
+ 
+  IO
+    read_petrel    - read petrel ascii formatted file
+    read_gstat_par    - read gstat parameter file
+    write_gstat_par   - write gstat parameter file
+    read_eas          - read EAS ascii formatted files
+    write_eas         - write EAS ascii formatted files
+    read_arcinfo_ascii  - read ARCINFO ascii formatted files
+    write_arcinfo_ascii - write ARCINFO ascii formatted files
+ 
+  MISC 
+    nanmean - mean of array, where NaN are excluded.
+    strip_space.m
+    format_variogram.m
+    deformat_variogram.m
+    vonk2d  - random field generator
+    watermark - adds label to figure
+    progress_txt - ascii progress bar
+ 
+
+    Overloaded methods:
+       serial/Contents
+       mmreader/Contents
+       audiorecorder/Contents
+       audioplayer/Contents
+       VideoReader/Contents
+       instrument/Contents
+       rsmd/Contents
+       resultset/Contents
+       drivermanager/Contents
+       driver/Contents
+       dmd/Contents
+       dbtbx/Contents
+       database/Contents
+       cursor/Contents
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="CreateMisfitFunction"><title>CreateMisfitFunction</title>
+<para><programlisting><![CDATA[  CreateMisfitFunction : Dynamically created function to be used for
+                         semivariogram optimization
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="MakeXmlRef"><title>MakeXmlRef</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="arcinfo2eas"><title>arcinfo2eas</title>
+<para><programlisting><![CDATA[  arcinfo2eas : convert ArcInfo file to EAS
+ 
+  CALL 
+     arcinfo2eas(file_arcinfo,file_eas);
+ 
+  or  
+     arcinfo2eas(file_arcinfo);
+     using the same file name as the arcinfo file
+     but with the 'eas' file extension.
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="block_log"><title>block_log</title>
+<para><programlisting><![CDATA[  block_log : block a log
+ 
+  Call:
+    [mz,z_out]=block_log(val,z,bz);
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="cokrig_sk"><title>cokrig_sk</title>
+<para><programlisting><![CDATA[  cokrig_sk : Simple CoKriging
+ 
+  Call :
+   function [d_est,d_var,lambda_sk,K_sk,k_sk]=cokrig_sk(pos_known,val_known,pos_est,V,val_0);
+ 
+  TMH/2005
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="colorbar_shift"><title>colorbar_shift</title>
+<para><programlisting><![CDATA[  colorbar_shift : Adds a colorbar to the current figure, with no reshaping
+ 
+  Before printing to a PS file you may need to set :
+  set(gca,'ActivePositionProperty','Position')
+ 
+ 
+  example : 
+  subplot(2,2,1)
+  imagesc(peaks)
+  subplot(2,2,2)
+  imagesc(peaks)
+  set(gca,'ActivePositionProperty','Position')
+  colorbar_shift;
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="colormap_nan"><title>colormap_nan</title>
+<para><programlisting><![CDATA[  colormap_nan
+ 
+  Replaces all NaN values with a specific color, and rescales the
+  colorbar appropriately;
+ 
+ 
+  example :
+  d=peaks(200);
+  d(find(d<0))=NaN;
+  figure(1);imagesc(d);
+  colormap(hot);
+  colormap_nan;
+  drawnow;
+  pause(2)
+ 
+  
+  figure(2);imagesc(d);
+  colormap_nan(jet,[.2 .9 .1]);
+  colorbar;drawnow;
+  pause(2);
+ 
+  figure(3);imagesc(d);
+  colormap_nan(jet(1000),[.2 .9 .1]);
+  colorbar
+ 
+ 
+ 
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="colormap_squeeze"><title>colormap_squeeze</title>
+<para><programlisting><![CDATA[  colormap_squeeze
+ 
+  Call :
+    colormap_squeeze(dperc);
+    dperc=[0 .. 0.5];
+ 
+    imagesc(peaks);
+    colormap_squeeze(.1);
+    pause(1);
+    colormap_squeeze(.1);
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="comb_cprob"><title>comb_cprob</title>
+<para><programlisting><![CDATA[  comb_cprob : PDF combination using permancne of ratios
+ 
+  Call : 
+   pAgBC=comb_cprob(pA,pAgB,pAgC)
+ 
+ 
+  pA    : Prob(A)
+  pAgB  : Prob(A|B)
+  pAgC  : Prob(A|C)
+  pAgBC : Prob(A|B,C)
+ 
+  Combination of conditional probabilities 
+  based on permanence of updating ratios.
+ 
+  Journel, An Alternative to Traditional Data Independence
+  Hypotheses, Math Geol(34), 2002
+  
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="comb_cprob_ind"><title>comb_cprob_ind</title>
+<para><programlisting><![CDATA[  comb_cprob_ind : Combination of two independent conditional PDF
+ 
+  Call :
+     pAgBC=comb_cprob_ind(pA,pAgB,pAgC)
+ 
+  pA    : Prob(A)
+  pAgB  : Prob(A|B)
+  pAgC  : Prob(A|C)
+  pAgBC : Prob(A|B,C)
+ 
+  TMH/2005
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="comb_cprob_nd"><title>comb_cprob_nd</title>
+<para><programlisting><![CDATA[  comb_cprob_nd : PDF combination using permancne of ratios
+ 
+  Combination of 'nd' conditional probabilities 
+  based on permanence of updating ratios.
+ 
+  Call : 
+   pAgND=comb_cprob(pA,pAgND,wAgND)
+ 
+ 
+  pA    [scalar] : Prob(A)
+  pAgND [array]  : Prob(A|N1),Prob(A|N2),...,Prob(A|ND)
+  wAgBC [array]  : Weight of each cprob
+  pAgBC [scala]  : Prob(A|ND)
+ 
+  Combination of conditional probabilities 
+  based on permanence of updating ratios.
+ 
+  Journel, An Alternative to Traditional Data Independence
+  Hypotheses, Math Geol(34), 2002
+  
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="covar_exp"><title>covar_exp</title>
+<para><programlisting><![CDATA[  semivar_exp : Calcualte experimental variogram 
+ 
+ [hc,garr,h,gamma,hangc,head,tail]=semivar_exp(pos,val,nbin,nbinang)
+   
+  pos : [ndata,ndims]
+  val : [ndata,ndata_types]
+ 
+  nbin : [integer] number of bins on distance anxes
+         [array] if specified as an array, this is used.
+   
+  nbinang : [integer] number of arrays between 0/180 degrees
+                      (default 1)
+  Example isotrop: 
+    [hc,garr]=semivar_exp(pos,val);
+    plot(garr,hc);
+ 
+  Example directional [0,45,90,135,180]: 
+    [hc,garr,h,gamma,hangc]=semivar_exp(pos,val,20,4);
+    plot(garr,hc);
+    legend(num2str(hangc'))
+  
+ 
+  TMH/2005
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="cpdf"><title>cpdf</title>
+<para><programlisting><![CDATA[  cpdf : cumulative probability density function
+ 
+  [pk_obs]=cpdf(alldata,d_obs,doPlot)
+ 
+  finds pk quantiles for data (d_obs), 
+  based on a series of data (alldata)
+ 
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="create_nscore_lookup"><title>create_nscore_lookup</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="create_nscore_lookup_old"><title>create_nscore_lookup_old</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="csemivar_exp"><title>csemivar_exp</title>
+<para><programlisting><![CDATA[  csemivar_exp : Calculate experimental cross semivariogram 
+ 
+ [hc,garr,h,gamma,hangc,head,tail]=semivar_exp(pos1,val1,pos2,val2,nbin,nbinang)
+   
+  pos1 : [ndata,ndims] : attribute 1
+  val1 : [ndata,1]     : attribute 1
+  pos2 : [ndata,ndims] : attribute 2
+  val2 : [ndata,1]       attribute 2
+ 
+  nbin : [integer] number of bins on distance anxes
+         [array] if specified as an array, this is used.
+   
+  nbinang : [integer] number of arrays between 0/180 degrees
+                      (default 1)
+  Example isotrop: 
+    [hc,garr]=semivar_exp(pos1,val1,pos2,val2);
+    plot(garr,hc);
+ 
+  Example directional [0,45,90,135,180]: 
+    [hc,garr,h,gamma,hangc]=semivar_exp(pos1,val1,pos2,val2,20,4);
+    plot(garr,hc);
+    legend(num2str(hangc'))
+  
+ 
+  TMH/2005
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="deformat_variogram"><title>deformat_variogram</title>
+<para><programlisting><![CDATA[  deformat_variogram : convert gstat variogram line into matlab structure
+ 
+  Call:
+    V=deformat_variogram(txt);
+  
+  Example: 
+  V=deformat_variogram('1 Sph(2)')
+ 
+ V = 
+ 
+      par1: 1
+      par2: 2
+      type: 'Sph'
+      itype: 1
+  
+  
+  See also : format_variogram
+ 
+  TMH /2004
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="dual"><title>dual</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="edist"><title>edist</title>
+<para><programlisting><![CDATA[  edist : Euclidean distance
+ 
+  Call :
+    D=edist(p1,p2,transform,isorange)
+ 
+  p1,p2 : vectors
+ 
+  transform : GSTAT anisotropy and/or range information
+ 
+  isorange : [0] (default), transform is the usual GSTAT-anisotropy setting
+  isorange : [1] means that transform simply lists the range in
+  each dimensions, and that no rotation is performed
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="estim_taran"><title>estim_taran</title>
+<para><programlisting><![CDATA[  estim_taran, one data set : Tarantola equations (16-17) 
+  
+  CALL : [m_est,Cm_est]=estim_taran(G,Cm,Cd,m0,d0);
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="etype"><title>etype</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="f77strip"><title>f77strip</title>
+<para><programlisting><![CDATA[  f77strip : Strips f77 characters from binary file.
+ 
+  [data]=f77strip(file,format,xskip,zskip);
+ 
+  IN :
+  required
+  file [string], optional, deafult='f77.bin'
+ 
+  optional :
+  format [string], 'float16','float32'[default],'float64'
+  xskip [scalar], Skip every xskip column
+  zskip [scalar], Skip every zskip row
+ 
+  OUT
+  data [matrix], required
+ 
+  Purpose : Reads a f77 style binary file
+ 
+  At the beginning and end of each row, an integer
+  containing the number of bytes in the row is printed
+  (like ftnunstrip/ftnstrip in the CWP SU package)
+ 
+  by Thomas Mejer Hansen, 05/2000
+  Octave 2.0.15 and Matlab 5.3 compliant
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="fft_ma_3d"><title>fft_ma_3d</title>
+<para><programlisting><![CDATA[  The FFT-MA algorithm in 3D
+  Call: out=FFT_MA_3D(ny,nx,nz,Nly,Nlx,Nlz,cell,h_min,h_max,h_z,gmean,gvar,it)
+  it: 1) Spherical, 2) Exponential, 3) Gaussian
+  ny, nx, nz: Number of model parameters in the x, y, and z directions,
+  respectively
+  Nlx, Nly, Nlz: Extensions of the grid in the x, y, and z directions in 
+  order to avoid artefacts due to edge effects. Number of model parameters 
+  in the extension = Nlx*range_x/cell, where cell is the size of the cells 
+  and range_x is the range i the x-direction.
+  h_min, h_max, and h_z, are the ranges in the horizontal (x), vertical (y) and (z) direction.
+  gvar: Global variance
+  gmean: Global mean
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="format_variogram"><title>format_variogram</title>
+<para><programlisting><![CDATA[  format_variogram : Convert matlab style Variogram to Gstat style
+ 
+  Call :
+    txt=format_variogram(V);
+ 
+  See also: deformat_variogram
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="fresnel_punch"><title>fresnel_punch</title>
+<para><programlisting><![CDATA[  fresnel_punch : computes the sensitivity kernel for a wave traveling from S to R.
+ 
+  CALL : 
+     [K,RAY,timeS,timeR,raypath]=fresnel_punch(Vel,x,y,z,S,R,freq,alpha);
+ 
+  IN : 
+     Vel : Velocity field
+     x [1:nx] :
+     y [1:ny] :
+     z [1:nz] :
+     S [1,3] : Location of Source
+     R [1,3] : Location of Receiver
+     freq : frequency
+     alpha: controls exponential decay away ray path
+ 
+  OUT :
+     K : Sensitivity kernel
+     R : Ray sensitivity kernel (High Frequency approx)
+     timeS : travel computed form Source
+     timeR : travel computed form Receiver
+     raypath [nraydata,ndim] : the center of the raypath 
+ 
+  TMH/2006
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="gaussian_simulation_cholesky"><title>gaussian_simulation_cholesky</title>
+<para><programlisting><![CDATA[  gaussian_simulation_cholesky : generate realizations from a Gaussian 2D
+  distribution mean m0 and covariance Cm
+ 
+  Very eficient for smaller models to generate a sample
+  of the posterior PDF for least squares inversion problems :
+  
+  For example : 
+   [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d0);
+   z_uncond=gaussian_simulation_cholesky(m_est,Cm_est,nsim);
+   z_cond=gaussian_simulation_cholesky(m_est,Cm_est,nsim);
+ 
+  Choleksy decomposition can be calculated prior to calling
+    Cm=chol(Cm);
+    is_chol=1;
+    z_cond=gaussian_simulation_cholesky(m_est,Cm_est,nsim,is_chol);
+ 
+ 
+ 
+  % unconditional realization:
+  x=[1:1:40];
+  y=[1:1:40];
+  [xx,yy]=meshgrid(x,y);
+  Cm=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(45,.1,30)');
+  m0=xx.*0;
+  nsim=12;
+  [z_uncond,D]=gaussian_simulation_cholesky(m0,Cm,nsim);
+  for i=1:nsim;subplot(4,3,i);imagesc(x,y,D(:,:,i));axis image;end
+ 
+ 
+  see also gaussian_simulation_cholesky_resim
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="gstat"><title>gstat</title>
+<para><programlisting><![CDATA[  gstat : call gstat from Matlab
+ 
+  CALL : gstat(G)
+     G : gstat data structure OR gstat parameter file on disk
+ 
+         [pred,pred_var,pred_covar,mask,G]=gstat(G)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="gstat_binary"><title>gstat_binary</title>
+<para><programlisting><![CDATA[  gstat_binary : returns the path to the binary gstat
+ 
+  Call :
+     gstat_bin = gstat_binary;
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="gstat_convert"><title>gstat_convert</title>
+<para><programlisting><![CDATA[  gstat_convert : convert between ascii/binary formats
+ 
+   CALL : [data,x,y,dx,nanval]=gstat_convert(file,f,suf)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="gstat_krig"><title>gstat_krig</title>
+<para><programlisting><![CDATA[  gstat_krig : Simple/Ordinary Kriging using GSTAT
+ 
+  Call :
+  [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V,options);
+ 
+  ndata : number of data observations
+  ndims : dimensions of data location (>=1)
+  nest  : number of data locations to be estimated
+ 
+  pos_known [ndata,ndims] : Locations of data observations
+  val_known [ndata,1 or 2]  : col1 : Data value as measured at 'pos_known'
+                              col2 : Data uncertainty as measured at
+                              'pos_known' (optional)
+  pos_est   [nest ,ndims] : Location of data to be estimated
+  V : Variogram model, e.g. '1 Sph(100)'
+ 
+ 
+  %% Example 1 : 1D - NO DATA UNCERTAINTY
+  profile on
+  pos_known=10*rand(10,1);
+  val_known=rand(size(pos_known)); % adding some uncertainty
+  pos_est=[0:.01:10]';
+  V=deformat_variogram('1 Sph(1)');
+  [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
+  plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
+  legend('SK estimate','SK variance','Observed Data')
+  title(['V = ',V])
+  profile viewer
+ 
+ 
+ 
+  %% Example 2 : 1D - Data Uncertainty 
+  pos_known=[1;5;10];
+  val_known=[0 3 2;0.001 1 0.001]'; % adding some uncertainty
+  pos_est=[0:.01:10]';
+  V='1 Sph(2)';
+  [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
+  plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
+  legend('SK estimate','SK variance','Observed Data')
+  title(['using data uncertainty, V = ',V])
+ 
+ 
+  %% Example 3 : 2D estimation 
+  pos_known=[0 1;5 8;10 1];
+  val_known=[0 3 2]';
+  x=[0:.1:10];
+  y=[0:.1:10];
+  [xx,yy]=meshgrid(x,y);
+  pos_est=[xx(:) yy(:)];
+  V='1 Sph(7)';
+  [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
+  subplot(1,2,1);scatter(pos_est(:,1),pos_est(:,2),10,d_est)
+  axis image;title('Kriging mean')
+  subplot(1,2,2);scatter(pos_est(:,1),pos_est(:,2),10,d_var)
+  axis image;title('Kriging variance')
+ 
+ 
+  %% Example 4 :SIMULATION
+  pos_known=[0 1;5 1;10 1];
+  val_known=[0 3 2]';
+  pos_est=linspace(-1,11,200)';pos_est(:,2)=1;
+  V='.0001 Nug(0) + .2 Gau(2)';
+  [d_est,d_var]=gstat_krig(pos_known,val_known,pos_est,V);
+  plot(pos_est(:,1),d_est,'k-',pos_known(:,1),val_known(:,1),'r*')
+  
+  options.nsim=120;
+  [d_sim,d_varsim,pos_sim]=gstat_krig(pos_known,val_known,pos_est,V,options);
+  d=sortrows([pos_sim(:,1) d_sim],1);
+  d_sim=d(:,2:(options.nsim+1));
+  
+  d=sortrows([pos_sim(:,1) d_varsim],1);
+  d_varsim=d(:,2);
+  
+  plot(pos_est(:,1),d_sim,'r-');
+  
+  hold on
+  plot(pos_est(:,1),d_est,'k-','linewidth',4)
+  plot(pos_known(:,1),val_known(:,1),'b.')
+  
+  plot(pos_est(:,1),d_varsim-4,'k-')
+  plot(pos_est(:,1),d_var-4,'r-')
+  hold off
+  
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="gstat_krig_blinderror"><title>gstat_krig_blinderror</title>
+<para><programlisting><![CDATA[  gstat_krig_blinderror : blind cross validation using gstat
+ 
+  Call as gstat_krig is called : 
+     [d_est,d_var,be,d_diff]=gstat_krig_blinderror(pos_known,val_known,pos_est,V,options);
+ 
+  [d_est,d_var] : Cross validation prediction
+  [be] : Cross validation error
+ 
+  /TMH 12/2005
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="hpd_2d"><title>hpd_2d</title>
+<para><programlisting><![CDATA[  hpd_2d : highest posterior density 
+ 
+  call : 
+     [levels]=hpd_2d(lik,hpd_level)cl
+ 
+  lik=abs(peaks);
+  levels=hpd_2d(lik,[.1:.2:.9])
+  contourf(lik,levels)
+ 
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="hpd_2d_point"><title>hpd_2d_point</title>
+<para><programlisting><![CDATA[  hpd_2d_point : highest posterior density plot from scattered data
+ 
+  Call :
+   [lik,levels,x,y]=hpd_2d_point(x_p,y_p,lik_p,x,y,hpd_levels,corner_type)
+ 
+  See also : hpd_2d
+ 
+  Example :
+   nd=1300;
+   x_p=randn(nd,1)*1;
+   y_p=randn(nd,1)*1;
+   lik_p = abs(peaks(x_p,y_p));
+   subplot(1,3,1);
+   [lik,levels,x,y]=hpd_2d_point(x_p,y_p,lik_p);
+   subplot(1,3,2);
+   [lik,levels,x,y]=hpd_2d_point(x_p,y_p,lik_p,[],[],[.1:.1:1]);
+   subplot(1,3,3);
+   [lik,levels,x,y]=hpd_2d_point(x_p,y_p,lik_p,-1:.1:1,-1:.1:1,[.2 0.5 1.0]);
+ 
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="icpdf"><title>icpdf</title>
+<para><programlisting><![CDATA[  icdf : inverse cimulative density function
+ 
+  find data value associated to an pk quantile.
+ 
+  CALL : d_obs=icdf(data,pk_obs)
+    
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="indicator_transform_con"><title>indicator_transform_con</title>
+<para><programlisting><![CDATA[  indicator_transform_con : transform continous data into indicator
+ 
+  CALL :
+ 
+  [id,lev]=indicator_transform_con(d,lev)
+  
+  [d] : data
+  [lev] : indicator transform of list lev#s : Prob(zi<lev(i))
+          if not specified level is chosen to match qantiles
+          .1,.2,...,.9
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="indicator_transform_dis"><title>indicator_transform_dis</title>
+<para><programlisting><![CDATA[  indicator_transform_dis : transform discrete data into indicator
+ 
+  CALL :
+ 
+  [id,lev]=indicator_transform_dis(d,ident)
+  
+  [d] : data
+  [ient] : Transform data into a binary discrete data, such that Prob(zi=ident(i))
+          if not specified level is chosen all unique4 discrete
+          identifiers are chosen.
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="inscore"><title>inscore</title>
+<para><programlisting><![CDATA[  inscore : normal score BACK transform
+ 
+  CALL :
+    d=inscore(d_nscore,o_nscore)
+ 
+  d_nscore : normal score values to be back transformed 
+             using the 'o_nscore' object, obtained using 
+             'nscore'
+ 
+  See also nscore.m
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="isorange"><title>isorange</title>
+<para><programlisting><![CDATA[  isorange : convert range scaling to gstat/gslib range settings
+ 
+ 
+  for example
+    V = '1.0 Sph(0.7,0.8,0.9)';
+ 
+    Vgstat=isorange(V);
+    format_variogram(Vgstat,1)
+  
+  Used when 'options.isorange=1'
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="krig"><title>krig</title>
+<para><programlisting><![CDATA[  krig : Simple/Ordinar/Trend Kriging
+ 
+  Call :
+  [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,options);
+ 
+  ndata : number of data observations
+  ndims : dimensions of data location (>=1)
+  nest  : number of data locations to be estimated
+ 
+  pos_known [ndata,ndims] : Locations of data observations
+  val_known [ndata,1 or 2]  : col1 : Data value as measured at 'pos_known'
+                              col2 : Data uncertainty as measured at
+                              'pos_known' (optional)
+  pos_est   [N ,ndims] : Location of N data locations to be estimated
+  V : Variogram model, e.g. '1 Sph(100)'
+  val_0 : A priori assumed data value (default=mean(val_known))
+ 
+ 
+ 
+  Example 1D - NO DATA UNCERTAINTY
+  profile on
+  pos_known=10*rand(10,1);
+  val_known=rand(size(pos_known)); % adding some uncertainty
+  pos_est=[0:.01:10]';
+  V=deformat_variogram('1 Sph(1)');
+  [d_est,d_var]=krig(pos_known,val_known,pos_est,V);
+  plot(pos_est,d_est,'r.',pos_est,d_var,'b.',pos_known,val_known(:,1),'g*')
+  legend('SK estimate','SK variance','Observed Data')
+  %title(['V = ',V])
+  profile viewer
+ 
+  See source code for more examples
+ 
+ 
+  see also : krig_npoint, krig_blinderror
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="krig_blinderror"><title>krig_blinderror</title>
+<para><programlisting><![CDATA[  krig_blinderror : Cross validation blind error
+  CALL : 
+    [d_est,d_var,be,d_diff,L,L2]=krig_blinderror(pos_known,val_known,pos_est,V,options,nleaveout)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="krig_covar_lik"><title>krig_covar_lik</title>
+<para><programlisting><![CDATA[  krig_covar_lik : Calculates the likelihood tha V is consistent with data observations
+ 
+  Call :
+    L=krig_covar_lik(pos_known,val_known,V,options)
+ 
+ 
+  Can be used to infer covariance properties (range, sill, anisotropy,...)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="krig_crossval_1d_exh"><title>krig_crossval_1d_exh</title>
+<para><programlisting><![CDATA[  krig_crossval_1d_exh
+  CALL : 
+    [V_L,B_be,ML,Mbe,ML2,par2_range,nugfrac_range]=krig_crossval_1d_exh(pos_known,val_known,V,options);
+ 
+ function [V_L,V_be,ML,Mbe,ML2,par2_range,nugfrac_range]=krig_crossval_1d_exh(pos_known,val_known,V,options);
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="krig_npoint"><title>krig_npoint</title>
+<para><programlisting><![CDATA[  krig_npoint : as 'krig' butfor multiple estimation position.
+ 
+  [d_est,d_var,options]=krig_npoint(pos_known,val_known,pos_est,V,options);
+ 
+  As krig, but allowing size(pos_known,1)>1
+ 
+  See also : krig
+  
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="krig_optim_1d_exh"><title>krig_optim_1d_exh</title>
+<para><programlisting><![CDATA[  krig_optim_1d_exh
+  CALL : 
+    [V_L,B_be,ML,Mbe,ML2,par2_range,nugfrac_range]=krig_optim_1d_exh(pos_known,val_known,V,options);
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="krig_optim_mcmc"><title>krig_optim_mcmc</title>
+<para><programlisting><![CDATA[  krig_optim_mcmc
+  CALL :
+    [V_new,be_acc,L_acc,par2,nugfrac_acc,V_acc,options]=krig_optim_mcmc(pos_known,val_known,V,options)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="krig_optim_ml"><title>krig_optim_ml</title>
+<para><programlisting><![CDATA[  krig_optim_ml : MCMC Maximum likelihood optimization
+ 
+  Call : 
+ 
+     [Vop2,Vop1,be,L,par2,nugfrac,Vall]=krig_optim_ml(pos_known,val_known,V,options)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="krig_optim_range"><title>krig_optim_range</title>
+<para><programlisting><![CDATA[  krig_optim_range
+  CALL : 
+    [V,be]=krig_optim_range(pos_known,val_known,V,options)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="krig_volume"><title>krig_volume</title>
+<para><programlisting><![CDATA[  krig_volume : kriging with volume average data
+ 
+  See hansen et. al. 2005.
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="least_squares_inversion"><title>least_squares_inversion</title>
+<para><programlisting><![CDATA[  least_squares_inversion, one data set : Tarantola equations (16-17) 
+  
+  CALL : [m_est,Cm_est]=least_squares_inversion(G,Cm,Cd,m0,d0);
+ 
+  See also : gaussian_simulation_cholesky
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="least_squares_oneone"><title>least_squares_oneone</title>
+<para><programlisting><![CDATA[  least_squares_oneone : Least squares inverison using only scalar 
+                         operations. (only valid when offdiag(Cd)=0)
+ 
+  See Tarantola (2005), Inverse Problem Theory, page 198, Ch 6.
+  
+  Call : 
+    [m_est,sigma2,Cm_est]=least_squares_oneone(G,Cm,Cd,m0,d_obs)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="least_squares_partition_data"><title>least_squares_partition_data</title>
+<para><programlisting><![CDATA[  least_squares_partition_data : least sq. inversion using partitioning
+ 
+  See Tarantola (2005), page 197, eqn. 6.211 or 6.212.
+ 
+  Least squares inversion by partitioning into to data subsets
+  with independent data covariance !
+  This can be very fast if the number of data observations is
+  large, and large compared to the number of model parameters.
+  
+ 
+  CALL : [m_est,Cm_est]=least_squares_partition_data(G,Cm,Cd,m0,d_obs,nsubsets,use_eq);
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="least_squares_slice"><title>least_squares_slice</title>
+<para><programlisting><![CDATA[  least_squares_slice : least sq. inversion using partitioning
+ 
+ 
+  CALL : [m_est,Cm_est]=least_squares_slice(G,Cm,Cd,m0,d0,id,im);
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="mgstat_clean"><title>mgstat_clean</title>
+<para><programlisting><![CDATA[  mgstat_clean : clean up temporary files from visim, sgems, fast
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="mgstat_demo"><title>mgstat_demo</title>
+<para><programlisting><![CDATA[  mgstat_demo : demos illustrating the use of mGstat
+ 
+  Try some of the following demos:
+ 
+  mgstat_demo('mgstat'); % mgstat demo, illustrating the native matlab
+                         %  algorithms
+  mgstat_demo('gstat');  % demos using gstat
+  mgstat_demo('visim');  % demos using visim
+  mgstat_demo('sgems');  % demos using sgems
+  mgstat_demo('snesim'); % demos using snesim
+ 
+  mgstat_demo('all'); % runs all of the available demos.
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="mgstat_dir"><title>mgstat_dir</title>
+<para><programlisting><![CDATA[  mgstat_dir : return the install directory for mGstat
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="mgstat_set_path"><title>mgstat_set_path</title>
+<para><programlisting><![CDATA[  mgstat_set_path : set path to all mGstat 
+ 
+    set path to : 
+      mGstat_Install_Dir/snesim
+      mGstat_Install_Dir/visim
+      mGstat_Install_Dir/sgems
+      mGstat_Install_Dir/fast
+      mGstat_Install_Dir/misc
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="mgstat_verbose"><title>mgstat_verbose</title>
+<para><programlisting><![CDATA[  mgstat_verbose : list verbose information to the console
+ 
+  Call:
+   mgstat_verbose(txt,verbose)
+ 
+  txt [string] : text to be displayed
+  verbose [integer] (def=0) : increase to see more information
+ 
+  'vlevel' must be set in the mgstat_verbose.m m-file.
+ 
+  All entries with vebose>vlevel are displayed
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="nanmean"><title>nanmean</title>
+<para><programlisting><![CDATA[  nanmean : mean of data, ignoring NaN's
+  
+  call : meandata=nanmean(data)
+ 
+  data [n-dimensional array]
+  meandata [scalar]
+ 
+  TMH(tmh@gfy.ku.dk), 2001
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="nanstd"><title>nanstd</title>
+<para><programlisting><![CDATA[  nanstd : std of data, ignoring NaN's
+  
+  call : stddata=nanstd(data)
+ 
+  data [n-dimensional array]
+  stddata [scalar]
+ 
+  TMH(tmh@gfy.ku.dk), 2001
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="nanvar"><title>nanvar</title>
+<para><programlisting><![CDATA[  nanvar : var of data, ignoring NaN's
+  
+  call : vardata=nanvar(data)
+ 
+  data [n-dimensional array]
+  vardata [scalar]
+ 
+  TMH(tmh@gfy.ku.dk), 2001
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="nhood"><title>nhood</title>
+<para><programlisting><![CDATA[  nhood : Neighborhood selection
+ 
+ 
+  TMH/2005
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="normcdf"><title>normcdf</title>
+<para><programlisting><![CDATA[  NORMCDF returns normal cumulative distribtion function
+ 
+  cdf = normcdf(x,m,s);
+ 
+  Computes the CDF of a the normal distribution 
+     with mean m and standard deviation s
+     default: m=0; s=1;
+  x,m,s must be matrices of same size, or any one can be a scalar. 
+ 
+  see also: NORMPDF, NORMINV 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="norminv"><title>norminv</title>
+<para><programlisting><![CDATA[  NORMINV returns inverse cumulative function of the normal distribution
+ 
+  x = norminv(p,m,s);
+ 
+  Computes the quantile (inverse of the CDF) of a the normal 
+     cumulative distribution with mean m and standard deviation s
+     default: m=0; s=1;
+  p,m,s must be matrices of same size, or any one can be a scalar. 
+ 
+  see also: NORMPDF, NORMCDF 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="normpdf"><title>normpdf</title>
+<para><programlisting><![CDATA[  NORMPDF returns normal probability density 
+ 
+  pdf = normpdf(x,m,s);
+ 
+  Computes the PDF of a the normal distribution 
+     with mean m and standard deviation s
+     default: m=0; s=1;
+  x,m,s must be matrices of same size, or any one can be a scalar. 
+ 
+  see also: NORMCDF, NORMINV 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="nscore"><title>nscore</title>
+<para><programlisting><![CDATA[  nscore : Normal score transform
+ 
+  CALL :
+    [d_nscore,o_nscore]=nscore(d,w1,w2,dmin,dmax,DoPlot)
+ 
+ 
+  INPUT PARAMETERS :
+  Required :
+  d : array of data to transformed into normal scorres.
+ 
+  Optional :
+  w1,dmin : Extrapolation options for lower tail.
+            w1=1 -> linear interpolation
+            w1>1 -> Gradual power interpolation
+  w2,dmax : Extrapolation options for lower tail.
+            w1=1 -> linear interpolation
+            w1<1 -> Gradual power interpolation
+ 
+  See Goovaerts page 280-281 for details
+ 
+  DoPlot : ==1 --> The choice of CCPDF to be used for normal score
+                   transformation is plotted
+  OUTPUT PARAMETERS
+ 
+  d_nscore : normal score transform of input data
+  o_nscore : normal socre object containing information 
+             needed to perform normal score backtransform. 
+ 
+ 
+  See also : inscore
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="plot_scale"><title>plot_scale</title>
+<para><programlisting><![CDATA[  plot_scale : plot scale to figure
+ 
+  Call:
+     plot_scale(ax,len,pos,FontSize)
+ 
+     ax: axis (gca)
+     len [1,2]: length of scale length in each direction
+     pos [1],[2],[3] or [4]: Position of scale plot.
+         [NW],[SW],[NE],[SE]
+ 
+ 
+  Example
+         imagesc(peaks);
+         hold on;
+         plot_scale(gca,[15 15],3);
+         hold off;
+         axis image
+ 
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="pos2index"><title>pos2index</title>
+<para><programlisting><![CDATA[  [ix,iy]=pos2index(xpos,ypos,x,y);
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="ppp"><title>ppp</title>
+<para><programlisting><![CDATA[  file=ppp.m : Creates a lx,ly cm plot
+ 
+  call function ppp(lx,ly,Fsize,x1,y1),
+  
+  (lx,ly) : WIDTH and HEIGHT of plot in cm
+  Fsize   : Font Size
+  (x1,y1) : Lower left corner of plot (relative to lower left corner of paper)
+ 
+ 
+  (C) Thomas Mejer Hansen, 1997-2001, tmh@gfy.ku.dk
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="precal_cov"><title>precal_cov</title>
+<para><programlisting><![CDATA[  precal_cov : Precalculate covariance matrix
+ 
+  CALL :
+    cov=precal_cov(pos1,pos2,V,options);
+ 
+  pos1   [ndata1,ndims] : Location of data to be estimated
+  pos2   [ndata2,ndims] : Location of data to be estimated
+  V [struct] : Variogram structure
+ 
+  cov [ndata1,ndata1] : Covariance matrix
+ 
+  Ex:
+  x=[1:1:10];
+  y=[1:1:20];
+  [xx,yy]=meshgrid(x,y);
+  cov=precal_cov([xx(:) yy(:)],[xx(:) yy(:)],'1 Sph(5,.1,0)');
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="print_mul"><title>print_mul</title>
+<para><programlisting><![CDATA[  print_mul : prints both EPS and PNG figures of current plot
+ 
+ 
+  Call :
+    print_mul('test') : prints test.eps and test.png
+ 
+  In case 'mogrify' is available on the system
+  the png file will be trimmed and optionall 
+  A specific color will be made transparent :
+ 
+    print_mul('test',red) 
+        also creates trim_test.png
+ 
+    print_mul('test',1) 
+        also creates trim_test.png, with transparent white color
+ 
+    print_mul('test','red') 
+        also creates trim_test.png, with transparent red color
+ 
+  /TMH 12/2005
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="progress_txt"><title>progress_txt</title>
+<para><programlisting><![CDATA[  progress_txt : console based progress bar
+ 
+  Ex1 : 
+    for i=1:10000;
+      progress_txt(i,10000,'Ciao');
+    end
+ 
+  Ex1 :
+ 
+    for i=1:10;
+    for j=1:10;
+    for k=1:10;
+      progress_txt([i j k],[10 100 1000],'i','j','k');
+    end
+    end
+    end
+ 
+  TMH/2005, thomas@cultpenguin.com
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="rank_transform"><title>rank_transform</title>
+<para><programlisting><![CDATA[  rank_transform : rank transform data
+ 
+  Call : 
+    [r]=rank_transform(d);
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="read_arcinfo_ascii"><title>read_arcinfo_ascii</title>
+<para><programlisting><![CDATA[  read_arcinfo_ascii : Reads ascii formatted ArcInfo files
+   
+  Call : 
+    [data,x,y,dx,nanval,x0,y0,xll,yll]=read_arcinfo_ascii(filename);
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="read_bin"><title>read_bin</title>
+<para><programlisting><![CDATA[  read_bin : Reads a binary file to matlab
+ 
+  CALL : function [dataout]=read_bin(fileid,nx,nz,fchar,format,b_order)
+ 
+  REQUIRED
+    fileid
+    nx
+ 
+  OPTIONAL
+    nz      : Number of samples in 2nd direction
+    fchar (scalar)  : (==1)Remove F77 chracters
+    format (string) : 'float32' [default] or 'int16' or 'int32',...
+    b_order : set byteorder : '0' : Little Endian 
+                              '1' : Big endian 
+ 
+ 
+  /TMH 2006
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="read_eas"><title>read_eas</title>
+<para><programlisting><![CDATA[  read_eas : reads an GEO EAS formatted file into Matlab.
+ 
+  Call [data,header,title]=read_eas(filename);
+ 
+  TMH (tmh@gfy.ku.dk)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="read_emm"><title>read_emm</title>
+<para><programlisting><![CDATA[  read_emm : read emm output file from em1dinv
+ 
+  CALL : 
+    [emm]=read_emm(filename);
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="read_gstat_ascii"><title>read_gstat_ascii</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="read_gstat_par"><title>read_gstat_par</title>
+<para><programlisting><![CDATA[  read_gstat_par : Reads gstat.par file into Matlab data structure
+ 
+  CALL : 
+     G = read_gstat_par('ex01.cmd');
+ 
+  KNOWN BUGS (FEB 2004)
+    Cannot load covariogram : covariogram(data1,data2)
+    Semivariogram line : Can only contain veriogram, not filename
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="read_gstat_semivar"><title>read_gstat_semivar</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="read_petrel"><title>read_petrel</title>
+<para><programlisting><![CDATA[  read_peterl : reads an PETREL ascii point file
+ 
+  Call [data,header]=read_eas(filename);
+ 
+  TMH (tmh@gfy.ku.dk)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="read_punch_par"><title>read_punch_par</title>
+<para><programlisting><![CDATA[  FUNCTION : [fxs,fys,fzs,nx,ny,nz,x0,y0,z0,h,timefile,velfile,reverse,maxoff]=read_punch_par(filename); 
+  Purpose : Reads PAR file from PUNCH program (HOLE PROGRAM)
+  
+  TMH 09/1999;
+ 
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="read_surfer_grid"><title>read_surfer_grid</title>
+<para><programlisting><![CDATA[  read_surfer_grid : Read Surfer ASCII GRD file
+ 
+  CALL :
+  [data,x,y]=read_surfer_grid(filename);
+ 
+  IN:
+    filename [char] :string
+  OUT:
+    data [ny,nx]
+    x [nx]
+    y [ny]
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="rot2"><title>rot2</title>
+<para><programlisting><![CDATA[  rot2 : 2D coordiante transformation 
+ 
+  Call : 
+    htrans=rot2(h,ang,ani,dir)
+ 
+  h :[hx,hy] location
+  ang : angle in radians
+  ani : anisotropy factor 
+  
+  dir : 'direction' =1, normal transform, <>1, inverse transform
+ 
+ 
+  TMH/2005
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="scatter_dot"><title>scatter_dot</title>
+<para><programlisting><![CDATA[  scatter_dot : A black dot beneith scatter dots 
+ 
+  Call  : 
+    scatter_dot(x,y,MS,v,option)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="scatter_hpd"><title>scatter_hpd</title>
+<para><programlisting><![CDATA[  scatter_hpd : calculate 2D HPD region
+ 
+  [prob,levels,x_arr,y_arr,f2,c2]=scatter_hpd(x,y,p,p_levels,x_arr,y_arr)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="semivar"><title>semivar</title>
+<para><programlisting><![CDATA[  semivar : calcualte semivariogram
+ 
+  [binc,sv,bin_array,svM]=semivar(loc,val,bin_array);
+ 
+  loc : [ndim,n]
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="semivar_exp"><title>semivar_exp</title>
+<para><programlisting><![CDATA[  semivar_exp : Calculate experimental variogram
+ 
+ [gamma,h,ang_center,gamma_cloud,h_cloud]=semivar_exp(pos,val,nbin,nbinang)
+ 
+  pos : [ndata,ndims]
+  val : [ndata,ndata_types]
+ 
+  nbin : [integer] number of bins on distance anxes
+         [array] if specified as an array, this is used.
+ 
+  nbinang : [integer] number of arrays between 0/180 degrees (def=1)
+            [array] array of angles.
+ 
+  Example : load jura data
+    dwd=[mgstat_dir,filesep,'examples',filesep,'data',filesep,'jura',filesep];
+    [p,pHeader]=read_eas([dwd,'prediction.dat']);
+    idata=6;dval=pHeader{idata};
+    pos=[p(:,1) p(:,2)];
+    val=p(:,idata);
+    figure;scatter(pos(:,1),pos(:,2),10,val(:,1),'filled');
+      colorbar;title(dval);xlabel('X');ylabel('Y');axis image;
+ 
+  Example isotrop:
+    [garr,hc]=semivar_exp(pos,val);
+    plot(hc,garr);
+    xlabel('Distance (m)');ylabel('semivariance');title(dval)
+ 
+  Exmple directional
+    [garr,hc,hangc,gamma,h]=semivar_exp(pos,val,20,4);
+    plot(hc,garr);
+    legend(num2str(180*hangc'./pi))
+    xlabel('Distance (m)');ylabel('semivariance');title(dval)
+ 
+ 
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="semivar_exp_gstat"><title>semivar_exp_gstat</title>
+<para><programlisting><![CDATA[  semivar_exp_gstat : Experimental semivariance using GSTAT
+ 
+  CALL : 
+ 
+  [gamma,hc,np,av_dist]=semivar_exp_gstat(pos,val,angle,tol,width,cutoff)
+ 
+  IN : 
+     pos : [ndata,ndims] : location of data
+     val : [ndata,1] : data values
+     angle [1] : angle (degrees)
+     tol [1] : angle tolerance around 'angle' (degrees)
+     width[1] : width of bin use to average semivariance
+     cutoff[1] : max distance for whoch to compute semivariance
+ 
+ 
+ 
+  'angle' and 'tol' are optional
+ 
+  defults: angle=0;
+           tol=180
+ 
+  OUT :
+     gamma : semivariance
+     hc : Seperation distance
+     np : Number of points for each seperation distance
+     av_dist : Average distance
+ 
+  EXAMPLE : 
+    % GET JURA DATA
+    dwd=[mgstat_dir,filesep,'examples',filesep,'data',filesep,'jura',filesep];
+    [p,pHeader]=read_eas([dwd,'prediction.dat']);
+    idata=6;dval=pHeader{idata};
+    pos=[p(:,1) p(:,2)];
+    val=p(:,idata);
+    figure;scatter(pos(:,1),pos(:,2),10,val(:,1),'filled');
+      colorbar;title(dval);xlabel('X');xlabel('Y');axis image;
+  
+    % ISOTROP SEMIVARIOGRAM
+    [gamma,hc]=semivar_exp_gstat(pos,val);
+    figure;plot(hc,gamma);
+    title(dval);xlabel('Distance (m)');ylabel('Semivariance');
+ 
+    % ANISOTROPIC SEMIVARIOGRA
+    hang=[0 45 90];
+    tol=10; % Angle tolerance
+    clear gamma;
+    figure
+    for ih=1:length(hang);
+       [gamma(:,ih),hc]=semivar_exp_gstat(pos,val,hang(ih),tol);
+    end
+    figure;plot(hc,gamma);
+    title(dval);xlabel('Distance (m)');ylabel('Semivariance');
+    legend(num2str(hang'));
+ 
+    % ANISOTROPIC SEMIVARIOGRAM (2)
+    width=[0.1];
+    cutoff=[4];
+    hang=[0 45 90];
+    tol=10; % Angle tolerance
+    clear gamma;
+    for ih=1:length(hang);
+       [gamma,hc]=semivar_exp_gstat(pos,val,hang(ih),tol,width,cutoff);
+       p(ih)=plot(hc,gamma);hold on
+       if ih==1, set(p(ih),'color',[0 0 0]);end
+       if ih==2, set(p(ih),'color',[0 1 0]);end
+       if ih==3, set(p(ih),'color',[0 0 1]);end
+    end
+    hold off
+    title(dval);xlabel('Distance (m)');ylabel('Semivariance');
+    legend(num2str(hang'));
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="semivar_map"><title>semivar_map</title>
+<para><programlisting><![CDATA[  semivar_map : create 2D semivariogram map
+ 
+  See Goovaerts, p. 99
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="semivar_optim"><title>semivar_optim</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="semivar_synth"><title>semivar_synth</title>
+<para><programlisting><![CDATA[  semivar_synth : synthethic semivariogram
+ 
+  [sv,d]=semivar_synth(V,d,gstat);
+     V : Variogram model
+     d : seperation (array or matrix)
+     gstat : [0] use SGeMS semivariogram definitions (default)
+     gstat : [1] use GSTAT semivariogram definitions 
+  
+ 
+  Call ex :  
+     [sv,d]=semivar_synth('0.1 Nug(0) + 1 Gau(1.5)',[0:.1:6]);plot(d,sv)
+  or : 
+     V(1).par1=1;V(1).par2=1.5;V(1).type='Gau';
+     V(2).par1=0.1;V(2).par2=0;V(2).type='Nug';
+     [sv,d]=semivar_synth(V,[0:.1:6]);plot(d,sv)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="set_mgstat_path"><title>set_mgstat_path</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="sgsim"><title>sgsim</title>
+<para><programlisting><![CDATA[  sgsim : sequential Gaussian simulation
+ 
+  Call : 
+    [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);%
+  
+  all arguments are the same as for 'krig.m', except the number of
+  generated realizations can be set using :
+     options.nsim=10; (default is options.nsim=1)
+ 
+  note: this algorithm is very slow and for teaching purposes 
+        if you intend to simulate large fields use either the 
+        'gstat' or 'mgstat' simulation options.
+ 
+ 
+  see also: krig
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="space2char"><title>space2char</title>
+<para><programlisting><![CDATA[  space2char : replace oen character with another in string
+ 
+  txtout=space2char(txt,charout,charin);
+ 
+  Example : 
+     txt='Hello nice world';
+     space2char(txt)
+             ans = Hello_nice_world
+     space2char(txt,'+')
+             ans = Hello+nice+world
+     space2char(txt,'+','l')
+             ans = He++o nice wor+d
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="spherical_spreading"><title>spherical_spreading</title>
+<para><programlisting><![CDATA[  sperical_spreading(r,type);
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="strip_space"><title>strip_space</title>
+<para><programlisting><![CDATA[  strip_space : strip leading/tailing spaces from string
+ 
+  CALL :
+    txt=strip_space(txt,type);
+ 
+    txt[string]
+    type[integer] : [0] strip leading and trailing space (default);
+    type[integer] : [1] strip leading space;
+    type[integer] : [2] strip trailing space;
+ 
+ 
+  EX :
+   a='    Hei Ho Here We Go      ';
+  ['''',strip_space(a),'''']
+  ans =
+  'Hello World'
+ 
+ % strip leading space
+  ['''',strip_space(a,1),'''']
+ % strip trailing space
+  ['''',strip_space(a,2),'''']
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="suptitle"><title>suptitle</title>
+<para><programlisting><![CDATA[  suptitle : Puts a title above all subplots.
+ 	SUPTITLE('text') adds text to the top of the figure
+ 	above all subplots (a "super title"). Use this function
+ 	after all subplot commands.
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="title_alt"><title>title_alt</title>
+<para><programlisting><![CDATA[  title_alt : Alternate title positioning
+ 
+  Call : 
+     title_alt(string,isub,location,dw,w_out)
+ 
+  title     [str] : title string
+  isub      [int] : Number of subplot. 1-->'a)' is prepended to the title
+                                       2-->'b)' is prepended to the title..
+                                       0--> use original string [Default]
+  location  [str] : 'NorthWestInside' 
+                    'NorthWestOutside' [Default]       
+                    'NorthEastInside'        
+                    'NorthEastOutside'        
+ 
+  dw        [rea] : distance from edge to label, relative to plot size
+                    [default dw=0.01];
+ 
+  w_out     [rea] : distance from edge to horizontal edge of label, 
+                    when location='*Outsize', relative to plot size.
+                    [default dw=0.2];
+ 
+  
+ 
+  EXAMPLE : 
+    figure
+    for i=1:5;
+        subplot(2,3,i)
+        imagesc(peaks(i*10))
+        title_alt('Title',i);
+    end
+ 
+    figure
+    subplot(2,2,1);title_alt('NorthWestInside',i,'NorthWestInside');
+    subplot(2,2,2);title_alt('NorthWestOutside',i,'NorthWestOutside');
+    subplot(2,2,3);title_alt('NorthEastInside',i,'NorthEastInside');
+    subplot(2,2,4);title_alt('NorthEastOutside',i,'NorthEastOutside');
+         
+  (C) TMH/2007
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="vonk2d"><title>vonk2d</title>
+<para><programlisting><![CDATA[  VONK2D.M : 2D Von Karman Distribution
+ 
+  Call : [randdata,x,z,data,expcorr]=vonk2d(rseed,dx,dz,ax,az,ix,iz,pop,med,nu,vel,frac)
+ 
+  rseed : Random Seed number
+  dx,dz : Spatial distance
+  ax,az : Horizontal, vertical lengthscale
+  ix,iz : size of model in same scale as ax,az
+  nu    : Hurst Number
+ 
+  pop   : Population, [1]:Gaussian [2]:PDF
+  med   : Medium    , [1]:Gaussian [2]:Exponential [3]: Von Karman 
+                      [4]:Pink     [5]:Brown
+  vel   : Scalar or vector of velocities, For pop=pdf,v(1) is used as
+                                          +/-max velocity of input field
+  frac  : fraction assigned to each velocity (normalized), same size
+          as vel   
+ 
+  (C) 1998-2001 Thomas Mejer Hansen (tmh@gfy.ku.dk)
+  UPDATED APR 05 1999 /TMH
+  Octave 2.0.15 and Matlab 5.3 compliant
+  
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="watermark"><title>watermark</title>
+<para><programlisting><![CDATA[  watermark : _add watermark to figure : watermark(txt,FontSize);
+ 
+  Call
+   watermark(txt);
+   watermark(txt,FontSize);
+   ax=watermark(txt,FontSize,position);
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="write_arcinfo_ascii"><title>write_arcinfo_ascii</title>
+<para><programlisting><![CDATA[  write_arcinfo_ascii : Writes ascii formatted ArcInfo files
+  
+  CALL :
+  [data,x,y,dx,nanval]=write_arcinfo_ascii(filename,data,x,y,nannumber,xll,yll);
+ 
+  filename [char] :string
+  data [ny,nx]
+  x [nx]
+  y [ny]
+  nannumber [1] : can be left empty []. Optional.
+  xll [char] : 'CENTER'(def) or 'CORNER'. Optional.
+  yll [char] : 'CENTER' or 'CORNER'. if 'xll' is set, yll=xll.
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="write_bin"><title>write_bin</title>
+<para><programlisting><![CDATA[ write_bin.m 
+ 
+  CALL : 
+    write_bin(filename,variable,fchar,format,b_order);
+ 
+  REQUIRED : 
+    filename (string)
+    variable : to be written to a binary file;
+ 
+  OPTIONAL
+    fchar (scalar)  : [1] Remove F77 chracters [0,defailt] do nothing
+    format (string) : 'float32' [default] or 'int16' or 'int32',...
+    b_order : set byteorder : '0' : Little Endian 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="write_eas"><title>write_eas</title>
+<para><programlisting><![CDATA[  write_eas : writes a GEO EAS formatted file into Matlab.
+ 
+  Call write_eas(filename,data,header,title,nanValue);
+ 
+  filename [string]
+  data [ndata,natts] 
+  header [structure{natts}] : header values for data columns
+  title [string] : optional title for EAS file
+  nanValue [float] : NaN value
+ 
+  TMH (tmh@gfy.ku.dk)
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="write_gstat_ascii"><title>write_gstat_ascii</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="write_gstat_par"><title>write_gstat_par</title>
+<para><programlisting><![CDATA[  write_gstat_par : write gstat.par file from Matlab structure
+  
+  CALL :
+ 
+     filename=write_gstat_par(G,filename);
+ 
+   input --:
+   G [struct]: gstat matlab structure
+   filename [string] : optinal filename
+ 
+   output --:
+   filename [string] : filename of command file written to disk 
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="write_punch_par"><title>write_punch_par</title>
+<para><programlisting><![CDATA[  write_punch_par(filename,timefile,velfile,fxs,fys,fzs,nx,ny,nz,x0,y0,z0,h,reverse,maxoff);
+  Purpose : WRITES OUT PAR-FILE FOR USE WITH 'PUNCH' (John Hole)
+ 
+  CALL write_punch_par(filename,timefile,velfile,fxs,fys,fzs,nx,ny,nz,x0,y0,z0,h,reverse,maxoff);
+   filename [string] : Name of par-file
+   timefile [string] : Name of output-time file
+   velfile  [string] : Name of input velocity file
+   fxs      [scalar] :
+   fys      [scalar] :
+   fzs      [scalar] :
+   nx       [scalar] :
+   ny       [scalar] :
+   nz       [scalar] :
+   x0       [scalar] :
+   y0       [scalar] :
+   z0       [scalar] :
+   h        [scalar] :
+   reverse  [scalar] :
+   maxxoff  [scalar] : Maximum offset
+  
+  TMH 09/1999
+ 
+]]></programlisting></para>
+</sect2>
+
+<sect2 id="write_surfer_grid"><title>write_surfer_grid</title>
+<para><programlisting><![CDATA[  write_surfer_grid : Writes ascii formatted Surfer GRD file
+  
+  CALL :
+  [data,x,y,dx,nanval]=write_surfer_grid(filename,data,x,y);
+ 
+  filename [char] :string
+  data [ny,nx]
+  x [nx]
+  y [ny]
+]]></programlisting></para>
+</sect2>
+

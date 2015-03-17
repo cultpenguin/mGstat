@@ -1,0 +1,113 @@
+<sect1 id="Snesim"><title>Working with &snesim; and &mgstat;</title>
+    <para>
+      &mgstat; implements 4 m-files that allow interactions with &snesim; Here we make no effort to explain the meaning of all the options for the snesim parameter file, but refer to the documenation for &snesim;
+    </para>
+
+
+<sect2 id="SnesimSession"><title>Working with &snesim; and &mgstat;</title>
+<para>
+Get a copy of a snesim parameter file, as well as the associated training image and data templates using 
+<xref linkend="snesim_init" xrefstyle="select:quotedtitle"/>:
+<programlisting>
+S = snesim_init;
+S = 
+
+             fconddata: [1x1 struct]
+                  ncat: 2
+              cat_code: [0 1]
+            pdf_target: [0.7000 0.3000]
+         use_vert_prop: 0
+             fvertprob: [1x1 struct]
+      pdf_target_repro: 1
+        pdf_target_par: 0.5000
+           debug_level: -2
+                fdebug: [1x1 struct]
+                   out: [1x1 struct]
+                  nsim: 1
+                    nx: 80
+                   xmn: 0.2500
+                  xsiz: 0.5000
+                    ny: 120
+                   ymn: 0.2500
+                  ysiz: 0.5000
+                    nz: 1
+                   zmn: 0.2500
+                  zsiz: 0.5000
+                 rseed: 500
+             ftemplate: [1x1 struct]
+              max_cond: 16
+      max_data_per_oct: 0
+       max_data_events: 20
+            n_mulgrids: 2
+    n_mulgrids_w_stree: 1
+                   fti: [1x1 struct]
+                  nxtr: 250
+                  nytr: 250
+                  nztr: 1
+                  hmax: 10
+                  hmin: 10
+                 hvert: 5
+                  amax: 7
+                  amin: 3
+                 avert: 0
+               parfile: 'snesim.par'
+</programlisting>
+This will read the snesim parameter file into a &matlab; structure that can be easily altered.
+</para>
+<!--
+<para>
+The snesim par file looks like this
+<programlisting>
+<xi:include href="../mGstat/snesim/snesim.par" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</para>
+-->
+<para>
+This &snesim; <varname>S</varname> structure can be written to a &snesim; parameter files using : 
+<xref linkend="write_snesim" xrefstyle="select:quotedtitle"/>:
+<programlisting>
+write_snesim(S,'snesim.par');
+</programlisting>
+</para>
+
+
+<para>
+A &snesim; parameter file can be read into a &matlab; structure <varname>S</varname>, using: 
+<xref linkend="read_snesim" xrefstyle="select:quotedtitle"/>:
+<programlisting>
+S=read_snesim('snesim.par');
+</programlisting>
+</para>
+
+
+<para>
+&snesim; can be from &matlab; using:
+<xref linkend="snesim" xrefstyle="select:quotedtitle"/>:
+<programlisting>
+S = snesim_init;
+S.nsim = 10;
+S = snesim(S);
+</programlisting>
+The output from running snesim is located in the data structure as 
+<varname>S.D</varname>. In the present case:
+<programlisting>
+size(S.D)
+80 120 10
+</programlisting>
+Thus to plot the realizations one could use
+<programlisting>
+for i=1:S.nsim
+  subplot(4,3,i);
+  imagesc(S.x,S.y,S.D(:,:,i));
+  axis image
+end
+</programlisting>
+
+</para>
+
+
+
+
+</sect2>
+
+</sect1>

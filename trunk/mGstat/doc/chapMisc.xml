@@ -1,0 +1,242 @@
+<sect1 id="nfd"><title>Traveltime calculation using FAST</title>
+<para>
+Colin Zelts <ulink url = "http://terra.rice.edu/department/faculty/zelt/fast.html">FAST</ulink> code contains a program (nfd) to compute first arrival times in a square grid by solving the eikonal equation. An m-file wrapper is available in &mgstat; to easily call <filename>nfd</filename>
+</para>
+
+<sect2 id="compile_fast"><title>Compile nfd using g77</title>
+<para>
+To use nfd form the FAST package the nfd binary must be copied to <filename>&mgstatroot;/bin/nfd</filename>.
+</para>
+<para>
+Compiling of the FAST codes is non trivial on the Linux platforms tested, using the Makefiles released as part of FAST. The help for compiling fast found here below, was tested on Linux (Redhat and Ubuntu) using goth F77 and the Intel Fortran Compiler (ifort)
+Download <ulink url = "http://terra.rice.edu/department/faculty/zelt/fast.tar.gz">fast.tar.gz</ulink> and compile 'nfd' using
+<programlisting>
+wget http://terra.rice.edu/department/faculty/zelt/fast.tar.gz
+tar xvfz fast.tar.gz
+cd fast
+find ./pltlib -name '*.f' -exec g77 -c {} \;
+find ./fd -name '*.f' -exec g77 -c {} \;
+g77 -o nfd main.o model.o time.o findiff.o findiff2d.o stencils.o stencils2d.o misc.o plt.o blkdat.o nopltlib.o
+cp nfd &mgstatroot;/bin/.
+</programlisting>
+In addition you may need to change <filename>fd/fd.par</filename> to enabale models larger than nx*ny*nz = 601*100*25. Use for example
+<programlisting>
+     parameter(nxmax=601, nymax=100, nzmax=225, ncolour=10,
+     +          nsources=99)
+</programlisting>
+Then you should be ready to use nfd.
+</para>
+<para>
+To get rid of the message :FD: finite difference traveltime calculation, during each run of 'nfd' you can comment out lines 92-93 in <filename>fd/main.f</filename>, such that 
+<programlisting>
+      write(6,335)
+335   format(/'FD: finite difference traveltime calculation')
+</programlisting>
+is changed to
+<programlisting>
+c      write(6,335)
+c335   format(/'FD: finite difference traveltime calculation')
+</programlisting>
+</para>
+</sect2>
+
+<sect2><title>fast_fd_2d</title>
+<para>
+</para>
+<para>
+<programlisting>
+nx=100;ny=120;
+x=[1:1:nx];
+y=[1:1:ny];
+v=ones(ny,nx);
+S=[10 20];
+t = fast_fd_2d(x,y,v,S);
+imagesc(x,y,t);axis image
+hold on
+[cs,h]=contour(x,y,t,[25:25:100],'k-');
+clabel(cs,h,'labelspacing',100)
+hold off
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/mgstat_fast_fd_2d.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/mgstat_fast_fd_2d.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Travel times computed using 'nfd'</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+</para>
+</sect2>
+
+<sect2><title id="eikonal_fast_fd_2d_traveltime">fast_fd_2d_traveltime</title>
+<para>
+fast_fd_2d_traveltime computes the traveltime between a set of Sources  
+(<varname>Sources</varname>) and Receivers
+(<varname>Receivers</varname>)
+</para>
+<para>
+Note that the size of Sources and Recivers MUST be the same. If you are ineterested in calculating the traveltime between all rays between a set of Sources and receivers consider using  <xref linkend="fast_fd_2d_traveltime_matrix"></xref>
+</para>
+<programlisting>
+nx=100;ny=120;
+x=[1:1:nx];
+y=[1:1:ny];
+v=ones(ny,nx);
+Sources  =[2 10 ; 2 80];
+Receivers=[10 10;100 80];
+t=fast_fd_2d_traveltime(x,y,v,Sources,Receivers)
+plot(t);
+xlabel('raynumber');ylabel('travel time')
+</programlisting>
+</sect2>
+
+<sect2><title id="eikonal_fast_fd_2d_traveltime_matrix">fast_fd_2d_traveltime_matrix</title>
+<para>
+fast_fd_2d_traveltime_matrix computes the traveltime from a number of sources 
+(<varname>Sources</varname>) to a number of Receivers
+(<varname>Receivers</varname>)
+</para>
+<programlisting>
+nx=100;ny=120;
+x=[1:1:nx];
+y=[1:1:ny];
+v=ones(ny,nx);
+Sources=[2 10;2 80];
+nr=40;
+Receivers=[ones(nr,1)*nx-2,linspace(2,ny-1,nr)']
+t=fast_fd_2d_traveltime_matrix(x,y,v,Sources,Receivers)
+plot(t);
+xlabel('raynumber');ylabel('travel time')
+</programlisting>
+</sect2>
+
+<sect2><title>fast_fd_clean</title>
+<para>
+<filename>fast_fd_2d_clean</filename> deletes a large number of files from disk, generated running fast_fd_2d.
+</para>
+</sect2>
+
+<sect2 id="fast_kernel"><title>Computing sensitivity kernels using nfd</title>
+<para>
+</para>
+<sect3 id="raypath"><title>Finite and High frequency approximation kernel</title>
+<para>
+To calculate finite frequency and high frequency sensitivity kernel of one set og source and receivers use :
+<programlisting>
+nx=80;ny=70;
+x=[1:1:nx];
+y=[1:1:ny];
+z=1;
+v=ones(ny,nx);  % Velocity field
+S=[4 4];        % Sources
+R=[nx-4 ny-4];  % Receiver
+
+T=8;            % Dominant period
+alpha=1;        % 
+
+[K,RAY,timeS,timeR,raypath,raylength]=kernel(v,x,y,z,S,R,T,alpha);
+subplot(2,2,1);imagesc(x,y,timeS);title('Time from source');axis image
+subplot(2,2,2);imagesc(x,y,timeR);title('Time from receiver');axis image
+subplot(2,2,3);imagesc(x,y,K);title('Finite Frequency Kernel');axis image
+subplot(2,2,4);imagesc(x,y,RAY);title('High frequency kernel');axis image
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/kernel.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/kernel.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Sensitivity kernel using <filename>kernel</filename></phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+</para>
+<para>
+To calculate finite frequency and high frequency sensitivity kernel of more than one set og source and receivers <filename>kernel_multiple</filename> should be used, as this is more eficient than calling <filename>kernel</filename> many times:
+<programlisting>
+nx=80;ny=70;
+x=[1:1:nx];
+y=[1:1:ny];
+z=1;
+v=ones(ny,nx);  % Velocity field
+S=[4 4 ; 4 10 ;4 ny-4];        % Sources
+R=[nx-4 ny-4;nx-4 ny-4;nx-4 ny-4];  % Receiver
+
+T=8;            % Dominant period
+alpha=1;        % 
+
+[K,RAY,Gk,Gray,timeS,timeR,raypath,raylength]=kernel_multiple(v,x,y,z,S,R,T,alpha);
+subplot(1,2,1);imagesc(x,y,reshape(sum(Gk),ny,nx));title('3 finite frequency kernels');caxis([0 1]);axis image
+subplot(1,2,2);imagesc(x,y,reshape(sum(Gray),ny,nx));title('3 high frequency kernels');axis image
+</programlisting>
+</para>
+<para>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/kernel.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/kernel_multiple.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Sensitivity kernel using <filename>kernel_multiple</filename></phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+</para>
+</sect3>
+
+
+<sect3 id="fresnel"><title>Finite frequency kernel</title>
+<para>
+<programlisting>
+nx=40;ny=70;
+x=[1:1:nx];
+y=[1:1:ny];
+v=ones(ny,nx);
+SR=[4 4 ;nx-4 ny-4];
+t = fast_fd_2d(x,y,v,SR);
+
+dt=t(:,:,1)+t(:,:,2);
+dt=dt-min(dt(:));
+F = munk_fresnel_2d(1,dt);
+subplot(1,3,1);imagesc(x,y,t(:,:,1));axis image;title('Source')
+subplot(1,3,2);imagesc(x,y,t(:,:,2));axis image;title('Receiver')
+subplot(1,3,3);imagesc(x,y,F);axis image;title('Fresnel')
+
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/mgstat_munk_fresnel_2d.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/mgstat_munk_fresnel_2d.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Travel times computed using 'nfd'</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+
+
+</para>
+</sect3>
+
+
+
+</sect2>
+
+
+</sect1>
+
+

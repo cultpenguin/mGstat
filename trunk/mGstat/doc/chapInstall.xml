@@ -1,0 +1,301 @@
+<sect1 id="Install"><title>mGstat</title>
+<para>
+The latest version of &mgstat; is available from <ulink url = "http://sourceforge.net/project/showfiles.php?group_id=102150">Sourceforge.net</ulink>.
+</para>
+
+
+<para>
+Unpacking the downloaded file as
+<programlisting>
+cd /home/tmh/matlab
+tar xvfz mgstat-&mgstat-version;.tgz
+</programlisting>
+will create a directory structure called 'mGstat'. To use the toolbox from Matlab, simply add the path where &mgstat; is installed to the &matlab; path as
+<programlisting>
+>> addpath /home/tmh/matlab/mGstat
+>> addpath /home/tmh/matlab/mGstat/visim
+>> addpath /home/tmh/matlab/mGstat/snesim
+>> addpath /home/tmh/matlab/mGstat/sgems
+>> addpath /home/tmh/matlab/mGstat/misc
+</programlisting>
+The above paths can also be set running 
+<xref linkend="mgstat_set_path" xrefstyle="select:quotedtitle"/>.
+</para>
+
+<para>
+See the &matlab; documentation for instructions on how to permanently add the paths to the mGstat toolbox. In Windows this can be done using the <varname>pathtool</varname>
+</para>
+
+
+
+<sect2 id="RequireMent"><title>System Requirements</title>
+<para>
+&mgstat; is implemented using &matlab; R2009b.
+</para>
+<para>
+An effort has been made to ensure that the toolbox works with  &octave; version 3.2.4 (<ulink url = "http://www.gnu.org/software/octave/download.html">download</ulink>). &octave; is a free alternative to &matlab;. Note however that &matlab; is the main tool for development.
+</para>
+<para>
+&mgstat; should work on any operating system running &matlab; or &octave;. 
+However, interfaces 
+&gstat; (<xref linkend="chapGSTAT" xrefstyle="select:quotedtitle"/>), 
+&sgems; (<xref linkend="chapSGEMS" xrefstyle="select:quotedtitle"/>), 
+&visim; (<xref linkend="chapVISIM" xrefstyle="select:quotedtitle"/>), and
+&snesim; (<xref linkend="chapSNESIM" xrefstyle="select:quotedtitle"/>).
+</para>
+</sect2>
+
+<sect2 id="InstallmGstatSVN"><title>&mgstat; from SVN</title>
+<para>
+The latest development version of &mgstat; can be obtain from an SVN (Subversion) repository, which can be checked out using the following command:
+<programlisting>
+svn co https://mgstat.svn.sourceforge.net/svnroot/mgstat/trunk mgstat
+</programlisting>
+The repository can also be 
+<ulink url="http://mgstat.svn.sourceforge.net/viewvc/mgstat/trunk/mGstat">browsed at SourceForge</ulink>.
+</para>
+</sect2>
+</sect1>
+
+
+
+<sect1 id="InstallExtras"><title>Extras</title>
+<para>
+In addition to the native matlab geostatistical commands, &mgstat; contains interfaces to 
+&gstat; (<xref linkend="chapGSTAT" xrefstyle="select:quotedtitle"/>), 
+&sgems; (<xref linkend="chapSGEMS" xrefstyle="select:quotedtitle"/>), 
+&visim; (<xref linkend="chapVISIM" xrefstyle="select:quotedtitle"/>), and
+&snesim; (<xref linkend="chapSNESIM" xrefstyle="select:quotedtitle"/>).
+</para>
+<para>
+As of version 0.9, &mgstat; includes compiled windows binaries for, &gstat;, &visim; and &snesim;. Source and compiled windows version of &sgems; is available online (see below).
+</para>
+
+
+<para>
+For unix systems, &gstat;, &visim;, &snesim;, and &nfd; must be compiled from scratch. The windows exe-file for %sgems; can optionally be run on Linux/OSX using &wine;. &mgstat; includes source code for &visim; and &snesim;. Source code for &gstat;, &sgems;, and &nfd; can be downloaded online (see below). Note that all programs but &nfd; is released under open source licences.
+</para>
+
+
+
+
+<sect2 id="InstallGstat"><title>&gstat;</title>
+<para>
+As of version 0.8, &mgstat; comes with a gstat.exe pre-compiled for Windows, and thus no further installation should be necessary.
+</para>
+<para>
+As of version 1.0, &mgstat; comes with a pre-compiled binary for Intel Mac <filename>gstat_mac_g3</filename>, and thus no further installation should be necessary.
+</para>
+<para>
+From the &gstat; website (<ulink url = "http://www.gstat.org/">http://www.gstat.org/</ulink>) both source and binary packages can be <ulink url = "http://www.gstat.org/download.html">downloaded</ulink>.
+</para>
+<para>
+The <ulink url = "http://www.gstat.org/gstat.pdf">&gstat; PDF manual</ulink> is a very useful source of information to have access to while using &gstat;.
+</para>
+
+<sect3 id="InstallGstat2"><title>Making &gstat; available for &mgstat;</title>
+<para>
+&mgstat; use the m-file <varname>gstat_binary</varname> to locate the &gstat; binary file. 
+<varname>gstat_binary</varname> searches the system path to find a binary executable called <varname>gstat</varname>, and chooses the first it encounters. In the <filename>mGstat/bin</filename> directory is also scanned. 
+</para>
+<para>
+Simply running from within &matlab; should return the full path to the &gstat; binary as 
+<programlisting>
+>> gstat_binary
+
+ans =
+
+/usr/local/bin/gstat
+
+</programlisting>
+</para>
+<para>
+If the gstat binary file is not in the system path, or if you have difficulties using the default automatic localization,  
+<varname>gstat_binary.m</varname> can be manually edited to point to a specific location. Simple replace 
+<programlisting>
+gstat = '';
+</programlisting>
+with 
+<programlisting>
+gstat='/usr/local/bin/gstat';    
+</programlisting>
+
+</para>
+<para>
+</para>
+</sect3>
+
+</sect2>
+
+<sect2 id="InstallVisim"><title>&visim;</title>
+<para>
+As of version 0.8, &mgstat; comes with a visim.exe pre-compiled for Windows. Therefore no further installation should be necessary on Windows.
+</para>
+<para>
+As of version 0.9, the source code for &visim; is part of the &mgstat; code. The source code is located in <filename>mGstat/visim/visim/src</filename>
+</para>
+<para>
+To compile visim ; 
+<programlisting>
+cd mGstat/visim/visim/src/gslib
+# EDIT Makefile to point to your fortran 77 or fortran 90 compiler
+make
+cd mGstat/visim/visim/src
+# EDIT Makefile to point to your fortran 77 or fortran 90 compiler
+# EDIT visim.inc to change/set the maximum array sized
+make
+</programlisting>
+this should create a binary 'visim' or 'visim.exe' (windows). Copy this file to 
+<programlisting>
+cp mGstat/visim/visim/src/visim mGstat/bin/.
+</programlisting>
+</para>
+
+<para>
+A detailed manual for &visim; can be obtained from <ulink url = "http://imgp.gfy.ku.dk/visim.php">Inverse modeling and geostatistics project</ulink>.
+</para>
+
+
+</sect2>
+
+
+<sect2 id="InstallSnesim"><title>&snesim;</title>
+<para>
+As of version 0.9, &mgstat; comes with a snesim.exe pre-compiled for Windows. Therefore no further installation should be necessary on Windows.
+</para>
+<para>
+As of version 0.9, the source code for &visim; is part of the &mgstat; code. The source code is located in <filename>mGstat/visim/visim/src</filename>
+</para>
+</sect2>
+
+
+<sect2 id="InstallSgems"><title>&sgems;</title>
+
+<para>
+&sgems; source, and compiled windows exe files, can be downloaded from 
+<ulink url = "http://sgems.sourceforge.net/">http://sgems.sourceforge.net/</ulink>. &sgems; version 2.1 is supported by &mgstat; (<ulink url = "http://downloads.sourceforge.net/sgems/sgems-2.1_installer.exe">http://downloads.sourceforge.net/sgems/sgems-2.1_installer.exe</ulink>).
+</para>
+<para>
+On windows systems the &sgems; binary is assumed to be located in <varname>c:\Program Files\SGeMS\sgems.exe</varname>. If it is located on another location, it should be manually set in <xref linkend="sgems" xrefstyle="select:quotedtitle"/>.
+</para>
+<para>
+On Linux, &mgstat; can call both a natively compiled &sgems; binary and the Windows compiled &sgems; binary using &wine;</para>
+
+
+<sect3 id="sgemspath_env"><title>Setting the system environment variable for &sgems;.</title>
+<para>
+In order to call &sgems; from within &matlab; the environment variable <varname>GSTLAPPLI</varname> must be set and point to the installation directory for &sgems;.
+</para>
+<para>Using linux and the bash shell use:
+<screen>export GSTLAPPLI=/path/to/sgems_dir</screen>
+</para>
+<para>Using windows Vista, right click on 'My Computer'; select properties; sleect Advanced System Setting; Choose 'environment variables'; 
+</para>
+<para>Using windows XP, right click on 'My Computer'; select 'Properties'; select the 'Advanced' tab; click 'Environment Variables'; 
+</para>
+<para>Click 'New' to add a system variable called <varname>GSTLAPPLI</varname> and set to the value <varname>/path/to/sgems_dir</varname>
+</para>
+</sect3>
+
+
+<sect3 id="sgems_compile"><title>Compiling &sgems; for Linux.
+</title>
+<para>
+A guide for compiling &sgems; from source code on Ubuntu Linux is available here: <ulink url = "http://imgp.imm.dtu.dk/compile_sgems.php">http://imgp.imm.dtu.dk/compile_sgems.php</ulink>.
+</para>
+</sect3>
+
+
+<sect3 id="sgems_wine"><title>Running &sgems; using WINE.
+</title>
+<para>
+If you fail to compile &sgems; natively, you can run the windows binary EXE through using operating systems supported by <ulink url = "http://www.winehq.org/">&wine;</ulink>. &wine; allow running windows applications on Linux, BSD, Solaris and Mac OS X. SGeMS seems to work fine using &wine;
+</para>
+<para>
+Start by installing wine, which is available as a package for most Linux systems (for Debian/Ubuntu use):
+<programlisting>
+sudo apt-get install wine
+</programlisting></para>
+<para>
+Then install the &sgems; windows executable (download from <ulink url = "http://downloads.sourceforge.net/sgems/sgems-2.1_installer.exe">http://downloads.sourceforge.net/sgems/sgems-2.1_installer.exe</ulink>.) using &wine;: 
+
+
+<programlisting>
+wine sgems-2.1_installer.exe
+</programlisting>
+</para>
+<para>
+This should create desktop icon for &sgems; (running through wine).
+</para>
+<para>
+To use &sgems; through &wine; edit <filename>sgems.m</filename> to make make sure the <varname>use_wine_on_unix</varname> set to '1':
+or set a system environmental variable as:
+<programlisting>
+setenv('USE_WINE_ON_UNIX','1')
+</programlisting>
+</para>
+
+</sect3>
+
+</sect2>
+
+</sect1>
+
+<sect1 id="mgstat_global_settings"><title>Global settings</title>
+<para>
+A number of environment variables can be set to control the behaviour of &mgstat;. The environment variable can be set in the operating system, or directly through &matlab; using:
+<programlisting>
+setenv('ENV_VAR_NAME','ENV_VAR_VALUE');
+</programlisting>
+
+</para>
+
+<sect2 id="mgstat_env_var_mgstat_verbose_level"><title>MGSTAT_VERBOSE_LEVEL</title>
+<para>
+  The amount of information printed to the screen when using &mgstat; can be controlled by the setting the <varname>MGSTAT_VERBOSE_LEVEL</varname>. By default it is set to 
+<programlisting>
+setenv('MGSTAT_VERBOSE_LEVEL','1')
+</programlisting>
+A higher number increase, while a smaller number reduce the information printed to screen.
+</para>
+</sect2>
+
+<sect2 id="mgstat_env_semivar_def"><title>SEMIVAR_DEF</title>
+<para>
+There are different definitions of semivariogram models. To make use of the definions used by &gstat; and &sgems; (and &gslib;) set the following:
+<programlisting>
+setenv('SEMIVAR_DEF','GSTAT')
+setenv('SEMIVAR_DEF','SGeMS')
+</programlisting>
+The default is to use SGeMS definitions. See also <xref linkend="Spatial" xrefstyle="select:quotedtitle"/>.
+
+</para>
+</sect2>
+
+
+<sect2 id="mgstat_env_var_gstlapplihome"><title>GSTLAPPLIHOME</title>
+<para>
+The installation directory of &sgems; can be given by the variable:
+<varname>
+GSTLAPPLIHOME
+</varname>
+This is used to find the executable file for launching &sgems;.
+</para>
+</sect2>
+
+
+<sect2 id="mgstat_env_var_sgems_dev"><title>SGEMS_DEV</title>
+<para>
+If you are using the development version of &sgems; you should set this variable to 1:
+<programlisting>
+setenv('SGEMS_DEV','1')
+</programlisting>
+The default option is to you the stable version of &sgems;, and then this variable does not have to be set.
+</para>
+<para>
+Note that &mgstat; may not yet support the latest development version of &sgems;, so it is not recommended to use the development version for normal users.
+</para>
+</sect2>
+
+
+</sect1>

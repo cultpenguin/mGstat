@@ -1,0 +1,186 @@
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Ubuntu'), url(https://themes.googleusercontent.com/static/fonts/ubuntu/v5/_xyN3apAT_yRRDeqB3sPRg.woff) format('woff');
+}
+
+body{
+       font-size: 10pt;	 
+       margin-left:  30px; 
+       margin-right: 30px;
+       margin-top:   30px;  
+       color: black;
+       background: #ffffff;
+       font-family: Ubuntu, Bodini, Helvetica, Syntax;
+     }
+
+
+
+A:hover {       color: #993333;
+		text-decoration: underline;}
+A:link {        color: #993333;
+		text-decoration: none;}
+A:visited {        color: #990000;
+		text-decoration: none;}
+
+
+H1, H2, H3, H4, H5, H6{
+        font-weight: 900;
+        }
+
+H1 {
+	font-size:16pt;
+        padding-left: 30px;
+        padding-right: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+}
+H2 {
+	font-size:12pt;
+        padding-left: 30px;
+        padding-right: 5px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+}
+H3 {
+	font-size:10pt;
+        padding-left: 30px;
+        padding-right: 3px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+}
+H4 {
+	font-size:8pt;
+        padding-left: 30px;
+        padding-right: 1px;
+        padding-top: 10px;
+        padding-bottom: 1px;
+	margin-right: 300px;
+}
+
+.abstract {
+	font-size:8pt;
+        padding-left: 30px;
+        padding-right: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+	margin-left: 100px;
+	margin-right: 100px;
+
+
+}
+
+
+
+.title  {color: #ffffff; 
+        background: #000000; 
+        font-weight: bold;
+        text-align: left;
+        padding: 3pt;
+
+        }
+
+.subtitle  {color: #ffffff; 
+        background: #000000; 
+        font-weight: bold;
+        font-size: 20pt;
+        text-align: left;
+        padding-left: 30px;
+        padding-right: 30px;
+        padding-top: 30px;
+        padding-bottom: 30px;
+        }
+
+
+
+
+.figure,.mediaobject {color: #000000; 
+        background: #ffffff; 
+        font-weight: bold;
+        font-size: 14pt;
+        text-align: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        }
+
+.guilabel, .guibutton, .guimenu, .guimenuitem {
+        background: #000000;
+        color: #ffffff; 
+        padding-left: 2px;
+        padding-right: 2px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        font-weight: bold;
+}
+
+.interface {
+        background: #ff3456;
+        color: #000000; 
+        padding-left: 2px;
+        padding-right: 2px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        font-weight: bold;
+}
+
+.topic {margin-left:  -25px; 
+ 	font-size: 14pt; 
+        font-weight: bold;
+        text-align: left;
+        }
+
+.smaller {font-size: 8pt;
+        }
+
+.varname {color: #000000; 
+        font-family:monospace;
+        font-weight: bold;
+        border-bottom: solid #993333 1px;
+        border-top: solid #993333 1px;
+        }
+
+
+.copyright {color: #000000;
+        font-size: 8pt; 
+        font-family:monospace;
+        font-weight: bold;
+        }
+
+
+pre.programlisting
+{
+        font-family:monospace;
+        white-space: pre;
+        background-color: #eeeeee;
+        border:solid;
+        color: #000000;
+        border-color: #993333;
+        border-left: solid #993333 2px;
+        border-right: solid #993333 2px;
+        border-top: solid #993333 2px;
+        border-bottom: solid #993333 2px;
+
+        padding: 3pt;
+        padding-left: 15pt;
+}
+
+pre.screen
+{
+        font-family:monospace;
+        white-space: pre;
+        background-color: #dddddd;
+        border:solid;
+        color: #000000;
+        border-color: #993333;
+        border-left: solid #993333 2px;
+        border-right: solid #993333 2px;
+        border-top: solid #993333 2px;
+        border-bottom: solid #993333 2px;
+
+        padding: 3pt;
+        padding-left: 15pt;
+}
+
+
+<!-- <BODY BGCOLOR="#FFFFFF"> -->

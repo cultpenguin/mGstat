@@ -1,0 +1,724 @@
+<sect1 id="GSLIBvisim"><title>&visim;</title>
+<para>
+&visim; is a sequential simulation code based on &gslib; ('Geostatistical Software LIBrary', <ulink url = "http://ekofisk.stanford.edu/SCRFweb/">Stanford Center for Reservoir Forecasting</ulink>, <ulink url = "http://stanford.edu/">Stanford University</ulink>) for sequential Gaussian and direct sequential simulation with histogram reproduction. In addition to classical simulation based on noise-free hard data of point support, &visim; also handles noisy data of mixed support, enabling linear stochastic inversion using the sequential simulation approach.
+</para>
+<para>
+&visim; can be used to generate samples of the a posteriori distribution of a linear inverse problem.
+</para>
+<para>
+For detailed information the usage of &visim; visit the
+<ulink url = "http://imgp.gfy.ku.dk/visim.php">VISIM homepage at IMGP</ulink>.
+[<ulink url = "http://imgp.gfy.ku.dk/visim/visim_manual_1.1.pdf">user manual pdf</ulink>].
+</para>
+<para>
+References to the use of &visim; should be made to :
+</para>
+<para>
+Hansen, T. M., and Mosegaard, K., 2008. VISIM : Sequential simulation for linear inverse problems. Computers andGeosciences, 34(1), pp 53-76.  
+[<ulink url = "http://dx.doi.org/10.1016/j.cageo.2007.02.003">doi:10.1016/j.cageo.2007.02.003</ulink>].
+
+
+</para>
+
+<sect2 id="runningvisim"><title>Running &visim; from &matlab;</title>
+<para>
+The three main files to control &visim; from &matlab; are 
+<xref linkend="read_visim"></xref>
+<xref linkend="write_visim"></xref>
+<xref linkend="visim"></xref>
+
+</para>
+<sect3 id="visim_binary"><title>Check path to &visim;</title>
+<para>
+
+When running <xref linkend="visim"></xref> an attempt is made to look
+for a &visim; binary. First the 'bin' sub folder where &mgstat; is installed
+is searched, then the system path is searched for 'visim' binary file.
+By running <xref linkend="visim"></xref> with no arguments the path
+to the use binary (if located) is listed:
+
+<programlisting>
+visim;
+Using VISIM binary : ~/bin/visim
+</programlisting>
+
+If the binary for &visim; is not found you have to edit the 'visim.m'
+m-file and manually give set the path in the top of the file.
+</para>
+</sect3>
+
+
+
+<sect3 id="run_visim"><title>Running &visim; from &matlab;</title>
+<para>
+<xref linkend="visim"></xref> is used to run &visim; from within
+&matlab;. The input is either a &visim; parameter file (as a string)
+or a &visim; &matlab; structure, as obtained using <xref
+linkend="read_visim"></xref>.
+</para>
+<para>
+Therefore the following two approached will run &visim; on the 
+<filename>visim_sgsim.par</filename>: 
+<programlisting>
+V = visim('visim_sgsim.par');
+</programlisting>
+<programlisting>
+V = visim('visim_sgsim.par');
+V = visim(V);
+</programlisting>
+which will result in the following out to the screen : 
+<programlisting>
+
+ VISIM Version: 1.000
+
+ filename is sgsim_uncond.par
+ sgsim_uncond.par
+ Initializing data2vol covar lookup table
+ Initializing vol2vol covar lookup table
+ Working on realization number  1
+ Working on realization number  2
+ Working on realization number  3
+...
+ Working on realization number  100
+
+V =
+
+                parfile: 'sgsim_uncond.par'
+               cond_sim: 0
+              fconddata: [1x1 struct]
+                   cols: [6x1 double]
+               fvolgeom: [1x1 struct]
+                fvolsum: [1x1 struct]
+             trimlimits: [2x1 double]
+             debuglevel: -11
+                    out: [1x1 struct]
+                   nsim: 100
+                   ccdf: 0
+                refhist: [1x1 struct]
+                     nx: 21
+                    xmn: 0.1250
+                   xsiz: 0.2500
+                     ny: 49
+                    ymn: 0.1250
+                   ysiz: 0.2500
+                     nz: 1
+                    zmn: 0.1250
+                   zsiz: 0.2500
+                      x: [1x21 double]
+                      y: [1x49 double]
+                      z: 0.1250
+                  rseed: 69068
+                minorig: 0
+                maxorig: 1
+               nsimdata: 28
+                  volnh: [1x1 struct]
+              densitypr: 0
+        assign_to_nodes: 1
+    max_data_per_octant: 0
+          search_radius: [1x1 struct]
+           search_angle: [1x1 struct]
+                  gmean: 0.1304
+                   gvar: 2.0000e-04
+                     Va: [1x1 struct]
+                   tail: [1x1 struct]
+                      D: [21x49x7 double]
+                  etype: [1x1 struct]
+
+</programlisting>
+The output of running visim is the &matlab; structure listed above,
+that contains all parameters of the &visim; used parameter file, as
+well as the simulated/estimated data
+<varname>V.D</varname>, and the E-type mean and variance as 
+<varname>V.etype.mean</varname> and
+<varname>V.etype.var</varname>
+ 
+</para>
+<para>
+An example of running 9 runs of &visim; while changing the primary
+anisotropy direction from 0 to 90 is the following 
+<programlisting>
+Vorig = read_visim('visim_sgsim.par');
+for i=1:4
+  V{i}=Vorig;
+  V{i}.Va.ang1=i*10
+  V{i}=visim(V{i}));
+end
+</programlisting>
+Each of the &matlab; structures 
+<varname>V{1}</varname>,<varname>V{2}</varname>,..,<varname>V{9}</varname>
+now contain the simulation result.
+</para>
+
+</sect3>
+
+
+</sect2>
+
+
+<sect2 id="plotvisim_sim"><title>Plotting &visim; realizations</title>
+<para>
+To plot a number of generated realizations use <xref
+linkend="visim"></xref>. 
+</para>
+
+<para>
+The simplest use of <xref linkend="visim"></xref> is simple to specify
+a number of realizations to plot.
+<programlisting>
+V=read_visim('sgsim_cond_1.par');
+visim_plot_sim(V,2)
+</programlisting>
+
+An example of using all the options available for <xref linkend="visim"></xref>
+<programlisting>
+nsim=7;     % number of realizations to plot
+cax=[.1 .16]; % scaling for colorbar axis
+FS = 10;    % FontSize
+nxsub=7;    % Number of subplots in the X-direction
+nzsub=7;    % Number of subplots in the z-direction
+visim_plot_sim(V,nsim,cax,FS,nxsub,nzsub);
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/visim_sim_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/visim_sim_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Visim E-type example 1</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+</para>
+
+
+<sect3 id="plotvisim_etype"><title>Plotting &visim; E-type</title>
+<para>
+In case &visim; is run in simulation mode, <varname>visim_plot_etype</varname> plots the E-type (the point wise mean and/or variance) of all generated simulations.
+ 
+<programlisting>
+cax=[.1 .16]; % scaling for colorbar axis
+visim_plot_etype('sgsim_cond_1.par');
+</programlisting>
+
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/visim_etype_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/visim_etype_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Visim E-type example 1</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+
+The following will plot both the E-type mean and variance. 
+<programlisting>
+V=read_visim('sgsim_cond_1.par');
+plotAll=1;
+visim_plot_etype(V,plotAll);
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/visim_etype_ex3.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/visim_etype_ex3.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Visim E-type example 1</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+
+The following will plot both the E-type mean and variance with the specified colorscales.
+<programlisting>
+V=read_visim('sgsim_cond_1.par');
+cax=[.1 .16]; % scaling for colorbar axis E-type Mean
+cax_var=[0  1e-4]; % scaling for colorbar axis E-type variance
+plotAll=1;
+visim_plot_etype(V,plotAll,cax,cax_var);
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/visim_etype_ex4.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/visim_etype_ex4.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Visim E-type example 1</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+See more info at <xref linkend="visim_plot_etype"></xref>
+</para>
+</sect3>
+
+
+<sect3 id="plotvisim_histogram"><title>Plotting &visim; histogram</title>
+<para>
+To plot the histogram for all realizations, compared to the a priori chosen one use 
+<varname>visim_plot_hist</varname> :
+<programlisting>
+V=read_visim('sgsim_uncond.par');
+visim_plot_hist(V);
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/visim_hist_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/visim_hist_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Visim E-type example 1</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+
+and to plot just the histogram of one simulation use
+<programlisting>
+V=read_visim('sgsim_uncond.par');
+visim_plot_hist(V,10);
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/visim_hist_ex2.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/visim_hist_ex2.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Visim E-type example 1</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+See more info at <xref linkend="visim_plot_hist"></xref>
+
+</para>
+</sect3>
+
+<sect3 id="plotvisim_semivar"><title>Plotting &visim; semivariogram</title>
+<para>
+To plot the experimental semivariograms compared to the a priori chosen semivariogram, use 
+<varname>visim_plot_semivar_real</varname> :
+<programlisting>
+V=read_visim('sgsim_uncond.par');
+visim_plot_semivar_real(V);
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/visim_semi_real_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/visim_semi_real_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Visim E-type example 1</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+See more info at <xref linkend="visim_plot_semivar_real"></xref>
+</para>
+
+<para>
+To compatre the mean experiemntal computed for a number of realizatoins to the a priori chosen semivariogram, use 
+<programlisting>
+V=read_visim('sgsim_uncond.par');
+visim_plot_semivar(V,1:V.nsim);
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/visim_semi_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/visim_semi_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Visim E-type example 1</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+See more info at <xref linkend="visim_plot_semivar"></xref>
+</para>
+</sect3>
+
+
+<sect3 id="plotvisim_kernel"><title>Plotting the sensitivity kernel</title>
+<para>
+The sensitivity kernel for all or a specific selection of volume average data can be plotted using  :
+<programlisting>
+subplot(1,3,1)
+visim_plot_kernel('sgsim_cond_3.par');
+subplot(1,3,2)
+visim_plot_kernel('sgsim_cond_3.par',11);
+subplot(1,3,3)
+visim_plot_kernel('sgsim_cond_3.par',11:25);
+colormap(1-gray)
+</programlisting>
+This will result in the following :
+
+<mediaobject>
+     <imageobject>
+       <imagedata fileref="figures/kernelfig.png" format="PNG"></imagedata>
+     </imageobject> 
+     <imageobject>
+       <imagedata fileref="figures/kernelfig.png" format="PNG"></imagedata>
+     </imageobject> 
+        <textobject>
+  	 <phrase>Examples of plotting the kernel</phrase>
+        </textobject> 
+</mediaobject>
+See more info at <xref linkend="visim_plot_kernel"></xref>
+</para>
+</sect3>
+
+<sect3 id="plotvisim_condtab"><title>Plotting &visim; conditional
+lookup table</title>
+<para>
+See more info at <xref linkend="visim_plot_condtab"></xref>
+</para>
+</sect3>
+
+
+<sect3 id="plotvisim_volumefit"><title>Plotting the distribution of
+the prediction error of the used volume average data</title>
+<para>
+To plot the distribution of the volume average estimates as calculated form the realization and the observed volume average values use:
+<programlisting>
+V=read_visim('sgsim_cond_1.par');
+visim_plot_volfit(V);
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject role="fo">
+    <imagedata fileref="figures/visim_volfit_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <imageobject role="html">
+    <imagedata fileref="figures/visim_volfit_ex1.png" format="PNG"></imagedata>
+  </imageobject> 
+  <textobject>
+    <phrase>Visim E-type example 1</phrase>
+  </textobject> 
+</mediaobject>
+</informalfigure>
+</para>
+<para>
+See more info at <xref linkend="visim_plot_volfit"></xref>
+</para>
+</sect3>
+
+
+
+</sect2>
+</sect1>
+
+<!--
+   VISIM EXAMPLES 
+-->
+
+<sect1 id="visim_examples"><title>&visim; examples</title>
+<para>
+Here follows a few examples for problems that can be addressed using &visim;
+</para>
+
+<sect2 id="visim_quickstart_1"><title>visim_init</title>
+<para>
+<filename>visim_init</filename> generate a reference data structure (equivalent of a &visim; parameter file) for unconditional simulation:
+</para>
+<programlisting>
+V=visim_init;
+V=visim(V);
+visim_plot_sim(V);
+</programlisting>
+
+<para>
+<filename>visim_init</filename> can optionally be called with a suggested geometry: </para>
+<programlisting>
+V=visim_init(1:1:50,1:2:200);
+V=visim(V);
+visim_plot_sim(V);
+</programlisting>
+
+<para>
+Finally, <filename>visim_init</filename> an existing &visim; structure can be passed, that will form the base of an update &visim; structure:
+</para>
+<programlisting>
+V=visim_init(1:1:50,1:2:200,V);
+V=visim(V);
+visim_plot_sim(V);
+</programlisting>
+<para>
+When <filename>visim_init</filename> is called, the gloval variance <varname>V.gvar</varname> is checked for consistency with the semivariogram model, and fixed appropriately such that the global variance is set to the total sill value of the specicied semivariogram. The tail values will also be checked for consistency if <varname>V.ccdf=1</varname>.
+</para>
+
+</sect2>
+
+
+<sect2 id="dssim_uncond"><title>Direct Sequential Simulation</title>
+<para>
+If <varname>V.ccdf=1</varname>, direct sequential simulation is performed. This enable the use of a non-Gaussian distribution of the subsurface parameters (the target distribution). The shape of the target distribution is given by the data found in the file<varname>V.refhist.fname</varname>. The target distribution can be treated as either a continious or a discrete function using<varname>V.refhist.do_discrete</varname>. 
+</para>
+<para>
+The following example will perform unconditional simulation with a trimodal target distribution assumed to be continious:
+</para>
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/visim_examples/visim_example_dssim_cont_1.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+
+<para>
+The following example will perform unconditional simulation with a target distribution chosen as [1 10 10 40], asssmued to be continious:
+</para>
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/visim_examples/visim_example_dssim_cont_2.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+
+<para>
+The last DSSIM example is a example of unconditional simulation with a target distribution chosen as [1 10 10 40], asssmued to be discrete. This means that no other values than the ones given in the target distirbution can be simulated. This can be used for categorical simulation:
+</para>
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/visim_examples/visim_example_dssim_discrete_1.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</sect2>
+
+
+<sect2 id="datacov"><title>Correlated data errors</title>
+<para>
+
+Correlated data errors can be specified as an EAS formatted ascii file with the name <filename>datacov_[V.fout]</filename>. If for example the output file for 
+<filename>visim.par</filename> is set to 
+<filename>visim.out</filename>, then the file with correlated data errors should be name
+<filename>datacov_visim.out</filename>. If this file exist, correlated data errors are read from the file appropriately. If the file does not exist, UNcorrelated data errors are assumed, as given by the fourth column of the <filename>V.fvolsum.fname</filename> file. 
+</para>
+</sect2>
+
+
+
+
+<sect2 id="visim_from_lsq"><title>Simulation of linear inverse problems</title>
+<para>
+&visim; can be used to solve any linear inverse problem, using both estimation and simulation. The function
+<filename>G_to_visim</filename> converts 
+a linear inverse problem in Matlab format to a visim format:
+</para>
+<programlisting>
+
+load lsq_example.mat
+V=G_to_visim(x,y,z,d_obs,G,Cd,m0);
+
+% MAKE SURE THE KERNEL LOOKS OK
+figure;
+subplot(1,2,1);visim_plot_kernel(V); % All kernels
+subplot(1,2,2);visim_plot_kernel(V,2); % the 2nd kernel
+
+V.volnh.max=200; % MAX NUMBER OF VOLUMES TO USE
+V.Va.a_hmax=0;
+V.Va.a_hmin=0;
+
+% Estimation using VISIM
+V.nsim=0;
+Vest=visim(V);
+
+% Simulation using Matlab
+V.nsim=10;
+Vsim=visim(V);
+
+% Estimation using Matlab
+m0=zeros(V.nx*V.ny,1)+m0;
+d0=G*m0;
+Cm=V.gvar.*eye(V.nx*V.ny);
+m_est = m0 +Cm*G'*inv(G*Cm*G' + Cd)*(d_obs-d0);
+Cm_est = Cm - Cm*G'*inv( G*Cm*G' + Cd  )*G*Cm;
+
+subplot(2,3,1);
+imagesc(V.x,V.y,reshape(m_est,V.ny,V.nx));axis image
+cax=caxis;
+title_alt('LSQ mean',1)
+subplot(2,3,2);
+imagesc(V.x,V.y,Vest.etype.mean');axis image;caxis(cax)
+title_alt('VISIM LSQ mean',2)
+subplot(2,3,3);
+imagesc(V.x,V.y,Vsim.etype.mean');axis image;caxis(cax)
+title_alt('VISIM Etype mean',3)
+
+subplot(2,3,4);
+imagesc(V.x,V.y,reshape(diag(Cm_est),V.ny,V.nx));axis image
+cax=caxis;
+title_alt('LSQ var',4)
+subplot(2,3,5);
+imagesc(V.x,V.y,Vest.etype.var');axis image;caxis(cax)
+title_alt('VISIM LSQ var',5)
+subplot(2,3,6);
+imagesc(V.x,V.y,Vsim.etype.var');axis image;caxis(cax)
+title_alt('VISIM LSQ etype',6)
+</programlisting>
+</sect2>
+
+<sect2 id="visim_borehole_tomography"><title>Cross borehole tomography example</title>
+<para>
+As &visim; conditions to linear average measurements of the model
+parameter space, &visim; can be used to draw samples from the a
+posteriori probability distribution linear
+inverse problems.
+</para>
+
+
+
+
+
+<sect3 id="errsim"><title>Conditional simulation through error simulation</title>
+<para>
+Conditional simulation through error simulation is a fast alternative to traditional conditinal sequential Gaussian simulation, Journel and Huijbregts (1978) page 495.
+
+
+See the following reference for more details:
+Hansen, T. M. and Mosegaard, K. : VISIM : Sequential simulation for linear inverse problems, Computers and Geosciences 2007, doi:10.016/j.cageo.2007.02.003.
+
+</para>
+<para><programlisting>
+V=read_visim('visim_sgsim_cond_3.par');
+
+V.nsim=100;
+
+% Traditional conditional Gaussian simulation
+Vseqsim=visim(V);
+% Conditional simulation through error simulation
+Verrsim=visim_errsim(V);
+</programlisting></para>
+
+
+</sect3>
+
+
+<sect3 id="visim_borehole_tomography_kernel"><title>Calculating
+averaging kernels for cross borehole tomography</title>
+<para>
+To deal with any kind of linear inverse problem in &visim; the
+averaging kernel describing the forward problem must be given
+</para>
+<para>
+The averaging kernel is defined in two text files 
+<filename>visim_volgeom.eas</filename> (defining the geometry of each
+average kernel) and 
+<filename>visim_volsum.eas</filename>. (giving the observed average
+and measurement error for each defined volume average.
+</para>
+<para>
+These two files can be calculated for tomography problems with
+arbitrary source-receiver geometry, and for a specific velocity
+model. Both the high frequency approximation to the wave equation,
+rays, and Fresnel zone based kernels can be generated using the 
+<filename>visim_setup_punch</filename>
+</para>
+<para>
+<programlisting>
+V=read_visim('sgsim_reference.par');
+nx=V.nx;
+ny=V.ny;
+nz=V.nz;
+
+m_ref=read_eas('visim_sgsim_refmod.eas');
+m_ref=reshape(m_ref(:,3),ny,nx)';
+% m_ref=zeros(nx,ny)+0.13;
+
+S=linspace(1,11.5,7);
+R=linspace(2,10,7);
+
+[ss,rr]=meshgrid(S,R);
+
+S=[ss(:).*0+.1 ss(:)];
+R=[rr(:).*0+4.9 rr(:)];
+
+type=1;  % [1]: Ray approximation, [2]: Fresnel zone based kernels
+doPlot=1;% [0]: No visual progress, [1]: Plot all kernels as they are computed.
+
+% CALCULATE GEOMETRY IN REF MODEL
+[V_ray,G_ray]=visim_setup_punch(V,S,R,m_ref,[],[],'ref_rays',type,doPlot);
+type=2;  % [1]: Ray approximation, [2]: Fresnel zone based kernels
+[V_fre,G_fre]=visim_setup_punch(V,S,R,m_ref,[],[],'ref_frechet',type,doPlot);
+  
+</programlisting>
+<mediaobject>
+     <imageobject>
+       <imagedata fileref="figures/kernel_ex1.png" format="PNG"></imagedata>
+     </imageobject> 
+     <imageobject>
+       <imagedata fileref="figures/kernel_ex1.png" format="PNG"></imagedata>
+     </imageobject> 
+        <textobject>
+  	 <phrase>Examples of plotting the kernel</phrase>
+        </textobject> 
+</mediaobject>
+See more info at <xref linkend="visim_plot_kernel"></xref>
+</para>
+<para>
+To visualize the generated averaging kernels use for example :
+
+<programlisting>
+subplot(1,2,1)
+visim_plot_kernel(V_ray);caxis([0 .1])
+subplot(1,2,2)
+visim_plot_kernel(V_fre);caxis([0 .1])
+</programlisting>
+<mediaobject>
+     <imageobject>
+       <imagedata fileref="figures/kernel_ex2.png" format="PNG"></imagedata>
+     </imageobject> 
+     <imageobject>
+       <imagedata fileref="figures/kernel_ex2.png" format="PNG"></imagedata>
+     </imageobject> 
+        <textobject>
+  	 <phrase>Examples of plotting the kernel</phrase>
+        </textobject> 
+</mediaobject>
+</para>
+
+
+<para>
+Now we compute the observed travel time from the refernce model and
+the current ray geometry
+<programlisting>
+t_obs=G_ray*m_ref(:);
+t_err=0.*t_obs.*.01;
+[V_tomo]=visim_setup_punch(V,S,R,m_ref,t_obs,t_err,'tomo_ray',type,doPlot);
+</programlisting> 
+This generates the filename
+<filename>visim_tomo_ray.par</filename>. This parameter file can now
+be used to perform estimation and/or simulation :
+<programlisting>
+V_tomo.cond_sim=3;   % condition to volume averages only (no point data)
+V_tomo.nsim=100;     % 100 realizations
+V_tomo.volh.max=100; % max 100 average data in the neighborhood.
+V_tomo=visim(V_tomo);
+</programlisting>
+
+</para>
+
+</sect3>
+
+
+
+<sect3 id="visim_borehole_tomography_linear"><title>Linear inversion :
+Cross borehole tomography example</title>
+<para>
+</para>
+</sect3>
+
+
+</sect2>
+
+
+</sect1>
+
