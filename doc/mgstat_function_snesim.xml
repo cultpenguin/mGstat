@@ -1,0 +1,24 @@
+<sect2 id="read_snesim"><title>read_snesim</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="snesim"><title>snesim</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="snesim_init"><title>snesim_init</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="snesim_prior_sampler"><title>snesim_prior_sampler</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="snesim_set_resim_data"><title>snesim_set_resim_data</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+
+<sect2 id="write_snesim"><title>write_snesim</title>
+<para><programlisting><![CDATA[]]></programlisting></para>
+</sect2>
+

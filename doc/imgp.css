@@ -1,0 +1,82 @@
+BODY{
+       font-size: 14pt;	 
+       margin-left:  30px; 
+       margin-right: 30px;
+       margin-top:   30px;  
+       color: black;
+       background: #ffffff;
+       font-family: Bodini, Helvetica, Syntax;
+     }
+
+A:hover {
+		color: #444444;
+		text-decoration: underline;
+}
+
+H1, H2, H3, H4, H5, H6{
+        font-weight: 900;
+        }
+
+.title  {color: #ffffff; 
+        background: #000000; 
+        font-weight: bold;
+        font-size: 30pt;
+        text-align: left;
+        padding-left: 30px;
+        padding-right: 30px;
+        padding-top: 30px;
+        padding-bottom: 30px;
+        }
+
+.subtitle  {color: #ffffff; 
+        background: #000000; 
+        font-weight: bold;
+        font-size: 20pt;
+        text-align: left;
+        padding-left: 30px;
+        padding-right: 30px;
+        padding-top: 30px;
+        padding-bottom: 30px;
+        }
+
+
+.figure,.mediaobject {color: #000000; 
+        background: #ffffff; 
+        font-weight: bold;
+        font-size: 14pt;
+        text-align: center;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        }
+
+.guilabel, .guibutton, .guimenu, .guimenuitem {
+        background: #000000;
+        color: #ffffff; 
+        padding-left: 2px;
+        padding-right: 2px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        font-weight: bold;
+}
+
+.interface {
+        background: #ff3456;
+        color: #000000; 
+        padding-left: 2px;
+        padding-right: 2px;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        font-weight: bold;
+}
+
+.topic {margin-left:  -25px; 
+ 	font-size: 14pt; 
+        font-weight: bold;
+        text-align: left;
+        }
+
+.smaller {font-size: 8pt;
+        }
+
+
+<!-- <BODY BGCOLOR="#FFFFFF"> -->

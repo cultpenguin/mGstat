@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE book SYSTEM "/usr/share/xml/docbook/schema/dtd/4.3/docbookx.dtd"[
+<!ENTITY mgstat "mGstat"> 
+<!ENTITY mgstatroot "[MGSTAT_ROOT]"> 
+<!ENTITY mgstat-version "0.6"> 
+<!ENTITY matlab "Matlab"> 
+<!ENTITY gslib "GSLIB"> 
+<!ENTITY gstat "GSTAT"> 
+<!ENTITY visim "VISIM"> 
+<!ENTITY pubdate SYSTEM "pubdate.xml"> 
+<!ENTITY chapInstall SYSTEM "chapInstall.xml"> 
+<!ENTITY chapUserGuide SYSTEM "chapUserGuide.xml"> 
+<!ENTITY chapGstatCommands SYSTEM "chapGstatCommands.xml"> 
+<!ENTITY chapGstat SYSTEM "chapGstat.xml"> 
+<!ENTITY chapGSLIB SYSTEM "chapGSLIB.xml"> 
+<!ENTITY chapVISIM SYSTEM "chapVISIM.xml"> 
+<!ENTITY chapNativeMatlab SYSTEM "chapNativeMatlab.xml"> 
+<!ENTITY chapMisc SYSTEM "chapMisc.xml"> 
+<!ENTITY chapMatlabReference SYSTEM "chapMatlabReference.xml"> 
+<!ENTITY MatlabReference SYSTEM "MatlabReference.xml"> 
+]>
+<book>
+  <bookinfo>
+    <title>&mgstat;</title>
+        
+    <author>
+      <firstname>Thomas Mejer</firstname>
+      <surname>Hansen</surname>
+      <affiliation>
+        <address><email>cultpenguin@gmail.com</email></address>
+      </affiliation>
+    </author>
+    
+    <copyright>
+      <year>2004-2007</year>
+      <holder role="mailto:thomas@cultpenguin.com">Thomas Mejer Hansen</holder>
+    </copyright>
+    
+    <edition>version &mgstat-version;</edition>  
+    <pubdate>&pubdate;</pubdate>  
+
+    <abstract>
+      <para>&mgstat; is a geostatistical Matlab toolbox. Both native functions and links to GSLIB and GSTAT functions are provided</para>
+    </abstract>
+  </bookinfo>
+
+
+<chapter>
+ <title id="Installation">Installation</title>
+  &chapInstall;
+</chapter>
+
+<chapter>
+ <title>User Guide</title>
+  &chapUserGuide;
+</chapter>
+
+<chapter>
+ <title id="chapGSTAT">GSTAT from &matlab;</title>
+ <para>A number of m-files makes it relatively easy to get access to the features of &gstat; from within from Matlab.</para>
+  &chapGstat;
+</chapter>
+
+
+<chapter>
+ <title id="chapVISIM">VISIM - Direct and Gaussian sequential simulation</title>
+ <para>This chapter show how to use call some of the function available in the libgs of the &visim; software.</para>
+  &chapVISIM;
+</chapter>
+
+
+<chapter>
+ <title id="chapMisc">Misc</title>
+ <para>.</para>
+  &chapMisc;
+</chapter>
+
+
+<chapter>
+ <title>Matlab Reference</title>
+ <para>bla</para>
+  &MatlabReference;
+</chapter>
+
+
+
+</book>
+      

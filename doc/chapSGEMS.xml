@@ -1,0 +1,569 @@
+<sect1 id="inssgems"><title>Install &sgems;</title>
+<para>See <xref linkend="InstallSgems"></xref> on details how to install &sgems; on Windows and Linux.</para>
+</sect1>
+
+<sect1 id="SGEMS_data_format"><title>&sgems; data format</title>
+<para>
+&sgems; handles two data formats: The classical ASCII GEOEAS format, that has been widely used in the geostatistical community. In addition, &sgems; make use of a new in BINARY format. The binary format is much faster to work with, and handles both point set data and grid data, will full description of the grid properties (cell size, origin, grid size).
+</para>
+<para>
+In order to run &sgems; interactively from &matlab; only the binary format can be used, as there is no way to instruct &sgems; about grid size properties reading a EAS file.
+</para>
+
+<para>
+Reading and writing of the GEOEAS format are done using the
+<xref linkend="read_eas"/> and 
+<xref linkend="write_eas"/> function.
+</para>
+
+
+<para>
+Binary &sgems; formatted data (both point set and grid data) can be read using the 
+<xref linkend="sgems_read"/> function.
+</para>
+<para>
+Binary point set data can be written using the   
+<xref linkend="sgems_write_pointset"/> function, and 
+binary grid data can be written using the 
+<xref linkend="sgems_write_grid"/> function, and 
+</para>
+
+
+
+<sect2 id="SGEMS_eas_to_sgems"><title>GEOEAS to &sgems;</title>
+<para></para>
+<para>EAS files can be converted to &sgems;-binary formatted files using 
+<xref linkend="eas2sgems"/>.
+</para>
+
+<sect3 id="SGEMS_eas_to_sgems_POINT"><title>GEOEAS Point Set to &sgems;-binary</title>
+<para>
+An EAS with data formatted as a point-set, the data section starts with 'ndim' columns defining the location in ndim-space, followed by N columns of DATA.
+</para>
+<para>
+Use the following syntax:
+<programlisting> 
+O=eas2sgems(file_eas,file_sgems,ndim);
+</programlisting> 
+</para>
+
+<para> 
+Convert a 3D EAS file with two data sets (5 cols, 3 dimensions) using
+<programlisting> 
+ndim=3
+eas2sgems('file.eas','file.sgems',ndim)
+</programlisting> 
+</para>
+
+<para> 
+Convert a 2D EAS file with two data sets (4 cols, 2 dimensions) using
+<programlisting> 
+ndim=2
+eas2sgems('file.eas','file.sgems',ndim)
+</programlisting> 
+</para>
+
+
+</sect3>
+<sect3 id="SGEMS_eas_to_sgems_GRID"><title>GEOEAS GRID to &sgems;-binary</title>
+<para>
+For an EAS with data formatted as GRIDS, the data section consist of N colums, representing N grids.   An EAS not does not contain information about the cell size (dx,dy,dx) cell size, or the location of the first cell for each dimension (x0,y0,z0).
+</para>
+<para>
+It 'may' (not part of strict format) contain information about the size of the grid(s) in the first line 'xxxxx (90x10x1)'.
+</para>
+<para>
+Use the following syntax:
+<programlisting>
+O=eas2sgems(file_eas,file_sgems,nx,ny,nz,dx,dy,dz,x0,y0,z0);
+</programlisting>
+</para>
+
+
+
+<para> 
+Convert an EAS file with 2 grids, assuming the grid size is given in the EAS header ('HEADER (60x70x1)'), and(dx,dy,dz)=(1,1,1), (x0,y0,z0)=(0,0,0):
+<programlisting> 
+ndim=2
+eas2sgems('file.eas','file.sgems')
+</programlisting> 
+</para>
+
+<para>
+Same as above, but all manual settings: 
+<programlisting> 
+eas2sgems('file.eas','file.sgems',60,70,1,1,1,1,0,0,0); 
+</programlisting> 
+</para>
+
+<para>
+Same as above, but but (x0,y0,z0)=(10,10,6): 
+<programlisting> 
+eas2sgems('file.eas','file.sgems',60,70,1,10,10,6,0,0,0); 
+</programlisting> 
+</para>
+
+
+
+
+</sect3>
+</sect2>
+
+<sect2 id="SGEMS_sgems_to_eas"><title>&sgems; to EAS</title>
+<para></para>
+<para>&sgems;-binary formatted files can be converted to EAS ASCII formatted files using 
+<xref linkend="sgems2eas"/>. Simply call :
+<programlisting>
+sgems2eas('file.sgems','file.eas');
+</programlisting>
+</para>
+</sect2>
+
+
+
+</sect1>
+
+
+<sect1 id="chapSGEMSuse"><title>Using &sgems;</title>
+<para>
+In order to make full use of the &matlab; interface to &sgems; some knowledge of the use of &sgems; is essential. The book Applied Geostatistics with SGeMS (Remy, Boucher and Wu, Cambridge University Press, 2009), written by the developers of &sgems; is highly recommended.
+</para>
+
+<para>
+The &matlab; interface to &sgems; relies on a feature of &sgems; that allow &sgems; to read and execute a series of Python commands from the command line, without the need to load the graphical user interface, as for example:
+<screen>
+sgems -s sgems_python_script.py
+</screen>
+</para>
+
+
+<para>
+The &matlab; interface consists of methods and functions to automatically create such a Python script, execute the script using &sgems; and load the simulated/estimated results into &matlab;
+</para>
+<para>
+One function (<xref linkend="sgems_grid"/>) handles these actions allowing simulation on grids in the following manner:
+</para>
+<para>
+<orderedlist>
+<listitem><para>
+Define a parameter file (<xref linkend="sgems_get_par"/>, <xref linkend="sgems_read_xml"/>)
+</para></listitem>
+<listitem><para>
+Write a python script that (<xref linkend="sgems_grid_py"/>)
+
+<orderedlist>
+<listitem><para>
+sets up a grid or pointset where simulation or estimation is performed 
+</para></listitem>
+<listitem><para>
+performs the simulation/estimation
+</para></listitem>
+<listitem><para>
+export the simulated/estimated data 
+</para></listitem>
+</orderedlist>
+
+</para></listitem>
+<listitem><para>
+Load the data into &matlab; (<xref linkend="sgems_write"/>)
+</para></listitem>
+</orderedlist>
+</para>
+
+<para>
+For a complete list of &sgems; related commands on &mgstat; see <xref linkend="ref_sgems"/>
+</para>
+
+<sect2 id="SGEMS_seqsim"><title>Sequential simulation using &sgems;</title>
+<para>This section contains a rather detailed explanation of using &sgems; to perform simulation. Much more compact example can be found in the following chapters.</para>
+
+
+<para>
+Unconditional and conditional sequential simulation can be performed using <xref linkend="sgems_grid"/> :
+<screen>
+S = sgems_grid(S);
+</screen>
+Where <varname>S</varname> is a &matlab; data structure containing all the information needed to setup and run &sgems;
+</para>
+
+
+<para>
+A number of different simulation algorithms are available in &sgems; The behavior of each algorithm is controlled through an XML file. Such an XML file can for example be exported from &sgems; by choosing to save a parameter file for a specific algorithm. 
+</para> 
+
+<para>
+Such an XML formatted parameter is needed to perform any kind of simulation. A number of 'default' parameter files available using the <xref linkend="sgems_get_par"/> function. For example to obtain a default parameter file for sequential Gaussian simulation use 
+<screen>
+S = sgems_get_par('sgsim')
+
+S = 
+
+    xml_file: 'sgsim.par'
+         XML: [1x1 struct]
+
+</screen>
+As can be seen the adds the name of the XML file (S.xml_file) as well as a XML data structure in the &sgems; matlab structure <varname>S.XML</varname>.
+
+</para>
+
+<para>All supported simulation/estimation types can be found calling <varname>sgems_get_par</varname> without arguments:
+<programlisting language="matlab" linenumbering="numbered">
+>> sgems_get_par
+sgems_get_par : available SGeMS type dssim
+sgems_get_par : available SGeMS type filtersim_cate
+sgems_get_par : available SGeMS type filtersim_cont
+sgems_get_par : available SGeMS type lusim
+sgems_get_par : available SGeMS type sgsim
+sgems_get_par : available SGeMS type snesim_std
+</programlisting>
+</para>
+
+<para>
+
+Now all parameters for 'sgsim' simulation can be set directly from the &matlab; command line. To see the number of fields in the XML file (refer to the &sgems; book described above for the meaning of all parameters):
+<screen>
+>> S.XML.parameters
+
+ans = 
+
+                algorithm: [1x1 struct]
+                Grid_Name: [1x1 struct]
+            Property_Name: [1x1 struct]
+          Nb_Realizations: [1x1 struct]
+                     Seed: [1x1 struct]
+             Kriging_Type: [1x1 struct]
+                    Trend: [1x1 struct]
+      Local_Mean_Property: [1x1 struct]
+         Assign_Hard_Data: [1x1 struct]
+                Hard_Data: [1x1 struct]
+    Max_Conditioning_Data: [1x1 struct]
+         Search_Ellipsoid: [1x1 struct]
+     Use_Target_Histogram: [1x1 struct]
+              nonParamCdf: [1x1 struct]
+                Variogram: [1x1 struct]
+</screen>
+
+To see the number of realization :
+<screen>
+>> S.XML.parameters.Nb_Realizations
+
+ans = 
+
+    value: 10
+</screen>
+To set the number of realization to 20 do:
+<screen>
+>> S.XML.parameters.Nb_Realizations.value=20;
+</screen>
+</para>
+
+<para>
+One also need to define the grid used for simulation. This is done through the <varname>S.dim</varname> data structure:
+<screen>
+%grid size
+S.dim.nx=70;
+S.dim.ny=60;
+S.dim.nz=1;
+% grid cell size
+S.dim.dx=1;
+S.dim.dy=1;
+S.dim.dz=1;
+% grid origin
+S.dim.x0=0;
+S.dim.y0=0;
+S.dim.z0=0;
+</screen>
+All the values listed above for the <varname>S.dim</varname> data structure are default, thus if they are not set, they are assumed as listed.
+</para>
+
+<para>
+Unconditional simulation is now performed using:
+<screen>
+>> S=sgems_grid(S);
+sgems_grid : Trying to run SGeMS using sgsim.py, output to SGSIM.out
+'import site' failed; use -v for traceback 
+Executing script... 
+ 
+working on realization 1
+|#                   |    5%working on realization 2
+|##                  |    10%working on realization 3
+|###                 |    15%working on realization 4
+|####                |    20%working on realization 5
+|#####               |    25%working on realization 6
+|######              |    30%working on realization 7
+|#######             |    35%working on realization 8
+|########            |    40%working on realization 9
+|#########           |    45%working on realization 10
+|##########          |    50%working on realization 11
+|###########         |    55%working on realization 12
+|############        |    60%working on realization 13
+|#############       |    65%working on realization 14
+|##############      |    70%working on realization 15
+|###############     |    75%working on realization 16
+|################    |    80%working on realization 17
+|#################   |    85%working on realization 18
+|##################  |    90%working on realization 19
+|################### |    95%working on realization 20
+|####################|    100% 
+sgems_read : Reading GRID data from SGSIM.sgems
+sgems_grid : SGeMS ran successfully
+
+S = 
+
+    xml_file: 'sgsim.par'
+         XML: [1x1 struct]
+         dim: [1x1 struct]
+        data: [4200x20 double]
+           O: [1x1 struct]
+           x: [1x70 double]
+           y: [1x60 double]
+           z: 1
+           D: [4-D double]
+</screen>
+
+As seen above the following field have been added to the &sgems; matlab structure:  
+<varname>S.x</varname>,
+<varname>S.y</varname>,
+<varname>S.z</varname>,
+<varname>S.data</varname> and
+<varname>S.D</varname>.
+
+
+</para>
+<para>
+<varname>S.x</varname>,
+<varname>S.y</varname>,
+<varname>S.z</varname> are 3 arrays defining the grid.
+</para>
+
+
+<para>
+<varname>S.data</varname>, is the simulated data as exported from &sgems;. Note the each realization is returned as a list of size nx*ny*nz.
+</para>
+
+
+<para>
+<varname>S.D</varname>, is but a rearrangement of <varname>S.data</varname> into a 4D dimensional data structure, of size (nx,ny,nz,nsim). To visualize for example the 3rd realization use for example:
+<screen>
+imagesc(S.x,S.y,S.D(:,:,1,3));
+</screen>
+</para>
+
+
+<para>
+Conditional simulation can be performed by setting the <varname>S.d_obs</varname> parameter. For example:
+<screen>
+S.d_obs=[18 13 0 0; 5 5 0 1; 2 28 0 1];
+S=sgems_grid(S);
+imagesc(S.x,S.y,S.D(:,:,1,3));
+</screen>
+</para>
+
+<sect3 id="SgemsSemivariogram"><title>Specification of variogram model</title>
+<para>
+Using sequential Gaussian simulation the semivariogram model is specified in
+<varname>S.XML.parameters.Variogram</varname>:
+<screen>
+>> S.XML.parameters.Variogram
+ans=
+      nugget: 1.0000e-003
+   structures_count: 1
+        structure_1: [1x1 struct
+</screen>
+To run 10 simulations with increasing range do for example:
+<screen>
+for i=1:1:10
+  r=i*10;
+  S.XML.parameters.Variogram.structure_1.ranges.max=[r];
+  S.XML.parameters.Variogram.structure_1.ranges.medium=[r];
+  S.XML.parameters.Variogram.structure_1.ranges.min=[r];
+  S=sgems_grid(S);
+  subplot(4,3,i);imagesc(S.x,S.y,S.D(:,:,1)');
+end
+</screen>
+The variogram model can also be specified using a shorter notation
+(same format as when using GSTAT):
+<screen>
+    S.XML.parameters.Variogram=sgems_variogram_xml('0.1 Nug(0) + 0.4 Exp(10) + 0.5 Sph(40,30,0.2)');
+</screen>
+</para>
+</sect3>
+
+</sect2>
+
+
+<sect2 id="SGEMS_seqsim_uncond"><title>Unconditional sequential Gaussian simulation using &sgems;</title>
+<para>
+A simple example of unconditional sequential simulation.
+<screen>
+S=sgems_get_par('sgsim');
+S.XML.parameters.Nb_Realizations.value=12;
+S=sgems_grid(S);
+for i=1:S.XML.parameters.Nb_Realizations.value;
+  subplot(4,3,i);
+  imagesc(S.x,S.y,S.D(:,:,1,i));
+end
+</screen>
+</para>
+</sect2>
+
+
+
+<sect2 id="SGEMS_seqsim_cond"><title>Conditional sequential Gaussian simulation</title>
+<para>
+Conditioning data can be specified either as a data variable or as an sgems-binary formatted file (see <xref linkend="SGEMS_data_format"></xref>).
+</para>
+
+<sect3 id="SGEMS_seqsim_cond_var"><title>conditional data as a variable</title>
+<para>
+A simple example of conditional sequential simulation (<filename>examples/sgems_examples/sgems_example_sgsim_conditional.m</filename>):
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/sgems_examples/sgems_example_sgsim_conditional.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</para>
+</sect3>
+
+<sect3 id="SGEMS_seqsim_cond_file"><title>conditional data from file</title>
+<para>
+A simple example of conditional sequential simulation (<filename>examples/sgems_examples/sgems_example_sgsim_conditional_hard_data_from_file.m</filename>):
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/sgems_examples/sgems_example_sgsim_conditional_hard_data_from_file.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+</para>
+
+<informalfigure>
+<mediaobject>
+  <imageobject>
+    <imagedata width="100%" fileref="figures/sgems_example_sgsim_conditional_hard_data_from_file.png" format="PNG"></imagedata>
+  </imageobject> 
+  <caption><para>Sequential Gaussian conditional simulation</para></caption>
+</mediaobject>
+</informalfigure>
+
+
+</sect3>
+
+</sect2>
+
+
+
+<sect2 id="SGEMS_seqsim_snesim"><title>Unconditional SNESIM and FILTERSIM Gaussian simulation using &sgems;</title>
+<para>
+A simple example of unconditional SNESIM AND FILTERSIM simulation.
+<screen>
+
+S1=sgems_get_par('snesim_std'); %
+% Note that S1.ti_file is automatically set. 
+% simply change this to point to another training to use.
+S1.XML.parameters.Nb_Realizations.value=4;
+
+S2=sgems_get_par('filtersim_cont');
+S2.XML.parameters.Nb_Realizations.value=4;
+
+S1=sgems_grid(S1);
+S2=sgems_grid(S2);
+
+
+for i=1:S1.XML.parameters.Nb_Realizations.value;
+  subplot(S1.XML.parameters.Nb_Realizations.value,2,i);
+  imagesc(S1.x,S1.y,S1.D(:,:,1,i));axis image;
+
+  subplot(S1.XML.parameters.Nb_Realizations.value,2,i+S1.XML.parameters.Nb_Realizations.value);
+  imagesc(S2.x,S2.y,S2.D(:,:,1,i));axis image;
+end
+</screen>
+</para>
+</sect2>
+
+
+
+<sect2 id="SGEMS_image2ti"><title>Convert image to training image;</title>
+<para>
+Using <ulink url = "http://farm3.static.flickr.com/2117/1609350318_7300f07360_d.jpg">a JPG file from FLICKR</ulink> as training image:
+</para>
+
+
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/sgems_examples/sgems_example_ti_from_image.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+<informalfigure>
+<mediaobject>
+  <imageobject>
+    <imagedata width="100%" fileref="figures/sgems_example_ti_from_image.png" format="PNG"></imagedata>
+  </imageobject> 
+  <caption><para>Example of converting an image and using it for continuous filtersim simulation</para></caption>
+</mediaobject>
+</informalfigure>
+</sect2>
+
+<sect2><title>Simulation demonstration</title>
+<para>
+Demonstration simulation of &mgstat; supported simulation algorithms can be performed using <xref linkend="sgems_demo"/>. To see a list of supported simulation algorithms use:
+<programlisting language="matlab" linenumbering="numbered">
+>> sgems_get_par
+sgems_get_par : available SGeMS type dssim
+sgems_get_par : available SGeMS type filtersim_cate
+sgems_get_par : available SGeMS type filtersim_cont
+sgems_get_par : available SGeMS type lusim
+sgems_get_par : available SGeMS type sgsim
+sgems_get_par : available SGeMS type snesim_std
+</programlisting>
+To run a demonstration of continuous filtersim simulation using the 'filtersim_cont' algorithm do 
+<programlisting language="matlab" linenumbering="numbered">
+>> sgems_demo('filtersim_cont');
+</programlisting>
+This will perform both unconditional and conditional simulation, and visualize the results as for example here below.
+</para>
+
+<informalfigure>
+<mediaobject>
+  <imageobject>
+    <imagedata width="100%" fileref="figures/sgems_demo_filtersim_cont_uncond.png" format="PNG"></imagedata>
+  </imageobject> 
+ <caption><para>Unconditional simulation</para></caption>
+</mediaobject>
+<mediaobject>
+  <imageobject>
+    <imagedata width="100%" fileref="figures/sgems_demo_filtersim_cont_cond.png" format="PNG"></imagedata>
+  </imageobject> 
+ <caption><para>Conditional simulation</para></caption>
+</mediaobject>
+<mediaobject>
+  <imageobject>
+    <imagedata width="100%" fileref="figures/sgems_demo_filtersim_cont_etype.png" format="PNG"></imagedata>
+  </imageobject> 
+ <caption><para>E-type on conditional simulations</para></caption>
+</mediaobject>
+</informalfigure>
+
+<para>
+Running <xref linkend="sgems_demo"/> without arguments will run the demonstration using all supported simulation algorithms.
+</para>
+</sect2>
+
+
+
+<sect2><title>Probability perturbation (PPM)</title>
+<para>
+<filename>examples/sgems-examples/sgems_example_ppm.m</filename> is an example of applying the probability perturbation method, where one realization can be gradually deformed into another independent realization.
+</para>
+
+<programlisting language="matlab " linenumbering="numbered">
+<xi:include href="../mGstat/examples/sgems_examples/sgems_example_ppm.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</programlisting>
+
+<informalfigure>
+<mediaobject>
+  <imageobject>
+    <imagedata width="100%" fileref="figures/sgems_example_ppm.png" format="PNG"></imagedata>
+  </imageobject> 
+  <caption><para>Example of applying the Probability Perturbation Method using &sgems;</para></caption>
+</mediaobject>
+</informalfigure>
+</sect2>
+
+
+
+</sect1>
+
+

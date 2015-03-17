@@ -1,0 +1,593 @@
+<sect1 id="data"><title>Specifications of data locations</title>
+<para>
+A point in &mgstat; can be multidimensional (higher than 3 dimensions). Only the native &matlab; implementations of geostatistical algorithm can handle this. &gstat; and &gslib; are restricted to 3D.
+</para>
+<para>
+A point is given by a 1-row vector, where the number of columns definexs the dimension. For example, the location of the three 1D-points 
+<parameter>(x1,x2,x3)</parameter>=
+<parameter>(1,5,10)</parameter> is given by 
+<programlisting>
+>> pos=[1;5;10];
+>> [ndata,ndim]=size(pos)
+
+ndata =
+     3
+
+ndim =
+     1
+</programlisting>
+</para>
+<para>
+More than one location is specified by a matrix where each row defines one point, and the number of rows is the number of locations. For example, the three 4-dimensional points, 
+<parameter>(2,2,4,8)</parameter>,
+<parameter>(1,2,3,4)</parameter>,
+<parameter>(6,6,2,2)</parameter> is given by 
+
+<programlisting>
+>> pos=[2 2 4 8; 1 2 3 4; 6 6 2 2];
+>> [ndata,ndim]=size(pos)
+
+ndata =
+     3
+
+ndim =
+     4
+</programlisting>
+</para>
+<para>
+To transform locations from array structures to the matrix shape used by &mgstat; is straightforward in &matlab;. The following two arrays denoting x and y locations
+<programlisting>
+x =[ 1     2     3
+     1     2     3];
+
+y =[ 4     4     4
+     5     5     5];
+</programlisting>
+can be converted to the format required by &mgstat; by 
+<programlisting>
+>> pos=[x(:) y(:)]
+pos =
+     1     4
+     1     5
+     2     4
+     2     5
+     3     4
+     3     5
+
+>> [ndata,ndim]=size(pos)
+ndata =
+     6
+
+ndim =
+     2
+</programlisting>
+</para>
+</sect1>
+
+
+
+<sect1 id="Spatial"><title>Modeling spatial correlation</title>
+
+<sect2 id="semivariogram"><title>Semivariogram specification</title>
+<para>
+Semivariogram models are specified using the &gstat; notation. For example a Spherical semivariogram model with a range of 1 and a sill of 0.1 is specified as 
+<programlisting>
+V = '0.1 Sph(1)'
+</programlisting>
+Nested semivariogram models are specified as for example:
+<programlisting>
+V= '0.1 Nug(0) + 0.1 Sph(1)'
+</programlisting>
+</para>
+
+<para>
+2D anisotropy is specified as the angle of the primary direction clockwise from North, <varname>rotation</varname>, and the fraction of range of the range in the secondary direction (perpendicular to tha primary direction) to the range of the primary direction, <varname>anisotropy_factor</varname>:
+<programlisting>
+V = 'sill Sph(range,rotation,anisotropy_factor)'
+</programlisting>
+To specify an angle of 30 degrees from north and a fraction of 0.3 :
+<programlisting>
+V = '0.1 Sph(1,30,.3)'
+</programlisting>
+</para>
+
+<para>
+See more details in the 
+<ulink url = "http://www.gstat.org/gstat.pdf">&gstat; manual</ulink>.
+</para>
+
+
+<para>
+Internally in &matlab; the string describing the semivariogram model is translated into a &matlab; structure. There is significant computational improvements by doing this conversion, and it allows an easier way to set semivariogram parameters from &matlab;. Converting a semivariogram from string format a &matlab; structure can be done using <xref linkend="deformat_variogram"  xrefstyle="select:quotedtitle"/>: 
+<programlisting>
+V = deformat_variogram('0.1 Sph(1,30,.3)')
+V =
+     par1: 0.1000
+     par2: [1 30 0.3000]
+     type: 'Sph'
+    itype: 1
+</programlisting>
+The semivariogram in form of the &matlab; structure is also much easier to manipulate.
+</para>
+<para>
+To convert a semivariogram in form of a &matlab; structure back into a readable string using <xref linkend="format_variogram"  xrefstyle="select:quotedtitle"/>:
+<programlisting>
+format_variogram(V,1)
+ans =
+0.1 Sph(1,30,0.3)
+</programlisting>
+
+</para>
+
+<!--
+<para>
+3D anisotropy is also supported. Please check the &gstat; manual to see how this is specified.
+<programlisting>
+0.1 Sph(1,30,45,.8,.5,.....)
+</programlisting>
+</para>
+-->
+</sect2>
+
+<sect2 id="synsemivariogram"><title>Synthetic semivariogram</title>
+<para>
+A synthetic semivariogram can be calculated using <varname>semivar_synth</varname>, <xref linkend="semivar_synth"  xrefstyle="select:quotedtitle"/>:
+<programlisting>
+V='0.1 Nug(0) + 1 Gau(1.5)';
+[sv,d]=semivar_synth(,[0:.1:6]);
+plot(d,sv)
+</programlisting>
+Note that there are different conventions for the definition of som semivariogram models. &gslib; and &sgems; use on convention, while for example &gstat; use another. Default &mgstat; make use of the definitions used in &mgstat;. To change this see <xref linkend="mgstat_env_semivar_def"  xrefstyle="select:quotedtitle"/>.
+</para>
+</sect2>
+
+<sect2 id="expsemivariogram"><title>Experimental semivariogram</title>
+<para>
+There are two ways to calculate the experimental semivariogram. A native matlab function and a wrapper to &gstat;. The native matlab function allows use of multidimensional data, while the &gstat; wrapper only allows up to 3D data observations. The native &matlab; function allows computation of several angle ranges at once while the  &gslib; wrapper must be called separately for each angle array.
+However, the &gslib; wrapper is much faster.
+</para>
+<sect3 id="expsemmat"><title>Native &matlab;</title>
+<para>
+<xref linkend="semivar_exp" xrefstyle="select:quotedtitle"/> is a native &matlab; function to compute directional dependent experimental semivariograms from multi dimensional data observations. An example assuming an isotropic semivariogram model:
+<programlisting>
+[gamma,h]=semivar_exp(pos,val);
+plot(h,gamma);
+</programlisting>
+The semivariogram in a number of angle ranges can be simultaneously calculated using: 
+<programlisting>
+% Example directional [0,45,90,135,180]: 
+[gamma,h,angle_center]=semivar_exp(pos,val,20,4);
+plot(h,gamma);
+legend(num2str(angle_center))
+</programlisting>
+This computes the semivariogram in for angle arrays, from 0-45, 45-90, 90-135, 135-380. 'angle_center' is the the center of each angle gather : 22.5, 67.5, 112.5, 157.6 degrees.
+</para>
+<para>
+The angle range can manually be specified using: 
+<programlisting>
+% Example directional [0,45,90,135,180]: 
+ang=[0 45 90 135 180];
+[gamma,h,angle_center]=semivar_exp(pos,val,20,4);
+plot(h,gamma);
+legend(num2str(angle_center))
+</programlisting>
+The semivariogram for angles between for example 13 and 22 degrees, can be computed using :
+<programlisting>
+% Example directional 13-22 deg
+[gamma,h,angle_center]=semivar_exp(pos,val,20,[13 22]);
+plot(h,gamma);
+legend(num2str(angle_center))
+</programlisting>
+
+</para>
+</sect3>
+
+<sect3 id="expsemgstat"><title>&gstat;</title>
+<para>
+<xref linkend="semivar_exp_gstat" xrefstyle="select:quotedtitle"/> 
+ is a wrapper for &gstat; for computing the directional dependent experimental semivariogram for one angle range. Is supports up to three dimensional data observations. The angle range is specified as the angle and a tolerance. Thus the semivariogram in within the angle range 20 +-10 degrees is found using :
+<programlisting>
+[gamma,h]=semivar_exp_gstat(pos,val,20,10)
+</programlisting>
+
+</para>
+
+
+</sect3>
+
+</sect2>
+
+</sect1>
+
+
+
+<sect1 id="estimation"><title>Estimation</title>
+<para>
+  Multidimensional kriging estimation with noisy data observations can be performed using <xref linkend="krig" xrefstyle="select:quotedtitle"/>
+</para>
+<para>
+  <programlisting>
+    [d_est,d_var,lambda_sk,K_dd,k_du,inhood]=krig(pos_known,val_known,pos_est,V,options);
+    
+    
+    ndata : number of data observations
+    ndims : dimensions of data location (>=1)
+    nest  : number of data locations to be estimated
+    
+    pos_known [ndata,ndims] : Locations of data observations
+    val_known [ndata,1 or 2]  : col1 : Data value as measured at 'pos_known'
+                                col2 : Data uncertainty as measured at
+    'pos_known' (optional)
+    pos_est   [1 ,ndims] : Location of data to be estimated
+    V : Variogram model, e.g. '1 Sph(100)'
+    options : kriging options.
+    
+  </programlisting>
+  
+  Please note data uncertainty is listed as the second column of <varname>val_known</varname>. Data uncertainty is defined as the variance of Gaussian noise distribution associated to each data measurement. Specified in this manner, the noise on data observations is considered uncorrelated. If only one column is specified, data observations are treated as noise free.
+  
+</para>
+
+
+<sect2 id="options"><title>Kriging Options</title>
+<para>
+  <varname>options</varname>, the last argument, is a &matlab; structure that controls most aspect of the kriging, such as choosing the neighborhood, and kriging method. The names for most of these options are same as the names used to control &gstat;, see <xref linkend="chapGSTAT" xrefstyle="select:quotedtitle"/>
+</para>
+<para>
+
+<table frame='all'><title>kriging options</title>
+<tgroup cols='4' align='left' colsep='10' rowsep='1'>
+<colspec colnum='1' colname='c1' colwidth='1*' />
+<colspec colnum='2' colname='c2' colwidth='1*' />
+<colspec colnum='3' colname='c3' colwidth='1*' />
+<colspec colnum='4' colname='c4' colwidth='1*' />
+<thead>
+<row>
+  <entry>option.[?]</entry>
+  <entry>&gstat; equiv</entry>
+  <entry>description</entry>
+  <entry>link</entry>
+</row>
+</thead>
+<!--
+<tfoot>
+<row>
+  <entry>option.</entry>
+  <entry>&gstat; equiv</entry>
+  <entry>description</entry>
+  <entry>link</entry>
+</row>
+</tfoot>
+-->
+<tbody>
+<row>
+  <entry>sk_mean,mean</entry>
+  <entry>sk_mean</entry>
+  <entry>Specify the global mean, as used by simple kriging</entry>
+</row>
+<row>
+  <entry>trend</entry>
+  <entry>trend</entry>
+  <entry>Krig only the trend.</entry>
+  <entry></entry>
+</row>
+<row>
+  <entry>max</entry>
+  <entry>max</entry>
+  <entry>The maximum number of data to use in the search neighborhood</entry>
+  <entry></entry>
+</row>
+<!--
+<row>
+  <entry>poly</entry>
+  <entry></entry>
+  <entry></entry>
+  <entry></entry>
+</row>
+-->
+<row>
+  <entry>polytrend</entry>
+  <entry>d</entry>
+  <entry>The polynomial order of the trend for each dimension</entry>
+  <entry></entry>
+</row>
+<row>
+  <entry>xvalid</entry>
+  <entry>xvalid</entry>
+  <entry>If specified as <varname>xvalid=1</varname> cross validation on known data locations is performed</entry>
+  <entry></entry>
+</row>
+<row>
+  <entry>isorange</entry>
+  <entry></entry>
+  <entry><varname>isorange=1</varname> assumes no rotation in anisotropy. If chosen, each entry in the range section of a variogram corresponds to the range for a certain dimension. For example 'Sph(1,10,1,100)' corresponds to a range of 1 in the first dimension, 10 in the second dimension, 1 in the third dimension and 100 in the fourth dimension. If &gstat; is used for kriging in 1, 2 and 3 dimensions, the range selections are translates properly to &gstat; format using the isorange function.</entry>
+  <entry></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+
+
+</para>
+
+
+<sect3 id="options_method"><title>kriging methods</title>
+<para>
+the Kriging methods: simple Kriging, ordinary Kriging and Kriging with a trend are all available using <varname>krig</varname>. The difference between these three methods is the way the trend is modelled. Simple Kriging assumed a constant and known mean. Ordinary kriging makes use of an varying unknown mean (that is estimated within the neighborhood). Kriging with a trend model the trend as a smoothly varying polynomial trend. Thus ordinary kriging is but a form of kriging with a trend,; a 0th order polynomial trend.
+</para>
+
+<para>
+</para>
+
+<para>
+</para>
+
+<sect4 id="options_sk"><title>Simple kriging</title>
+<para>
+  By default ordinary Kriging in an exhaustive neighborhood (i.e. all data measurements are used all the time) is performed. This is identical to simple Kriging when <varname>options.mean=mean(pos_known(:,1))</varname>
+</para>
+</sect4>
+
+
+<sect4 id="options_ok"><title>Ordinary kriging</title>
+<para>
+  If the 'mean' is given as  <varname>options.mean</varname>, Simple Kriging is performed.
+</para>
+</sect4>
+
+<sect4 id="options_kt"><title>Kriging with a trend / Universal kriging</title>
+<para>
+For each dimension (direction) the order of the polynomial fit of the trend can be specified by <varname>options.polyfit</varname>
+</para>
+<para>
+if the value of <varname>options.polyfit</varname> is an integer scalar, then the same polynomial fit is used for all dimensions. Thus the default linear trend in all directions is identical to specifying  <varname>options.polyfit=1</varname>. 
+</para>
+<para>
+if the value of <varname>options.polyfit</varname> is an array of integers, each integer in the array must specify the order of the trend for each dimension. The length of the array must be equal to the size of the dimension of the observation. Thus, for 2D data observations one can specify a 2nd order polynomial trend in the first direction and a 0th order fit in the second direction as <varname>options.polyfit=[2 0]</varname>. 
+</para>
+</sect4>
+
+
+</sect3>
+<sect3 id="options_nhood"><title>kriging neighborhood</title>
+<para>
+By default all data observations are always used. The kriging neighborhood denote the data that are actually used by the kriging systems. 
+</para>
+<para>
+  A maximum number of data used by the kriging system is selected as <varname>options.max=10</varname>. The data locations closes to the point being estimated is retained in the data neighborhood.
+</para>
+<para>
+See also <xref linkend="nhood" xrefstyle="select:quotedtitle"/> that controls the data neighborhood behavior.
+</para>
+</sect3>
+</sect2>
+
+
+
+<sect2 id="krigex"><title>Kriging examples</title>
+<para>
+Based on the data observations below, a number of example are shown illustrating the use of kriging in &mgstat;
+</para>
+
+
+<sect3 id="krige1"><title>1D Kriging, no data uncertainty</title>
+<para>
+In the following example 3 data measurements has been made : x(1)=0; x(5)=3; x(2)=2. Using a Spherical semivariogram model with a range of '0.2' and a sill of '1', the mean and variance of the distribution of the local probability density function at x(2) is found: 
+<programlisting>
+<xi:include href="../mGstat/examples/mgstat_examples/krig_ex1.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+d_est =
+
+    1.6667
+
+
+d_var =
+
+    1.3333
+
+</programlisting>
+from: <filename>mGstat/examples/mgstat_examples/krig_ex1.m</filename>
+</para>
+</sect3>
+
+<sect3 id="krigex2"><title>Kriging a series of points - noise free data</title>
+<para>
+<programlisting>
+pos_known=[1;5;10];
+val_known=[0;3;2]; % 
+V='1 Sph(.2)';      % Select variogram model
+pos_est=[0:.1:10]';
+[d_est,d_var]=krig(pos_known,val_known,pos_est,V);
+plot(pos_est,d_est,'k',pos_known,val_known,'ro')
+print -dpng krigex2
+</programlisting>
+</para>
+</sect3>
+
+<sect3 id="krigex3"><title>Kriging a series of point - SK, OK, Ktrend</title>
+<para>
+<programlisting>
+pos_known=[1;5;10]; %
+val_known=[0;3;2];  % 
+V='1 Sph(.2)';      % Select variogram model
+pos_est=[0:.1:10]';
+[d_est_ok,d_var_ok]=krig(pos_known,val_known,pos_est,V);
+options.mean=2;
+[d_est_sk,d_var_sk]=krig(pos_known,val_known,pos_est,V,options);
+options.trend=1;
+[d_est_kt,d_var_kt]=krig(pos_known,val_known,pos_est,V,options);
+plot(pos_est,[d_est_sk,d_est_ok,d_est_kt],'-',pos_known,val_known,'ro')
+legend('SK','OK','KT','Data')
+print -dpng krigex3
+</programlisting>
+</para>
+</sect3>
+
+
+
+<sect3 id="krigex4"><title>Kriging a series of point - SK, OK, Ktrend</title>
+<para>
+<programlisting>
+rand('seed',1)
+ndata=10;
+pos_known=rand(ndata,1)*10;
+val_known=randn(ndata,1); % 
+V='1 Sph(.2)';      % Select variogram model
+pos_est=[0:.1:10]';
+clear options;
+[d_est_ok,d_var_ok]=krig(pos_known,val_known,pos_est,V,options);
+options.mean=2;
+[d_est_sk,d_var_sk]=krig(pos_known,val_known,pos_est,V,options);
+options.trend=1;
+[d_est_kt,d_var_kt]=krig(pos_known,val_known,pos_est,V,options);
+plot(pos_est,[d_est_sk,d_est_ok,d_est_kt],'-',pos_known,val_known,'k*')
+legend('SK','OK','KT','Data')
+print -dpng krigex4
+</programlisting>
+</para>
+</sect3>
+
+<sect3 id="krigex5"><title>Kriging a series of point - SK, OK, Ktrend - Neighborhood</title>
+<para>
+<programlisting>
+rand('seed',1)
+ndata=10;
+pos_known=rand(ndata,1)*10;
+val_known=randn(ndata,1); % 
+V='1 Sph(.2)';      % Select variogram model
+pos_est=[0:.1:10]';
+clear options;options.max=4;
+[d_est_ok,d_var_ok]=krig(pos_known,val_known,pos_est,V,options);
+options.mean=2;
+[d_est_sk,d_var_sk]=krig(pos_known,val_known,pos_est,V,options);
+options.trend=1;
+[d_est_kt,d_var_kt]=krig(pos_known,val_known,pos_est,V,options);
+plot(pos_est,[d_est_sk,d_est_ok,d_est_kt],'-',pos_known,val_known,'k*')
+legend('SK','OK','KT','Data')
+print -dpng krigex5
+</programlisting>
+</para>
+</sect3>
+
+
+
+<sect3 id="krigex6"><title>Kriging a series of point - SK, OK, Ktrend - Neighborhood, noisy data</title>
+<para>
+<programlisting>
+rand('seed',1)
+ndata=30;
+pos_known=rand(ndata,1)*10;
+val_known=randn(ndata,1); % 
+val_var=zeros(ndata,1)+.1; % 
+V='1 Sph(.1)';      % Select variogram model
+pos_est=[-2:.1:12]';
+clear options;options.max=4;
+[d_est_ok,d_var_ok]=krig(pos_known,[val_known val_var],pos_est,V,options);
+options.mean=mean(val_known);
+[d_est_sk,d_var_sk]=krig(pos_known,[val_known val_var],pos_est,V,options);
+options.trend=1;
+[d_est_kt,d_var_kt]=krig(pos_known,[val_known val_var],pos_est,V,options);
+plot(pos_est,[d_est_sk,d_est_ok,d_est_kt],'-',pos_known,val_known,'k*')
+legend('SK','OK','KT','Data')
+print -dpng krigex6
+</programlisting>
+
+
+</para>
+</sect3>
+
+
+
+
+<!--
+<sect3><title>fig</title><para>
+<programlisting>
+</programlisting>
+</para>
+<para>
+<mediaobject>
+  <imageobject>
+    <imagedata fileref="figures/krigex2.png" align="center" width="12cm" format="PNG"/>
+  </imageobject>
+  <textobject>
+    <phrase></phrase>
+  </textobject>
+  <caption>
+    <para>
+    </para>
+  </caption>
+</mediaobject>
+</para>
+</sect3>
+-->
+
+</sect2>
+
+
+</sect1>
+
+
+<sect1 id="simulation"><title>Simulation</title>
+<para>
+</para>
+
+<sect2 id="sgsim_matlab"><title>Sequential Gaussian Simulation</title>
+<para>
+sgsim can be used to perform sequential Gaussian simulation. It make
+use of <xref linkend="krig"  xrefstyle="select:quotedtitle"/>, and can be called using the same command arguments. In
+addition, one can set 'options.nsim' to define how many realizations is
+generated.
+<programlisting>
+options.nsim = 10;
+</programlisting>
+Note that this implementation og SGSIM is vert slow, and only included
+as an example. Consider using VISIM og SGEMS instead [link].
+</para>
+</sect2>
+<sect2 id="lusim_matlab"><title>LU Gaussian Simulation</title>
+<para>
+Gaussian Simulation based on LU decomposition of the covariance model
+is a precise (no use of neighborhood) method for generating
+realizations of Gaussian random models. But, it is only practical when
+the number of model parameters is realatively small, beacuse a full
+(nx*ny*nz)*(nx*ny*nz) covariance model need to be setup.
+<programlisting>
+ %% Load Jura Data
+[d_prediction,d_transect,d_validation,h_prediction,h_transect,h_validation,x,y,pos]=jura(.1);
+Va = '1 Sph(8)';
+pos_known = d_prediction(:,1:2);
+val_known = d_prediction(:,5);
+
+options.nsim=9;
+[sim_data,m_est,Cm_est]=lusim(pos_known,val_known,pos,Va,options);
+
+for i=1:options.nsim;
+subplot(3,3,i);
+  imagesc(x,y,reshape(sim_data(:,i),length(y),length(x)));%axis image;caxis([-2 2])
+  axis image;
+end
+</programlisting>
+</para>
+</sect2>
+<sect2 id="FFTMA"><title>FFT Moving Average</title>
+<para>
+The FFT Moving Average method is a very efficient method for
+generating unconditional realizations of Gaussian random models. As
+opposed to the  <xref linkend="lusim_matlab"  xrefstyle="select:quotedtitle"/> method, one only need to define the covariance
+model in a grid of size (nx*ny*nz). [REF TO PAPER]
+</para>
+<para>
+<programlisting>
+x=[1:1:40];y=1:1:35;z=1:30;
+Va='1  Sph(10,30,.5)';
+[out,z]=fft_ma(x,Va); % 1D
+[out,z]=fft_ma(x,y,Va); % 2D
+[out,z]=fft_ma(x,y,z,Va); %3D
+</programlisting>
+ 
+Some information about padding and resimulation ...
+</para>
+</sect2>
+
+</sect1>
+

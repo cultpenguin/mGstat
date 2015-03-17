@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<!DOCTYPE book SYSTEM "/usr/share/xml/docbook/schema/dtd/4.3/docbookx.dtd"[
+<!ENTITY mgstat "mGstat"> 
+<!ENTITY mgstatroot "[MGSTAT_ROOT]"> 
+<!ENTITY mgstat-version "1.00"> 
+<!ENTITY matlab "Matlab"> 
+<!ENTITY octave "Octave"> 
+<!ENTITY gslib "GSLIB"> 
+<!ENTITY sgems "S-GeMS"> 
+<!ENTITY gstat "GSTAT"> 
+<!ENTITY visim "VISIM"> 
+<!ENTITY snesim "SNESIM"> 
+<!ENTITY nfd "nfd"> 
+<!ENTITY wine "WINE"> 
+<!ENTITY pubdate SYSTEM "pubdate.xml"> 
+<!ENTITY yearnow SYSTEM "yearnow.xml"> 
+<!ENTITY chapInstall SYSTEM "chapInstall.xml"> 
+<!ENTITY chapUserGuide SYSTEM "chapUserGuide.xml"> 
+<!ENTITY chapGstatCommands SYSTEM "chapGstatCommands.xml"> 
+<!ENTITY chapGstat SYSTEM "chapGstat.xml"> 
+<!ENTITY chapGSLIB SYSTEM "chapGSLIB.xml"> 
+<!ENTITY chapVISIM SYSTEM "chapVISIM.xml"> 
+<!ENTITY chapSNESIM SYSTEM "chapSNESIM.xml"> 
+<!ENTITY chapSGEMS SYSTEM "chapSGEMS.xml"> 
+<!ENTITY chapNativeMatlab SYSTEM "chapNativeMatlab.xml"> 
+<!ENTITY chapMisc SYSTEM "chapMisc.xml"> 
+<!ENTITY chapMatlabReference SYSTEM "chapMatlabReference.xml"> 
+<!ENTITY MatlabReference SYSTEM "MatlabReference.xml"> 
+<!ENTITY core_ref SYSTEM "mgstat_function_.xml"> 
+<!ENTITY sgems_ref SYSTEM "mgstat_function_sgems.xml"> 
+<!ENTITY snesim_ref SYSTEM "mgstat_function_snesim.xml"> 
+<!ENTITY visim_ref SYSTEM "mgstat_function_visim.xml"> 
+<!ENTITY fast_ref SYSTEM "mgstat_function_fast.xml"> 
+<!ENTITY misc_ref SYSTEM "mgstat_function_misc.xml"> 
+<!ENTITY % xinclude SYSTEM "xinclude.mod">
+%xinclude;
+]>
+
+
+<book>
+  <bookinfo>
+    <title>&mgstat;</title>
+        
+    <author>
+      <firstname>Thomas Mejer</firstname>
+      <surname>Hansen</surname>
+      <affiliation>
+        <address><email>thomas.mejer.hansen@gmail.com</email></address>
+      </affiliation>
+    </author>
+    
+    <copyright>
+      <year>2004-&yearnow;</year>
+      <holder role="mailto:thomas.mejer.hansen@gmail.com">Thomas Mejer Hansen</holder>
+    </copyright>
+    
+    <edition>version &mgstat-version;</edition> 
+    <pubdate>&pubdate;</pubdate>  
+
+    <abstract>
+      <para>&mgstat; is a geostatistical Matlab toolbox. Both native functions and interfaces to &gstat;, &visim;(&gslib;), &snesim;, and &sgems; are provided</para>
+    </abstract>
+  </bookinfo>
+
+
+<chapter>
+ <title id="Installation">Installation</title>
+  &chapInstall;
+</chapter>
+
+<chapter>
+ <title id="NativeMatlabKriging">Native &matlab; kriging algorithms</title>
+ <para>This chapter discuss how to run a number of kriging algorithms implemented natively in Matlab.</para>
+<para>
+These algorithms are note fast, but may be useful for smaller problems, and for teaching purposes. For larger scale problems consider using the &matlab; interfaces to &gstat; (<xref linkend="chapGSTAT" xrefstyle="select:quotedtitle"/>)
+ and &sgems; (<xref linkend="chapSGEMS" xrefstyle="select:quotedtitle"/>).
+</para>
+  &chapUserGuide;
+</chapter>
+
+<chapter>
+ <title id="chapGSTAT">&gstat; from &matlab;</title>
+ <para>This chapter discuss how to run &gstat; from within &matlab;.</para>
+  &chapGstat;
+</chapter>
+
+<chapter>
+ <title id="chapVISIM">&visim; - Direct and Gaussian sequential simulation</title>
+ <para>This chapter discuss how to run &visim; from within &matlab;.</para>
+  &chapVISIM;
+</chapter>
+
+<chapter>
+ <title id="chapSNESIM">&snesim; - Single Normal Equation SIMulation</title>
+ <para>This chapter discuss how to run &snesim; from within &matlab;. &snesim; is original Fortran code developed for Single Normal Equation SIMulation method developed by Sebastian Strebelle. </para>
+<para>This fortran based implementation has been superceeded by an implementaion is available through &sgems;. See the chapter <xref linkend="chapSGEMS" xrefstyle="select:quotedtitle"/>.</para>
+
+  &chapSNESIM;
+</chapter>
+
+<chapter>
+ <title id="chapSGEMS">&sgems; - The Stanford Geostatistical Modeling Software</title>
+ <para>This chapter discuss how to run  &sgems; from within &matlab;.</para>
+  &chapSGEMS;
+</chapter>
+
+<!--
+<chapter>
+ <title id="chapMisc">Misc</title>
+ <para>.</para>
+  &chapMisc;
+</chapter>
+-->
+
+<chapter>
+ <title>Matlab Reference</title>
+ <para>bla</para>
+
+  <sect1 id="ref_base"><title>Core functions</title>
+    <para></para>
+    &core_ref;
+  </sect1>
+
+  <sect1 id="ref_visim"><title>&visim; functions</title>
+    <para></para>
+    &visim_ref;
+  </sect1>
+
+  <sect1 id="ref_snesim"><title>&snesim; functions</title>
+    <para></para>
+    &snesim_ref;
+  </sect1>
+
+  <sect1 id="ref_sgems"><title>&sgems; functions</title>
+    <para></para>
+    &sgems_ref;
+  </sect1>
+<!--
+  <sect1 id="ref_fast"><title>FAST/nfd functions</title>
+    <para></para>
+    &fast_ref;
+  </sect1>
+-->
+
+
+  <sect1 id="ref_misc"><title>Misc functions</title>
+    <para></para>
+    &misc_ref;
+  </sect1>
+
+
+</chapter>
+
+
+
+</book>
+      
