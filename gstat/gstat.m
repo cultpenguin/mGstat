@@ -135,7 +135,7 @@ if (isfield(G,'mask'))
                     
                     if exist(file)==2;
                         %[pred{ip,isim},x,y,dx,nanval]=read_arcinfo_ascii(file);
-                        [pred(:,:,ip),x,y,dx,nanval]=read_arcinfo_ascii(file);
+                        [pred(:,:,isim),x,y,dx,nanval]=read_arcinfo_ascii(file);
                     else
                         pred{ip,isim}=[];mgstat_verbose(sprintf('Cannot find "%s"',file),1);
                     end
