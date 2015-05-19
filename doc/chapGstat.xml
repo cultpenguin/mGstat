@@ -242,7 +242,7 @@ legend(num2str(ang_array'))
 <para>
 </para>
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/gstat_examples/ex03.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/gstat_examples/ex03.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 </sect2>
 
@@ -251,7 +251,7 @@ legend(num2str(ang_array'))
 <para>
 </para>
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/gstat_examples/ex04.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/gstat_examples/ex04.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 </sect2>
 
@@ -261,7 +261,7 @@ legend(num2str(ang_array'))
 <para>
 </para>
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/gstat_examples/ex05.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/gstat_examples/ex05.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 </sect2>
 
@@ -271,7 +271,7 @@ legend(num2str(ang_array'))
 <para>
 </para>
 <programlisting language="matlab " >
-<xi:include href="../mGstat/examples/gstat_examples/ex06.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/gstat_examples/ex06.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 </sect2>
 
@@ -281,7 +281,7 @@ legend(num2str(ang_array'))
 <para>
 </para>
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/gstat_examples/ex07.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/gstat_examples/ex07.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 </sect2>
 
@@ -291,7 +291,7 @@ legend(num2str(ang_array'))
 <para>
 </para>
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/gstat_examples/ex09.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/gstat_examples/ex09.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 </sect2>
 
@@ -301,7 +301,7 @@ legend(num2str(ang_array'))
 <para>
 </para>
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/gstat_examples/ex10.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/gstat_examples/ex10.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 </sect2>
 

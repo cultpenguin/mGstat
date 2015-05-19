@@ -475,21 +475,21 @@ If <varname>V.ccdf=1</varname>, direct sequential simulation is performed. This 
 The following example will perform unconditional simulation with a trimodal target distribution assumed to be continious:
 </para>
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/visim_examples/visim_example_dssim_cont_1.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/visim_examples/visim_example_dssim_cont_1.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 
 <para>
 The following example will perform unconditional simulation with a target distribution chosen as [1 10 10 40], asssmued to be continious:
 </para>
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/visim_examples/visim_example_dssim_cont_2.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/visim_examples/visim_example_dssim_cont_2.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 
 <para>
 The last DSSIM example is a example of unconditional simulation with a target distribution chosen as [1 10 10 40], asssmued to be discrete. This means that no other values than the ones given in the target distirbution can be simulated. This can be used for categorical simulation:
 </para>
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/visim_examples/visim_example_dssim_discrete_1.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/visim_examples/visim_example_dssim_discrete_1.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 </sect2>
 

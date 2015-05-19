@@ -418,7 +418,7 @@ Conditioning data can be specified either as a data variable or as an sgems-bina
 <para>
 A simple example of conditional sequential simulation (<filename>examples/sgems_examples/sgems_example_sgsim_conditional.m</filename>):
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/sgems_examples/sgems_example_sgsim_conditional.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/sgems_examples/sgems_example_sgsim_conditional.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 </para>
 </sect3>
@@ -427,7 +427,7 @@ A simple example of conditional sequential simulation (<filename>examples/sgems_
 <para>
 A simple example of conditional sequential simulation (<filename>examples/sgems_examples/sgems_example_sgsim_conditional_hard_data_from_file.m</filename>):
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/sgems_examples/sgems_example_sgsim_conditional_hard_data_from_file.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/sgems_examples/sgems_example_sgsim_conditional_hard_data_from_file.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 </para>
 
@@ -484,7 +484,7 @@ Using <ulink url = "http://farm3.static.flickr.com/2117/1609350318_7300f07360_d.
 
 
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/sgems_examples/sgems_example_ti_from_image.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/sgems_examples/sgems_example_ti_from_image.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 <informalfigure>
 <mediaobject>
@@ -549,7 +549,7 @@ Running <xref linkend="sgems_demo"/> without arguments will run the demonstratio
 </para>
 
 <programlisting language="matlab " linenumbering="numbered">
-<xi:include href="../mGstat/examples/sgems_examples/sgems_example_ppm.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/sgems_examples/sgems_example_ppm.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 </programlisting>
 
 <informalfigure>

@@ -374,7 +374,7 @@ Based on the data observations below, a number of example are shown illustrating
 <para>
 In the following example 3 data measurements has been made : x(1)=0; x(5)=3; x(2)=2. Using a Spherical semivariogram model with a range of '0.2' and a sill of '1', the mean and variance of the distribution of the local probability density function at x(2) is found: 
 <programlisting>
-<xi:include href="../mGstat/examples/mgstat_examples/krig_ex1.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include href="../examples/mgstat_examples/krig_ex1.m" parse="text" xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
 d_est =
 
