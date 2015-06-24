@@ -1,6 +1,6 @@
 % fft_ma :
 % Call :
-%    [out,z,options,logL]=fft_ma_2d(x,y,z,Va,options)
+%    [out,z,options,logL]=fft_ma(x,y,z,Va,options)
 %
 %    x: array, ex : x=1:1:80:
 %    y: array, ex : y=1:1:50:
