@@ -20,4 +20,4 @@
 %
 function [out,options]=mps_enesim(TI_data,SIM_data,options)
 options.type='enesim';
-[out,options]=mps(TI_data,SIM_data,options)
+[out,options]=mps(TI_data,SIM_data,options);
