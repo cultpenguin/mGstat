@@ -76,7 +76,7 @@ if ~strcmp(options.type,'dsim');
     options.H=SIM_data.*0.*NaN;
 end
 options.N=SIM_data.*0.*NaN;
-options.N_DROPPED=SIM_data.*0;
+options.N_DROPPED=zeros(size(SIM_data));;
 
 %% SET SEOM DATA STRICTURES
 
@@ -274,5 +274,4 @@ if options.plot>2
         fprintf('%s : coule not close writerObj',mfilename);
     end
 end
-
 out=SIM.D;
