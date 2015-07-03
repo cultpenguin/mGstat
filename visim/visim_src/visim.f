@@ -16,18 +16,18 @@ c-----------------------------------------------------------------------
 c
 c                Volume Integration SIMulation
 c                ******************************c
-c The program is executed either by specifying the 
-c parameter file as a commandline parameter  
+c The program is executed either by specifying the
+c parameter file as a commandline parameter
 c   visim visim.par
 c or with no command line arguments
 c   visim
 c In the latter case the user
 c will be prompted for the name of a parameter file.  The parameter
-c file is described in the documentation 
+c file is described in the documentation
 c
 c The output file will be a GEOEAS file containing the simulated values
 c The file is ordered by x,y,z, and then simulation (i.e., x cycles
-c fastest, then y, then z, then simulation number).  
+c fastest, then y, then z, then simulation number).
 c can be transformed to reproduce a target histogram.
 c
 c
@@ -70,7 +70,7 @@ c Read the parameters and data (transform as required):
 c
 
 
-	
+
       call readparm
 
 
@@ -83,35 +83,35 @@ c      if ((idrawopt.eq.2).or.(idrawopt.eq.4)) then
       endif
 
 
-c     
-c  setup the krige estimation variance matrix for honoring the local data 
+c
+c  setup the krige estimation variance matrix for honoring the local data
 c  (conditional simulation) if it is to be calculated in stead of read
-c  from a seperate file.  
-c     
-c      write(ldbg,*) 'icond=', icond      
+c  from a seperate file.
+c
+c      write(ldbg,*) 'icond=', icond
       if(icond.eq.1.and.ivar.eq.0) then
 c        call setup_krgvar
 c	write(*,*) 'Kriging variance calculated'
-      end if 
+      end if
 
 c
-c  open the output file 
+c  open the output file
 c
       open(lout,file=outfl,status='UNKNOWN')
 
-      if (doestimation.eq.1) then 
-         tmpfl='visim_estimation'//'_'//outfl               
+      if (doestimation.eq.1) then
+         tmpfl='visim_estimation'//'_'//outfl
          open(lout_mean,file=tmpfl,status='UNKNOWN')
          write(lout_mean,110)
       endif
 
       write(lout,108)
-      
- 108  format('VISIM Realizations',/,'1',/,'value')  
+
+ 108  format('VISIM Realizations',/,'1',/,'value')
  110  format('VISIM ESTIMATION',/,'2',/,'mean',/,'std')
 
       if (read_randpath.eq.1) then
-         tmpfl='randpath'//'_'//outfl               
+         tmpfl='randpath'//'_'//outfl
          inquire(file=tmpfl,exist=testfl)
          if(.not.testfl) then
 c            read_randpath=-1;
@@ -119,13 +119,13 @@ c            read_randpath=-1;
             write(*,*) 'WARNING: Could not read random path',
      1           tmpfl,' - using read_randpath=',read_randpath
          else
-            write(*,*) 'Reading random path from ',tmpfl 
+            write(*,*) 'Reading random path from ',tmpfl
          endif
       endif
-	
+
 
       if (read_volnh.eq.1) then
-         tmpfl='volnh'//'_'//outfl               
+         tmpfl='volnh'//'_'//outfl
          inquire(file=tmpfl,exist=testfl)
          if(.not.testfl) then
 c            read_volnh=0;
@@ -133,11 +133,11 @@ c            read_volnh=0;
             write(*,*) 'WARNING: Could not read volume neighborhood',
      1           tmpfl,' - using read_volnh=',read_volnh
          else
-            write(*,*) 'Reading volume average neighborhood from ',tmpfl 
+            write(*,*) 'Reading volume average neighborhood from ',tmpfl
          endif
       endif
 
-      
+
 
 c     INITIALIZE Data2Volume lookup table
       call  cov_data2vol(0,0,0,0,0,temp)
@@ -147,12 +147,12 @@ c      write(*,*) 'stop  : Calculating Data2Vol covariance'
 
 c     INITIALIZE Volume2Volume lookup table
       call  cov_vol2vol(0,0,temp)
-      
+
 
 
       if (read_covtable.eq.1) then
 c     ALSO CHECK IF FILES EXIST
-         tmpfl='cv2v'//'_'//outfl               
+         tmpfl='cv2v'//'_'//outfl
          inquire(file=tmpfl,exist=testfl)
          if(.not.testfl) then
             write(*,*) 'Could not read Covariance lookup table : ',
@@ -167,7 +167,7 @@ c     ALSO CHECK IF FILES EXIST
             end do
             close(9)
          endif
-         tmpfl='cd2v'//'_'//outfl               
+         tmpfl='cd2v'//'_'//outfl
          inquire(file=tmpfl,exist=testfl)
          if(.not.testfl) then
             write(*,*) 'Could not read Covariance lookup table : ',
@@ -187,40 +187,40 @@ c     ALSO CHECK IF FILES EXIST
 c
 c     Open File Handle for lambdas
 c
-      tmpfl='lambda'//'_'//outfl               
+      tmpfl='lambda'//'_'//outfl
       open(99, file=tmpfl, status = 'unknown',form='unformatted')
-      
+
 c     	open File Handle for volnh
       if (read_volnh.ge.0) then
-        tmpfl='volnh'//'_'//outfl               
+        tmpfl='volnh'//'_'//outfl
       	open(97, file=tmpfl, status = 'unknown',form='unformatted')
-        tmpfl='nh'//'_'//outfl               
+        tmpfl='nh'//'_'//outfl
       	open(96, file=tmpfl, status = 'unknown',form='unformatted')
-      endif	
+      endif
       if (read_randpath.ge.0) then
-        tmpfl='randpath'//'_'//outfl               
+        tmpfl='randpath'//'_'//outfl
       	open(98, file=tmpfl, status = 'unknown',form='unformatted')
-      endif	
-             
+      endif
+
 c
-c  begin the actual simulation 
+c  begin the actual simulation
 c
 
-      do isim =1, nsim 
+      do isim =1, nsim
 c
 c call visim for the simulation(s):
 c
-      
+
          call visim
 
-      end do 
+      end do
 
-      close(lout) 
-      if (doestimation.eq.1) close(lout_mean) 
+      close(lout)
+      if (doestimation.eq.1) close(lout_mean)
 
       if (read_covtable.eq.0) then
-	      
-	      
+
+
          tmpfl='cv2v'//'_'//outfl
          open(9,file=tmpfl,status='unknown',form='unformatted')
          do i=1,nvol
@@ -248,7 +248,7 @@ c Finished:
 c
       if (idbg.gt.-1) then
          write(*,9998) VERSION
- 9998    format(/' VISIM Version: ',f5.3, ' Finished'/)
+ 9998    format(/' VISIM Version: ',f2.1, ' Finished'/)
       endif
       stop
       end

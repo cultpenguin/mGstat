@@ -13,44 +13,54 @@ C and redistribute the programs in GSLIB, but only under the condition %
 C that this notice and the above copyright notice remain intact.       %
 C                                                                      %
 C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
-c     
+
+c
 c     This function draws from the local conditional distribution and return
-c     the value simu. The drawing depends on the type of local distribution 
+c     the value simu. The drawing depends on the type of local distribution
 c     specified in idrawopt
-c     
-      
+c
+c
+c     ADAPTION : Thomas Mejer Hansen                DATE: August 2005-2015
+c
+
       use geostat_allocate
 	  include  'visim.inc'
-      real*8   acorni 
-      real p  
+      real*8   acorni
+      real p
       real cmean1, cstdev1
-      real aunif, bunif   
+      real aunif, bunif
       real cvarn, cmn, zt, cvar
-      
-      
+
+c   get random number
       p = acorni(idum)
-      
-      if(idrawopt.eq.0) then   
+
+      if(idrawopt.eq.0) then
+c   Traditional Gaussian simualation
          call gauinv(dble(p),zt,ierr)
-         simu=zt*cstdev1+cmean1            
-      else if(idrawopt.eq.1) then   
-c     USE DSSIM HR CODE
-          simu = drawfrom_condtab(cmean1,cstdev1,p)
-      else	
-         write(*,*) 'Error: drawing option larger than 1'     
+         simu=zt*cstdev1+cmean1
+      else if(idrawopt.eq.1) then
+c   Simulation mathching a 1D marginal distribution
+        simu = drawfrom_condtab(cmean1,cstdev1,p)
+
+        if(simu.lt.zmin) then
+            if (idbg.gt.1) then
+                write(*,*) 'VISIM_SIMU: ZMIN VIOLATION',zmin,simu
+            endif
+            simu=zmin
+        endif
+        if(simu.gt.zmax) then
+            if (idbg.gt.1) then
+                write(*,*) 'VISIM_SIMU: ZMAX VIOLATION',zmax,simu
+            endif
+            simu=zmax
+        endif
+
+      else
+         write(*,*) 'Error: drawing option larger than 1'
          write(*,*) 'No implementation for this option'
       endif
-      
 
-      
-      if(simu.lt.zmin) then
-c      	write(*,*) 'ZMIN VIOLATION',zmin,simu
-      endif
-      if(simu.gt.zmax) then
-c      	write(*,*) 'ZMAX VIOLATION',zmax,simu
-      endif
-      
+
       return
       end
-      
+

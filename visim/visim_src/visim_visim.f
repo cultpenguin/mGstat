@@ -14,48 +14,48 @@ C that this notice and the above copyright notice remain intact.       %
 C                                                                      %
 C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 c-----------------------------------------------------------------------
-c     
+c
 c     Conditional Simulation of a 3-D Rectangular Grid
 c     ************************************************
-c     
+c
 c     This subroutine generates 3-D realizations of a sequential process with
 c     a given autocovariance model, and conditional to input sample data.
 c     The conditional simulation is achieved by sequential simulation of all
 c     the nodes visited by a random path.
-c     
-c     
+c
+c
 c
 c     PROGRAM NOTES:
-c     
+c
 c     1. The three dimensional anisotropy parameters, i.e., of the search
 c     ellipse and variogram ranges are described in section 2.3 of the
 c     manual.   The variogram parameters are described in the same place
-c     
+c
 c     2. The original data and previously simulated grid nodes can be
 c     searched separately.  There can be a different maximum number of
 c     each and a minimum number of original data can be specified
 c     to restrict simulation beyond the limits of the data.  The
 c     closeness of previously simulated grid nodes is measured according
 c     to the variogram structural distance.
-c     
-c     
-c     
+c
+c
+c
 c     INPUT VARIABLES:
-c     
+c
 c     nd               Number of data (no missing values)
 c     x,y,z(nd)        coordinates of the data
-c     vr(nd)           sample data 
-c     
+c     vr(nd)           sample data
+c
 c     nx,ny,nz         Number of blocks in X,Y, and Z
 c     xmn,ymn,zmn      Coordinate at the center of the first Block
 c     xsiz,ysiz,zsiz   spacing of the grid nodes (block size)
-c     
+c
 c     nsim             number of simulations
 c     sim              the current realization across the field
 c     idbg             integer debugging level (0=none,2=normal,4=serious)
 c     ldbg             unit number for the debugging output
 c     lout             unit number for the output
-c     
+c
 c     radius           Maximum search radius
 c     sang1            Azimuth angle of the principal search direction
 c     sang2            Dip angle of the principal search direction
@@ -66,11 +66,11 @@ c     ndmin            Minimum number of data required before sim
 c     ndmax            Maximum number of samples for simulation
 c     noct             Maximum number per octant if an octant search is
 c     desired (if <= 0, then no octant search)
-c     
+c
 c     nodmax           Maximum number of previously simulated grid nodes
 c     to consider in the simulation.  The structural
 c                      variogram distance is used to identify close ones
-c     
+c
 c     c0               Nugget constant (isotropic).
 c     cc(nst)          Multiplicative factor of each nested structure.
 c     aa(nst)          Parameter "a" of each nested structure.
@@ -85,11 +85,11 @@ c     radius in direction "ang1")
 c     anis2(nst)       Anisotropy (radius in minor direction at 90 degrees
 c     vertical from "ang1" divided by the principal
 c     radius in direction "ang1")
-c     
-c     
+c
+c
 c OUTPUT VARIABLES:  Simulated Values are written to "lout"
-c     
-c     
+c
+c
 c
 c EXTERNAL REFERENCES:
 c
@@ -103,10 +103,10 @@ c     cova3            Calculates the covariance given a variogram model
 c     krige            Sets up and solves either the SK or OK system
 c     ksol             Linear system solver using Gaussian elimination
 c
-c     
-c     
+c
+c
 c     Concepts taken from F. Alabert and E. Isaaks
-c     
+c
 c-----------------------------------------------------------------------
 c      implicit none
       use geostat_allocate
@@ -125,33 +125,34 @@ c      implicit none
       integer imult, nmult, in, ind, index, iy, ix, iz
       integer ix1, iy1, iz1, jx ,jy, j, jz, id, i, id2
       integer is, irepo, isrot
-      
+
       real cmean,cstdev,gmean, gvar, lktype, cbb
       integer n_mean, n_var
-      
+
       character tmpfl*80
 c      integer lout_krig
 
 c
 c      open(8, file='checkord.dat', status = 'unknown')
 
+
 c
 c Set up the rotation/anisotropy matrices that are needed for the
 c variogram and search.
 c
-                  
+
 c      write(ldbg,*) 'Setting up rotation matrices',
 c     +     ' for variogram and search'
       do is=1,nst(1)
-         call setrot(ang1(is),ang2(is),ang3(is),anis1(is),anis2(is), 
-     +        is,MAXROT,rotmat)   
+         call setrot(ang1(is),ang2(is),ang3(is),anis1(is),anis2(is),
+     +        is,MAXROT,rotmat)
       end do
       isrot = MAXNST + 1
       call setrot(sang1,sang2,sang3,sanis1,sanis2,isrot,MAXROT,rotmat)
-      
-c     
+
+c
 c     Set up the super block search:
-c     
+c
       if(sstrat.eq.0) then
 c         write(ldbg,*) '****Setting up super block search strategy'
          nsec = 1
@@ -163,20 +164,20 @@ c         write(ldbg,*) '****Setting up super block search strategy'
      +        isrot,MAXROT,rotmat,radsqd,nsbtosr,ixsbtosr,
      +        iysbtosr,izsbtosr)
       end if
-      
-c     
+
+c
 c     Set up the covariance table and the spiral search:
-c     
+c
 
       call ctable
 
 
-      
+
 c     In the case of a collocated cokriging, secondary variable is avalaible
 c     at every grid for each realization.  Read in the secondary data
 c     distribution for realization number larger than 1. The secondary data
-c     for the first relization has already been read in read_par subroutine. 
-      
+c     for the first relization has already been read in read_par subroutine.
+
       if(isim.gt.1.and.ktype.eq.4) then
          write(*,*)
          write(*,*) ' Reading next secondary model'
@@ -198,16 +199,16 @@ c     for the first relization has already been read in read_par subroutine.
          do i=1,nxyz
             cp =  cp + dble(1.0/real(nxyz))
             w  = (cp + oldcp)/2.0
-            lvm(i) = lvm(i) * w 
+            lvm(i) = lvm(i) * w
             oldcp  =  cp
          end do
          write(*,*) ' Restoring order of secondary model'
          call sortem(1,nxyz,sim,1,lvm,c,d,e,f,g,h)
  977     continue
       end if
-c     
+c
 c     Work out a random path for this realization:
-c     
+c
       do ind=1,nxyz
          sim(ind)   = real(acorni(idum))
          order(ind) = ind
@@ -218,7 +219,7 @@ c      p=real(acorni(idum))
 c
 c     The multiple grid search works with multiples of 4 (yes, that is
 c     somewhat arbitrary):
-c     
+c
       if (densitypr.eq.0) then
          mults=1;
          nmult=4;
@@ -228,7 +229,7 @@ c
       endif
 
 c      write(*,*) 'mults,nmult,densitypr=',mults,nmult,densitypr
-      
+
       if(mults.eq.1) then
          do imult=1,nmult
             nnz = max(1,nz/(imult*4))
@@ -265,16 +266,16 @@ c      do i=1,nxyz
 c        order(i)=i
 c      enddo
 
-c      READ/WRITE RANDOM PATH FROM/TO DISK? 
-      if(read_randpath.eq.0) then      
-	  write(98) (order(i),i=1,nxyz)          
-c	  write(98) (sim(i),i=1,nxyz)          
-      endif	
+c      READ/WRITE RANDOM PATH FROM/TO DISK?
+      if(read_randpath.eq.0) then
+	  write(98) (order(i),i=1,nxyz)
+c	  write(98) (sim(i),i=1,nxyz)
+      endif
 c	write(*,*) 'read_randpath=',read_randpath
-      if(read_randpath.eq.1) then      
+      if(read_randpath.eq.1) then
 	  read(98) (order(i),i=1,nxyz)
 c	  read(98) (sim(i),i=1,nxyz)
-      endif	
+      endif
 
 
 c     OPEN HANDLE FOR KRIGING MEAN + VAR
@@ -283,16 +284,16 @@ c     OPEN HANDLE FOR KRIGING MEAN + VAR
       open(lout_krig, file=tmpfl, status = 'unknown')
 
 
-	  
-c     
+
+c
 c     Initialize the simulation:
-c     
+c
       do ind=1,nxyz
          sim(ind) = UNEST
       end do
-c     
+c
 c     Assign the sample data to the closest grid node:
-c     
+c
       TINY = 0.0001
 c     write(ldbg,*) nd
       do id=1,nd
@@ -303,22 +304,22 @@ c     write(ldbg,*) nd
          xx  = xmn + real(ix-1)*xsiz
          yy  = ymn + real(iy-1)*ysiz
          zz  = zmn + real(iz-1)*zsiz
-         
+
 c         WRITE(ldbg,*) X(ID), Y(ID), Z(ID)
 c         WRITE(ldbg,*) IX, IY, IZ
 c         WRITE(ldbg,*) XX, YY, ZZ
 c         WRITE(*,*) X(ID), Y(ID), Z(ID)
 c          WRITE(*,*) IX, IY, IZ, vr(id)
-c          WRITE(*,*) XX, YY, ZZ, 
-        
+c          WRITE(*,*) XX, YY, ZZ,
+
 c     coordinates of x, y and z
-c     
+c
          test = abs(xx-x(id)) + abs(yy-y(id)) + abs(zz-z(id))
-c     
+c
 c     Assign sample data to the closest grid node unles there is a close data:
-c     
-         
-         
+c
+
+
          if(sstrat.eq.1) then
             if(sim(ind).ge.0.0) then
                id2 = int(sim(ind)+0.5)
@@ -330,39 +331,39 @@ c               write(ldbg,102) id,id2
                sim(ind) = real(id)
             end if
          end if
-         
-         
-c     
+
+
+c
 c     In case when data are not assigned to grid node, Assign a
 c     flag(10.0*UNEST) with a very negative value, so that this node does not
 c     get simulated:
-c     
+c
          if(sstrat.eq.0.and.test.le.TINY) then
             sim(ind)=10.0*UNEST
          end if
       end do
 c     c This is the end of loop over all sample data id=1,nd
-      
-      
+
+
  102  format(' WARNING data values ',2i5,' are both assigned to ',
      +     /,'         the same node - taking the closest')
-      
-c     
+
+c
 c     Now, enter data values into the simulated grid in the case when data
-c     are assigned to grid node, when (id.gt.0) satisfies.  
-c     
+c     are assigned to grid node, when (id.gt.0) satisfies.
+c
       do ind=1,nxyz
          id = int(sim(ind)+0.5)
          if(id.gt.0) sim(ind) = vr(id)
       end do
       irepo = max(1,min((nxyz/10),10000))
-      
-c     
+
+c
 c     MAIN LOOP OVER ALL THE NODES:
-c     
-      
+c
+
       if (idbg.gt.0) print*, 'ok before the main loop?'
-      
+
       neg = 0
       nsmall0 = 0
       nsmall = 0
@@ -374,7 +375,7 @@ c
             sim_std(ind) = 0
          end do
       endif
-      
+
       tstep=5000000;
       if (idbg.ge.-1) tstep=10000;
       if (idbg.ge.0) tstep=1000;
@@ -382,62 +383,62 @@ c
       if (idbg.ge.2) tstep=1;
 
       do in=1,nxyz
-        if(((in/tstep)*tstep .eq.in).AND.(idbg.ge.0)) write(*,103)in
- 103     format('************   currently on node 
-     +        ',i9,' *****')
-         
-         
-         
-c     
+        if(((in/tstep)*tstep .eq.in).AND.(idbg.ge.(0))) write(*,103)in
+ 103     format('************   currently on node ',i9,' *****')
+
+
+
+c
 c     Figure out the location of this point and make sure it has
 c     not been assigned a value already:
-c     
-         
+c
+
 c     order() keeps the simulation random path
-         
+
          index = int(order(in)+0.5)
-         
+
 c      WRITE(*, *) 'SIM(', INDEX, ')=', SIM(INDEX),order(in)
 c      WRITE(*, *) 'mask(', index, ')=', mask(index)
-         
-         
-C CHECK IF SAMPLE IS ALLREADY CONDITIONED 
-C THIS IS ESSENTIAL,          
+
+
+C CHECK IF SAMPLE IS ALLREADY CONDITIONED
+C THIS IS ESSENTIAL,
          if ((sim(index).ne.UNEST).or.(mask(index).eq.0)) then
+            write(*,*) 'Sample already conditioned,,'
             go to 5
          end if
-      
+
 
 c     USE SOMETHING LIKE NEXT LINE IF ONLY PART OF THE FIELD IS TO BE SIMULATED
 c     +              (INDEX.gt.2460).or.(INDEX.lt.2400))) go to 5
 c     If data are not assigned to grid node (sstrat=0), grid that is too close
 c     to data will be skipped by (sim(index).lt.(UNEST*2.0)). Later it will
-c     be reassigned by the very close grid node  
-c     If data assigned to grid node (sstrat=1), grid node that has been 
+c     be reassigned by the very close grid node
+c     If data assigned to grid node (sstrat=1), grid node that has been
 c     a positive value will be the grid node that has received the sample
-c     valeu or a grid node that has been visited. 
-         
-c                  write(ldbg,*) nxy, nx 
+c     valeu or a grid node that has been visited.
+
+c                  write(ldbg,*) nxy, nx
                   iz = int((index-1)/nxy) + 1
                   iy = int((index-(iz-1)*nxy-1)/nx) + 1
                   ix = index - (iz-1)*nxy - (iy-1)*nx
                   xx = xmn + real(ix-1)*xsiz
                   yy = ymn + real(iy-1)*ysiz
                   zz = zmn + real(iz-1)*zsiz
-                  
+
                   if (idbg.ge.4) then
                      write(ldbg,*) 'index',iz, iy, ix
                      write(ldbg,*) '     ',zz, yy, xx
                      write(*,*) 'index',ix, iy, iz
                      write(*,*) '     ',xx, yy, zz
                   endif
-                  
-c     
+
+c
 c     Now, we'll simulate the point ix,iy,iz.  First, get the close data
 c     and make sure that there are enough to actually simulate a value,
 c     we'll only keep the closest "ndmax" data, and look for previously
 c     simulated grid nodes:
-c     
+c
                   if(sstrat.eq.0) then
 c     write(ldbg,*) 'call srchsupr'
                      call srchsupr(xx,yy,zz,radsqd,isrot,MAXROT,
@@ -450,14 +451,14 @@ c     write(ldbg,*) 'call srchsupr'
                         WRITE(ldbg, *) 'There are nclose=',nclose,
      +                       ' in the search radius',
      +                       ' for grid ', index
-                     end if 
+                     end if
 
                      if(nclose.lt.ndmin) then
 c     assign global mean and variance.
-                        cmean = skgmean   
+                        cmean = skgmean
                         cstdev = sqrt(gvar)
                         go to 51
-                     endif 
+                     endif
                      if(nclose.gt.ndmax) nclose = ndmax
                   endif
 
@@ -473,14 +474,14 @@ c     assign global mean and variance.
 c
 c     FIND DATA IN VOLUME NEIGHOURHOOD
 c
-c     
+c
 
-                  call nhoodvol(ix,iy,iz,xx,yy,zz,index)       
-                  if (nusev.eq.0) then 
+                  call nhoodvol(ix,iy,iz,xx,yy,zz,index)
+                  if (nusev.eq.0) then
 c                     write(*,*) 'nusev=',index,nusev
 c                    stop
                   endif
-                  if(read_volnh.eq.0) then      
+                  if(read_volnh.eq.0) then
                      write(97) (nusev)
                      write(97) (usev(i),i=1,nusev)
                      write(96) (ncnode)
@@ -489,8 +490,8 @@ c                    stop
                      write(96) (cnodez(i),i=1,ncnode)
                      write(96) (cnodev(i),i=1,ncnode)
                      write(96) (cnodeindex(i),i=1,ncnode)
-                  endif	
-                  if(read_volnh.eq.1) then      
+                  endif
+                  if(read_volnh.eq.1) then
                      read(97) nusev
                      read(97) (usev(i),i=1,nusev)
                      read(96) ncnode
@@ -499,122 +500,118 @@ c                    stop
                      read(96) (cnodez(i),i=1,ncnode)
                      read(96) (cnodev(i),i=1,ncnode)
                      read(96) (cnodeindex(i),i=1,ncnode)
-                  endif	
+                  endif
 
-c     
+c
 c     Calculate the conditional mean and standard deviation.  This will be
 c     done with kriging if there are enough data, otherwise, the global mean
 c     and standard deviation will be used:
-c    
+c
                   if(ktype.eq.2) then
                      gmean = lvm(index)
                   else
                      gmean = skgmean
                   end if
-                  
+
  51	    	  continue
-                  
-                  
-c     double check for not enough data with search radius. 
-                  
-                  if((nclose+ncnode+nusev).lt.1) then
+
+
+c     double check for not enough data with search radius.
+              if((nclose+ncnode+nusev).lt.1) then
     	             if (idbg.gt.1) then
             WRITE(ldbg,*) ' __WARNING: neighboring data points and',
-     +                    ' grid node have not been found.', 
+     +                    ' grid node have not been found.',
      +                    ' Global mean and variance is assigned.'
             WRITE(*,*) ' __WARNING: neighboring data points and',
-     +                    ' grid node have not been found.', 
+     +                    ' grid node have not been found.',
      +                    ' Global mean and variance is assigned.'
             WRITE(*,*)    'index,nusev=',index,nusev
-		     endif 
-                     cmean  = gmean 
+		     endif
+                     cmean  = gmean
                      cstdev = sqrt(gvar)
                   else
-                  
+
                      if (idbg.ge.3) then
-                        WRITE(ldbg,*) 'cmean=', cmean, 'cstdev=', cstdev   
+                        WRITE(ldbg,*) 'cmean=', cmean, 'cstdev=', cstdev
                      end if
-                     
-                     
-c     
-c     Perform the kriging.  Note that if there are fewer than four data 
+
+
+c
+c     Perform the kriging.  Note that if there are fewer than four data
 c     in the case of ordinary kriging, then simple kriging is prefered so
 c     that the variance of the realization does not become artificially
 c     inflated:
-c     
-                     
+c
+
 c                     write(*,*) 'in=',in,' index=',index
                      lktype = ktype
                      if(ktype.eq.1.and.(nclose+ncnode).lt.4)lktype=0
 
                      call krige_volume(ix,iy,iz,xx,yy,zz,lktype,
      +                       gmean,cmean,cstdev,index)
-                     
-c                     write(*,*) 'cmean=',cmean,' cstdev=',cstdev
+
                   endif
-                  
+
 c
-c TO CHECK THAT THE KRIGED MEAN SURFACE IS COORECT SET THE STANDARD DEV=0 
+c TO CHECK THAT THE KRIGED MEAN SURFACE IS COORECT SET THE STANDARD DEV=0
 c      cstdev=0
 
-                  
+
 
                   if (idbg.gt.3) then
                      WRITE(*,*) 'SIM in=',in,' RESULT index=',
-     +                 order(in),' cmean=', 
+     +                 order(in),' cmean=',
      +                    cmean, ' cstdev=', cstdev
 c                     stop
                   endif
-
-c     
+c
 c     Draw a value from the uniform distribution having conditional mean and
 c     variance and assign a value to this node:
-c     
-
-c DRAW A RANDOM SAMPLE FROM THE CHOSEN DISTRBUTION                  
+c
 
 
-                  p = acorni(idum)   
+                  p = acorni(idum)
 
-                  if (p .ge. pkr) then 
+                  if (p .ge. pkr) then
                      if (doestimation.eq.0) then
                         sim(index) = simu(cmean,cstdev)                           write(*,*) 'pos ',cmean,sim(index)
                      endif
-                      
+
                      sim_mean(index) = cmean
-                     sim_std(index) = cstdev                         
+                     sim_std(index) = cstdev
                   else
                      write(*,*) 'PKR PKR',pkr
                      sim(index) = cmean
                   end if
-                  
-                  
+
+
+
  111              format(1x, 6(f10.5, 1x))
  141              format(' random number ',f6.4,' realization ',f7.4)
-c     
-c     
-                  
-c     
-c     END MAIN LOOP OVER NODES:
-c     
- 5                continue
-                  
-               end do
-            
+c
+c
 
-      
+c
+c     END MAIN LOOP OVER NODES:
+c
+ 5                continue
+
+               end do
+
+
+
       if (doestimation.eq.1) then
          do i=1,nxyz
             sim(i)=sim_mean(i)
             write(lout_mean,87) sim_mean(i), sim_std(i)*sim_std(i)
- 87         format(f19.8,f19.8)  
+ 87         format(f19.8,f19.8)
          enddo
       endif
 
 c write estimated volume average to screen
       	if (idbg.gt.1) then
       	if ((icond.eq.1).OR.(icond.eq.3)) then
-               write(*,89)               
+               write(*,89)
                write(*,*) 'VOLUME AVERAGE ESTIMATES : '
                sumderr=0
                sumerr=0
@@ -635,7 +632,7 @@ c                  write (*,*) 'ivol=',ivol,vobs,volobs(ivol)
  88               format(' Volume ',i3,': obs_sim=',f8.3,
      +              ' obs_vol=',f8.3,
      +              ' diff=',f8.3,'%')
-                  
+
 
                enddo
 
@@ -646,16 +643,16 @@ c                  write (*,*) 'ivol=',ivol,vobs,volobs(ivol)
 
 	endif
         endif
-   
+
                if (idbg.gt.2)  then
-                  print*, 'negative is ', neg, ', nsmall0 is ', 
-     1                 nsmall0, ', small is ', nsmall, ', 
+                  print*, 'negative is ', neg, ', nsmall0 is ',
+     1                 nsmall0, ', small is ', nsmall, ',
      2                 nlarge is ', nlarge
                endif
-c     
+c
 c     In the case when no data assigned to grid, the grid node that is too
-c     close to the data location will be reassigned the sample data value. 
-c     
+c     close to the data location will be reassigned the sample data value.
+c
                if(sstrat.eq.0) then
                   do id=1,nd
                      call getindx(nx,xmn,xsiz,x(id),ix,testind)
@@ -669,9 +666,9 @@ c
                      if(test.le.TINY) sim(ind) = vr(id)
                   end do
                end if
-c     
+c
 c     Write results:
-c     
+c
                ne = 0
                av = 0.0
                ss = 0.0
@@ -680,12 +677,12 @@ c
                   ne = ne + 1
                   av = av + simval
                   ss = ss + simval*simval
-c		  write(ldbg, *) simval 
+c		  write(ldbg, *) simval
                   write(lout,'(f19.10)') simval
                end do
                av = av / max(real(ne),1.0)
                ss =(ss / max(real(ne),1.0)) - av * av
-               if (idbg.gt.-1)  then 
+               if (idbg.gt.-1)  then
                  write(ldbg,112) isim,ne,av,ss
                  write(*,   112) isim,ne,av,ss
  112             format(/,' Realization ',i3,': number   = ',i8,/,
@@ -694,13 +691,13 @@ c		  write(ldbg, *) simval
      +              '                  variance = ',f12.4,
      +              ' (close to global variance)',/)
                endif
-c     
+c
 c     END MAIN LOOP OVER SIMULATIONS:
-c     
-               
-               
-c     
+c
+
+
+c
 c     Return to the main program:
-c     
+c
                return
                end
