@@ -9,9 +9,9 @@
 %
 %  S is a Matlab structure will all options for running SNESIM
 %
-% See also: write_snesim_10, snesim
+% See also: write_snesim, snesim
 %
-function obj=read_snesim_10(filename,read_data)
+function obj=read_snesim(filename,read_data)
 
 if nargin==0;
     filename='snesim.par';
@@ -234,12 +234,19 @@ obj.search_radius.avert=data(3);
 if (read_data>0)
     nsim=obj.nsim;
     nxyz=obj.dim.nx*obj.dim.ny*obj.dim.nz;
+    
+    
+    
     if (nsim>0)&(~isempty(obj.out.data))
         %try
         if obj.dim.nz==1,
-            obj.D=reshape(obj.out.data(1:(nsim*nxyz)),obj.dim.nx,obj.dim.ny,nsim)';
+            obj.D=zeros(obj.dim.ny,obj.dim.nx,nsim)
+            for isim=1:nsim
+                ii=[1:nxyz]+(isim-1)*nxyz;                
+                obj.D(:,:,isim)=reshape(obj.out.data(ii,1),obj.dim.nx,obj.dim.ny)';
+            end
         else
-            obj.D=reshape(obj.out.data(1:(nsim*nxyz)),obj.dim.nx,obj.dim.ny,obj.dim.nz,nsim);
+            obj.D=reshape(obj.out.data(1:(nsim*nxyz),1),obj.dim.nx,obj.dim.ny,obj.dim.nz,nsim);
         end
         if nsim==1
             E=obj.D;
@@ -253,9 +260,6 @@ if (read_data>0)
         if (nsim~=obj.nsim),
             disp(sprintf('SETTING NSIM=%d TO MATCH SIM DATA',nsim));
         end
-        %catch
-        %    disp(sprintf('FAILED TO LOAD DATA',nsim));
-        %end
     end
 end
 

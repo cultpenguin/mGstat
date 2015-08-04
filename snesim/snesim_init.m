@@ -9,6 +9,12 @@
 %
 function S=snesim_init
 
+
+load snesim_init_v10
+return;
+
+
+
 % call: S=snesim_init
 
 %Data file:
