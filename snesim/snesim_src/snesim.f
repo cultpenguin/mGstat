@@ -1,3 +1,38 @@
+
+c@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+c Ch1~Ch4/To incorporate local proportions with servosystem correction
+c                                                        /07-23-02/Sunder
+c Ch5/To incorporate local proportions with servosystem correction
+c                                                        /07-29-02/Sunder
+c Ch6~Ch10, Ch12, Ch19~Ch23, Ch27~Ch36 /To incorporate rotaion and 
+c affinity transform
+c                                                      /08-12-02/Tuanfeng
+c Ch11, Ch13~Ch18, Ch24~Ch26, Ch37 /To incorporate local proportions with 
+c servosystem correction
+c                                                      /08-13-02/Tuanfeng
+c Ch38~Ch42 /To incorporate secondary soft propability P(A|C)
+c                                                      /08-15-02/Tuanfeng
+c Ch43~Ch65        /To incorporate multiple training images
+c                                                      /08-16-02/Tuanfeng
+c Ch66~Ch69     /To incorporate target proportion using Bayesian updating
+c                                                      /08-25-02/Tuanfeng
+c Ch70~Ch72     /To incorporate replicate number cmin
+c                                                      /08-27-02/Tuanfeng
+c Ch73~Ch83     /To remove the features of incoporating local proportion
+c              into servsystem (Instead Local proportion taken as P(A|C))
+c                                                      /10-13-02/Tuanfeng
+c Ch84~Ch88    /To modify the formula which combines P(A|B) and P(A|C)
+c                so that 0.0<=Tau1, Tau2<=1.0; 
+c                Tau1=1.0, Tau2=0.0: only P(A|B) used; 
+c                Tau1=0.0, Tau2=1.0: only P(A|C) used.
+c                IF Tau1/Tau2 increases, impact of P(a|B)/P(A|C) increases
+c                Tau1 and Tau2 could be chosen automatically. 
+c                In addition, P(A|C) is used for all multiple grids, 
+c                not only for several coarse grids 
+c                                                      /11-29-02/Tuanfeng
+c@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
 c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 c                                                                     %
 c Copyright (C) 2000, The Board of Trustees of the Leland Stanford    %
@@ -12,7 +47,6 @@ c and redistribute the programs in GSLIB, but only under the          %
 c condition that this notice remain intact.                           %
 c                                                                     %
 c%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 c----------------------------------------------------------------------
 c
 c                Single Normal Equation Simulation
@@ -34,53 +68,34 @@ c		Code developped and written by Sebastien Strebelle.
 c
 c
 c----------------------------------------------------------------------
-
-
       MODULE parameter
       IMPLICIT NONE
       SAVE
-     
+      
       ! Declare constant variables
-
       ! Input/output units used
       INTEGER, PARAMETER :: lin=1, lout=2, lun=3, ldbg=4
-
       ! Program version
-      REAL, PARAMETER :: VERSION=4.000
-
-      ! Maximum number of categories (classes of values)
-      INTEGER, PARAMETER :: MAXCUT=2
-
-      ! Maximum dimensions of the simulation grid
-      INTEGER, PARAMETER :: MAXX=300, MAXY=300, MAXZ=20
-
-      ! Maximum dimensions of the training image
-      INTEGER, PARAMETER :: MAXXTR=250, MAXYTR=250, MAXZTR=20
-      
-      ! Maximum dimensions of the data search neighborhood (odd numbers)
-      INTEGER, PARAMETER :: MAXCTX =71, MAXCTY=71, MAXCTZ=21
-
-      INTEGER, PARAMETER :: MAXXY=MAXX*MAXY, MAXXYTR=MAXXTR*MAXYTR
-      INTEGER, PARAMETER :: MAXXYZ=MAXXY*MAXZ
-      INTEGER, PARAMETER :: MAXXYZTR=MAXXYTR*MAXZTR
-      INTEGER, PARAMETER :: MAXCTXY=MAXCTX*MAXCTY
-      INTEGER, PARAMETER :: MAXCTXYZ=MAXCTXY*MAXCTZ
-
+      REAL, PARAMETER :: VERSION=10.000
+      ! Maximum number of simulation grid nodes
+      INTEGER, PARAMETER :: MAXXYZ = 70000
+c Ch30 new begin: add global variables
+      ! Maximum number of search trees for rotation factors
+      INTEGER, PARAMETER :: MAXTREEANG=5
+      ! Maximum number of search trees for affinity factors
+      INTEGER, PARAMETER :: MAXTREEAFF=3
+      ! Angle tolerance for using one category of angles
+      REAL, PARAMETER :: ANGTOL=10
+c Ch30 new end
       ! Maximum number of original sample data
-      INTEGER, PARAMETER :: MAXDAT=100000
-
-      ! Maximum number of conditioning nodes
-      INTEGER, PARAMETER :: MAXNOD=100
-
-      ! Maximum number of multiple grids
-      INTEGER, PARAMETER :: MAXMULT=5
-
-      ! Minimum correction factor in the servosystem (if used)
-      REAL, PARAMETER :: MINCOR=1.0
-
+      INTEGER, PARAMETER :: MAXDAT=1000
       REAL, PARAMETER :: EPSILON=1.0e-20, DEG2RAD=3.141592654/180.0
       INTEGER, PARAMETER :: UNEST=-99
       
+c Ch63 new begin
+      ! Maximum dimensions of the training image
+      INTEGER, PARAMETER :: MAXXTR=250, MAXYTR=250, MAXZTR=1
+c Ch64 new end
       
       ! Variable declarations
       
@@ -97,104 +112,157 @@ c----------------------------------------------------------------------
       INTEGER :: ncut
       
       ! Category thresholds
-      INTEGER, DIMENSION(MAXCUT) :: thres
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: thres
       
       ! Target global pdf and target vertical proportion curve
-      REAL, DIMENSION(MAXCUT) :: pdf
-      REAL, DIMENSION(MAXZ,MAXCUT) :: vertpdf 
+      REAL, ALLOCATABLE, DIMENSION(:) :: pdf
+      REAL, ALLOCATABLE, DIMENSION(:,:) :: vertpdf 
       
       ! Use target vertical proportion curve (0=no, 1=yes)
       INTEGER :: ivertprop
       
       ! Number of nodes simulated in each category for the full grid
       ! and for each horizontal layer    
-      INTEGER, DIMENSION(MAXCUT) :: nodcut
-      INTEGER, DIMENSION(MAXZ,MAXCUT) :: vertnodcut
-
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: nodcut
+      INTEGER, ALLOCATABLE, DIMENSION(:,:) :: vertnodcut
       ! Dimension specifications of the simulation grid
       INTEGER :: nx, ny, nz, nxy, nxyz
       REAL :: xmn, xsiz, ymn, ysiz, zmn, zsiz
-      
-      ! Training images
-      INTEGER, DIMENSION (MAXXTR,MAXYTR,MAXZTR,MAXMULT) :: trainim
-      
+
+      ! Training image
+c Ch58 add one dimension to consider imult
+      INTEGER, ALLOCATABLE, DIMENSION (:,:,:,:) :: trainim
+
+c Ch63 new begin: changed to array with dimension (nmult)      
       ! Dimensions of the training images
-      INTEGER, DIMENSION (MAXMULT) :: nxtr, nytr, nztr, nxytr, nxyztr
+      INTEGER, ALLOCATABLE, DIMENSION (:) :: nxtr, nytr, nztr, 
+     +                                      nxytr, nxyztr
+c Ch63 new end
       
       ! Integer debugging level (0=none,1=normal,3=serious)
       INTEGER :: idbg
       
-      ! Use servosystem (0=no,1=yes)            
-      INTEGER :: iservo
-         
-      ! Servosystem correction
-      REAL, DIMENSION (MAXMULT) :: servocor
+      ! Servosystem correction parameter
+      REAL :: servocor
       
       ! Number of realizations to generate
       INTEGER :: nsim
       
       ! Realization and number of conditioning data retained
-      INTEGER, DIMENSION (MAXX,MAXY,MAXZ) :: simim, numcd
-      
-      ! Parameters defining the search ellipse
-      REAL, DIMENSION (MAXMULT) :: radius, radius1, radius2
-      REAL, DIMENSION (MAXMULT) :: sanis1, sanis2
-      REAL, DIMENSION (MAXMULT) :: sang1, sang2, sang3
+      INTEGER, ALLOCATABLE, DIMENSION (:,:,:) :: simim, numcd
+
+c Ch62 new begin: changed to array with dimension (nmult)      
+      ! Parameters defining the search ellipsoid
+      REAL, ALLOCATABLE, DIMENSION (:) :: radius, radius1, radius2
+      REAL, ALLOCATABLE, DIMENSION (:) :: sanis1, sanis2
+      REAL, ALLOCATABLE, DIMENSION (:) :: sang1, sang2, sang3
+c Ch62 new end
       REAL, DIMENSION (3,3) :: rotmat
       
-      ! Number of grid node locations in data search 
-      ! neighborhood (no search tree)
-      INTEGER :: nlsearch
+      ! Maximum number of conditioning data retained,
+      ! which is also the number of template nodes corresponding
+      ! to previously simulated grids
+      INTEGER :: prevnodmax
+      ! Number of template nodes corresponding to current grid
+      INTEGER :: curnodmax      
       
-      ! Relative grid node coordinates in data search 
-      ! neighborhood 
-      INTEGER, DIMENSION (MAXCTXYZ) :: ixnode,iynode,iznode
+      ! Total number of grids
+      INTEGER :: nmult
       
-      ! Number of conditioning data
-      INTEGER :: nodmax
-      
-      ! Number of conditioning data per octant
-      INTEGER :: noct
-      
-      ! Minimum number of replicates for training cpdf to be retained
-      INTEGER :: cmin
-      
-      ! Total number of multiple grids, number of multiple grids
-      ! simulated using a search tree
-      INTEGER :: nmult, streemult
-      
-      ! Current multiple grid number
+      ! Spacing between nodes of current grid
       INTEGER :: ncoarse
       
-      ! Dimensions of the current multiple grid
+      ! Dimensions of current grid
       INTEGER :: nxcoarse, nycoarse, nzcoarse
       INTEGER :: nxycoarse, nxyzcoarse
       
-      ! Number of nodes in the data template (with search tree)
+      ! Number of nodes in the data template
       INTEGER :: nltemplate
       
-      ! Relative node coordinates in the data template (with search tree)
-      INTEGER, DIMENSION (MAXNOD) :: ixtemplate,iytemplate,iztemplate
+      ! Relative coordinates of data template nodes
+      INTEGER, ALLOCATABLE, DIMENSION (:) :: ixtemplate,iytemplate
+      INTEGER, ALLOCATABLE, DIMENSION (:) :: iztemplate
       
       ! Number of times a conditioning data was located at each 
       ! template data location and number of times this data was dropped.
-      INTEGER, DIMENSION (MAXNOD) :: nlcd, nldropped
+      INTEGER, ALLOCATABLE, DIMENSION (:) :: nlcd, nldropped
       
-      ! Number of nodes simulated in the current multiple grid
+      ! Number of nodes simulated in the current grid
       INTEGER :: nodsim
       
-      ! Relative coordinates and values of conditioning data
-      INTEGER, DIMENSION (MAXNOD) :: cnodex,cnodey,cnodez,cnodev
+      ! Conditioning data values at data template nodes
+      INTEGER, ALLOCATABLE, DIMENSION (:) :: cnodev
       
       ! Number of conditioning data retained
       INTEGER :: ncnode
       
-      ! Index of the nodes successively visited in the current multiple grid
+      ! Index of the nodes successively visited in the current grid (random path)
       INTEGER, DIMENSION(MAXXYZ) :: order
+      ! Index of the multiple-grid offsets
+      LOGICAL, DIMENSION(8) :: multgridoffset, prevgridoffset
 
-      ! random number seed for gfortran
-      integer :: seed_size
-      
+c Ch73 old begin: remove codes.
+c Ch1 new begin      
+
+c      ! Use local proportions (0=no, 1=yes)
+c      INTEGER :: ilocalprop
+c      ! Local proportions
+c      REAL, ALLOCATABLE, DIMENSION(:,:,:,:) :: localprop
+
+c Ch1 new end      
+c Ch11 new begin
+
+c      ! Window size for local proportin
+c      INTEGER :: nwx, nwy, nwz
+
+c Ch11 new end
+c Ch73 old end
+
+c Ch6 new begin      
+      ! Use rotation and affinity (0=no, 1=yes)
+      INTEGER :: irotate
+      ! Rotate and affinity data
+      REAL, ALLOCATABLE, DIMENSION(:,:,:) :: rotangle
+      ! categories for affinity factors
+      INTEGER, ALLOCATABLE, DIMENSION(:,:,:) :: affclass      
+c Ch6 new end
+
+c Ch31 new begin
+      ! number of angle categories
+      INTEGER :: nangcat
+      ! angles for angle categories
+      REAL, DIMENSION(MAXTREEANG) :: angcat
+      ! number of affinity categories
+      INTEGER :: naffcat 
+      ! affinity factors for affinity categories
+      REAL, DIMENSION(MAXTREEAFF,3) :: affcat
+c Ch31 new end
+
+c Ch80 old begin: remove codes
+c Ch13 new begin
+c      ! Number of nodes simulated in each category in a local window
+c      INTEGER, ALLOCATABLE, DIMENSION(:) :: localnodcut
+c Ch13 new end
+c Ch80 old end
+
+c Ch38 new begin
+      ! Use soft data and auto set of tau values (0=no, 1=yes)
+      INTEGER :: isoft, iauto
+      ! Used weight for combining soft information
+      REAL :: tau1, tau2
+      ! Probability for soft data
+      REAL, ALLOCATABLE, DIMENSION (:,:,:,:) :: softprob 
+c Ch38 new end
+
+c Ch67 new begin
+      ! Training image proportions
+      REAL, ALLOCATABLE, DIMENSION (:,:) :: trpdf
+c Ch67 new end
+
+c Ch70 new begin
+      ! Minimum number of replicates for training cpdf to be retained
+      INTEGER :: cmin
+c Ch70 new end
       CONTAINS
       
  
@@ -214,25 +282,30 @@ c-----------------------------------------------------------------------
       
       ! Declare local variables
       REAL, DIMENSION(10) :: var
-      INTEGER,allocatable, DIMENSION(:) :: seed
-      CHARACTER (LEN=30) :: datafl, outfl, dbgfl, templatefl
+      INTEGER, DIMENSION(2) :: seed
+      CHARACTER (LEN=30) :: datafl, outfl, dbgfl
       CHARACTER (LEN=30) :: vertpropfl
-      CHARACTER (LEN=30), DIMENSION(MAXMULT) :: trainfl
+c Ch60 change trainfl->trainfl(nmult)
+      CHARACTER (LEN=30), ALLOCATABLE, DIMENSION(:) :: trainfl
+      CHARACTER (LEN=30) :: rotanglefl,softfl
       CHARACTER (LEN=40) ::  str
       LOGICAL :: testfl
       INTEGER :: nvari, i, j, k, ioerror
-      INTEGER :: icut, ntr, ix, iy, iz, ic, imult
+      INTEGER :: icut, ntr, ix, iy, iz, ic, imult, kmult
+      INTEGER :: npr, nrot, nsf
       INTEGER :: ixl, iyl, izl, ivrl
-      INTEGER, DIMENSION (MAXMULT) :: ivrltr
-      REAL :: servo      
+      INTEGER, ALLOCATABLE, DIMENSION(:) :: ivrltr
       INTEGER :: ixv
-      REAL, DIMENSION(MAXCUT) :: sampdf, trpdf
+      REAL, ALLOCATABLE, DIMENSION(:) :: sampdf
+! Ch32 new begin
+      REAL :: angmax, angmin
+! Ch32 new end
 
 !
 ! Note VERSION number:
 !
       WRITE(*,9999) VERSION
- 9999 format(/' SNESIM Version: ',f5.3/)
+ 9999 format(/' SNESIM Version: ',f8.3/)
 !
 ! Get the name of the parameter file - try the default name if no input:
 !
@@ -263,29 +336,29 @@ c-----------------------------------------------------------------------
       READ(lin,'(a30)',err=98) datafl
       CALL chknam(datafl,30)
       WRITE(*,*) ' data file = ',datafl
-
       READ(lin,*,err=98) ixl,iyl,izl,ivrl
       WRITE(*,*) ' input columns = ',ixl,iyl,izl,ivrl
-
       READ(lin,*,err=98) ncut
       WRITE(*,*) ' number of categories = ',ncut
-      IF(ncut>MAXCUT) THEN
-         WRITE(*,*) 'ERROR: maximum number of categories: ',MAXCUT
-         WRITE(*,*) '       you have asked for : ',ncut
-      END IF
-
+      ALLOCATE(thres(ncut))
       READ(lin,*,err=98) (thres(icut), icut=1,ncut)
       WRITE(*,*) ' categories = ', (thres(icut), icut=1,ncut)
-
+      ALLOCATE(pdf(ncut))
       READ(lin,*,err=98) (pdf(icut), icut=1,ncut)
       WRITE(*,*) ' target pdf = ', (pdf(icut), icut=1,ncut)
+      ALLOCATE(nodcut(ncut))
+
+c Ch 81 old begin: remove codes
+c Ch14 new begin
+c      ALLOCATE(localnodcut(ncut))
+c Ch14 new end
+c Ch 81 old end
 
       READ(lin,*,err=98) ivertprop
       WRITE(*,*) ' use target vertical proportions = ',ivertprop
       IF(ivertprop>1) THEN
          STOP 'ERROR: ivertprop must be 0 or 1'
       END IF
-
       READ(lin,'(a30)',err=98) vertpropfl
       CALL chknam(vertpropfl,30)
       WRITE(*,*) ' vertical proportions file = ',vertpropfl
@@ -295,46 +368,32 @@ c-----------------------------------------------------------------------
          WRITE(*,*) 'not exist, check for the file and try again  '
          STOP
       END IF
-
-      READ(lin,*,err=98) iservo,servo
-      WRITE(*,*) ' servosystem correction = ',iservo,servo
-      IF(iservo/=0.AND.iservo/=1) THEN
-         STOP 'ERROR: iservo must be 0 or 1'
+      ALLOCATE(vertpdf(nz,ncut),vertnodcut(nz,ncut))
+      READ(lin,*,err=98) servocor
+      WRITE(*,*) ' servosystem correction = ',servocor
+      IF(servocor>=1.OR.servocor<0) THEN  
+         STOP 'ERROR: correction factor must be >=0, <1 !'
       END IF
-      IF(iservo==1.AND.servo<0) THEN  
-         STOP 'ERROR: correction factor must be positive !'
-      END IF
-      IF(iservo==1.AND.servo>1) THEN
-         STOP 'ERROR: correction factor must be less than 1.0 !'
-      END IF
-
+      servocor=servocor/(1-servocor)
+      WRITE(*,*) ' servosystem correction = ',servocor
       READ(lin,*,err=98) idbg
       WRITE(*,*) ' debugging level = ',idbg
-
       READ(lin,'(a30)',err=98) dbgfl
       CALL chknam(dbgfl,30)
       WRITE(*,*) ' debugging file = ',dbgfl
-
       READ(lin,'(a30)',err=98) outfl
       WRITE(*,*) ' output file = ',outfl
-
       READ(lin,*,err=98) nsim
       WRITE(*,*) ' number of realizations = ',nsim
-
       READ(lin,*,err=98) nx,xmn,xsiz
       WRITE(*,*) ' X grid specification = ',nx,xmn,xsiz
-
       READ(lin,*,err=98) ny,ymn,ysiz
       WRITE(*,*) ' Y grid specification = ',ny,ymn,ysiz
-
-       READ(lin,*,err=98) nz,zmn,zsiz
+      READ(lin,*,err=98) nz,zmn,zsiz
       WRITE(*,*) ' Z grid specification = ',nz,zmn,zsiz
-
-      IF(nx>MAXX.or.ny>MAXY.or.nz>MAXZ) THEN
-         WRITE(*,*) 'ERROR: available grid size: ',MAXX,MAXY,MAXZ
-         WRITE(*,*) '       you have asked for : ',nx,ny,nz
-         STOP
-      END IF
+      nx=max(1,nx)
+      ny=max(1,ny)
+      nz=max(1,nz)
       nxy  = nx*ny
       nxyz=nxy*nz
       
@@ -342,111 +401,200 @@ c-----------------------------------------------------------------------
       WRITE(*,*) ' random number seed = ',ixv
       
       ! Initialize the random seed of the simulation:
-      CALL random_seed(size = seed_size)
-      allocate(seed(1:seed_size))
       seed(1)=ixv
       seed(2)=ixv+1
-      CALL random_seed(PUT=seed)
+      CALL random_seed(PUT=seed(1:2))
       
-      READ(lin,'(a30)',err=98) templatefl
-      CALL chknam(templatefl,30)
-      WRITE(*,*) ' data template file = ',templatefl
-
-      READ(lin,*,err=98) nodmax
-      WRITE(*,*) ' maximum conditioning data = ',nodmax
-      IF(nodmax.gt.MAXNOD) THEN
-         WRITE(*,*) 'ERROR: maximum available cond. data: ',MAXNOD
-         WRITE(*,*) '       you have asked for :  ',nodmax
-         STOP
-      END IF
-
-      READ(lin,*,err=98) noct
-      WRITE(*,*) ' maximum conditioning data per octant= ',noct
-
+      READ(lin,*,err=98) prevnodmax
+      WRITE(*,*) ' maximum conditioning data = ',prevnodmax
+      prevnodmax=max(1,prevnodmax)
+      
+      ! curnodmax is set to 4, which is reasonable, but quite arbitrary.
+      curnodmax=4
+      nltemplate=prevnodmax+curnodmax
+      ALLOCATE(ixtemplate(nltemplate),iytemplate(nltemplate))
+      ALLOCATE(iztemplate(nltemplate))
+      ALLOCATE(nlcd(nltemplate),nldropped(nltemplate))
+      ALLOCATE(cnodev(nltemplate))
+c Ch71 new begin
       READ(lin,*,err=98) cmin
       WRITE(*,*) ' min. number of replicates = ',cmin
+      IF(cmin<=0) THEN
+         WRITE(*,*) 'cmin is not positive, reset to 1'
+         cmin = 1
+      END IF
+c Ch72 new end
 
-      READ(lin,*,err=98) nmult, streemult
-      WRITE(*,*) ' multiple grid simulation = ',nmult,streemult
-      IF(nmult>MAXMULT) THEN
-         WRITE(*,*) 'ERROR: maximum number of mult. grids: ',MAXMULT
-         WRITE(*,*) '       you have asked for :  ',nmult
-         STOP
+
+c Ch74 old begin: remove codes.
+c Ch2 new begin
+
+c      READ(lin,*,err=98) ilocalprop, nwx, nwy, nwz
+c      IF(ilocalprop>1) THEN
+c        STOP 'ERROR: ilocalprop must be 0 or 1'
+c      END IF
+c      WRITE(*,*) ' use local proportions = ',ilocalprop
+c      READ(lin,'(a30)',err=98) localpropfl
+c      CALL chknam(localpropfl,30)
+
+c Ch2 new end
+c Ch74 old end
+
+c Ch39 new begin
+
+      READ(lin,*,err=98) isoft, iauto
+      IF(isoft>1) THEN
+        STOP 'ERROR: isoft must be 0 or 1'
+      END IF
+
+
+      IF(iauto>1) THEN
+        STOP 'ERROR: iauto must be 0 or 1'
+      END IF
+
+      WRITE(*,*) ' use soft data and auto set of tau= ',isoft, iauto
+
+      READ(lin,*,err=98) tau1, tau2
+      IF(tau1<0.or.tau1>1.or.tau2<0.or.tau2>1) THEN
+        STOP 'ERROR: all tau values must be in [0, 1]'
+      END IF
+
+      IF(iauto==0) THEN
+         WRITE(*,*) 'tau values: ', tau1, tau2
+      ELSE
+         WRITE(*,*) 'automatically combine P(A|B) and P(A|C)'
+      END IF
+
+      READ(lin,'(a30)',err=98) softfl
+      CALL chknam(softfl,30)
+      IF(isoft>0) THEN
+         WRITE(*,*) 'Probability data file =', softfl
+      END IF
+
+c Ch39 new end
+
+      
+      
+c Ch7 new begin
+        
+      READ(lin,*,err=98) irotate
+      IF(irotate>1) THEN
+        STOP 'ERROR: irotate must be 0 or 1'
+      END IF
+      WRITE(*,*) ' use rotation and affinity = ',irotate
+      READ(lin,'(a30)',err=98) rotanglefl
+      CALL chknam(rotanglefl,30)
+      IF(irotate>0) THEN
+         WRITE(*,*) 'Rotation and affinity file =', rotanglefl
       END IF
       
-      IF(streemult>nmult) THEN
-       WRITE(*,*) 'ERROR: the number of grids using the search tree'
-       WRITE(*,*) 'must be less than the total number of mult. grids.'
-       STOP
+      READ(lin,*,err=98) naffcat
+      WRITE(*,*) ' number of affinty categories = ', naffcat 
+      IF(naffcat<=0.OR.naffcat>MAXTREEAFF) THEN
+        WRITE(*,*) 'ERROR: naffcat must be >=1'
+        WRITE(*,*) ' and <=MAXTREEAFF:',MAXTREEAFF
+        STOP
       END IF
+        
+      DO i=1,naffcat
+         READ(lin,*,err=98) (affcat(i,j),j=1,3)
+         WRITE(*,*) ' affinity factors ax,ay,az = ', (affcat(i,j),j=1,3)
+      END DO
+c Ch7 new end
 
+c Ch61 new begin: add do loop and change trainfl->trainfl(nmult)
+      READ(lin,*,err=98) nmult
+      WRITE(*,*) 'multiple grid simulation=', nmult
 
-! Now read the information related to each multiple grid. 
-! If only one training image is provided in the parameter file,
-! this single image will be used for all multiple grids.
+      ALLOCATE(trainfl(nmult))
+      ALLOCATE(ivrltr(nmult))
+
+      ALLOCATE(nxtr(nmult))
+      ALLOCATE(nytr(nmult))
+      ALLOCATE(nztr(nmult))
+      ALLOCATE(nxytr(nmult))
+      ALLOCATE(nxyztr(nmult))
+
+      ALLOCATE(radius(nmult))
+      ALLOCATE(radius1(nmult))
+      ALLOCATE(radius2(nmult))
+      ALLOCATE(sanis1(nmult))
+      ALLOCATE(sanis2(nmult))
+      ALLOCATE(sang1(nmult))
+      ALLOCATE(sang2(nmult))
+      ALLOCATE(sang3(nmult))
       
       DO imult=nmult,1,-1
-        WRITE(*,*) 'Multiple grid ', imult
-        READ(lin,'(a30)',IOSTAT=ioerror) trainfl(imult)
-        IF(ioerror<0.AND.imult==nmult) THEN
-          STOP 'ERROR in parameter file!'
-        ELSE IF(ioerror<0) THEN
-          trainfl(imult)=trainfl(nmult)
-          WRITE(*,*) ' training image file = ',trainfl(imult)
-          nxtr(imult)=nxtr(nmult)
-          nytr(imult)=nytr(nmult)
-          nztr(imult)=nztr(nmult)
-          WRITE(*,*) ' training grid dimensions = ',
-     + 	                 nxtr(imult),nytr(imult),nztr(imult)
-          ivrltr(imult)=ivrltr(nmult)
-          WRITE(*,*) ' column for variable = ',ivrltr(imult)
-          radius(imult)=radius(nmult)
-          radius1(imult)=radius1(nmult)
-          radius2(imult)=radius2(nmult)
-          WRITE(*,*) ' data search neighborhood radii = ',radius(imult),
-     +                 radius1(imult),radius2(imult)
-          sang1(imult)=sang1(nmult)
-          sang2(imult)=sang2(nmult)
-          sang3(imult)=sang3(nmult)
-          WRITE(*,*) ' search anisotropy angles = ',sang1(imult),
+         WRITE(*,*) 'Multiple grid ', imult
+         kmult=imult   
+         READ(lin,'(a30)',IOSTAT=ioerror) trainfl(imult)
+         IF(ioerror<0.AND.imult==nmult) THEN
+            STOP 'no training image exists!'
+         ELSE IF(ioerror<0) THEN            
+            trainfl(imult)=trainfl(kmult+1)
+            WRITE(*,*) ' training image file = ',trainfl(imult)
+            nxtr(imult)=nxtr(kmult+1)
+            nytr(imult)=nytr(kmult+1)
+            nztr(imult)=nztr(kmult+1)
+            WRITE(*,*) ' training grid dimensions = ',
+     +                   nxtr(imult),nytr(imult),nztr(imult) 
+            ivrltr(imult)=ivrltr(kmult+1)  
+            WRITE(*,*) ' column for variable = ',ivrltr(imult)
+            radius(imult)=radius(kmult+1)
+            radius1(imult)=radius1(kmult+1)
+            radius2(imult)=radius2(kmult+1)
+            WRITE(*,*) ' data search neighborhood radii = ',
+     +                 radius(imult),radius1(imult),radius2(imult)
+            sang1(imult)=sang1(kmult+1)
+            sang2(imult)=sang2(kmult+1)
+            sang3(imult)=sang3(kmult+1)
+            WRITE(*,*) ' search anisotropy angles = ',sang1(imult),
      +                 sang2(imult),sang3(imult)
-        ELSE
-          CALL chknam(trainfl(imult),30)
-          WRITE(*,*) ' training image file = ',trainfl(imult)
 
-          READ(lin,*,err=98) nxtr(imult), nytr(imult), nztr(imult)
-          WRITE(*,*) ' training grid dimensions = ',
-     + 	           nxtr(imult),nytr(imult),nztr(imult)
-
-          READ(lin,*,err=98) ivrltr(imult)
-          WRITE(*,*) ' column for variable = ',ivrltr(imult)
+   
+         ELSE 
+            CALL chknam(trainfl(imult),30)
+            WRITE(*,*) ' training image file = ',trainfl(imult)
+            READ(lin,*,err=98) nxtr(imult),nytr(imult),nztr(imult)
+            WRITE(*,*) ' training grid dimensions = ',
+     +        nxtr(imult),nytr(imult),nztr(imult)
+         
+            READ(lin,*,err=98) ivrltr(imult)
+            WRITE(*,*) ' column for variable = ',ivrltr(imult)
       
-          READ(lin,*,err=98) radius(imult),radius1(imult),radius2(imult)
-          WRITE(*,*) ' data search neighborhood radii = ',radius(imult),
-     +                 radius1(imult),radius2(imult)
-
-          READ(lin,*,err=98) sang1(imult),sang2(imult),sang3(imult)
-          WRITE(*,*) ' search anisotropy angles = ',sang1(imult),
+            READ(lin,*,err=98) radius(imult),radius1(imult),
+     +                         radius2(imult)
+            WRITE(*,*) ' data search neighborhood radii = ',
+     +               radius(imult),radius1(imult),radius2(imult)
+         
+            READ(lin,*,err=98) sang1(imult),sang2(imult),sang3(imult)
+            WRITE(*,*) ' search anisotropy angles = ',sang1(imult),
      +                 sang2(imult),sang3(imult)
-        END IF
-      
-        IF(nxtr(imult)>MAXXTR.or.nytr(imult)>MAXYTR) THEN
-          WRITE(*,*) 'ERROR: available train. grid size: ',
-     +              MAXXTR,MAXYTR, MAXZTR
-          WRITE(*,*) '       you have asked for : ',
-     +              nxtr(imult),nytr(imult),nztr(imult)
-          STOP
-        END IF
-        nxytr(imult) = nxtr(imult)*nytr(imult)
-        nxyztr(imult)=nxytr(imult)*nztr(imult)
+         END IF
 
-        IF(radius(imult)<EPSILON.OR.radius1(imult)<EPSILON.
-     +                         OR.radius2(imult)<EPSILON) 
-     +     STOP 'radius must be greater than zero'
-        sanis1(imult)=radius1(imult)/radius(imult)
-        sanis2(imult)=radius2(imult)/radius(imult)
-     
+
+         IF(nxtr(imult)>MAXXTR.or.nytr(imult)>MAXYTR.or.
+     +                               nztr(imult)>MAXZTR) THEN
+            WRITE(*,*) 'ERROR: available train. grid size: ',
+     +               MAXXTR,MAXYTR, MAXZTR
+            WRITE(*,*) '       you have asked for : ',
+     +               nxtr(imult),nytr(imult),nztr(imult)
+            STOP
+         END IF
+
+         nxtr(imult)=max(1,nxtr(imult))
+         nytr(imult)=max(1,nytr(imult))
+         nztr(imult)=max(1,nztr(imult))
+         nxytr(imult)= nxtr(imult)*nytr(imult) 
+         nxyztr(imult)=nxytr(imult)*nztr(imult)
+       
+         IF(radius(imult)<EPSILON.OR.radius1(imult)<EPSILON.
+     +          OR.radius2(imult)<EPSILON) 
+     +        STOP 'radius must be greater than zero'
+         sanis1(imult)=radius1(imult)/radius(imult)
+         sanis2(imult)=radius2(imult)/radius(imult)
       END DO
+c Ch61 new end
 
 !
 ! Now, read the data if the file exists:
@@ -507,14 +655,15 @@ c-----------------------------------------------------------------------
 !
       WRITE(*,*) ' Number of acceptable data = ', nd
       IF(nd>0) THEN
+         ALLOCATE(sampdf(ncut))
          sampdf(1:ncut)=real(nodcut(1:ncut))/real(nd)
          DO icut=1,ncut
             WRITE(*,111) icut, sampdf(icut)
 111         format(/,' Sample proportion of category ',
      +                      i4,' : ',f6.4) 
          END DO
+         DEALLOCATE(sampdf)
       END IF
-
 !
 ! Now, read the target vertical proportions if used:
 !
@@ -548,98 +697,212 @@ c-----------------------------------------------------------------------
          END DO
          CLOSE(lin)
       END IF
+!
+! Now, read the training image if the file exists:
+!
+c Ch59 new begin: add one dimension for trainim to consider imult
+      ALLOCATE(trainim(MAXXTR,MAXYTR,MAXZTR,nmult))
+      ALLOCATE(trpdf(ncut,nmult))
+      trpdf(1:ncut,1:nmult)=0.0
 
-!
-! Now, read the training images if the files exist:
-!
       DO imult=nmult,1,-1
-        INQUIRE(file=trainfl(imult),exist=testfl)
-        IF(.NOT.testfl) THEN
-          STOP 'Error in training image file'
-        ELSE   
-          WRITE(*,*) 'Reading training image ',imult
-          OPEN(lin,file=trainfl(imult),status='OLD')
-          READ(lin,*,err=97)
-          READ(lin,*,err=97) nvari
-          DO i=1,nvari
-            READ(lin,*,err=97)
-          END DO
-          IF(ivrltr(imult)>nvari) THEN
-            WRITE(*,*) 'ERROR: you have asked for a column number'
-            WRITE(*,*) '       greater than available in file'
-            STOP
-          END IF
+         INQUIRE(file=trainfl(imult),exist=testfl)
+         IF(.NOT.testfl) THEN
+             STOP 'Training image file does not exist!'
+         ELSE   
+             OPEN(lin,file=trainfl(imult),status='OLD')
+             READ(lin,*,err=97)
+             READ(lin,*,err=97) nvari
+             DO i=1,nvari
+                READ(lin,*,err=97)
+             END DO
+             IF(ivrltr(imult)>nvari) THEN
+                 WRITE(*,*) 'ERROR: you have asked for a column number'
+                 WRITE(*,*) '       greater than available in file'
+                 STOP
+             END IF
 !
 ! Read all the data until the end of the training file:
 ! ntr: number of data read in the training file.
 !
-          ntr=0
-          trpdf(1:ncut)=0.0
+             ntr=0
+             DO
+             READ(lin,*, IOSTAT=ioerror) (var(j),j=1,nvari)
+             IF(ioerror<0) EXIT
+             ntr=ntr+1
+             IF(ntr>nxyztr(imult)) STOP ' ERROR exceeded nxyztr - 
+     +                                    check inc file'
+             iz=1+(ntr-1)/nxytr(imult)
+             iy=1+(ntr-(iz-1)*nxytr(imult)-1)/nxtr(imult)
+             ix=ntr-(iz-1)*nxytr(imult)-(iy-1)*nxtr(imult)
+             DO icut=1,ncut
+                IF(nint(var(ivrltr(imult)))==thres(icut)) THEN
+                   trainim(ix,iy,iz,imult)=icut
+                   trpdf(icut,imult) = trpdf(icut,imult) + 1
+                   EXIT
+                END IF
+             END DO
+          END DO
+          CLOSE(lin)
+        END IF
+        trpdf(1:ncut,imult)=trpdf(1:ncut,imult)/nxyztr(imult)
+      END DO
+c Ch59 new end
+
+c Ch75 old begin: remove codes.
+c Ch3 new begin      
+!
+! Now, read the local proportion file, if it exists
+! 
+c      IF(ilocalprop==1) THEN
+c       INQUIRE(file=localpropfl,exist=testfl)
+c       IF(.NOT.testfl) THEN
+c          WRITE(*,*)  'ERROR: local proportions file:', localpropfl
+c          WRITE(*,*)   'dose not exist, check it and try again'
+c          STOP
+c       ELSE   
+c          ALLOCATE(localprop(ncut,nx,ny,nz))
+c          OPEN(lin,file=localpropfl,status='OLD')
+c          READ(lin,*,err=97)
+c          READ(lin,*,err=97) nvari
+c          DO i=1,nvari
+c             READ(lin,*,err=97)
+c          END DO
+      
+!
+! Read all the data until the end of the local proportions file:
+! npr: number of data read in the local proportions file.
+!
+c          npr=0
+c          DO
+c             READ(lin,*, IOSTAT=ioerror) (var(j),j=1,nvari)
+c             IF(ioerror<0) EXIT
+c             npr=npr+1
+c             IF(npr>nxyz) STOP ' ERROR exceeded nxyz - 
+c     +                                  check inc file'
+c             iz=1+(npr-1)/nxy
+c             iy=1+(npr-(iz-1)*nxy-1)/nx
+c             ix=npr-(iz-1)*nxy-(iy-1)*nx
+c	     localprop(1:ncut,ix,iy,iz) = var(1:ncut)
+c          END DO
+c          CLOSE(lin)
+c       END IF
+c      END IF
+c Ch3 new end
+c Ch75 old end
+
+
+c Ch40 new begin
+!
+! Now, read the soft probability file, if it exists
+!
+      IF(isoft==1) THEN
+       INQUIRE(file=softfl,exist=testfl)
+       IF(.NOT.testfl) THEN
+          WRITE(*,*)  'ERROR: softprobability file:', softfl
+          WRITE(*,*)   'dose not exist, check it and try again'
+          STOP
+       ELSE
+          ALLOCATE(softprob(ncut,nx,ny,nz))
+          OPEN(lin,file=softfl,status='OLD')
+          READ(lin,*,err=97)
+          READ(lin,*,err=97) nvari
+          DO i=1,nvari
+             READ(lin,*,err=97)
+          END DO
+          nsf=0
           DO
-            READ(lin,*, IOSTAT=ioerror) (var(j),j=1,nvari)
-            IF(ioerror<0) EXIT
-            ntr=ntr+1
-          IF(ntr>nxyztr(imult)) STOP ' ERROR exceeded nxyztr - 
-     +                                 check inc file'
-            iz=1+(ntr-1)/nxytr(imult)
-            iy=1+(ntr-(iz-1)*nxytr(imult)-1)/nxtr(imult)
-            ix=ntr-(iz-1)*nxytr(imult)-(iy-1)*nxtr(imult)
-            DO icut=1,ncut
-              IF(nint(var(ivrltr(imult)))==thres(icut)) THEN
-                trainim(ix,iy,iz,imult)=icut
-                trpdf(icut)=trpdf(icut)+1
-                EXIT
-              END IF
-            END DO
+             READ(lin,*, IOSTAT=ioerror) (var(j),j=1,nvari)
+             IF(ioerror<0) EXIT
+             nsf=nsf+1
+             IF(nsf>nxyz) STOP ' ERROR exceeded nxyz -
+     +                                  check inc file'
+             iz=1+(nsf-1)/nxy
+             iy=1+(nsf-(iz-1)*nxy-1)/nx
+             ix=nsf-(iz-1)*nxy-(iy-1)*nx
+             softprob(1:ncut,ix,iy,iz) = var(1:ncut)
+          END DO
+          CLOSE(lin)
+       END IF
+      END IF
+c Ch40 new end
+
+
+!
+! Read all the data until the end of the local proportions file:
+! npr: number of data read in the local proportions file.
+!
+
+
+
+c Ch8 new begin 
+!
+! Now, read the rotation and affinity file, and categorize angles, 
+! if it exists
+! 
+       nangcat=1
+       angcat(1)=sang1(1)
+
+       IF(irotate==1) THEN
+       INQUIRE(file=rotanglefl,exist=testfl)
+       IF(.NOT.testfl) THEN
+          WRITE(*,*) 'Error: rotation and affinity file:', rotanglefl
+          WRITE(*,*) 'dose not exist, check it and try again'
+          STOP
+       ELSE
+          ALLOCATE(rotangle(nx,ny,nz))
+          ALLOCATE(affclass(nx,ny,nz))
+          OPEN(lin,file=rotanglefl,status='OLD')
+          READ(lin,*,err=97)
+          READ(lin,*,err=97) nvari
+          IF(nvari/=2) STOP ' ERROR the rotation file
+     +                        should contain 2 colums'             
+          DO i=1,nvari
+             READ(lin,*,err=97)
+          END DO
+
+! 
+! Read all the data until the end of the angle and affinity file:
+! nrot: number of data read in the local proportions file.
+!
+          nrot=0
+          angmax=-1.0e21
+          angmin=+1.0e21
+          DO
+             READ(lin,*, IOSTAT=ioerror) (var(j),j=1,nvari)
+             IF(ioerror<0) EXIT
+             nrot=nrot+1
+             IF(nrot>nxyz) STOP ' ERROR exceeded nxyz -
+     +                                  check inc file'
+             iz=1+(nrot-1)/nxy  
+             iy=1+(nrot-(iz-1)*nxy-1)/nx
+             ix=nrot-(iz-1)*nxy-(iy-1)*nx
+             rotangle(ix,iy,iz) = var(1)
+             affclass(ix,iy,iz) = nint(var(2))
+             IF(var(1)<angmin) angmin=var(1)
+             IF(var(1)>angmax) angmax=var(1)
           END DO
           CLOSE(lin)
         END IF
 !
-! Calculate the correction parameter of the servosystem:
+! Categorize angles
 !
-        trpdf=trpdf/nxyztr(imult)
-        IF(iservo==1) THEN
-          servocor(imult)=
-     +       max((maxval(100*abs(trpdf-pdf))/MINCOR)**servo, 1.5)
-          WRITE(*,*) 'Correction parameter = ',servocor(imult)
+        IF(abs(angmax-angmin)>ANGTOL) THEN
+           nangcat=MAXTREEANG
+           IF(MAXTREEANG>1) THEN
+             DO i=1,nangcat
+                angcat(i)=angmin+(i-1)*(angmax-angmin)
+     +                                 /real(MAXTREEANG-1)
+             END DO
+           END IF
         ELSE
-          servocor(imult)=0.0
+         nangcat=1
+         angcat(1)=(angmin+angmax)/2.0
         END IF
-      END DO
-      
-!
-! Now, read the file defining the data template if it exists:
-!
-      INQUIRE(file=templatefl,exist=testfl)
-      IF(.NOT.testfl) THEN
-         STOP 'Error in data template file'
-      ELSE   
-         WRITE(*,*) 'Reading data template file'
-         OPEN(lin,file=templatefl,status='OLD')
-         READ(lin,*,err=96)
-         READ(lin,*,err=96) nvari
-         DO i=1,nvari
-            READ(lin,*,err=96)
-         END DO
-         IF(nvari/=3) STOP 'ERROR: the number of columns should be 3'
-!
-! Read all the data locations until the end of the training file:
-! nltemplate: number of data locations in the template.
-!
-         nltemplate=0
-         DO
-            READ(lin,*, IOSTAT=ioerror) (var(j),j=1,nvari)
-            IF(ioerror<0) EXIT
-            nltemplate=nltemplate+1
-            IF(nltemplate>MAXNOD) THEN
-             STOP 'ERROR exceeded MAXNOD - check source code'
-            END IF
-            ixtemplate(nltemplate)=nint(var(1))
-            iytemplate(nltemplate)=nint(var(2))
-            iztemplate(nltemplate)=nint(var(3))
-         END DO
-         CLOSE(lin)
-      END IF
+      END IF 
+c Ch8 new end
+
+
 
 !
 ! Open the output file:
@@ -659,17 +922,14 @@ c-----------------------------------------------------------------------
       END IF
  
       RETURN
-
 !
 ! Error in an Input File Somewhere:
 !
  92   STOP 'ERROR in vertical proportions file!'
- 96   STOP 'ERROR in data template file!'
  97   STOP 'ERROR in training image file!'
  98   STOP 'ERROR in parameter file!'
  99   STOP 'ERROR in data file!'
       END SUBROUTINE ReadParm
-
   
       	
       SUBROUTINE MakePar
@@ -686,7 +946,6 @@ c-----------------------------------------------------------------------
  10   format('                  Parameters for SNESIM',/,
      +       '                  ********************',/,/,
      +       'START OF PARAMETERS:')
-
       WRITE(lun,11)
  11   format('data.dat                      ',
      +       '- file with original data')
@@ -709,8 +968,8 @@ c-----------------------------------------------------------------------
  17   format('vertprop.dat                  ',
      +       '- file with target vertical proportions')
       WRITE(lun,18)
- 18   format('1    0.5                      ',
-     +       '- target pdf repro. (0=no, 1=yes), parameter') 
+ 18   format('0.5                           ',
+     +       '- servosystem parameter (0=no correction)') 
       WRITE(lun,33)
  33   format('0                             ',
      +       '- debugging level: 0,1,2,3')
@@ -735,21 +994,62 @@ c-----------------------------------------------------------------------
       WRITE(lun,50)
  50   format('69069                         ',
      +       '- random number seed')
-      WRITE(lun,53)
- 53   format('template.dat                  ',
-     +       '- file for primary data template')
       WRITE(lun,55)
  55   format('16                            ',
      +       '- max number of conditioning primary data')
+
       WRITE(lun,56)
- 56   format('0                             ',
-     +       '- max number of data per octant (0=not used)')
-      WRITE(lun,57)
- 57   format('20                            ',
-     +       '- min number of data events')
-      WRITE(lun,58)
- 58   format('2     1                       ',
-     +       '- number of mult-grids, number with search trees')
+ 56   format('10                            ', 
+     +       '- min. replicates number')
+c Ch76 old begin: remove codes.
+c Ch5 new begin
+c      WRITE(lun,65)
+c 65   format('0   20  20  1                 ',
+c     +       '- cond. to LP (0=N, 1=Y), window size')
+c 
+c      WRITE(lun,66)
+c 66   format('localprop.dat                 ',
+c     +        '- file for local proportions') 
+c Ch5 new end
+c Ch76 old end
+
+c Ch9 new begin
+      WRITE(lun,65)
+ 65   format('1     0                     ',
+     +       '- condtion to LP (0=no, 1=yes), flag for iauto')
+    
+      WRITE(lun,655)
+ 655  format('1.0     1.0                     ',
+     +       '- two weighting factors to combine P(A|B) and P(A|C)')
+
+      WRITE(lun,66)
+ 66   format('localprop.dat                 ',
+     +        '- file for local proportions')
+            
+      WRITE(lun,67)
+ 67   format('1                             ',
+     +       '- condition to rotation and affinity (0=no, 1=yes)')
+      WRITE(lun,68)
+ 68   format('rotangle.dat                  ',
+     +        '- file for rotation and affinity')
+      
+      WRITE(lun,69)
+ 69   format('3                             ',
+     +       '- number of affinity categories')
+      WRITE(lun,70)
+ 70   format('1.0  1.0  1.0                 ',
+     +       '- affinity factors (X,Y,Z)     ')
+      WRITE(lun,71)
+ 71   format('1.0  0.6  1.0                 ',
+     +       '- affinity factors             ')
+      WRITE(lun,72)
+ 72   format('1.0  2.0  1.0                 ',   
+     +       '- affinity factors             ')
+c Ch9 new end
+
+      WRITE(lun,555)
+ 555  format('5                             ',
+     +       '- number of multiple grids')
       WRITE(lun,60)
  60   format('train.dat                     ',
      +       '- file for training image')
@@ -765,18 +1065,15 @@ c-----------------------------------------------------------------------
       WRITE(lun,64)
  64   format('0.0   0.0   0.0               ',
      +       '- angles for search ellipsoid')
+
       CLOSE(lun)
       RETURN
       END SUBROUTINE MakePar
-
       END MODULE parameter
-
 c----------------------------------------------------------------------
-
       MODULE simul
       USE parameter
       IMPLICIT NONE
-
 !      
 ! This type defines an elementary node of the search tree 
 ! used to store the training cpdfs prior to the image simulation.
@@ -787,161 +1084,16 @@ c----------------------------------------------------------------------
 ! corresponding to an additional conditioning datum assigned 
 ! to the category icut.
 !
-
       TYPE streenode
-         INTEGER, DIMENSION(MAXCUT) ::  repl
+         INTEGER, DIMENSION(:), POINTER ::  repl
          TYPE(streenode), DIMENSION(:), POINTER :: next
       END TYPE streenode
-
-
-
       
       CONTAINS
 
-      SUBROUTINE InitializeSearch (imult)
-      IMPLICIT NONE
-c-----------------------------------------------------------------------
-c
-c        Establish a search for nearby nodes in order of closeness
-c        *********************************************************
-c
-c We want to establish a search for nearby nodes in order of closeness 
-c as defined by the distance corresponding to the search ellipse.
-c
-c
-c PROGRAM NOTE: The dimensional anisotropy parameters, i.e., the parameters
-c defining the search ellipse (data search neighborhood) are described in 
-c section 2.3 of the GSLIB User's guide.
-c
-c
-c INPUT VARIABLES:
-c
-c  nx,ny,nz        	Number of blocks in X,Y, and Z
-c  xsiz,ysiz,zsiz   	Spacing of the grid nodes (block size)
-c  MAXCTX,Y,Z          	Maximum dimensions of the data search neighborhood
-c  radius       	Maximum search radius
-c  rotmat               Rotation matrix accounting for anisotropy
-c  imult                Current multiple grid
-c
-c
-c OUTPUT VARIABLES:  
-c
-c  nlsearch          	Number of nodes in the data search neighborhood
-c  i[x,y,z]node    	Relative indices of those nodes
-c
-c
-c EXTERNAL REFERENCES:
-c
-c  sortem          	Sorts multiple arrays in ascending order
-c
-c
-c
-c-----------------------------------------------------------------------
-
-      ! Declare dummy arguments
-      INTEGER, INTENT(IN) :: imult
-      
-      ! Declare local variables
-      INTEGER :: i,j,k,ic,jc,kc,il,n
-      REAL :: xx,yy,zz,hsqd,radsqd,cont
-      INTEGER :: nctx, ncty, nctz, nctxy, nctxyz
-      REAL, DIMENSION(MAXCTXYZ) :: tmp
-      INTEGER, DIMENSION(MAXCTXYZ) :: ordercd,c,d,e,f,g,h
-
-!
-! Set up rotation matrix to compute anisotropic distances
-! for conditioning data search
-!
-      CALL SetRotMat(imult)
-      radsqd=radius(imult)*radius(imult)
-!
-! Size of the data search neighborhood
-!
-      nctx=min(((MAXCTX-1)/2),(nx-1))
-      ncty=min(((MAXCTY-1)/2),(ny-1))
-      nctz=min(((MAXCTZ-1)/2),(nz-1))
-!
-! Debugging output:
-!
-      WRITE(ldbg,*) 'Search for conditioning data'
-      WRITE(ldbg,*) 'The maximum range in each coordinate direction is:'
-      WRITE(ldbg,*) '          X direction: ',nctx*xsiz
-      WRITE(ldbg,*) '          Y direction: ',ncty*ysiz
-      WRITE(ldbg,*) '          Z direction: ',nctz*zsiz
-      WRITE(ldbg,*) 'Conditioning data are not searched ', 
-     +              'beyond this distance!'
-
-!
-! Now, set up the table of distances to the unknown, and keep track of 
-! the node offsets that are within the search radius:
-!
-      nlsearch = 0
-      DO i=-nctx,nctx
-         xx = i * xsiz
-         ic = nctx + 1 + i
-         DO j=-ncty,ncty
-            yy = j * ysiz
-            jc = ncty + 1 + j
-            DO k=-nctz,nctz
-               zz = k * zsiz
-               kc = nctz + 1 + k
-! Calculate the anisotropic distance:
-      	       hsqd = 0.0
-               DO n=1,3
-                  cont=rotmat(n,1)*xx+rotmat(n,2)*yy+rotmat(n,3)*zz
-                  hsqd = hsqd + cont*cont
-      	       END DO
-               IF(hsqd.le.radsqd) THEN
-               nlsearch=nlsearch+1
-!
-! We want to search by closest distance (anisotropic distance 
-! defined by the search ellipse):
-!
-               tmp(nlsearch)=hsqd
-               ordercd(nlsearch)=real((kc-1)*MAXCTXY+(jc-1)*MAXCTX+ic)
-               ENDIF
-            END DO
-         END DO
-      END DO
-!
-! Finished setting up the table of distances to the unknown, 
-! now order the nodes such that the closest ones are searched
-! first. 
-!
-      call sortem(1,nlsearch,tmp,1,ordercd,c,d,e,f,g,h)
-      DO il=1,nlsearch
-         iznode(il)=int((ordercd(il)-1)/MAXCTXY) + 1
-         iynode(il)=int((ordercd(il)-(iznode(il)-1)
-     +                 *MAXCTXY-1)/MAXCTX)+1
-         ixnode(il)=ordercd(il)-(iznode(il)-1)*MAXCTXY
-     +                       -(iynode(il)-1)*MAXCTX
-         ixnode(il)=ixnode(il)-nctx-1
-         iynode(il)=iynode(il)-ncty-1
-         iznode(il)=iznode(il)-nctz-1
-      END DO
-!
-! Debugging output if requested:
-!
-      IF(idbg>1) THEN
-         WRITE(ldbg,*) 'There are ',nlsearch,' nearby nodes that will '
-         WRITE(ldbg,*) ' be checked until enough conditioning data '
-         WRITE(ldbg,*) ' are found.'
-         WRITE(ldbg,*)
-         DO i=1,nlsearch
-            xx = ixnode(i) * xsiz
-            yy = iynode(i) * ysiz
-            zz = iznode(i) * zsiz
-            write(ldbg,100) i,xx,yy,zz
-         END DO
- 100     format('Point ',i5,' at ',3f12.4)
-      ENDIF
-
-
-      END SUBROUTINE InitializeSearch
-
-c-----------------------------------------------------------------------
-
+c Ch43: add imult here SetRotMat()->SetRotMat(imult)     
       SUBROUTINE SetRotMat(imult)
+      IMPLICIT NONE
 c-----------------------------------------------------------------------
 c
 c              Sets up an Anisotropic Rotation Matrix
@@ -960,7 +1112,6 @@ c   sang3            	 Third rotation angle
 c   sanis1           	 First anisotropy ratio
 c   sanis2           	 Second anisotropy ratio
 c   rotmat          	 Rotation matrix
-c   imult                Current multiple grid
 c
 c
 c OUTPUT PARAMETER:
@@ -969,10 +1120,10 @@ c   rotmat               Rotation matrix accounting for anisotropy
 c
 c
 c-----------------------------------------------------------------------
-
-      ! Declare dummy arguments
+c Ch55 new begin
+      ! Delcare dummy arguments
       INTEGER, INTENT(IN) :: imult
-      
+c Ch55 new end      
       ! Declare local variables
       REAL :: afac1,afac2,sina,sinb,sint,cosa,cosb,cost
       REAL :: alpha,beta,theta
@@ -987,6 +1138,8 @@ c-----------------------------------------------------------------------
 !         theta   Angle of rotation of minor axis about the major axis
 !                 of the ellipsoid.
 !
+c Ch44 add imult here: sang123->sang123(imult)
+
       IF(sang1(imult)>=0.0.and.sang1(imult)<270.0) then
          alpha=(90.0-sang1(imult))*DEG2RAD
       ELSE
@@ -1017,99 +1170,238 @@ c-----------------------------------------------------------------------
       rotmat(3,1) = afac2*(sint*sina + cost*sinb*cosa)
       rotmat(3,2) = afac2*(-sint*cosa + cost*sinb*sina)
       rotmat(3,3) = afac2*(cost * cosb)
-
       END SUBROUTINE SetRotMat
       
 c-----------------------------------------------------------------------
-
-
-      SUBROUTINE RelocateData ()
+c Ch47 add imult here: CreateTemplate()->CreateTemplate(imult)      
+      SUBROUTINE CreateTemplate(imult)
       IMPLICIT NONE
 c-----------------------------------------------------------------------
 c
-c       Relocate sample data to the closest simulation grid nodes
-c       *********************************************************
+c                     Create data template
+c                     ********************
+c
+c We want to establish a search for nearby nodes in order of closeness 
+c as defined by the distance corresponding to the search ellipse.
+c The data template will consist of the nearest 'prevnodmax' nodes of the
+c previously simulated grids, and the nearest 'curnodmax' nodes of the
+c current grid.
+c
+c PROGRAM NOTE: The dimensional anisotropy parameters, i.e., the parameters
+c defining the search ellipse (data search neighborhood) are described in 
+c section 2.3 of the GSLIB User's guide.
 c
 c
 c INPUT VARIABLES:
 c
-c  nd               	Number of data
-c  x,y,z(nd)        	Coordinates of the data
-c  vr(nd)           	Data values
 c  nx,ny,nz        	Number of blocks in X,Y, and Z
-c  xmn,ymn,zmn      	Coordinate at the center of the first Block
 c  xsiz,ysiz,zsiz   	Spacing of the grid nodes (block size)
+c  MAXXYZ          	Maximum size of simulation grid
+c  radius       	Maximum search radius
+c  rotmat               Rotation matrix accounting for anisotropy
 c
 c
 c OUTPUT VARIABLES:  
 c
-c  simim          	Realization so far
-c  nodcut          	Number of nodes simulated in each category so far
+c  nltemplate          	Number of nodes in the data template
+c  i[x,y,z]template    	Relative coordinates of those nodes
 c
 c
 c EXTERNAL REFERENCES:
 c
-c  getindx          	Gets the (x, y, or z) coordinate of the closest grid node
+c  sortem          	Sorts multiple arrays in ascending order
 c
-c 
+c
 c
 c-----------------------------------------------------------------------
+c Ch56 new begin
+      ! Delcare dummy arguments
+      INTEGER, INTENT(IN) :: imult
+c Ch56 new end
 
       ! Declare local variables
-      INTEGER :: ix, iy, iz, id, id2
-      REAL :: xx, yy, zz, test, test2
-      LOGICAL :: testind
+      INTEGER :: i,j,k,ic,jc,kc,il,n, nlsearch
+      INTEGER :: ncdata, prevncdata, location, templatesize
+      REAL :: xx,yy,zz,hsqd,radsqd,cont
+      INTEGER :: nctx, ncty, nctz, nctxy, nctxyz
+      REAL, DIMENSION(MAXXYZ) :: tmp
+      INTEGER, DIMENSION(MAXXYZ) :: ordercd,c,d,e,f,g,h
+      radsqd=radius(imult)*radius(imult)
 
 !
-! Loop over all sample data:     
+! Size of the data search neighborhood
 !
-      DO id=1,nd
+      nctx=min(((nx-1)/2),nltemplate)
+      ncty=min(((ny-1)/2),nltemplate)
+      nctz=min(((nz-1)/2),nltemplate)
 !
-! Calculate the coordinates of the closest simulation grid node:
+! Debugging output:
 !
-         CALL getindx(nx,xmn,xsiz,x(id),ix,testind)
-         CALL getindx(ny,ymn,ysiz,y(id),iy,testind)
-         CALL getindx(nz,zmn,zsiz,z(id),iz,testind)
-         xx=xmn+real(ix-1)*xsiz
-         yy=ymn+real(iy-1)*ysiz
-         zz=zmn+real(iz-1)*zsiz
-         test=abs(xx-x(id))+abs(yy-y(id))+abs(zz-z(id))
+      WRITE(ldbg,*) 'Search for conditioning data'
+      WRITE(ldbg,*) 'The maximum range in each coordinate direction is:'
+      WRITE(ldbg,*) '          X direction: ',nctx*xsiz*ncoarse
+      WRITE(ldbg,*) '          Y direction: ',ncty*ysiz*ncoarse
+      WRITE(ldbg,*) '          Z direction: ',nctz*zsiz*ncoarse
+      WRITE(ldbg,*) 'Conditioning data are not searched ', 
+     +              'beyond this distance!'
 !
-! Assign this data to the node (unless there is a closer data):
+! Now, set up the table of distances to the unknown, and keep track of 
+! the node offsets that are within the search radius:
 !
-         IF(simim(ix,iy,iz)>0) THEN
-            id2 = simim(ix,iy,iz)
-            test2 = abs(xx-x(id2))+abs(yy-y(id2))+abs(zz-z(id2))
-            IF(test<test2) simim(ix,iy,iz)=id
-            IF(idbg>1) WRITE(ldbg,102) id,id2
-         ELSE
-            simim(ix,iy,iz)=id
-         END IF
-      END DO
-      
- 102  format('Warning data values ',2i5,' are both assigned to '
-     +    ,/,'        the same node - taking the closest')
-     
+      nlsearch = 0
+
+c Ch48 new begin
+      CALL SetRotMat(imult)
+c Ch48 new end
+
+      DO i=-nctx,nctx
+         xx = i * xsiz
+         ic = nctx + 1 + i
+         DO j=-ncty,ncty
+            yy = j * ysiz
+            jc = ncty + 1 + j
+            DO k=-nctz,nctz
+               zz = k * zsiz
+               kc = nctz + 1 + k
+! Calculate the anisotropic distance:
+      	       hsqd = 0.0
+               DO n=1,3
+                  cont=rotmat(n,1)*xx+rotmat(n,2)*yy+rotmat(n,3)*zz
+                  hsqd = hsqd + cont*cont
+      	       END DO
+               IF(hsqd.le.radsqd) THEN
+                  nlsearch=nlsearch+1
 !
-! Now, enter data values into the simulation grid:
+! We want to search by closest distance (anisotropic distance 
+! defined by the search ellipse):
 !
-      nodcut(1:ncut)=0
-      vertnodcut(1:nz,1:ncut)=0
-      DO iz=1,nz
-         DO iy=1,ny
-            DO ix=1,nx
-               id=simim(ix,iy,iz)
-               IF(id>0) THEN
-                  simim(ix,iy,iz) = vr(id) 
-                  nodcut(simim(ix,iy,iz))=nodcut(simim(ix,iy,iz))+1
-                  IF(ivertprop==1) 
-     + vertnodcut(iz,simim(ix,iy,iz))=vertnodcut(iz,simim(ix,iy,iz))+1
-               END IF
+                  tmp(nlsearch)=hsqd
+                  ordercd(nlsearch)=real((kc-1)*nxy+(jc-1)*nx+ic)
+               ENDIF
             END DO
          END DO
       END DO
-      END SUBROUTINE RelocateData	
+!
+! Finished setting up the table of distances to the unknown, 
+! now order the nodes such that the closest ones are searched
+! first. 
+!
+      call sortem(1,nlsearch,tmp,1,ordercd,c,d,e,f,g,h)
+      
+      ncdata=0
+      prevncdata=0
+      templatesize=0
 
+      DO il=2,nlsearch
+         k=int((ordercd(il)-1)/nxy) + 1
+         j=int((ordercd(il)-(k-1)*nxy-1)/nx)+1
+         i=ordercd(il)-(k-1)*nxy-(j-1)*nx
+         i=i-nctx-1
+         j=j-ncty-1
+         k=k-nctz-1
+         location=mod(abs(i),2)+mod(abs(j),2)*2+mod(abs(k),2)*4+1
+         IF(multgridoffset(location)) THEN
+            IF(prevgridoffset(location).AND.prevncdata<curnodmax) THEN
+               templatesize=templatesize+1
+               ixtemplate(templatesize)=i
+               iytemplate(templatesize)=j
+               iztemplate(templatesize)=k
+!               write(*,*) i,j,k
+               prevncdata=prevncdata+1
+            END IF
+            IF(.NOT.prevgridoffset(location)) THEN
+               templatesize=templatesize+1
+               ixtemplate(templatesize)=i
+               iytemplate(templatesize)=j
+               iztemplate(templatesize)=k
+!               write(*,*) i,j,k
+               ncdata=ncdata+1
+               if(ncdata>=prevnodmax) EXIT
+            END IF
+         END IF
+      END DO
+      nltemplate=templatesize
+!
+! Debugging output if requested:
+!
+      IF(idbg>0) THEN
+         WRITE(ldbg,*) 'There are ',nltemplate,' nodes in the template '
+         DO i=1,nltemplate
+             write(ldbg,100) i,ixtemplate(i),iytemplate(i),iztemplate(i) 
+         END DO
+ 100     format('Node ',i5,' at ',3i5)
+      ENDIF
+      END SUBROUTINE CreateTemplate
+c-----------------------------------------------------------------------
+c Ch49 old begin: no calculation of multiple grids needed, it is given
+c      SUBROUTINE CalculateMultGridNumber ()
+c      IMPLICIT NONE
+c-----------------------------------------------------------------------
+c
+c        Calculate number of multiple grids
+c        **********************************
+c
+c The number of multiple grids to be simulated is calculated as follows: 
+c the data template corresponding to the coarsest simulation grid should have
+c a larger extent than the search neighborhood 
+c
+c INPUT VARIABLES:
+c
+c  nx,ny,nz        	Number of blocks in X,Y, and Z
+c  xsiz,ysiz,zsiz   	Spacing of the grid nodes (block size)
+c  MAXCTX,Y,Z          	Maximum dimensions of the data search neighborhood
+c  radius       	Maximum search radius
+c  rotmat               Rotation matrix accounting for anisotropy
+c  imult                Current multiple grid
+c
+c
+c OUTPUT VARIABLES:  
+c
+c  nlsearch          	Number of nodes in the data search neighborhood
+c  i[x,y,z]node    	Relative indices of those nodes
+c
+c
+c EXTERNAL REFERENCES:
+c
+c  sortem          	Sorts multiple arrays in ascending order
+c
+c
+c
+c-----------------------------------------------------------------------
+c      ! Declare local variables
+c      INTEGER :: ind,n
+c      REAL :: xx,yy,zz,hsqd,cont,maxdist
+c      LOGICAL :: ndinside
+c      multgridoffset(1:8)=.TRUE.
+c      prevgridoffset(1:8)=.FALSE.
+c      CALL CreateTemplate()
+c      maxdist=max(radius,radius1)*max(radius,radius1)
+c      ncoarse=1
+c      nmult=0
+c      ndinside=.TRUE.
+c      DO
+c      ! Check if all the nodes of the data template are inside the search neighborhood
+c         DO ind=1,nltemplate
+c            xx=xsiz*ixtemplate(ind)*ncoarse
+c            yy=ysiz*iytemplate(ind)*ncoarse
+c            zz=zsiz*iztemplate(ind)*ncoarse
+c            hsqd = 0.0
+c            DO n=1,3
+c               cont=rotmat(n,1)*xx+rotmat(n,2)*yy+rotmat(n,3)*zz
+c               hsqd = hsqd + cont*cont
+c            END DO
+c            IF(hsqd>maxdist) ndinside=.FALSE.
+c         END DO
+c         IF(ndinside) THEN
+c            nmult=nmult+1
+c            ncoarse=ncoarse*2
+c         ELSE
+c            EXIT
+c         END IF
+c      END DO
+c      END SUBROUTINE CalculateMultGridNumber
+c
+c Ch49 old end
 c-------------------------------------------------------------------
       SUBROUTINE RandomPath()
       IMPLICIT NONE
@@ -1120,13 +1412,12 @@ c                    Work out a random path
 c                    **********************
 c
 c This subroutine works out a random path that visits all nodes of
-c the current multiple grid when this grid is simulated without a
-c search tree.
+c the current grid.
 c
 c
 c INPUT VARIABLES:
 c
-c  nxyzcoarse  	    Number of nodes in the current multiple grid 
+c  nxyzcoarse  	    Number of nodes in the current grid 
 c
 c
 c OUTPUT VARIABLES:
@@ -1135,8 +1426,6 @@ c  order           Indices of the nodes to be successively visited
 c
 c
 c____________________________________________________________________________
-
-
       ! Declare local variables
       REAL , DIMENSION  (MAXXYZ) :: sim
       INTEGER , DIMENSION  (MAXXYZ) :: c,d,e,f,g,h
@@ -1147,341 +1436,68 @@ c____________________________________________________________________________
       DO in=1, nxyzcoarse
          order(in)=in
       END DO
-      
       CALL sortem(1,nxyzcoarse,sim,1,order,c,d,e,f,g,h)
-
-
       END SUBROUTINE RandomPath
 
+c--------------------------------------------------------------------------
+c Ch14 new begin
 
-c -------------------------------------------------------------------
 
-
-      SUBROUTINE SearchClosestNodes(ix,iy,iz)
-      USE parameter
-      IMPLICIT NONE
+c Ch 82 old begin: remove codes
+c      SUBROUTINE SearchClosestNodes(ix,iy,iz)
+c      USE parameter
+c      IMPLICIT NONE
 c-----------------------------------------------------------------------
+c This subroutine calculate the number for simulated category with
+c a specified local window.
 c
-c               Search for nearby simulated grid nodes
-c               **************************************
-c
-c This subroutine is called only when the current multiple grid is
-c simulated without a search tree.
-c The idea is to spiral away from the node being simulated and note all
-c the nearby nodes that have been simulated.
-c
-c
-c PROGRAM NOTES: Since the original data are assigned to the closest 
-c grid nodes, original data and previously simulated grid nodes are
-c searched at the same time for local conditioning. 
-c Their closeness is measured according to the anisotropic
-c distance corresponding to the search ellipse.
-c
-c
-c INPUT VARIABLES:
-c
-c   ix,iy,iz        	Index of the point currently being simulated
-c   simim           	Realization so far
-c   nodmax         	Maximum number of nodes that we want
-c   noct            	Maximum number of nodes per octant (0=not used)
-c   nlsearch          	Number of nodes in the data search neighborhood
-c   i[x,y,z]node    	Relative indices of those nodes.
-c
-c
-c
+c INPUT VARIABLES: 
+c ix,iy,iz            Index of the point currently being simulated
+c simim               Realization so far
+c nwx,nwy,nwz         specified window size
 c OUTPUT VARIABLES:
+c localnodcut
 c
-c   ncnode          	Number of close nodes
-c   cnode[x,y,z]()  	Location of the nodes
-c   cnodev()        	Values at the nodes
+c------------------------------------------------------------------------
 c
+c  
+c      ! Declare dummy arguments
+c      INTEGER, INTENT(IN) :: ix, iy, iz
 c
+c      ! Declare local variables
+c      INTEGER :: i, j, k, i1, j1, k1
 c
-c-----------------------------------------------------------------------
-
-      ! Declare dummy arguments
-      INTEGER, INTENT(IN) :: ix, iy,iz
-
-      ! Declare local variables
-      INTEGER :: il,i,j,k,idx,idy,idz,iq
-      INTEGER, DIMENSION(8) :: ninoct   
-      
-! ninoct: the current number of close nodes per octant
-
-      iq=1
-      ncnode=0
-      ninoct(1:8)=0
-
-! Consider all the nearby nodes until enough have been found:
-!      	
-      DO il=2, nlsearch
-      	 IF(ncnode==nodmax) EXIT
-         i=ix+ixnode(il)
-         j=iy+iynode(il)
-         k=iz+iznode(il)
-         IF(i>=1.and.i<=nx.and.j>=1.and.j<=ny.and.k>=1.and.k<=nz) 
-     +      THEN
-            IF(simim(i,j,k)>UNEST) THEN
-!
-! Check the number of data already taken from this octant:
-!
-               IF(noct>0) THEN
-                  idx=ix-i
-                  idy=iy-j
-                  idz=iz-k
-                  IF(idz>0) THEN
-                     iq = 4
-                     IF(idx<=0.and.idy>0) iq=1
-                     IF(idx>0.and.idy>=0) iq=2
-                     IF(idx<0.and.idy<=0) iq=3
-                  ELSE
-                     iq=8
-                     IF(idx<=0.and.idy>0) iq=5
-                     IF(idx>0.and.idy>=0) iq=6
-                     IF(idx<0.and.idy<=0) iq=7
-                  ENDIF
-                  ninoct(iq)=ninoct(iq)+1
-               END IF
-               
-!
-! Consider all the nearby nodes until enough have been found:
-!      	
-               IF(noct==0.or.(noct>0.and.ninoct(iq)<=noct)) THEN
-                  ncnode = ncnode + 1
-                  cnodex(ncnode) = ixnode(il)
-                  cnodey(ncnode) = iynode(il)
-                  cnodez(ncnode) = iznode(il)
-                  cnodev(ncnode) = simim(i,j,k)
-               ENDIF
-            END IF
-         END IF
-      END DO
-      				      	
-      END SUBROUTINE SearchClosestNodes	
-
-c -------------------------------------------------------------------
-
-      SUBROUTINE InferCpdf(ix,iy,iz,cpdf,imult)
-      IMPLICIT NONE
-c-----------------------------------------------------------------------
+c      localnodcut(1:ncut)=0
 c
-c         Infer local cpdf from training image
-c         ************************************
+c 
+c      DO k1=-nwz,nwz
+c      DO j1=-nwy,nwy
+c      DO i1=-nwx,nwx
+c         i=ix+i1
+c         j=iy+j1
+c         k=iz+k1
+c         IF(i>=1.and.i<=nx.and.j>=1.and.j<=ny.and.k>=1.and.k<=nz)
+c     +      THEN
+c            IF(simim(i,j,k)>UNEST) THEN
+c               localnodcut(int(simim(i,j,k)))=
+c     +               localnodcut(int(simim(i,j,k)))+1
+c            END IF
+c          END IF
+c      END DO
+c      END DO
+c      END DO
 c
-c This subroutine, which is called only when the current multiple
-c grid is simulated without a search tree, scans the training image 
-c looking for data events identical to the conditioning 
-c data event (same data values and same geometric configuration) 
-c to infer the cpdf at location (ix,iy,iz).
+c                     
+c      END SUBROUTINE SearchClosestNodes
+                  
+c--------------------------------------------------------------------
+c Ch14 new end
+c Ch82 old end
 c
 c
-c INPUT VARIABLES:
-c
-c  ix,iy,iz        	Index of the point currently being simulated
-c  ncnode          	Number of close nodes
-c  cnode[x,y,z]()  	Location of the nodes
-c  cnodev()        	Values at the nodes
-c  simim           	Realization so far
-c  trainim          	Training image
-c  nxtr,nytr,nztr       Dimensions of the training image
-c  imult                Current simulation grid
-c
-c
-c
-c OUTPUT VARIABLES:
-c
-c  numcd(ix,iy,iz)   	Number of conditioning data finally retained
-c
-c
-c
-c-----------------------------------------------------------------------
-
-      ! Declare dummy arguments
-      INTEGER, INTENT(IN) :: ix, iy, iz, imult
-      REAL, DIMENSION (MAXCUT), INTENT(OUT) :: cpdf
-      
-      ! Declare local variables
-      INTEGER :: icd, ixtr, iytr, iztr, i, j, k
-      INTEGER :: icut, sumrepl
-      INTEGER, DIMENSION (MAXCUT,MAXNOD) :: replicate
-      
-! replicate: stores the number of training replicates for all possible
-! numbers of conditioning data (1,...,ncnode) and all possible
-! central values (1,...,ncut).
-      replicate(1:ncut,1:MAXNOD)=0
-
-      IF(idbg>1) WRITE(ldbg,201) ix,iy,iz
-201   format(/,' Simulate node:', i5, i5, i5)
-      IF(idbg>1) WRITE(ldbg,202) ncnode
-202   format(i3, ' conditioning data')
-      
-      DO icd=1, ncnode
-         IF(idbg>2) WRITE(ldbg,203) icd,cnodex(icd),cnodey(icd),
-     +                               cnodez(icd),thres(cnodev(icd))
-203   format('CD ', i3, ':',i5,i5,i5, ', category=', i3)
-      END DO
-      	            	      
-!     
-! Loop over all the nodes of the training image:
-!     
-      DO ixtr=1, nxtr(imult)
-        DO iytr=1, nytr(imult)
-          DO iztr=1, nztr(imult)
-
-! Loop over all the nodes of the data template consisting of both 
-! conditioning soft and hard data, centered on (ixtr,iytr,iztr)
-      	    DO icd=1, ncnode
-              i=ixtr+cnodex(icd)
-              j=iytr+cnodey(icd)
-              k=iztr+cnodez(icd)
-
-! Check if the current node is within the training image; if not,
-! go to the next training image node
-           IF(i>=1.and.i<=nxtr(imult).and.j>=1.and.j<=nytr(imult).
-     +          and.k>=1.and.k<=nztr(imult)) THEN
-     
-! Check if the value at the current node is the same as the
-! conditioning data value; if not, go to the next training image node
-              IF(trainim(i,j,k,imult)==cnodev(icd)) THEN
-      	        replicate(trainim(ixtr,iytr,iztr,imult),icd)=
-     +          replicate(trainim(ixtr,iytr,iztr,imult),icd)+1
-      	      ELSE 
-      		EXIT	
-              END IF
-            ELSE 
-      	      EXIT
-      	    END IF
-      	    END DO
-      	  END DO
-      	END DO
-      END DO
-!
-! Now, compute the cpdf:
-!
-      IF(ivertprop==1) THEN
-         cpdf(1:ncut)=vertpdf(iz,1:ncut)
-      ELSE
-         cpdf(1:ncut)=pdf(1:ncut)
-      END IF
-      
-      DO icd=ncnode, 1, -1
-          sumrepl=SUM(replicate(1:ncut,icd))
-          IF(idbg>2) WRITE(ldbg,*) 'Training replicates:', sumrepl
-
-! Check if enough training replicates: if yes, calculate the cpdf,
-! otherwise drop the furthest away datum
-          IF(sumrepl>=cmin) THEN
-             cpdf(1:ncut)=real(replicate(1:ncut,icd))/real(sumrepl)
-             numcd(ix,iy,iz)=icd
-             EXIT
-          END IF
-          IF(idbg>2) WRITE(ldbg,204) 
-204       format('Not enough replicates, drop the furthest away CD.')
-          IF(idbg>2) WRITE(ldbg,205) icd-1
-205       format('Infer cpdf for', i3, ' CD.')
-      END DO
-      
-! Write the local cpdf inferred if debugging required:
-      IF(idbg>1) THEN
-         WRITE(ldbg,206) numcd(ix,iy,iz)
-206      format('Number of CD finally retained: ', i3)          
-         DO icut=1,ncut
-            WRITE(ldbg,207) thres(icut), cpdf(icut)
-207         format('Cpdf for category ', i3, ' : ', f6.4)
-         END DO
-      END IF
-      
-      
-      END SUBROUTINE InferCpdf
-      
-c-----------------------------------------------------------------------
-
-
-      SUBROUTINE Simulation (imult)
-      IMPLICIT NONE
-c-----------------------------------------------------------------------
-c
-c           Conditional simulation of a 3-D rectangular grid
-c           ************************************************
-c
-c This subroutine simulates the current (3-D rectangular) multiple grid.
-c The conditional simulation is achieved by sequential simulation of all
-c the nodes visited by a random path. No search tree is used here!
-c
-c
-c INPUT VARIABLES:
-c
-c  ncoarse		Current multiple grid number
-c  n[x,y,z]coarse	Dimensions of the current multiple grid
-c  nxyzcoarse  	    	Number of nodes in the current multiple grid 
-c  simim           	Realization so far
-c  imult                Current simulation grid
-c
-c
-c
-c OUTPUT VARIABLE: All the nodes of the current multiple grid are simulated
-c
-c
-c
-c-----------------------------------------------------------------------
-
-      
-      ! Declare dummy arguments
-      INTEGER, INTENT(IN) :: imult
-
-      ! Declare local variables
-      INTEGER :: in, ic, ix, iy, iz, irepo
-      REAL, DIMENSION  (MAXCUT) :: ccdf, cpdf
-      INTEGER :: jx, jy, jz
-      
-      irepo=max(1,min((nxyzcoarse/10),10000))
-!
-! Main loop over all simulation grid nodes:
-!      
-      DO in=1, nxyzcoarse
-      	 IF(mod(in,irepo)==0) WRITE(*,103) in
- 103     format('   currently on node ',i9)
-!
-! Figure out the location of this point and make sure it has
-! not been assigned a value already:
-!
-         jz=1+int((order(in)-1)/nxycoarse)
-         jy=1+int((order(in)-(jz-1)*nxycoarse-1)/nxcoarse)
-         jx=order(in)-(jz-1)*nxycoarse-(jy-1)*nxcoarse
-         ix=(jx-1)*ncoarse+1
-         iy=(jy-1)*ncoarse+1
-         iz=(jz-1)*ncoarse+1
-     	 IF(simim(ix, iy, iz)<0) THEN
-!
-! Now, we'll simulate the point ix,iy,iz:
-!      
-
-! First, get close conditioning data:
-      	    CALL SearchClosestNodes(ix,iy,iz)
-      	 
-! If no conditioning data were found, use the marginal pdf as
-! local cpdf, otherwise infer the local cpdf from the training image:	 
-            IF(ncnode==0) THEN
-               numcd(ix,iy,iz)=0
-               IF(ivertprop==1) THEN
-                  cpdf(1:ncut)=vertpdf(iz,1:ncut)
-               ELSE
-                  cpdf(1:ncut)=pdf(1:ncut)
-               END IF
-            ELSE
-              CALL InferCpdf(ix,iy,iz,cpdf,imult)
-            END IF
-                              
-! Draw a random number and assign a value to this node:                                    
-            CALL DrawValue(ix, iy, iz, cpdf, imult)
-         END IF
-      END DO
-      
-      END SUBROUTINE Simulation	
-
-
 c-------------------------------------------------------------------
-      SUBROUTINE DrawValue (ix, iy, iz, cpdf, imult)
+c Ch57 add imult here: 
+      SUBROUTINE DrawValue (ix, iy, iz, cpdf,imult)
       IMPLICIT NONE
       
 c----------------------------------------------------------------------------
@@ -1498,7 +1514,6 @@ c  ix,iy,iz        	Index of the point currently being simulated
 c  cpdf         	Local cpdf
 c  idbg     	        Integer debugging level (0=none,2=normal,4=serious)
 c  ldbg      	        Unit number for the debugging output
-c  imult                Current simulation grid
 c
 c
 c
@@ -1509,16 +1524,24 @@ c  nodcut          	Number of nodes simulated in each category so far
 c
 c
 c____________________________________________________________________________
-
       ! Declare dummy arguments
-      REAL, DIMENSION  (MAXCUT) :: cpdf
+      REAL, DIMENSION (:) :: cpdf
       INTEGER, INTENT(IN) :: ix,iy,iz,imult
-
       ! Declare local variables
       INTEGER :: ic
-      REAL, DIMENSION  (MAXCUT) :: ccdf
+      REAL, ALLOCATABLE, DIMENSION  (:) :: ccdf
       REAL :: p, total, totalnodcut
+c Ch83 old begin: remove codes
+c Ch16 new begin
+c      REAL :: totallocalnodcut
+c Ch16 new end
 
+
+
+c Ch37 new begin
+c      totallocalnodcut=real(MAX(sum(localnodcut(1:ncut)),1))
+c Ch37 new end
+c Ch83 old end
 !
 ! Apply the servosystem correction:
 !
@@ -1528,22 +1551,59 @@ c____________________________________________________________________________
          totalnodcut=real(MAX(sum(nodcut(1:ncut)),1))
       END IF
       DO ic=1, ncut
+
+c Ch77 old begin: remove codes
+c Ch17 new begin
+c        IF(ilocalprop==1) THEN
+c          IF(localprop(ic,ix,iy,iz)<0.05) cpdf(ic)=0.0
+c          IF(localprop(ic,ix,iy,iz)>0.95) cpdf(ic)=1.0
+c        END IF
+c Ch17 new end
+c Ch77 old end
+
          IF(cpdf(ic)>0.05.AND.cpdf(ic)<0.95) THEN
-            IF(ivertprop==1) THEN
-               cpdf(ic)=cpdf(ic)+servocor(imult)*
-     +         (vertpdf(iz,ic)-real(vertnodcut(iz,ic))/totalnodcut)
-            ELSE
-               cpdf(ic)=cpdf(ic)+
-     +         servocor(imult)*(pdf(ic)-real(nodcut(ic))/totalnodcut)
-            END IF   
-            IF(cpdf(ic)<0.0) cpdf(ic)=0.0
-            IF(cpdf(ic)>1.0) cpdf(ic)=1.0
-         END IF
+c Ch25 new begin: at the first coarse grid, no correction needed
+           IF(imult<=nmult-1) THEN
+c Ch25 new end
+              IF(ivertprop==1) THEN
+                 cpdf(ic)=cpdf(ic)+servocor*
+     +      (vertpdf(iz,ic)-real(vertnodcut(iz,ic))/totalnodcut)
+              ELSE
+c Ch4 old begin
+c                cpdf(ic)=cpdf(ic)+
+c     +          servocor*(pdf(ic)-real(nodcut(ic))/totalnodcut)
+c Ch4 old end
+
+c Ch 78 new begin: recover the codes.
+                cpdf(ic)=cpdf(ic)+
+     +          servocor*(pdf(ic)-real(nodcut(ic))/totalnodcut)
+c Ch 78 new end
+
+c Ch 79 old begin: remove codes.
+c Ch4 new begin
+c                IF(ilocalprop==1.AND.imult==nmult-1.AND.
+c     +             totallocalnodcut>=(prevnodmax/4.0)) THEN
+c                    cpdf(ic)=cpdf(ic)+
+c     +           servocor*(localprop(ic,ix,iy,iz)-
+c     +              real(localnodcut(ic))/totallocalnodcut)
+c                 ELSE
+c                    cpdf(ic)=cpdf(ic)+
+c     +         servocor*(pdf(ic)-real(nodcut(ic))/totalnodcut)
+c	         END IF
+c Ch4 new end
+c Ch 79 old end
+              END IF   
+              IF(cpdf(ic)<0.0) cpdf(ic)=0.0
+              IF(cpdf(ic)>1.0) cpdf(ic)=1.0
+c Ch26 new begin: pair Ch25
+           END IF
+c Ch26 new end
+       END IF
       END DO
       
       total=sum(cpdf(1:ncut))
       cpdf(1:ncut)=cpdf(1:ncut)/total
-      IF(idbg>1.AND.iservo==1) THEN
+      IF(idbg>1) THEN
          WRITE(ldbg,210) 
 210      format('After servosystem correction:')
          DO ic=1,ncut
@@ -1551,7 +1611,7 @@ c____________________________________________________________________________
 211         format('Cpdf for category ', i3, ' : ', f6.4)
          END DO
       END IF
-                      
+      ALLOCATE(ccdf(ncut))
       ccdf(1)=cpdf(1)
       DO ic=2, ncut
      	 ccdf(ic)=ccdf(ic-1)+cpdf(ic)
@@ -1561,12 +1621,12 @@ c____________________________________________________________________________
      	  
      	  
 ! Draw a random value from the local ccdf
-
       CALL Random_Number(p)
       simim(ix, iy, iz)=1
       DO ic=2, ncut
          IF (p>ccdf(ic-1)) simim(ix,iy,iz)=ic
       END DO
+      DEALLOCATE(ccdf)
       	  
       nodcut(simim(ix,iy,iz))=nodcut(simim(ix,iy,iz))+1
       IF(ivertprop==1) 
@@ -1576,144 +1636,10 @@ c____________________________________________________________________________
 212   format('Category simulated at ', i5, i5, i5, ': ', i3)
       
       END SUBROUTINE DrawValue	
-
-c----------------------------------------------------------------------
-      
-      SUBROUTINE SortTemplate (imult)
-      IMPLICIT NONE
-c-----------------------------------------------------------------------
-c
-c                      Sort template data locations
-c                      ****************************
-c
-c This subroutine sorts the locations of the data template 
-c (used to construct the search trees) according to the
-c anisotropic distance corresponding to the search ellipse. Thus the
-c conditioning data are searched later in order of closeness according 
-c to that distance.
-c
-c
-c INPUT VARIABLES:
-c
-c  nltemplate           Number of template data locations
-c  i[x,y,z]template     Coordinates of template data locations
-c  rotmat   		Rotation matrix accounting for anisotropy
-c  imult                Current simulation grid
-c
-c
-c EXTERNAL REFERENCES:
-c
-c  sortem          	Sorts multiple arrays in ascending order
-c
-c
-c
-c-----------------------------------------------------------------------
-
-      ! Declare dummy arguments
-      INTEGER, INTENT(IN) :: imult
-
-      ! Declare local variables
-      INTEGER :: ind,n
-      REAL :: xx,yy,zz,hsqd,cont
-      REAL, DIMENSION(MAXNOD) :: tmp
-      INTEGER, DIMENSION(MAXNOD) :: e,f,g,h
-
-      CALL SetRotMat(imult)
-      
-      DO ind=1,nltemplate
-         xx=ixtemplate(ind)
-         yy=iytemplate(ind)
-         zz=iztemplate(ind)
-! Calculate the anisotropic distance:
-      	 hsqd = 0.0
-         DO n=1,3
-            cont=rotmat(n,1)*xx+rotmat(n,2)*yy+rotmat(n,3)*zz
-            hsqd = hsqd + cont*cont
-      	 END DO
-         tmp(ind) = hsqd
-      END DO
-!
-! Finished setting up the table of distances to the unknown, 
-! now order the nodes such that the closest ones are searched
-! first. 
-!
-      call sortem(1,nltemplate,tmp,3,ixtemplate,iytemplate,
-     +            iztemplate,e,f,g,h)
-       
-      END SUBROUTINE SortTemplate
-
-c----------------------------------------------------------------------
-      
-      SUBROUTINE RandomPathTree()
-      IMPLICIT NONE
-      
-c----------------------------------------------------------------------------
-c
-c                    Work out a random path
-c                    **********************
-c
-c This subroutine works out a pseudo-random path that visits first 
-c the best informed nodes of the current multiple grid when this grid
-c is simulated with a search tree is used.
-c
-c
-c INPUT VARIABLES:
-c
-c  nxyzcoarse  	    Number of nodes in the current multiple grid 
-c
-c
-c OUTPUT VARIABLES:
-c
-c  order           Indices of the nodes to be successively visited
-c
-c
-c____________________________________________________________________________
-
-
-      ! Declare local variables
-      REAL , DIMENSION  (MAXXYZ) :: sim
-      INTEGER , DIMENSION  (MAXXYZ) :: c,d,e,f,g,h
-      INTEGER :: in, ind, ix,iy,iz,jx,jy,jz,i,j,k
-      
-      CALL Random_Number(sim(:nxyzcoarse))
-      DO in=1, nxyzcoarse
-         jz=1+int((in-1)/nxycoarse)
-         jy=1+int((in-(jz-1)*nxycoarse-1)/nxcoarse)
-         jx=in-(jz-1)*nxycoarse-(jy-1)*nxcoarse
-         ix=(jx-1)*ncoarse+1
-         iy=(jy-1)*ncoarse+1
-         iz=(jz-1)*ncoarse+1
-!
-! Figure out the number of CD at this location
-!
-         ncnode=0
-
-! Consider all the nearby nodes until enough have been found:
-
-         DO ind=1,nltemplate
-            IF(ncnode==nodmax) EXIT
-            i=ix+ixnode(ind)
-            j=iy+iynode(ind)
-            k=iz+iznode(ind)
-            IF(i>=1.and.i<=nx.and.j>=1.and.j<=ny.and.
-     +         k>=1.and.k<=nz) THEN
-               IF(simim(i,j,k)>UNEST) ncnode=ncnode+1
-            END IF
-         END DO
-         order(in)=in
-         sim(in)=sim(in)-ncnode
-      END DO
-      
-      CALL sortem(1,nxyzcoarse,sim,1,order,c,d,e,f,g,h)
-
-
-      END SUBROUTINE RandomPathTree
-
-
 c--------------------------------------------------------------------
+c Ch51 add inult here InferTree(stree)->InferTree(stree,imult)
       SUBROUTINE InferTree(stree,imult)
       IMPLICIT NONE
-
 c----------------------------------------------------------------------------
 c
 c                  Construct the search tree
@@ -1731,7 +1657,6 @@ c INPUT VARIABLES:
 c
 c  trainim     		Training image
 c  nxtr,nytr,nztr	Dimensions of the training image
-c  imult                Current simulation grid
 c
 c
 c OUTPUT VARIABLES:
@@ -1741,14 +1666,13 @@ c
 c
 c
 c____________________________________________________________________________
-
-
       ! Declare dummy arguments
-      TYPE(streenode) :: stree
+      TYPE(streenode) :: stree(MAXTREEANG,MAXTREEAFF)
+c Ch52 new begin
       INTEGER, INTENT(IN) :: imult
-
+c Ch52 new end
       ! Declare local variables
-      INTEGER :: ix, iy, iz, ccut
+      INTEGER :: ix, iy, iz, ccut, itree1, itree2
 
 !
 ! Loop over all the nodes of the training image:
@@ -1759,17 +1683,27 @@ c____________________________________________________________________________
          
 ! ccut: current central value:
                ccut=trainim(ix,iy,iz,imult)
-               CALL UpdateTree(stree,imult,ix,iy,iz,ccut,1)
+c Ch33 old begin:
+c              CALL UpdateTree(stree,ix,iy,iz,ccut,1)
+c Ch33 old end
+
+c Ch34 new begin:
+               DO itree1=1,nangcat
+                  DO itree2=1,naffcat
+                     CALL UpdateTree(itree1,itree2,
+     +                    stree(itree1,itree2), imult, ix,iy,iz,ccut,1)
+                  END DO
+               END DO
+c Ch34 new end
             END DO
          END DO
       END DO
       
       END SUBROUTINE InferTree
-
- ! -------------------------------------------------------------------
-      RECURSIVE SUBROUTINE UpdateTree(stree,imult,ix,iy,iz,ccut,icd)
+c-------- -------------------------------------------------------------------
+      RECURSIVE SUBROUTINE UpdateTree(itree1,itree2,
+     +                       onestree,imult,ix,iy,iz,ccut,icd)
       IMPLICIT NONE
-
 c----------------------------------------------------------------------------
 c
 c                  Update the search tree
@@ -1790,7 +1724,6 @@ c  i[x,y,z]node         Relative indices of the nodes in the
 c                       data search neighborhood
 c  ncoarse		Current multiple grid number
 c  icd			Index of the current data template location
-c  imult                Current simulation grid
 c  
 c
 c
@@ -1798,94 +1731,87 @@ c OUTPUT VARIABLES: Search tree stree updated
 c
 c
 c____________________________________________________________________________
-
-
       ! Declare dummy arguments
-      TYPE(streenode) :: stree
-      INTEGER, INTENT(IN) :: imult,ix,iy,iz,ccut,icd
-
+      TYPE(streenode) :: onestree
+      INTEGER, INTENT(IN) :: imult,ix,iy,iz,ccut,icd,itree1,itree2
       ! Declare local variables
-      INTEGER :: icut,ixh,iyh,izh
-     
+      INTEGER :: icut,ixh,iyh,izh,ic,err
+
+c Ch20 new begin: introduce local variables
+      REAL    :: xcor, ycor, alpha
+c Ch20 new end
+
+c Ch21 new begin
+! Rotate and then do affinity for data event.
+
+      alpha = -(angcat(itree1)-sang1(1))*DEG2RAD
+
+      xcor  = cos(alpha)*ixtemplate(icd)*ncoarse +
+     +               sin(alpha)*iytemplate(icd)*ncoarse
+      ycor  = -sin(alpha)*ixtemplate(icd)*ncoarse +
+     +                cos(alpha)*iytemplate(icd)*ncoarse
+c Ch21 new end
+
+c Ch22 old begin     
 ! First, calculate the coordinates of the location
 ! currently visited in the data template:
-
-      ixh=ix+ixnode(icd)
-      iyh=iy+iynode(icd)
-      izh=iz+iznode(icd)
+c      ixh=ix+ixtemplate(icd)*ncoarse
+c      iyh=iy+iytemplate(icd)*ncoarse
+c      izh=iz+iztemplate(icd)*ncoarse
+c Ch22 old end
+c Ch23 new begin   
+       ixh=ix+nint(affcat(itree2,1)*xcor)
+       iyh=iy+nint(affcat(itree2,2)*ycor) 
+       izh=iz+affcat(itree2,3)*iztemplate(icd)*ncoarse
+c Ch23 new end
       
 ! Check if the current template location is within the training image:
-      
+c Ch53 add imult here: nxyztr->nxyztr(imult)      
+
       IF(ixh>=1.AND.ixh<=nxtr(imult).AND.iyh>=1.AND.
      +   iyh<=nytr(imult).AND.izh>=1.AND.izh<=nztr(imult)) THEN
+
+c Ch54 add imult here: trainim(ixh,iyh,izh)->trainim(ixh,iyh,izh,imult)
          icut=trainim(ixh,iyh,izh,imult)
          
 ! If the search tree node corresponding to the current conditioning
 ! configuration does not exit, create it: 
          
-         IF(.NOT.ASSOCIATED(stree%next)) CALL ExtendTree(stree,icd)
+         IF(.NOT.ASSOCIATED(onestree%next)) THEN
+              ! Create a new node:
+              ALLOCATE(onestree%next(ncut),STAT=err)
+              IF(err/=0) STOP 'Machine out of memory'
+              ! Initialize the new node:
+              DO ic=1,ncut
+                 NULLIFY(onestree%next(ic)%repl)
+                 NULLIFY(onestree%next(ic)%next)
+              END DO
+         END IF
+            
+         IF(.NOT.ASSOCIATED(onestree%next(icut)%repl)) THEN
+               ALLOCATE(onestree%next(icut)%repl(ncut),STAT=err)
+               IF(err/=0) STOP 'Machine out of memory'
+               onestree%next(icut)%repl(1:ncut)=0
+         END IF
          
 ! Update the node corresponding to the current central value: 
-
-         stree%next(icut)%repl(ccut)=
-     +   stree%next(icut)%repl(ccut)+1
+         onestree%next(icut)%repl(ccut)=
+     +   onestree%next(icut)%repl(ccut)+1
      
 ! If locations need still be visited in the data template, visit them
 ! and update the search tree accordingly:  
   
          IF(icd<nltemplate)
-     + CALL UpdateTree(stree%next(icut),imult,ix,iy,iz,
-     +                  ccut,icd+1)
+     +         CALL UpdateTree(itree1,itree2,
+     +               onestree%next(icut),imult,ix,iy,iz,ccut,icd+1)
       END IF
-
-
+       
       END SUBROUTINE UpdateTree
       
-      
-c-------------------------------------------------------------------
-      SUBROUTINE ExtendTree(stree,icd)
-      IMPLICIT NONE
-
-c----------------------------------------------------------------------------
-c
-c                  Extend the search tree
-c                  **********************
-c
-c This subroutine creates a new node extending the search tree 'stree'. 
-c
-c
-c____________________________________________________________________________
-
-      ! Declare dummy arguments
-      TYPE(streenode) :: stree
-      INTEGER, INTENT (IN) :: icd
-      
-      ! Declare local variables
-      INTEGER :: err, ic
-      
-! Create a new node:
-
-      ALLOCATE(stree%next(ncut),STAT=err)
-      
-      IF(err/=0) THEN
-         Write(*,*) 'Machine out of memory'
-         STOP
-      END IF
-      
-! Initialize the new node:
-      
-      DO ic=1,ncut
-         stree%next(ic)%repl(1:ncut)=0
-         NULLIFY(stree%next(ic)%next)
-      END DO
-
-      END SUBROUTINE ExtendTree
-      
-      
+       
 c--------------------------------------------------------------------
       RECURSIVE SUBROUTINE DeallocateTree(stree,icd)
       IMPLICIT NONE
-
 c----------------------------------------------------------------------------
 c
 c                  Deallocate the search tree
@@ -1896,12 +1822,9 @@ c starting from the leaves to the root.
 c
 c
 c____________________________________________________________________________
-
-
       ! Declare dummy arguments
       TYPE(streenode) :: stree
       INTEGER, INTENT(IN) :: icd
-
       ! Declare local variables
       INTEGER :: icut
       
@@ -1911,10 +1834,9 @@ c____________________________________________________________________________
          END DO
          DEALLOCATE(stree%next)
       END IF
-
+      IF(ASSOCIATED(stree%repl)) DEALLOCATE(stree%repl)
+      
       END SUBROUTINE DeallocateTree      
-
-
 c--------------------------------------------------------------------
       SUBROUTINE AssignData()
       IMPLICIT NONE
@@ -1925,7 +1847,7 @@ c                  Assign sample data to closest grid nodes
 c                  ***************************************
 c
 c This subroutine assigns the original sample data to the closest nodes
-c of the multiple grid to be simulated with a search tree.
+c of the current grid to be simulated.
 c
 c
 c INPUT VARIABLES:
@@ -1951,16 +1873,16 @@ c
 c
 c
 c____________________________________________________________________________
-
       ! Declare local variables
       INTEGER :: ix, iy, iz, id, id2
       INTEGER :: jx, jy, jz
-      REAL :: xx, yy, zz, test, test2
+      REAL :: xx, yy, zz, test, testassigned
       REAL :: xmncoarse, ymncoarse, xsizcoarse, ysizcoarse
       REAL :: zmncoarse, zsizcoarse
-      LOGICAL :: testind
-      INTEGER, DIMENSION (MAXX,MAXY,MAXZ) :: simtemp
-
+      INTEGER :: jxbase, jybase, jzbase, jxoffset, jyoffset, jzoffset
+      INTEGER :: jxassigned, jyassigned, jzassigned, location
+      LOGICAL :: unassigned
+      INTEGER, ALLOCATABLE, DIMENSION (:,:,:) :: simtemp
 !
 ! Define specifications of the current multiple grid.
 !
@@ -1970,8 +1892,8 @@ c____________________________________________________________________________
       xsizcoarse=xsiz*ncoarse
       ysizcoarse=ysiz*ncoarse
       zsizcoarse=zsiz*ncoarse
+      ALLOCATE(simtemp(nxcoarse,nycoarse,nzcoarse))
       simtemp(1:nxcoarse,1:nycoarse,1:nzcoarse)=UNEST
-
 !
 ! Loop over all the original sample data
 !    
@@ -1979,59 +1901,102 @@ c____________________________________________________________________________
 !
 ! Calculate the coordinates of the closest simulation grid node:
 !
-        CALL getindx(nxcoarse,xmncoarse,xsizcoarse,x(id),ix,testind)
-        CALL getindx(nycoarse,ymncoarse,ysizcoarse,y(id),iy,testind)
-        CALL getindx(nzcoarse,zmncoarse,zsizcoarse,z(id),iz,testind)
-        xx  = xmncoarse + real(ix-1)*xsizcoarse
-        yy  = ymncoarse + real(iy-1)*ysizcoarse
-        zz  = zmncoarse + real(iz-1)*zsizcoarse
-        test = abs(xx-x(id)) + abs(yy-y(id)) + abs(zz-z(id))
-!
-! Assign this data to the node (unless there is a closer data):
-!
-        IF(simtemp(ix,iy,iz)>0) THEN
-          id2 = simtemp(ix,iy,iz)
-          test2 = abs(xx-x(id2)) + abs(yy-y(id2)) + abs(zz-z(id2))
-          IF(test<test2) simtemp(ix,iy,iz)=id
-        ELSE
-           simtemp(ix,iy,iz)=id
-        END IF
+         IF(nxcoarse>1) THEN
+            jxbase=int((x(id)-xmn)/xsizcoarse)+1
+         ELSE
+            jxbase=1
+         END IF
+         IF(nycoarse>1) THEN
+            jybase=int((y(id)-ymn)/ysizcoarse)+1
+         ELSE
+            jybase=1
+         END IF
+         IF(nzcoarse>1) THEN
+            jzbase=int((z(id)-zmn)/zsizcoarse)+1
+         ELSE
+            jzbase=1
+         END IF
+         unassigned=.TRUE.
+         
+         DO jxoffset=0,1
+            DO jyoffset=0,1
+               DO jzoffset=0,1
+                  jx=jxbase+jxoffset
+                  jy=jybase+jyoffset
+                  jz=jzbase+jzoffset
+                  IF(jx>=1.AND.jx<=nxcoarse.AND.jy>=1.AND.jy<=nycoarse
+     +                 .AND.jz>=1.AND.jz<=nzcoarse) THEN
+                     location=mod(abs(jx),2)+mod(abs(jy),2)*2+
+     +                    mod(abs(jz),2)*4+1
+                     IF(multgridoffset(location)) THEN
+                        xx=xmncoarse +(jx-1)*xsizcoarse
+                        yy=ymncoarse +(jy-1)*ysizcoarse
+                        zz=zmncoarse +(jz-1)*zsizcoarse
+                        test=abs(xx-x(id))+abs(yy-y(id))+abs(zz-z(id))
+                        IF(unassigned) THEN
+                           unassigned=.FALSE.
+                           testassigned=test
+                           jxassigned=jx
+                           jyassigned=jy
+                           jzassigned=jz
+                        ELSE IF(test<testassigned) THEN
+                           testassigned=test
+                           jxassigned=jx
+                           jyassigned=jy
+                           jzassigned=jz
+                        END IF
+                     END IF
+                  END IF
+               END DO
+            END DO
+         END DO
+         
+         IF(.NOT.unassigned) THEN
+            IF(simtemp(jxassigned, jyassigned, jzassigned)/=UNEST) THEN
+               id2=simtemp(jxassigned, jyassigned, jzassigned)
+               xx=xmncoarse +(jxassigned-1)*xsizcoarse
+               yy=ymncoarse +(jyassigned-1)*ysizcoarse
+               zz=zmncoarse +(jzassigned-1)*zsizcoarse
+               test = abs(xx-x(id2)) + abs(yy-y(id2)) + abs(zz-z(id2))
+               IF(testassigned<test) 
+     +              simtemp(jxassigned, jyassigned, jzassigned)=id
+            ELSE
+               simtemp(jxassigned, jyassigned, jzassigned)=id
+            END IF                  
+         END IF
       END DO
 !
 ! Now, enter data values into the simulated grid:
 !
-      DO iz=1,nzcoarse
-         DO iy=1,nycoarse
-      	    DO ix=1,nxcoarse
-               id=simtemp(ix,iy,iz)
+      DO jz=1,nzcoarse
+         DO jy=1,nycoarse
+      	    DO jx=1,nxcoarse
+               id=simtemp(jx,jy,jz)
                IF(id>0) THEN
-                  jz=(iz-1)*ncoarse+1
-                  jy=(iy-1)*ncoarse+1
-                  jx=(ix-1)*ncoarse+1
-
+                  iz=(jz-1)*ncoarse+1
+                  iy=(jy-1)*ncoarse+1
+                  ix=(jx-1)*ncoarse+1
 ! Check if there is already a simulated value; if yes, replace it.
-                  IF(simim(jx,jy,jz)>0) THEN
-                     nodcut(simim(jx,jy,jz))=nodcut(simim(jx,jy,jz))-1
-                     IF(ivertprop==1) 
-     + vertnodcut(jz,simim(jx,jy,jz))=vertnodcut(jz,simim(jx,jy,jz))-1
+                  IF(simim(ix,iy,iz)>0) THEN
+                     nodcut(simim(ix,iy,iz))=nodcut(simim(ix,iy,iz))-1
+                     IF(ivertprop==1) vertnodcut(iz,simim(ix,iy,iz))=
+     +                    vertnodcut(iz,simim(ix,iy,iz))-1
                   END IF
-                  simim(jx,jy,jz) = vr(id)  
-                  nodcut(simim(jx,jy,jz))=nodcut(simim(jx,jy,jz))+1
-                  IF(ivertprop==1) 
-     + vertnodcut(jz,simim(jx,jy,jz))=vertnodcut(jz,simim(jx,jy,jz))+1
+                  simim(ix,iy,iz) = vr(id)  
+                  nodcut(simim(ix,iy,iz))=nodcut(simim(ix,iy,iz))+1
+                  IF(ivertprop==1) vertnodcut(iz,simim(ix,iy,iz))=
+     +                 vertnodcut(iz,simim(ix,iy,iz))+1
              
 ! Indicates with a special value assigned to numcd that a sample data
 ! has been assigned to the node.
-                  numcd(jx,jy,jz)=10*UNEST           
+                  numcd(ix,iy,iz)=10*UNEST           
                END IF
 	    END DO	
          END DO
       END DO
+      DEALLOCATE(simtemp)
  
       END SUBROUTINE AssignData
-
-
-
 c-------------------------------------------------------------------
       SUBROUTINE UnassignData()
       IMPLICIT NONE
@@ -2057,12 +2022,9 @@ c  nodcut          	Number of nodes simulated in each category so far
 c
 c
 c____________________________________________________________________________
-
       ! Declare local variables
       INTEGER :: ix,iy,iz,jx,jy,jz
-
 ! Loop over all the nodes of the current simulation grid:
-
       DO jz=1, nzcoarse
          iz=(jz-1)*ncoarse+1
          DO jy=1, nycoarse
@@ -2072,7 +2034,6 @@ c____________________________________________________________________________
             
 ! Check if an original sample data has been assigned to the current node.
 ! If yes, remove it.
-
                IF(numcd(ix,iy,iz)==UNEST*10) THEN
                 nodcut(simim(ix,iy,iz))=nodcut(simim(ix,iy,iz))-1
                 IF(ivertprop==1) 
@@ -2083,14 +2044,10 @@ c____________________________________________________________________________
             END DO
          END DO
       END DO
-
       END SUBROUTINE UnassignData
-
 c-------------------------------------------------------------------
-
-      SUBROUTINE InferCpdfTree(ix,iy,iz,cpdf,stree)
+      SUBROUTINE InferCpdfTree(ix,iy,iz,cpdf,imult,stree)
       IMPLICIT NONE
-
 c----------------------------------------------------------------------------
 c
 c                    Return local cpdf
@@ -2121,35 +2078,56 @@ c  numcd(ix,iy,iz)   	Number of conditioning data finally retained
 c
 c
 c____________________________________________________________________________
-
       ! Declare dummy arguments
-      INTEGER, INTENT(IN) :: ix, iy, iz
-      REAL, DIMENSION (MAXCUT), INTENT(OUT) :: cpdf
-      TYPE(streenode) :: stree
-
+      INTEGER, INTENT(IN) :: ix, iy, iz,imult
+      REAL, DIMENSION (:), INTENT(OUT) :: cpdf
+      TYPE(streenode) :: stree(MAXTREEANG,MAXTREEAFF)
       
       ! Declare local variables
       INTEGER :: i, j, k, ind, maxind, icut , sumrepl
-      INTEGER, DIMENSION (MAXCUT) :: replicate
+      INTEGER, ALLOCATABLE, DIMENSION (:) :: replicate
+c Ch10 new begin
+      INTEGER :: itree, mtree1, mtree2
+      REAL :: vmin,tmpv
+c Ch10 new end
+     
 
 !
 ! First, spiral away from the node being simulated and node all 
 ! the nearby nodes that have been simulated
 !
       ncnode=0
-      
+
+c Ch12 new begin: accept rotation angles and affinity values:
+      mtree1=1
+      mtree2=1
+      vmin=+1.0e21
+
+      IF(irotate==1) THEN
+        DO itree=1,nangcat
+           IF(abs(angcat(itree)-rotangle(ix,iy,iz))<vmin) THEN
+              mtree1=itree
+              vmin=abs(angcat(itree)-rotangle(ix,iy,iz))
+           END IF
+        END DO 
+        mtree2=affclass(ix,iy,iz)             
+      END IF
+c Ch12 new end
+
+
 ! maxind: location index of the furthest away conditioning datum      
       maxind=0
 
 ! Consider all the nearby nodes until enough have been found:
-
       DO ind=1,nltemplate
-         IF(ncnode==nodmax) EXIT
-         i=ix+ixnode(ind)
-         j=iy+iynode(ind)
-         k=iz+iznode(ind)
-          
+         IF(ncnode==prevnodmax) EXIT
+
+         i=ix+ixtemplate(ind)*ncoarse
+         j=iy+iytemplate(ind)*ncoarse
+         k=iz+iztemplate(ind)*ncoarse
+
          cnodev(ind)=UNEST
+
          IF(i>=1.and.i<=nx.and.j>=1.and.j<=ny.and.
      +      k>=1.and.k<=nz) THEN
             cnodev(ind)=simim(i,j,k)
@@ -2158,14 +2136,13 @@ c____________________________________________________________________________
      +         nlcd(ind)+1
                ncnode=ncnode+1
                maxind=ind
-           IF(idbg>2) WRITE(ldbg,1204) ind,ixnode(ind),
-     +          iynode(ind),iznode(ind),
-     +          thres(cnodev(ind))
+            IF(idbg>2) WRITE(ldbg,1204) ind,ixtemplate(ind)*ncoarse,
+     +           iytemplate(ind)*ncoarse,iztemplate(ind)*ncoarse,
+     +           thres(cnodev(ind))
 1204  format('hard CD ', i3, ':',i5,i5,i5, ', category=', i3)
             END IF
-         END IF
+          END IF
       END DO
-      
 
 !
 ! Now, compute the cpdf
@@ -2178,42 +2155,57 @@ c____________________________________________________________________________
 401   format(/,' Simulate node:', i5, i5, i5)
       IF(idbg>1) WRITE(ldbg,402) ncnode
 402   format(i3, ' hard conditioning data')
-
 ! If enough identical data events, compute cpdf, otherwise drop the
 ! furthest away datum:
-
       IF(ivertprop==1) THEN
          cpdf(1:ncut)=vertpdf(iz,1:ncut)
       ELSE
          cpdf(1:ncut)=pdf(1:ncut)
       END IF
 
+      ALLOCATE(replicate(ncut))
+
       DO
-         replicate(1:ncut)=0
-         CALL RetrieveCpdfTree(1,stree,replicate,maxind)
-         sumrepl=SUM(replicate(1:ncut))
-         IF(idbg>2) WRITE(ldbg,*) 'Training replicates:', sumrepl
+        replicate(1:ncut)=0
+
+c Ch27 modify stree to stree(mtree)
+        CALL RetrieveCpdfTree(1,stree(mtree1,mtree2),replicate,maxind)
+        sumrepl=SUM(replicate(1:ncut))
+        IF(idbg>2) WRITE(ldbg,*) 'Training replicates:', sumrepl
 ! Check if enough training replicates: if yes, calculate the cpdf,
 ! otherwise drop the furthest away datum
-         IF(sumrepl>=cmin) THEN
-            cpdf(1:ncut)=real(replicate(1:ncut))/real(sumrepl)
-            EXIT
-         ELSE
-            ncnode=ncnode-1
-            nldropped(maxind)=nldropped(maxind)+1
-            IF(idbg>2) WRITE(ldbg,404) 
-404       format('Not enough replicates, drop the furthest away CD.')
-            IF(idbg>2) WRITE(ldbg,405) ncnode
-405       format('Infer cpdf for', i3, ' CD.')
+c Ch72 introduce cmin here
+        IF(sumrepl>=cmin) THEN
+           cpdf(1:ncut)=real(replicate(1:ncut))/real(sumrepl)
+           EXIT
+        ELSE
+           ncnode=ncnode-1
+           nldropped(maxind)=nldropped(maxind)+1
+           IF(idbg>2) WRITE(ldbg,404) 
+404      format('Not enough replicates, drop the furthest away CD.')
+           IF(idbg>2) WRITE(ldbg,405) ncnode
+405      format('Infer cpdf for', i3, ' CD.')
             DO 
                maxind=maxind-1
                IF(maxind==0) EXIT
-               IF(cnodev(maxind)/=UNEST) EXIT 
+               IF(cnodev(maxind)/=UNEST) EXIT
             END DO
          END IF
       END DO
+
+      DEALLOCATE(replicate)
+c Ch66 new begin: update ccdf using target pdf
+      DO icut=1,ncut
+         tmpv=(pdf(icut)-trpdf(icut,imult))*cpdf(icut)+
+     +           trpdf(icut,imult)*(1.0-pdf(icut))
+         cpdf(icut)=cpdf(icut)*(1.0-trpdf(icut,imult))*pdf(icut)/
+     +              max(tmpv,EPSILON)
+      END DO
+c Ch66 new end
+      
       
       numcd(ix,iy,iz)=ncnode
+
       
 ! Write out the cpdf if debugging required:
       IF(idbg>1) THEN
@@ -2228,7 +2220,7 @@ c____________________________________________________________________________
       END SUBROUTINE InferCpdfTree
 
 c-------------------------------------------------------------------
-      RECURSIVE SUBROUTINE RetrieveCpdfTree(cdind,stree,
+      RECURSIVE SUBROUTINE RetrieveCpdfTree(cdind,onestree,
      +                                        replicate,maxind)
       IMPLICIT NONE
       
@@ -2241,42 +2233,39 @@ c This subroutine retrieves the local cpdf at (ix,iy,iz) from the search tree.
 c
 c
 c____________________________________________________________________________
-
       ! Declare dummy arguments
       INTEGER,INTENT(IN) :: cdind, maxind
-      INTEGER, DIMENSION (MAXCUT), INTENT(INOUT) :: replicate
-      TYPE(streenode) :: stree
-
+      INTEGER, DIMENSION (:), INTENT(INOUT) :: replicate
+      TYPE(streenode) :: onestree
       ! Declare local variables
       INTEGER :: ic
       
 ! cdind: current level in the search tree.      
-
       IF(cdind<=maxind) THEN
          ic=cnodev(cdind)
          
+c Ch28 modify all stree to onestree in this subroutine:
          
 ! If there is a conditioning data at the template location cdind, 
 ! consider only that conditioning value, otherwise sum up over all
 ! values possibly taken by the location cdind:
          
-         IF(ASSOCIATED(stree%next)) THEN   
+         IF(ASSOCIATED(onestree%next)) THEN   
             IF(ic>UNEST) THEN 
                CALL RetrieveCpdfTree(cdind+1,
-     +            stree%next(ic),replicate,maxind)
+     +            onestree%next(ic),replicate,maxind)
             ELSE
               DO ic=1,ncut
                  CALL RetrieveCpdfTree(cdind+1,
-     +              stree%next(ic),replicate,maxind)
+     +              onestree%next(ic),replicate,maxind)
               END DO
             END IF
          END IF
       ELSE
-         replicate(1:ncut)=replicate(1:ncut)+stree%repl(1:ncut)
+         IF(ASSOCIATED(onestree%repl)) 
+     +      replicate(1:ncut)=replicate(1:ncut)+onestree%repl(1:ncut)
       END IF
-
       END SUBROUTINE RetrieveCpdfTree
-
       
 c-------------------------------------------------------------------
       SUBROUTINE SimulationTree (stree,imult)
@@ -2284,12 +2273,237 @@ c-------------------------------------------------------------------
       
 c----------------------------------------------------------------------------
 c
-c                    Simulate the current multiple grid
-c                    **********************************
+c                    Simulate the current grid
+c                    *************************
 c
-c This subroutine simulates the current (3-D rectangular) multiple grid.
+c This subroutine simulates the current grid.
+c The conditional simulation is performed by sequential simulation of all
+c the nodes visited by a random path.
+c
+c
+c INPUT VARIABLES:
+c
+c  ncoarse		Current multiple grid number
+c  n[x,y,z]coarse	Dimensions of the current multiple grid
+c  nxyzcoarse  	    	Number of nodes in the current multiple grid 
+c  simim           	Realization so far
+c  idbg     	        Integer debugging level (0=none,2=normal,4=serious)
+c  ldbg      	        Unit number for the debugging output
+c  imult                Current simulation grid
+c
+c
+c
+c OUTPUT VARIABLE: All the nodes of the current grid are simulated
+c
+c
+c____________________________________________________________________________
+      ! Declare dummy arguments
+      TYPE(streenode) :: stree(MAXTREEANG,MAXTREEAFF)
+      INTEGER, INTENT(IN) :: imult 
+      
+      ! Declare local variables
+      INTEGER :: in, ix, iy, iz, irepo, ncnode, ic
+      REAL, ALLOCATABLE, DIMENSION  (:) :: cpdf
+      INTEGER :: jx,jy,jz,location
+        
+      irepo=max(1,min((nxyzcoarse/10),10000))
+!
+! Main loop over all the nodes of the current multiple grid:
+!            
+      ALLOCATE(cpdf(ncut))
+      DO in=1, nxyzcoarse
+         IF(mod(in,irepo)==0) WRITE(*,303) in
+ 303     format('   currently on node ',i9)
+!
+! Figure out the location of this point and make sure it has
+! not been assigned a value already:
+!
+         jz=1+int((order(in)-1)/nxycoarse)
+         jy=1+int((order(in)-(jz-1)*nxycoarse-1)/nxcoarse)
+         jx=order(in)-(jz-1)*nxycoarse-(jy-1)*nxcoarse
+         ix=(jx-1)*ncoarse+1
+         iy=(jy-1)*ncoarse+1
+         iz=(jz-1)*ncoarse+1
+         location=mod(abs(jx),2)+mod(abs(jy),2)*2+mod(abs(jz),2)*4+1
+         
+         IF(simim(ix, iy, iz)<0.AND.multgridoffset(location)) THEN
+            nodsim=nodsim+1
+
+c Ch83 old begin: remove codes.
+c Ch15 new begin
+! Calculate locally simulated nodes
+c            CALL SearchClosestNodes(ix,iy,iz)
+c Ch15 new end
+c Ch83 old end
+
+c Ch68 old begin
+! Infer the local cpdf using the search tree
+c            CALL InferCpdfTree(ix, iy, iz, cpdf, stree)
+! Draw a random number and assign a value to this node:
+c Ch68 old end
+
+c Ch69 new begin: introduce imult here
+! Infer the local cpdf using the search tree
+            CALL InferCpdfTree(ix, iy, iz, cpdf, imult, stree)
+! Draw a random number and assign a value to this node:
+c Ch69 new end
+
+c Ch41 new begin
+! Update the cpdf to account for collocated soft datum if used:
+! Only use soft data on the first two coarse grids
+           IF(isoft==1) THEN
+             CALL UpdateForSecondary (ix, iy, iz, cpdf, imult)
+           END IF
+c Ch41 new end
+
+c Ch18 old begin
+c           CALL DrawValue(ix, iy, iz, cpdf)
+c Ch18 old end
+
+c Ch24 new begin: introduce imult here                                    
+            CALL DrawValue(ix, iy, iz, cpdf,imult)
+c Ch24 new end
+         END IF
+      END DO
+      DEALLOCATE(cpdf)
+      
+      END SUBROUTINE SimulationTree
+
+c Ch42 new begin: add a subrotine to consider soft information
+
+c-------------------------------------------------------------------
+      SUBROUTINE UpdateForSecondary (ix, iy, iz, cpdf, imult)
+      IMPLICIT NONE
+ 
+c----------------------------------------------------------------------------
+c  
+c               Update cpdf to account for secondary information
+c               ************************************************
+c
+c  This subroutine updates the local pdf conditional to hard data
+c  at (ix,iy,iz) to account for the collocated soft datum value 
+c  (method 2) 
+c
+c
+c INPUT VARIABLES:
+c
+c  ix,iy,iz             Index of the point currently being simulated
+c  cpdf                 Local cpdf
+c
+c
+c
+c OUTPUT VARIABLES:
+c
+c  simim                Realization so far
+c  nodcut               Number of nodes simulated in each category so far
+c
+c
+c____________________________________________________________________________
+         
+      ! Declare dummy arguments
+      REAL, DIMENSION  (:), INTENT(INOUT) :: cpdf
+      INTEGER, INTENT(IN) :: ix,iy,iz,imult
+            
+      ! Declare local variables
+      INTEGER :: ic, isec
+      REAL,  ALLOCATABLE, DIMENSION (:) :: softcpdf, tmptau1, tmptau2
+      REAL*8, ALLOCATABLE, DIMENSION (:) :: arel,brel,crel,xrel
+      REAL :: total
+
+! Allocate spaces for arrays
+      ALLOCATE(softcpdf(ncut))
+      ALLOCATE(tmptau1(ncut))
+      ALLOCATE(tmptau2(ncut))
+      ALLOCATE(arel(ncut))
+      ALLOCATE(brel(ncut))
+      ALLOCATE(crel(ncut))
+      ALLOCATE(xrel(ncut))
+
+! If a probability conditional to the hard data only is equal to 1, then 
+! no updating is required.
+
+      softcpdf(1:ncut)=softprob(1:ncut,ix,iy,iz)
+
+      tmptau1(1:ncut) = tau1
+      tmptau2(1:ncut) = tau2
+
+c Ch87 new begin: optimally set tau values
+      IF(iauto==1) THEN
+         DO ic=1,ncut
+            IF(cpdf(ic)>=pdf(ic)) THEN
+          tmptau1(ic) = (cpdf(ic) - pdf(ic))/(1 - pdf(ic))
+            ELSE
+               tmptau1(ic) = (pdf(ic) - cpdf(ic))/pdf(ic)
+            END IF
+         END DO
+
+         DO ic=1,ncut
+            IF(softcpdf(ic)>=pdf(ic)) THEN
+          tmptau2(ic) = (softcpdf(ic) - pdf(ic))/(1 - pdf(ic))
+            ELSE
+               tmptau2(ic) = (pdf(ic) - softcpdf(ic))/pdf(ic)
+            END IF
+         END DO
+      END IF
+c Ch87 new end
+
+c Ch84 begin of old
+c     IF(imult<nmult-1) RETURN
+c Ch84 end  
+      IF(maxval(cpdf(1:ncut))<(1-EPSILON)) THEN  
+         IF(maxval(softcpdf(1:ncut))>(1-EPSILON)) THEN
+            cpdf(1:ncut)=softcpdf(1:ncut)
+         ELSE
+            arel(1:ncut)=pdf(1:ncut)/max(1-pdf(1:ncut),EPSILON)
+            brel(1:ncut)=cpdf(1:ncut)/max(1-cpdf(1:ncut),EPSILON)
+       crel(1:ncut)=softcpdf(1:ncut)/max(1-softcpdf(1:ncut),EPSILON)
+c Ch85 old begin
+c            xrel(1:ncut)=brel(1:ncut)*
+c     +          (crel(1:ncut)/max(arel(1:ncut),EPSILON))**omega
+c Ch85 old end
+
+c Ch86 new begin: symmetric constrain on P(A|B) and P(A|C) 
+c 0.0=<tau1 and tau2<=1.0
+            xrel(1:ncut)=arel(1:ncut)*
+     +  (brel(1:ncut)/max(arel(1:ncut),EPSILON))**tmptau1(1:ncut)*
+     +       (crel(1:ncut)/max(arel(1:ncut),EPSILON))**tmptau2(1:ncut)
+c Ch86 new end      
+            cpdf(1:ncut)=xrel(1:ncut)/(1+xrel(1:ncut)) 
+            total=sum(cpdf(1:ncut))
+            cpdf(1:ncut)=cpdf(1:ncut)/total
+         END IF
+
+         IF(idbg>1) THEN
+            WRITE(ldbg,170)
+170         format('After updating for collocated soft datum:')
+            DO ic=1,ncut
+               WRITE(ldbg,171) thres(ic), cpdf(ic)
+171            format('Cpdf for category ', i3, ' : ', f6.4)
+            END DO
+         END IF
+      END IF    
+            
+! Deallocate spaces
+
+      DEALLOCATE(softcpdf)
+      DEALLOCATE(arel,brel,crel,xrel)
+     
+      END SUBROUTINE UpdateForSecondary
+
+c Ch42 new end: end of the added subroutine
+                        
+c-------------------------------------------------------------------
+      SUBROUTINE SimulateOneGrid(imult)
+      IMPLICIT NONE
+      
+c----------------------------------------------------------------------------
+c
+c                    Simulate the current grid
+c                    *************************
+c
+c This subroutine, which calls 'SimulationTree', simulates the current grid.
 c The conditional simulation is achieved by sequential simulation of all
-c the nodes visited by a pseudo-random path. A search tree is used here!
+c the nodes visited by a random path.
 c
 c
 c INPUT VARIABLES:
@@ -2308,46 +2522,88 @@ c OUTPUT VARIABLE: All the nodes of the current multiple grid are simulated
 c
 c
 c____________________________________________________________________________
-
       ! Declare dummy arguments
-      TYPE(streenode) :: stree
       INTEGER, INTENT(IN) :: imult
       
       ! Declare local variables
-      INTEGER :: in, ix, iy, iz, irepo, ncnode, ic
-      REAL, DIMENSION  (MAXCUT) :: cpdf
-      INTEGER :: jx,jy,jz
-        
-      irepo=max(1,min((nxyzcoarse/10),10000))
-!
-! Main loop over all the nodes of the current multiple grid:
-!            
-      DO in=1, nxyzcoarse
-         IF(mod(in,irepo)==0) WRITE(*,303) in
- 303     format('   currently on node ',i9)
-!
-! Figure out the location of this point and make sure it has
-! not been assigned a value already:
-!
-         jz=1+int((order(in)-1)/nxycoarse)
-         jy=1+int((order(in)-(jz-1)*nxycoarse-1)/nxcoarse)
-         jx=order(in)-(jz-1)*nxycoarse-(jy-1)*nxcoarse
-         ix=(jx-1)*ncoarse+1
-         iy=(jy-1)*ncoarse+1
-         iz=(jz-1)*ncoarse+1
+      INTEGER :: ind, itree1, itree2
+      REAL :: meanCD
+      TYPE(streenode) :: searchtree(MAXTREEANG,MAXTREEAFF)
+! Create data template:
+c Ch46 add imulat here: CreateTemplate()->CreateTemplate(imult)            
+      CALL CreateTemplate(imult)
+               
+      nlcd(1:nltemplate)=0
+      nldropped(1:nltemplate)=0
+      nodsim=0
+            
+! Builds the search tree corresponding to the current multiple grid:
 
-         IF(simim(ix, iy, iz)<0) THEN
-            nodsim=nodsim+1
+c Ch29 modify searchtree to searchtree(:,:)
 
-! Infer the local cpdf using the search tree
-            CALL InferCpdfTree(ix, iy, iz, cpdf, stree)
-! Draw a random number and assign a value to this node:                                    
-            CALL DrawValue(ix, iy, iz, cpdf, imult)
-         END IF
-
+      DO itree1=1,nangcat   
+          DO itree2=1,naffcat
+            ALLOCATE(searchtree(itree1,itree2)%repl(ncut))
+         searchtree(itree1,itree2)%repl(1:ncut)=int(pdf(1:ncut)*nxyz)
+            NULLIFY(searchtree(itree1,itree2)%next)
+          END DO
       END DO
+
+c Ch50 add imult here: InferTree(searchtree)->InferTree(searchtree,imult)
+      CALL InferTree(searchtree,imult)
+         
+! Assign data to the current multiple grid simulation:
+      CALL AssignData()
+! Work out a random path for this realization:
+      CALL RandomPath()
+! Perform simulation:
+      CALL SimulationTree(searchtree,imult)
+! Unassign the data:
+      IF(imult>1) CALL UnassignData()
+      IF(idbg>0) THEN
+         WRITE(ldbg,*)
+         WRITE(ldbg,*) 'Some statistics on the data template' 
+         DO ind=1,nltemplate
+            WRITE(ldbg,*)
+            WRITE(ldbg,505) ixtemplate(ind),iytemplate(ind),
+     +           iztemplate(ind)
+ 505        format('At location ',i4,i4,i4, ':')
+            WRITE(ldbg,506) 100.0*real(nlcd(ind))/real(nodsim)
+ 506        format('a conditioning datum was present',f5.1,
+     +           '% of the time')
+            IF(nlcd(ind)>0) WRITE(ldbg,507) 100.0*
+     +           real(nldropped(ind))/real(nlcd(ind))
+ 507        format('this conditioning datum was dropped',f5.1,
+     +           '% of the time')   
+            WRITE(ldbg,508) 100.0*
+     +           real(nlcd(ind)-nldropped(ind))/real(nodsim)
+ 508        format('so this location was actually used',f5.1,
+     +           '% of the time')      
+         END DO
+      END IF
+               
+! Deallocates the search tree:
+c Ch35 old begin:         
+c     CALL DeallocateTree(searchtree,1)
+c Ch35 old end
+ 
+c Ch36 new begin:
+      DO itree1=1,nangcat
+          DO itree2=1,naffcat
+            CALL DeallocateTree(searchtree(itree1,itree2),1)
+          END DO
+      END DO
+c Ch36 new end
+           
+! Calculate the mean number of CD finally retained in average 
+! for the current grid:
+      IF(idbg>0) THEN
+         CALL MeanNumberCD(meanCD)
+         WRITE(ldbg,173) meanCD
+ 173     format(/,' Mean number of conditioning data retained: ',f6.1)
+      END IF
       
-      END SUBROUTINE SimulationTree
+      END SUBROUTINE SimulateOneGrid
             
 c-------------------------------------------------------------------
       SUBROUTINE MeanNumberCD (meanCD)
@@ -2374,13 +2630,11 @@ c                  the current multiple grid
 c
 c
 c____________________________________________________________________________
-
       ! Declare dummy arguments
       REAL, INTENT(OUT) :: meanCD
       
       ! Declare local variables
       INTEGER :: totalncd, numncd, ix, iy, iz, jx, jy, jz
-
       totalncd=0
       numncd=0
       DO jz=1, nzcoarse
@@ -2401,40 +2655,52 @@ c____________________________________________________________________________
       END SUBROUTINE MeanNumberCD
             
       END MODULE simul
-
 c------------------------------------------------------------
 c------------------------------------------------------------
-
-
       PROGRAM snesim
       USE parameter
       USE simul
       IMPLICIT NONE
-
       ! Declare local variables
       INTEGER :: isim, ix, iy, iz, imult, ic, iter, ind
       INTEGER :: totalncd, numncd, jx, jy, jz
-      REAL :: meanCD
-      TYPE(streenode), TARGET :: searchtree
-      REAL, DIMENSION (MAXCUT) :: simpdf
+      REAL, ALLOCATABLE, DIMENSION (:) :: simpdf
       
-
 ! Read the parameters and data:
       CALL ReadParm
+      ncoarse=1
+c Ch45 old begin
+! Set up rotation matrix to compute anisotropic distances
+! for conditioning data search
+c     CALL SetRotMat()
+! Calculate number of multiple-grids
+c      ncoarse=1
+c      CALL CalculateMultGridNumber
+c Ch45 old end
+
+c Ch65 new begin
+      ncoarse=1
+      multgridoffset(1:8) = .TRUE.
+      prevgridoffset(1:8) = .FALSE.
+c Ch65 new end
+
+      WRITE(*,*)
+      WRITE(*,*) 'Number of multiple-grids:',nmult
       
+! Initialize the simulation
+      ALLOCATE(simim(nx,ny,nz), numcd(nx,ny,nz))
 !
 ! Main loop over all the simulations:
 !
       DO isim=1, nsim
-
 !      
 ! Initialize the simulation and assign the data to the closest grid nodes:
 !
          simim(1:nx,1:ny,1:nz)=UNEST
          numcd(1:nx,1:ny,1:nz)=UNEST
-! Assign original sample data to the closest simulation grid nodes
-         CALL RelocateData()
-         
+         nodcut(1:ncut)=0
+         IF(ivertprop==1) vertnodcut(1:nz,1:ncut)=0
+        
          WRITE(*,*)
          WRITE(*,*) 'Working on realization number ',isim
          
@@ -2442,10 +2708,7 @@ c------------------------------------------------------------
             WRITE(ldbg,2000) isim
 2000        format(/,/' Working on realization number:',i4)
          END IF
-
-!
-! Simulate the coarsest grids without search tree
-!
+! Loop over multiple-grids
          DO imult=nmult,1,-1
             ncoarse=2**(imult-1)
             nxcoarse=MAX(1,(nx-1)/ncoarse+1)
@@ -2460,83 +2723,32 @@ c------------------------------------------------------------
 2001           format(/' Working on grid:',i4)
             END IF
      
-            IF(imult>streemult) THEN
-
-! Set up the spiral search: 
-               CALL InitializeSearch(imult)
-            
-! Work out a random path for this realization:
-               CALL RandomPath()
-
-! Perform simulation:
-               CALL Simulation(imult)
-           
+            IF(imult==nmult) THEN
+               CALL SimulateOneGrid(imult)
             ELSE
-         
-!
-! Simulate the finest grids using search trees
-!
-
-! Sort the data template locations in order of closeness:            
-               CALL SortTemplate(imult)
-               
-! Rescale data template used to construct the seach tree
-	       ixnode(1:nltemplate)=ncoarse*ixtemplate(1:nltemplate)
-	       iynode(1:nltemplate)=ncoarse*iytemplate(1:nltemplate)
-	       iznode(1:nltemplate)=ncoarse*iztemplate(1:nltemplate)
-	       nlcd(1:nltemplate)=0
-	       nldropped(1:nltemplate)=0
-	       nodsim=0
-            
-! Builds the search tree corresponding to the current multiple grid:         
-               searchtree%repl(1:ncut)=int(pdf(1:ncut)*nxyz)
-               CALL InferTree(searchtree,imult)
-         
-! Assign data to the current multiple grid simulation:
-               CALL AssignData()
-
-! Work out a random path for this realization:
-               CALL RandomPathTree()
-! Perform simulation:
-               CALL SimulationTree(searchtree,imult)
-
-! Unassign the data:
-               IF(imult>1) CALL UnassignData()
-               IF(idbg>0) THEN
-                 WRITE(ldbg,*)
-                 WRITE(ldbg,*) 'Some statistics on the data template' 
-                 DO ind=1,nltemplate
-                   WRITE(ldbg,*)
-                   WRITE(ldbg,505) ixnode(ind),iynode(ind),iznode(ind)
-505                format('At location ',i4,i4,i4, ':')
-                   WRITE(ldbg,506) 100.0*real(nlcd(ind))/real(nodsim)
-506                format('a conditioning datum was present',f5.1,
-     +                    '% of the time')
-	           IF(nlcd(ind)>0) WRITE(ldbg,507) 100.0*
-     +                real(nldropped(ind))/real(nlcd(ind))
-507                format('this conditioning datum was dropped',f5.1,
-     +                    '% of the time')   
-	           WRITE(ldbg,508) 100.0*
-     +                   real(nlcd(ind)-nldropped(ind))/real(nodsim)
-508                format('so this location was actually used',f5.1,
-     +                    '% of the time')      
-                 END DO
-               END IF
-               
-! Deallocates the search tree:         
-               CALL DeallocateTree(searchtree,1)
-            ENDIF
-            
-! Calculate the mean number of CD finally retained in average 
-! for the current grid:
-            IF(idbg>0) THEN
-	       CALL MeanNumberCD(meanCD)
-               WRITE(ldbg,173) meanCD
-173   format(/,' Mean number of conditioning data retained: ',f6.1)
-           END IF
-        END DO
-
-
+               multgridoffset(1)=.TRUE.
+               prevgridoffset(1)=.TRUE.
+               multgridoffset(2:8)=.FALSE.
+               prevgridoffset(2:8)=.FALSE.
+! simulate first subgrid
+               multgridoffset(8)=.TRUE.
+               IF(nzcoarse>1) CALL SimulateOneGrid(imult)
+               prevgridoffset(8)=.TRUE.
+! simulate second subgrid
+               multgridoffset(4)=.TRUE.
+               multgridoffset(5)=.TRUE.
+               CALL SimulateOneGrid(imult)
+               prevgridoffset(4)=.TRUE.
+               prevgridoffset(5)=.TRUE.
+     
+! simulate third subgrid
+               multgridoffset(2)=.TRUE.
+               multgridoffset(3)=.TRUE.
+               multgridoffset(6)=.TRUE.
+               multgridoffset(7)=.TRUE.
+               CALL SimulateOneGrid(imult)
+            END IF
+         END DO
 ! Write out the realization in the output file:
 	 totalncd=0
 	 numncd=0
@@ -2555,12 +2767,14 @@ c------------------------------------------------------------
 !
 ! Calculate simulated global proportion for each category:
 !
+         ALLOCATE(simpdf(ncut))
          simpdf(1:ncut)=real(nodcut(1:ncut))/real(nxyz)
          DO ic=1,ncut
             WRITE(*,112) ic, simpdf(ic)
 112         format(/,' Simulated proportion of category ',
      +                      i4,' : ',f6.4) 
          END DO
+         DEALLOCATE(simpdf)
 !
 ! Calculate the mean number of CD retained:
 !
@@ -2570,7 +2784,24 @@ c------------------------------------------------------------
       CLOSE(lout)
       
 ! Finished:
+      DEALLOCATE(simim, numcd, trainim)
+      DEALLOCATE(thres,pdf,nodcut,vertpdf,vertnodcut)
+      DEALLOCATE(ixtemplate,iytemplate, iztemplate)
+      DEALLOCATE(nlcd,nldropped)
+      DEALLOCATE(cnodev)
+
+c Ch19 new begin
+c      DEALLOCATE(localprop)
+c      DEALLOCATE(rotangle)
+c      DEALLOCATE(affclass)
+c      DEALLOCATE(softprob)
+c      DEALLOCATE(nxtr,nytr,nztr,nxytr,nxyztr)
+c      DEALLOCATE(sanis1,sanis2) 
+c      DEALLOCATE(radius,radius1,radius2,sang1,sang2,sang3)
+c      DEALLOCATE(trpdf)
+c Ch19 new end
+      
       WRITE(*,9998) VERSION
- 9998 format(/' SNESIM Version: ',f5.3,' Finished'/)
+ 9998 format(/' SNESIM Version: ',f8.3,' Finished'/)
   
       END PROGRAM snesim
