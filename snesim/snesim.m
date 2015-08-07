@@ -18,6 +18,12 @@ function V=snesim(parfile,x,y,z)
   % FIRST TRY TO FIND THE snesim BINARY IN THE mGstat/bin/ DIRECTORY
   [p,f,s]=fileparts(which('mgstat_verbose'));
   if isunix==1
+    if ismac
+      if isempty(getenv('DYLD_LIBRARY_PATH'))
+        disp(sprintf('%s: SETTING DYLD LIBRARY PATH',mfilename))
+        setenv('DYLD_LIBRARY_PATH', '/usr/local/bin')
+      end
+    end
       snesim_bin=sprintf('%s/bin/snesim',p);
   else
       snesim_bin=sprintf('%s\\bin\\snesim.exe',p);
