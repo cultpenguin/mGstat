@@ -130,9 +130,9 @@ obj.dim.ny=tmp(1);obj.dim.ymn=tmp(2);obj.dim.ysiz=tmp(3);
 line=fgetl(fid);
 tmp=sscanf(line,'%d %f %f');
 obj.dim.nz=tmp(1);obj.dim.zmn=tmp(2);obj.dim.zsiz=tmp(3);
-obj.dim.x=[0:1:obj.dim.nx-1]*obj.dim.xsiz+obj.dim.xmn;
-obj.dim.y=[0:1:obj.dim.ny-1]*obj.dim.ysiz+obj.dim.ymn;
-obj.dim.z=[0:1:obj.dim.nz-1]*obj.dim.zsiz+obj.dim.zmn;
+obj.x=[0:1:obj.dim.nx-1]*obj.dim.xsiz+obj.dim.xmn;
+obj.y=[0:1:obj.dim.ny-1]*obj.dim.ysiz+obj.dim.ymn;
+obj.z=[0:1:obj.dim.nz-1]*obj.dim.zsiz+obj.dim.zmn;
 
 
 % RSEED
