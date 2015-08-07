@@ -49,9 +49,6 @@ c
      +          MAXNST =     4, MAXREF=10000,MAXCAT=24, 
      +          MV=20         , MAXVOLS=1 , MAXDINVOL=1,
      +		MAXQUAN=501,MAXMVLOOK=201)
-
-
-
 c
 c Fixed Parameters:
 c
@@ -63,7 +60,7 @@ c
      +          MAXXYZ=MAXCTX*MAXCTY*MAXCTZ,MAXSB=MAXSBX*MAXSBY*MAXSBZ,
      +          MXYZ=MAXX*MAXY*MAXZ,UNEST=-9999999.0,EPSLON=1.0e-20,
      +          MAXGEOMDATA=MAXVOLS*MAXDINVOL,
-     +          VERSION=1.9000)
+     +          VERSION=2.0)
 c
 c ACORN parameters:
 c

@@ -17,21 +17,32 @@
 %  options.n_max_ite [int]: number of maximum iterations through the TI for matching patterns (def=200)
 %
 %  % specific for options.type='enesim';
-%
 %  options.plot    [int]: [0]:none, [1]:plot cond, [2]:storing movie (def=0)
 %  options.verbose [int]: [0] no info to screen, [1]:some info (def=1)
+%  % approximating the ocnditional pd:
+%  options.n_max_condpd=10; % build conditional pd from max 10 counts
 %
-% %% Example 
+%
+% %% Example
 % TI=channels;
 % SIM=ones(40,40)*NaN;
 %
+% %% DIRECT SAMPLING
 % options.type='dsim';
 % options.n_cond=5;;
 % [out_dsim]=mps(TI,SIM,options)
 %
+% %% ENESIM
 % options.type='enesim';
 % options.n_cond=5;;
 % [out_dsim]=mps(TI,SIM,options)
+%
+% %% ENESIM USING APPROXIMATE CONDITIONAL
+% options.type='enesim';
+% options.n_cond=5;
+% options.n_max_condpd=10;
+% [out_dsim]=mps(TI,SIM,options)
+%
 %
 %
 % See also: mps_enesim, mps_dsim
@@ -48,7 +59,11 @@ if ~isfield(options,'plot_interval');options.plot_interval=100;end
 if ~isfield(options,'n_cond');options.n_cond=5;end
 if ~isfield(options,'rand_path');options.rand_path=1;end
 if ~isfield(options,'precalc_dist_full');end
- 
+
+if ~isfield(options,'n_max_condpd');
+    options.n_max_condpd=1e+9;
+end
+
 if strcmp(options.type,'dsim');
     if ~isfield(options,'n_max_ite');options.n_max_ite=200;end
 end
@@ -61,7 +76,7 @@ if ~strcmp(options.type,'dsim');
     options.H=SIM_data.*0.*NaN;
 end
 options.N=SIM_data.*0.*NaN;
-options.N_DROPPED=SIM_data.*0;
+options.N_DROPPED=zeros(size(SIM_data));;
 
 %% SET SEOM DATA STRICTURES
 
@@ -92,6 +107,7 @@ end
 
 % PRE ALLOCATE MATRIX WITH COUNTS
 options.C=zeros(size(SIM.D));
+options.IPATH=zeros(size(SIM.D));
 
 
 %% SET RANDOM PATH
@@ -107,6 +123,7 @@ N_PATH=length(i_path);
 
 for i=1:N_PATH; %  % START LOOOP OVER PATH
     
+    
     if options.verbose>0
         if ((i/100)==round(i/100))&(options.plot>-1)
             %progress_txt(i,N_SIM,mfilename);
@@ -121,6 +138,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     if options.verbose>1
         fprintf('At node iy,ix=[%d,%d]\n',iy,ix);
     end
+    options.IPATH(iy,ix)=i;
     
     
     
@@ -147,22 +165,23 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     end
     N_COND=length(V);
     
-    
     if strcmp(lower(options.type),'dsim');
         %% GET REALIZATION FROM TI USING DIRECT SIMULATION
         [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min]=mps_get_realization_from_template(TI,V,L,options);
-    SIM.D(iy,ix)=sim_val;
+        SIM.D(iy,ix)=sim_val;
+        
     elseif strcmp(lower(options.type),'enesim');
-        %% GET REALIZATION FROM TI BY 
+        %% GET REALIZATION FROM TI BY
         %  a) scanning the whole TO to establisj f(m_i|f(m_1,...,m_{i-1})
         %  b) generate a ralization from f(m_i|f(m_1,...,m_{i-1})
         N_PDF=0;
         if N_COND==0
-            [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,[],[]);
+            [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,[],[],options.n_max_condpd);
         else
-            for ic=1:N_COND
+            for ic=1:N_COND               
                 c_arr=(1:(N_COND-ic+1));
-                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V(c_arr),L(c_arr,:));
+                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V(c_arr),L(c_arr,:),options.n_max_condpd);
+                
                 if N_PDF>0, break; end
                 disp(sprintf('%s : PRUNING: dropping a node %02d/%02d at[ix,iy]=[%d,%d]',mfilename,N_COND-ic,N_COND,ix,iy))
                 options.N_DROPPED(iy,ix)=ic;
@@ -170,7 +189,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         end
         options.H(iy,ix)=entropy(C_PDF);
         options.N(iy,ix)=N_PDF;
-
+        
         % DRAW REALIZARTION FROM C_PDF
         sim_val=min(find(cumsum(C_PDF)>rand(1)))-1;
         try
@@ -178,7 +197,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         catch
             keyboard
         end
-
+        
         
     end
     %% GET FULL CONDITIONAL TO COMPUTE ENTROPY
@@ -255,5 +274,4 @@ if options.plot>2
         fprintf('%s : coule not close writerObj',mfilename);
     end
 end
-
 out=SIM.D;

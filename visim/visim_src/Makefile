@@ -8,10 +8,11 @@ progname=visim
 #
 #-----------------------------------------------------------------------
 PROG   = $(progname)
-PROG = ../../bin/visim
+PROG = visim
 
 COMP = gfortran
 FFLAGS = -static -O3
+
 
 SRCS   =  $(progname).f visim_krige.f visim_krige_volume.f \
                         visim_randpath.f visim_nhoodvol.f \

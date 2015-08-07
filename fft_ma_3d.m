@@ -287,8 +287,19 @@ if isfield(options,'lim');
         end
     end
 end
-    
-% inverse FFT
+ 
+
+%% linear combinartion of the perturbed paramaters
+if isfield(options,'gradual')&isfield(options,'z_rand')
+    if options.gradual<1
+        if exist('gaussian_linear_combine','file')            
+            i_perturbed=find((options.z_rand-z_rand)~=0);
+            z_rand(i_perturbed) = gaussian_linear_combine(options.z_rand(i_perturbed),z_rand(i_perturbed),options.gradual,0);
+        end
+    end
+end
+
+%% inverse FFT
 
 out=(ifftn( sqrt((options.fftC)).*fftn(z_rand) ));
 options.out=out;

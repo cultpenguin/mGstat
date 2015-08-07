@@ -134,6 +134,19 @@ if isfield(options,'lim');
     
 end
 
+
+%% linear combinartion of the perturbed paramaters
+if isfield(options,'gradual')&isfield(options,'z_rand')
+    if options.gradual<1
+        if exist('gaussian_linear_combine','file')
+            i_perturbed=find((options.z_rand-z_rand)~=0);
+            z_rand(i_perturbed) = gaussian_linear_combine(options.z_rand(i_perturbed),z_rand(i_perturbed),options.gradual,0);
+        end
+    end
+end
+
+
+%%
 out=reshape(real(ifft2(sqrt(options.fftC).*fft2(z_rand))),1,nx_c);
 
 out=out(1,1:nx)+options.gmean;

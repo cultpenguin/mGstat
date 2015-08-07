@@ -14,18 +14,18 @@ C that this notice and the above copyright notice remain intact.       %
 C                                                                      %
 C%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 c-----------------------------------------------------------------------
-c     
-c     Builds a lookup table forthe local shape of the 
+c
+c     Builds a lookup table forthe local shape of the
 c     conditional probaility.
 c     See Oz et. al 2003 or Deutch 2000, for details.
 c     *********************************************
-c     
+c
 c     INPUT VARIABLES:
-c     
+c
 c     OUTPUT VARIABLES:
-c     
-c     condtab : conditoinal prob lookup table 
-c     
+c
+c     condtab : conditoinal prob lookup table
+c
 c     ORIGINAL : Thomas Mejer Hansen                       DATE: August 2005
 c
 c
@@ -49,9 +49,9 @@ c      implicit none
       integer itarget_quan
 c      real zmin,zmax
       real ierror
-      
-      real q_norm, q_back(599) 
-      real x_cpdf(1500) 
+
+      real q_norm, q_back(599)
+      real x_cpdf(1500)
       real backtrans
       integer index_cdf
       character tmpfl*80
@@ -65,7 +65,7 @@ c      real zmin,zmax
 
       do i=1,nbt
          target(i)=bootvar(i);
-c     NEXT LINE TO MAKE SURE ALLE DATA HAVE WEIGHT 1... 
+c     NEXT LINE TO MAKE SURE ALLE DATA HAVE WEIGHT 1...
 c     THERE IS PROBABLY A BUG IN THE visim_readpar_uncertainty.f file here
 c     AS bootvar is NOT 1 when it has to be..
          target_weight(i)=1;
@@ -86,7 +86,7 @@ c     Compute Normal Score of TARGET HISTOGRAM
 c
       call nscore(nbt,target,zmin,zmax,0,target_weight,temp,1,
      1     target_nscore,ierror,discrete)
-c     centere normal scores 
+c     centere normal scores
       call nscore(nbt,target,zmin,zmax,0,target_weight,temp,1,
      1     target_nscore_center,ierror,0)
 
@@ -107,35 +107,35 @@ c      do i=1,n_q
 c         x_quan(i)=(1./n_q)/2+(i-1)*(1./n_q)
 c      enddo
 c NEW METHOD POST 2010
-      
+
       if (discrete.eq.1) then
          do i=1,(n_q)
             x_quan(i)=(i)*(1./n_q)
          enddo
       else
          do i=1,(n_q)
-c BETTER HIST REPRODUCTION            
+c BETTER HIST REPRODUCTION
 c            x_quan(i)=(i-1)*(1./n_q) + (1./n_q)/2
             x_quan(i)=(i-1)*(1./(n_q-1))
-         enddo 
+         enddo
       endif
 
       do i=1,(n_q)
          x_quan_center(i)=(i-1)*(1./n_q) + (1./n_q)/2
-      enddo 
+      enddo
 
-      if (idbg.gt.0) then 
+      if (idbg.gt.0) then
          write(*,*) ' Nscore MEAN range=',min_Gmean,max_Gmean,n_Gmean
          write(*,*) ' Nscore VAR range = ',min_Gvar, max_Gvar, n_Gvar
          write(*,*) ' Number of quantiles = ',n_q
          write(*,*) ' Number of samples drawn in nscore space= ',n_monte
-         write(*,*) 'Calc CondPDF Lookup n_Gmean,n_Gvar=',n_Gmean,n_Gvar 
+         write(*,*) 'Calc CondPDF Lookup n_Gmean,n_Gvar=',n_Gmean,n_Gvar
       endif
 
       do im=1,n_Gmean
 
-         Gmean=min_Gmean+(im-1)*(max_Gmean-min_Gmean)/(n_Gmean-1)            
-         
+         Gmean=min_Gmean+(im-1)*(max_Gmean-min_Gmean)/(n_Gmean-1)
+
          if (idbg.ge.2) write(*,*) 'precalc lookup im,n_Gmean=',
      1        im,n_Gmean, Gmean
 
@@ -150,7 +150,7 @@ c     BACK TRANSFORM QUANTILES
             dummy2=0
             do i=1,n_q
                call gauinv(dble(x_quan_center(i)) ,zt,ierr)
-               q_norm=zt*sqrt(gGvar)+Gmean            
+               q_norm=zt*sqrt(gGvar)+Gmean
 
               x_cpdf(i) = backtr(q_norm,nbt,target,target_nscore_center,
      +              zmin,zmax,ltail,ltpar,utail,utpar,discrete)
@@ -176,15 +176,15 @@ c     BACK TRANSFORM QUANTILES
 
          if (idbg.gt.2) write(*,*) 'gm,gv,mean_sim,mean_var',
      1        Gmean,gGvar,mean_sim,var_sim
-            
+
       enddo
-     
+
       enddo
 
 
-c     wirte lookup tables to disk      
-      if (idbg.gt.0) then 
-         
+c     wirte lookup tables to disk
+      if (idbg.gt.0) then
+
          tmpfl='cond_imean'//'_'//outfl
          open(29, file=tmpfl, status = 'unknown')
          tmpfl='cond_mean'//'_'//outfl
@@ -203,35 +203,35 @@ c     wirte lookup tables to disk
                      write(32,*) condlookup_cpdf(im,iv,i)
                   enddo
                endif
-            enddo     
+            enddo
          enddo
          close(30)
          close(31)
-         close(32)         
+         close(32)
       endif
 
       return
 
       end
-      
+
 
 
       real function drawfrom_condtab(cmean,cvar,p)
 c-----------------------------------------------------------------------
-c     
-c     Draw from a lookup table for the local shape of the 
+c
+c     Draw from a lookup table for the local shape of the
 c     conditional probaility.
 c     See Oz et. al 2003 or Deutch 2000, for details.
 c     *********************************************
-c     
+c
 c     INPUT VARIABLES:
-c     
+c
 c     OUTPUT VARIABLES:
-c     
-c     condtab : conditoinal prob llokup table 
-c     
+c
+c     condtab : conditoinal prob lookup table
+c
 c     ORIGINAL : Thomas Mejer Hansen                       DATE: August 2005
-c     
+c
 c
 c-----------------------------------------------------------------------
 c      implicit none
@@ -249,15 +249,17 @@ c      implicit none
       integer index_cdf
       real Kmean, Kstd, Fmean, Fstd, draw
       cvar=cvar*cvar
-            
 
-c     NEXT TMH
-      dm=xmax-xmin;
-c     NEXT OZ
-      dm=skgmean
+
+c   Normalize mean using the max-min values on the normal score transformation
+      dm=zmax-zmin;
+
+c   Normalize variance using the global variance
       dv=gvar
 
-      
+c   Find the conditional distribution in normal score space
+c   that matches the conditional mean and variance in original space
+
       mindist=1e+9
       do im=1,n_Gmean
          do iv=1,n_Gvar
@@ -266,56 +268,60 @@ c     NEXT OZ
 C     TMH STYLE
 c     BUT TOO HIGH SILL VALUE
 c            dist=( (condlookup_mean(im,iv)-cmean)/dm )**2+
-c     +        ( (condlookup_var(im,iv)-cvar)/dv )**2            
-C     OZ STYLE            
+c     +        ( (condlookup_var(im,iv)-cvar)/dv )**2
+C     OZ STYLE
 C     WORSE MATCH TO HISTOGRAM THAN ABOVE
             dist=( (condlookup_mean(im,iv)-cmean)/dm )**2+
-     +        abs (condlookup_var(im,iv)-cvar)/sqrt(dv)             
+     +        abs (condlookup_var(im,iv)-cvar)/sqrt(dv)
 
-            
             if (dist.lt.mindist) then
                mindist=dist
                im_sel=im
                iv_sel=iv
+
+
             endif
          enddo
       enddo
+
+c     write(*,*) 'VISIM_DFCT: [cmean,cvar]=',cmean,cvar,im_sel,iv_sel
+
 
       m_sel = condlookup_mean(im_sel,iv_sel)
       v_sel = condlookup_var(im_sel,iv_sel)
 
       if (idbg.gt.2) then
-	write(*,*) '-- looking up in condtab'
+        write(*,*) '-- looking up in condtab'
         write(*,*) 'cmean,cvar=',cmean,' ',cvar
-	write(*,*) 'm_sel=',m_sel,im_sel
-	write(*,*) 'v_sel=',v_sel,iv_sel
+        write(*,*) 'm_sel=',m_sel,im_sel
+        write(*,*) 'v_sel=',v_sel,iv_sel
       endif
 
 c     CHANGED FROM lout_krig=59, on Nov 9, 2009 by TMH
 c      lout_krig=60
 c      write(lout_krig,86) cmean, cvar,m_sel,v_sel
-c 86   format(f12.6,f15.9,f12.6,f15.9)  
-      
+c 86   format(f12.6,f15.9,f12.6,f15.9)
+
 
 C     PROBLEMS WITH ACORNI - THEREFORE REMOVED
 c     NOW DRAW FROM LOCAL CPDF
 c     (WITHOUT THIS,,, STRANGE SMALL NUMBER ARE GENERATED FROM acorni2
 c      do i=1,101
-c         p = acorni2(idum) 
+c         p = acorni2(idum)
 c      enddo
 
 c select random quantile
-c      p = acorni2(idum) 
+c      p = acorni2(idum)
 c CONSIDER USING RANDOM_SEED INSTEAD
       p = rand()
 
-c locate quantile      
+c locate quantile
       do i=1,(n_q);
          if (x_quan(i).gt.p) then
             index_cdf=i
             exit
          endif
-         
+
       enddo
 
       if (p.gt.x_quan(n_q)) then
@@ -325,24 +331,24 @@ c locate quantile
       if (discrete.eq.1) then
 c     FIND ARRAY
          write(*,*) 'DEBUG7 PRE',im_sel, iv_sel,index_cdf
-         draw = condlookup_cpdf(im_sel,iv_sel,index_cdf) 
+         draw = condlookup_cpdf(im_sel,iv_sel,index_cdf)
          write(*,*) 'DEBUG7 PRO, draw=',draw
- 
+
       else
 c      ASSUME CONTINIOUS TARGET HISTOGRAM
-         
+
 c interpolate
-         draw_h = condlookup_cpdf(im_sel,iv_sel,index_cdf) 
-         draw_l = condlookup_cpdf(im_sel,iv_sel,index_cdf-1) 
+         draw_h = condlookup_cpdf(im_sel,iv_sel,index_cdf)
+         draw_l = condlookup_cpdf(im_sel,iv_sel,index_cdf-1)
 
 c
 c         write(*,*) 'DEBUG p,index_cdf',p,index_cdf
 c         write(*,*) 'DEBUG ',im_sel, iv_sel,draw_h,draw_l
 
-         
+
          h=x_quan(index_cdf)-x_quan(index_cdf-1)
-         draw_a = draw_h*(x_quan(index_cdf)-p)/h 
-         draw_b = draw_l*(p-x_quan(index_cdf-1))/h 
+         draw_a = draw_h*(x_quan(index_cdf)-p)/h
+         draw_b = draw_l*(p-x_quan(index_cdf-1))/h
 
          draw = draw_a + draw_b
 
@@ -365,7 +371,7 @@ c      index_cdf = 1 + int(p*n_q)
 
 
 c      write(*,*) 'DEBUG8 draw=',drawfrom_condtab
-         
+
 
 c     CORRECTION ACCORDING TO Oz et al, 2003
 c     Consider another correction that builds a differet
@@ -382,7 +388,7 @@ c     local cpdf based on closeness to lookup table
            write(*,*) 'draw=',drawfrom_condtab,Fmean,Fstd,
      1          Kmean,Kstd
         endif
-      
+
         drawfrom_condtab = ( draw - Fmean ) * ( Kstd / Fstd) + Kmean
 
         if (Fstd.lt.(0.00001)) then
@@ -394,10 +400,10 @@ c     local cpdf based on closeness to lookup table
       endif
 
 c      write(*,*) 'DEBUG8 draw=',drawfrom_condtab
-            
 
-      return 
-      
+
+      return
+
 
       end
-      
+
