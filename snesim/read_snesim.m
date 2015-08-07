@@ -123,16 +123,16 @@ obj.nsim=sscanf(line,'%f');
 % DIM INFO
 line=fgetl(fid);
 tmp=sscanf(line,'%d %f %f');
-obj.dim.nx=tmp(1);obj.dim.xmn=tmp(2);obj.dim.xsiz=tmp(3);
+obj.nx=tmp(1);obj.xmn=tmp(2);obj.xsiz=tmp(3);
 line=fgetl(fid);
 tmp=sscanf(line,'%d %f %f');
-obj.dim.ny=tmp(1);obj.dim.ymn=tmp(2);obj.dim.ysiz=tmp(3);
+obj.ny=tmp(1);obj.ymn=tmp(2);obj.ysiz=tmp(3);
 line=fgetl(fid);
 tmp=sscanf(line,'%d %f %f');
-obj.dim.nz=tmp(1);obj.dim.zmn=tmp(2);obj.dim.zsiz=tmp(3);
-obj.x=[0:1:obj.dim.nx-1]*obj.dim.xsiz+obj.dim.xmn;
-obj.y=[0:1:obj.dim.ny-1]*obj.dim.ysiz+obj.dim.ymn;
-obj.z=[0:1:obj.dim.nz-1]*obj.dim.zsiz+obj.dim.zmn;
+obj.nz=tmp(1);obj.zmn=tmp(2);obj.zsiz=tmp(3);
+obj.x=[0:1:obj.nx-1]*obj.xsiz+obj.xmn;
+obj.y=[0:1:obj.ny-1]*obj.ysiz+obj.ymn;
+obj.z=[0:1:obj.nz-1]*obj.zsiz+obj.zmn;
 
 
 % RSEED
@@ -192,7 +192,7 @@ end
 % n multiple grids
 line=fgetl(fid);
 data=sscanf(line,'%f');
-obj.n_mulgrids=data(1);
+obj.nmulgrids=data(1);
 
 % Training image
 line=fgetl(fid);
@@ -233,20 +233,20 @@ obj.search_radius.avert=data(3);
 
 if (read_data>0)
     nsim=obj.nsim;
-    nxyz=obj.dim.nx*obj.dim.ny*obj.dim.nz;
+    nxyz=obj.nx*obj.ny*obj.nz;
     
     
     
     if (nsim>0)&(~isempty(obj.out.data))
         %try
-        if obj.dim.nz==1,
-            obj.D=zeros(obj.dim.ny,obj.dim.nx,nsim)
+        if obj.nz==1,
+            obj.D=zeros(obj.ny,obj.nx,nsim);
             for isim=1:nsim
                 ii=[1:nxyz]+(isim-1)*nxyz;                
-                obj.D(:,:,isim)=reshape(obj.out.data(ii,1),obj.dim.nx,obj.dim.ny)';
+                obj.D(:,:,isim)=reshape(obj.out.data(ii,1),obj.nx,obj.ny)';
             end
         else
-            obj.D=reshape(obj.out.data(1:(nsim*nxyz),1),obj.dim.nx,obj.dim.ny,obj.dim.nz,nsim);
+            obj.D=reshape(obj.out.data(1:(nsim*nxyz),1),obj.nx,obj.ny,obj.nz,nsim);
         end
         if nsim==1
             E=obj.D;

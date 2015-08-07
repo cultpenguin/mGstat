@@ -8,6 +8,7 @@ y=1:50;
 S.rseed=1;
 
 %% unconditional realization
+try;delete(S.fconddata.fname);end
 S=snesim(S,x,y);
 
 imagesc(S.x,S.y,S.D);axis image;
@@ -15,14 +16,14 @@ imagesc(S.x,S.y,S.D);axis image;
 
 %% Conditional realization
 Sc=S;
-Sc.n_mulgrids=1;
-Sc.nsim=10;
+Sc.nmulgrids=1;
+Sc.nsim=20;
 
-xc=1:1:length(x);
+xc=1:6:length(x);
 yc=0.*xc + 20;
-zc=0.*xc + S.dim.zmn; 
+zc=0.*xc + S.zmn;
 vc=0.*xc + 1; % black
-fname='cond.dat';
+fname='cond_hor_line.dat';
 write_eas(fname,[xc(:) yc(:) zc(:) vc(:)])
 
 Sc.fconddata.fname=fname;
@@ -37,32 +38,39 @@ subplot(1,2,1);imagesc(Sc.x,Sc.y,Sc.etype.mean);
 caxis([0 1]);axis image;
 subplot(1,2,2);imagesc(Sc.x,Sc.y,Sc.etype.var);
 axis image;
-
+return
 %% Resimulation
 Sr=S;
-Sr.n_mulgrids=3;
+Sr.nmulgrids=3;
 
 Sr=snesim(Sr);
+m1=Sr.D;
 figure(3);
 subplot(2,2,1),imagesc(Sr.x,Sr.y,Sr.D(:,:,1));;axis image;drawnow;
 
 for i=1:10;
-Sr.rseed=i;
-Sr=snesim_set_resim_data(Sr,Sr.D,[6 6]);
-Sr=snesim(Sr);
-
-subplot(2,2,2)
-d=read_eas(Sr.fconddata.fname);
-plot(d(:,1),d(:,2),'r.')
-axis([min(x) max(x) min(y) max(y)])
-
-subplot(2,2,3)
-imagesc(Sr.x,Sr.y,Sr.D(:,:,1));;axis image;drawnow;
-
-subplot(2,2,4)
-imagesc(Sr.x,Sr.y,S.D(:,:,1)-Sr.D(:,:,1));;axis image;drawnow;
-caxis([-1 1])
-
+    Sr.rseed=i;
+    Sr=snesim_set_resim_data(Sr,Sr.D,[10 10]);
+    
+    Sr=snesim(Sr);
+    
+    subplot(2,2,2)
+    try
+        d=read_eas(Sr.fconddata.fname);
+    catch
+        d=[];
+    end
+    plot(d(:,1),d(:,2),'r.')
+    set(gca,'ydir','reverse')
+    axis([min(x) max(x) min(y) max(y)])
+    
+    subplot(2,2,3)
+    imagesc(Sr.x,Sr.y,Sr.D(:,:,1));;axis image;drawnow;
+    
+    subplot(2,2,4)
+    imagesc(Sr.x,Sr.y,Sr.D(:,:,1)-m1);;axis image;drawnow;
+    caxis([-1 1])
+    
 end
 
 

@@ -45,21 +45,21 @@ function V=snesim(parfile,x,y,z)
       
       S=parfile;
       if nargin>1
-          S.dim.nx=length(x);
-          S.dim.xmn=x(1);
-          S.dim.xsiz=x(2)-x(1);
+          S.nx=length(x);
+          S.xmn=x(1);
+          S.xsiz=x(2)-x(1);
           S.x=x;
       end
       if nargin>2
-          S.dim.ny=length(y);
-          S.dim.ymn=y(1);
-          S.dim.ysiz=y(2)-y(1);
+          S.ny=length(y);
+          S.ymn=y(1);
+          S.ysiz=y(2)-y(1);
           S.y=y;
       end
       if nargin>3
-          S.dim.nz=length(z);
-          S.dim.zmn=z(1);
-          S.dim.zsiz=z(2)-z(1);
+          S.nz=length(z);
+          S.zmn=z(1);
+          S.zsiz=z(2)-z(1);
           S.z=z;
       end
       

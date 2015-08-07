@@ -93,12 +93,12 @@ function write_snesim(obj,parfile)
   fprintf(fid,'%-30s - %s\n',dtxt,txt);
   
   txt='nx,xmn,xsiz';
-  dtxt=sprintf('%d %g %g',obj.dim.nx,obj.dim.xmn,obj.dim.xsiz);
+  dtxt=sprintf('%d %g %g',obj.nx,obj.xmn,obj.xsiz);
   fprintf(fid,'%-30s - %s\n',dtxt,txt);
   txt='ny,ymn,ysiz';
-  dtxt=sprintf('%d %g %g',obj.dim.ny,obj.dim.ymn,obj.dim.ysiz);
+  dtxt=sprintf('%d %g %g',obj.ny,obj.ymn,obj.ysiz);
   fprintf(fid,'%-30s - %s\n',dtxt,txt);
-  dtxt=sprintf('%d %g %g',obj.dim.nz,obj.dim.zmn,obj.dim.zsiz);
+  dtxt=sprintf('%d %g %g',obj.nz,obj.zmn,obj.zsiz);
   txt='nz,zmn,zsiz';
   fprintf(fid,'%-30s - %s\n',dtxt,txt);
   
@@ -148,7 +148,7 @@ function write_snesim(obj,parfile)
   end
 
   txt='number of multiple grids';
-  dtxt=sprintf('%d',obj.n_mulgrids);
+  dtxt=sprintf('%d',obj.nmulgrids);
   fprintf(fid,'%-30s - %s\n',dtxt,txt);
   
   txt='file with training image';
