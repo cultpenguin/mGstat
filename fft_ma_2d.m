@@ -208,7 +208,7 @@ if isfield(options,'lim');
             options.pos_used=[x_all(x0) y_all(y0)];    
 
             [options.used]=set_resim_data(x(1)+[0:(size(z_rand,2)-1)]*dx,y(1)+[0:(size(z_rand,1)-1)]*dy,z_rand,options.lim,options.pos_used,options.wrap_around);
-
+            
             %% random selection within box
             if options.resim_type==3;
                 ii=find(options.used==0);
@@ -234,7 +234,10 @@ if isfield(options,'lim');
             % use n_resim as a proportion of all random deviates
             n_resim=n_resim.*prod(size(z_rand));
         end
-        n_resim=ceil(n_resim);
+        if (n_resim<2)&(n_resim>1)
+            n_resim=1;
+        end
+        n_resim=floor(n_resim);
         
         n_resim = min([n_resim prod(size(z_rand))]);
         
@@ -243,14 +246,17 @@ if isfield(options,'lim');
         
         n_resim = min([n_resim N_all]);
         
-        ii=randomsample(N_all,n_resim);
+        ii=randomsample(N_all,n_resim);                
         
         z_rand_new=randn(size(z_rand(ii)));
+        
         [iy,ix]=ind2sub([ny+options.wy,nx+options.wx],ii);
         for k=1:length(ii);
             
-            x0=round(ix(k))-ceil(options.wx/2);
-            y0=round(iy(k))-ceil(options.wy/2);
+            %x0=round(ix(k))-ceil(options.wx/2);
+            %y0=round(iy(k))-ceil(options.wy/2);
+            x0=ix(k)-ceil(options.wx/2);
+            y0=iy(k)-ceil(options.wy/2);
             
             if x0<1; x0=size(z_rand,2)+x0;end
             if y0<1; y0=size(z_rand,1)+y0;end
