@@ -8,6 +8,10 @@
 %
 % 'vlevel' must be set in the mgstat_verbose.m m-file.
 %
+% To set the verbose level dynamically, use e.g. 
+%   setenv('MGSTAT_VERBOSE_LEVEL','10')
+%
+%   
 % All entries with vebose>vlevel are displayed
 %
 

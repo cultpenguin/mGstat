@@ -1,9 +1,8 @@
 clear all;close all
 
-ti=channels;
-S=snesim_init(ti(2:2:end,2:2:end));
-x=1:50;
-y=1:50;
+S=snesim_init;
+x=1:250;
+y=1:200;
 
 S.rseed=1;
 
@@ -11,10 +10,43 @@ S.rseed=1;
 try;delete(S.fconddata.fname);end
 S=snesim(S,x,y);
 
+figure(1);
 imagesc(S.x,S.y,S.D);axis image;
+
+%% unconditional, constant rotation
+figure(2);
+i=0;
+for rot=[0 30 60 90];
+  i=i+1;
+  S=snesim_set_rotation_affinity(S,rot);
+  S=snesim(S,x,y);
+  figure(2);subplot(4,1,i);imagesc(S.D);axis image
+  title(sprintf('rotation = %d def',rot))
+end
+
+%% unconditional, varying rotation
+rot=zeros(size(S.D));
+for ix=1:S.nx;rot(:,ix)=90.*cos(2*pi*ix/S.nx);end
+for iy=1:S.ny;rot(iy,:)=rot(iy,:).*(iy./S.ny);end
+S=snesim_set_rotation_affinity(S,rot,1);  
+S=snesim(S,x,y);
+figure(3);
+subplot(2,1,1);imagesc(rot);axis image;colorbar
+subplot(2,1,2);imagesc(S.D);axis image
+
+%% unconditional, varying rotation, and scaling
+S=snesim_set_rotation_affinity(S,rot,2);  
+S=snesim(S,x,y);
+figure(4);
+subplot(2,1,1);imagesc(rot);axis image;colorbar
+subplot(2,1,2);imagesc(S.D);axis image
+
+
 
 
 %% Conditional realization
+S=snesim_init;
+S=snesim(S);
 Sc=S;
 Sc.nmulgrids=1;
 Sc.nsim=20;

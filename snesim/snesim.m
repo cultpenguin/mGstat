@@ -68,13 +68,25 @@ function V=snesim(parfile,x,y,z)
   end
   tic
     
-  if isunix==1
-      cmd=sprintf('%s < %s',snesim_bin,parfile);
-      unix(cmd);
-  else
-      cmd=sprintf('"%s" < %s',snesim_bin,parfile);
-      dos(cmd);
-  end
+  
+  
+if isunix==1
+    [status,result]=system(sprintf('%s < %s',snesim_bin,parfile));
+else
+    [status,result]=system(sprintf('"%s" < %s',snesim_bin,parfile));
+end
+%V=read_visim(parfile);
+%V.time=toc;
+mgstat_verbose(sprintf('%s : %s',mfilename,result),1);
+
+  
+%  if isunix==1
+%      cmd=sprintf('%s < %s',snesim_bin,parfile);
+%      unix(cmd);
+%  else
+%      cmd=sprintf('"%s" < %s',snesim_bin,parfile);
+%      dos(cmd);
+%  end
   V=read_snesim(parfile,1);
   V.time=toc;
   
