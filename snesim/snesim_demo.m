@@ -26,7 +26,7 @@ end
 
 %% unconditional, varying rotation
 rot=zeros(size(S.D));
-for ix=1:S.nx;rot(:,ix)=90.*cos(2*pi*ix/S.nx);end
+for ix=1:(S.nx/2);rot(:,ix)=90.*cos(2*pi*ix/S.nx);end
 for iy=1:S.ny;rot(iy,:)=rot(iy,:).*(iy./S.ny);end
 S=snesim_set_rotation_affinity(S,rot,1);  
 S=snesim(S,x,y);
@@ -42,7 +42,7 @@ subplot(2,1,1);imagesc(rot);axis image;colorbar
 subplot(2,1,2);imagesc(S.D);axis image
 
 
-
+return
 
 %% Conditional realization
 S=snesim_init;
