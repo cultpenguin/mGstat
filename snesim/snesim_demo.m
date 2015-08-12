@@ -42,6 +42,17 @@ subplot(2,1,1);imagesc(rot);axis image;colorbar
 subplot(2,1,2);imagesc(S.D);axis image
 
 
+%%
+clear S;close all
+
+snesim_clean;
+S=snesim_init;
+x=1:250;
+y=1:200;
+S=snesim(S);
+S=snesim_set_rotation_affinity(S,45,2);  
+S=snesim(S,x,y);
+imagesc(S.D);
 
 
 %% Conditional realization

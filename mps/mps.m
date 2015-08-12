@@ -35,13 +35,13 @@
 % %% ENESIM
 % options.type='enesim';
 % options.n_cond=5;;
-% [out_dsim]=mps(TI,SIM,options)
+% [out_enesim]=mps(TI,SIM,options)
 %
 % %% ENESIM USING APPROXIMATE CONDITIONAL
 % options.type='enesim';
 % options.n_cond=5;
 % options.n_max_condpd=10;
-% [out_dsim]=mps(TI,SIM,options)
+% [out_enesim_app]=mps(TI,SIM,options)
 %
 %
 %

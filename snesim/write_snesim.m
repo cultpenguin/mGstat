@@ -3,7 +3,7 @@
 % Ex. read/write snesim parameter file 
 %   S=read_snesim('snesim.par');
 %   S.nsim=10;
-%   write('snesim.par',S)
+%   write(S,'snesim.par')
 %
 % See also: read_snesim, snesim
 % 

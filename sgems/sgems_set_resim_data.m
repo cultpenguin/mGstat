@@ -37,7 +37,6 @@ pos(1)=min(S.x)+rand(1)*(max(S.x)-min(S.x));
 pos(2)=min(S.y)+rand(1)*(max(S.y)-min(S.y));
 pos(3)=min(S.z)+rand(1)*(max(S.z)-min(S.z));
 
-
 [xx,yy,zz]=meshgrid(S.x,S.y,S.z);
 
 if resim_type==2;

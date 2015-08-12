@@ -1,4 +1,4 @@
-% mps_dsim: Direct simulation
+% mps_dsim: Direct sampling
 %
 % VERY simple implementation of Direct Simulation
 % Currently only works for relatively small simulations grids, and

@@ -11,6 +11,9 @@
 %   S.nsim=10;
 %   snesim(S)
 %
+%   %% 
+%   S=snesim(S,1:1:10,1:1:10,1);
+%
 % See also snesim_init, read_snesim, write_snesim
 %
 function V=snesim(parfile,x,y,z)
@@ -59,7 +62,11 @@ function V=snesim(parfile,x,y,z)
       if nargin>3
           S.nz=length(z);
           S.zmn=z(1);
-          S.zsiz=z(2)-z(1);
+          if S.nz==1,
+            S.zsiz=1;
+          else
+            S.zsiz=z(2)-z(1);
+          end
           S.z=z;
       end
       
