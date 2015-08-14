@@ -38,6 +38,13 @@
 %   [ST]=mps_tree_populate(ti_mul{3},template,1,ST);
 %   [ST]=mps_tree_populate(ti_mul{4},template,1,ST);
 %
+% Example 3: Multiple training images, one call
+%    ti=channels;
+%    ti_mul{1}=ti(1:125,1:125);
+%    ti_mul{2}=ti(126:250,1:125);
+%    ti_mul{3}=ti(1:125,126:250);
+%    ti_mul{4}=ti(126:250,126:250);
+%    [ST]=mps_tree_populate(ti_mul,template)
 %
 % See also: mps_tree_get_cond, mps_tree_get_cond_notes, mps_template
 %
