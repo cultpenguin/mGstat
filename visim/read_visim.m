@@ -344,11 +344,16 @@ try
                 [d]=read_eas(fname);
                 d(find(d==UNEST))=NaN;
                 try
+                  if obj.nz==1,
                     obj.etype.mean=reshape(d(:,1),obj.nx,obj.ny);
-                    obj.D=obj.etype.mean;
                     obj.etype.var=reshape(d(:,2),obj.nx,obj.ny);
+                  else
+                    obj.etype.mean=reshape(d(:,1),obj.nx,obj.ny,obj.nz);
+                    obj.etype.var=reshape(d(:,2),obj.nx,obj.ny,obj.nz);
+                  end
+                  obj.D=obj.etype.mean;
                 catch
-                    mgstat_verbose(sprintf('%s : Failed to load estimations results from %s',mfilename,fname),8)
+                    mgstat_verbose(sprintf('%s : Failed to load estimations results from %s',mfilename,fname),-10)
                 end
             end
         end

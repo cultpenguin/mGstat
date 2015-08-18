@@ -404,7 +404,9 @@ c      WRITE(*, *) 'mask(', index, ')=', mask(index)
 C CHECK IF SAMPLE IS ALLREADY CONDITIONED
 C THIS IS ESSENTIAL,
          if ((sim(index).ne.UNEST).or.(mask(index).eq.0)) then
-            write(*,*) 'Sample already conditioned,,'
+c            write(*,*) 'Sample already conditioned,,'
+c            write(*,*) sim(index)
+c            write(*,*) mask(index)
             go to 5
          end if
 
