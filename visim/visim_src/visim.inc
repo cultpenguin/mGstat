@@ -66,6 +66,7 @@ c ACORN parameters:
 c
       integer KORDEI, MAXOP1, MAXINT
       parameter(KORDEI=12,MAXOP1=KORDEI+1,MAXINT=2**30)
+
 c
 c Variable Declaration:
 c
