@@ -117,6 +117,14 @@ if options.rand_path==1
     % 'SHUFFLE' index of path to get a random path
     i_path=shuffle(i_path);
 end
+
+% optionally load path from options
+if isfield(options,'i_path');
+  i_path=options.i_path; 
+    if options.verbose>1
+        fprintf('loaded path from options file');
+    end
+end  
 N_PATH=length(i_path);
 
 %% BIG LOOP OVER RANDOM PATH
