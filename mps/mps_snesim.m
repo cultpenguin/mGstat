@@ -18,6 +18,9 @@
 %  options.n_template [int]: template size
 %  options.storage_type [str]: 'tree';
 %
+%  % local prior probability / soft probability
+%  options.local_prob : structure (ndim=ncat) of with same size as simulation 
+%                       grid (SIM)
 %
 %  options.plot    [int]: [0]:none, [1]:plot cond, [2]:storing movie (def=0)
 %  options.verbose [int]: [0] no info to screen, [1]:some info (def=1)
@@ -33,8 +36,15 @@
 % options.n_template=16;;
 % [out_dsim]=mps_snesim(TI,SIM,options)
 %
-%
-% See also: mps_enesim, mps_dsim, mps, mps_tree_populate, mps_tree_get_cond
+%% SOFT probability
+% P{1}=SIM;
+% P{1}(:)=0.5;
+% P{1}(1:5,:)=0.9; % locally increased probabilitu of category 1
+% P{2]=1-P{1};
+% options.local_prob=P;
+% [out_dsim]=mps_snesim(TI,SIM,options)
+% 
+% See also: mps, mps_enesim, mps_tree_populate, mps_tree_get_cond
 %
 function [out,options]=mps_dsim(TI_data,SIM_data,options)
 out=[];
@@ -114,7 +124,13 @@ if options.n_mulgrids>0
     
     options_mul=options;
     options_mul.n_mulgrids=0;
- 
+    % check of local prior probablity and update according to mul grid
+    if isfield(options,'local_prob');
+      for i_lp=1:length(options.local_prob);
+        P{i_lp}=options.local_prob{i_lp}(iy,ix);
+      end
+      options_mul.local_prob=P;
+    end
     
     options_mul.ST=options.ST_mul{i_grid};
     mgstat_verbose(sprintf('%s: simulating on MultiGrid #%d d_cell=%d',mfilename,i_grid,d_cell(i_grid)),-1);      
@@ -199,6 +215,19 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     tic
     [c_pdf]=mps_tree_get_cond(options.ST,d_cond);
     options.C(iy,ix)=toc;
+    
+    
+    % optionally get local prior probability
+    if isfield(options,'local_prob');
+      for k=1:length(options.local_prob);
+        c_local(k)=options.local_prob{k}(iy,ix);
+      end
+      
+      c_combined = c_local.*c_pdf;
+      c_combined = c_combined./sum(c_combined);
+      c_pdf = c_combined;
+      
+    end
     
     % simulate from search tree
     sim_val=min(find(cumsum(c_pdf)>rand(1)))-1;
