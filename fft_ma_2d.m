@@ -184,12 +184,11 @@ if isfield(options,'lim');
     if options.wx > (size(z_rand,2)-nx);options.wx=(size(z_rand,2)-nx);end
     if options.wy > (size(z_rand,1)-ny);options.wy=(size(z_rand,1)-ny);end
     if (options.resim_type==1)|(options.resim_type==3)
-        % BOX TYPE RESIMULATION
+        %% BOX TYPE RESIMULATION
         
         if isfield(options,'pos');
             [options.used]=set_resim_data(x_all,y_all,z_rand,options.lim,options.pos,options.wrap_around);
         else
-
             % CHOOSE CENTER OF BOX AUTOMATICALLY
             
             % wx, wy, allow selecting from the center also in a area just
@@ -202,14 +201,12 @@ if isfield(options,'lim');
             if y0<1; y0=size(z_rand,1)+y0;end
             if x0>size(z_rand,2); x0=x0-size(z_rand,2);end
             if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
-             
+                                     
             % we do not use options.pos, but options.pos_used, such that 
             % opions.pos is not fixed for for subsequent calls top fft_ma
-            options.pos_used=[x_all(x0) y_all(y0)];    
-
+            options.pos_used=[x_all(x0) y_all(y0)];
             [options.used]=set_resim_data(x(1)+[0:(size(z_rand,2)-1)]*dx,y(1)+[0:(size(z_rand,1)-1)]*dy,z_rand,options.lim,options.pos_used,options.wrap_around);
-            
-            %% random selection within box
+            % random selection within box
             if options.resim_type==3;
                 ii=find(options.used==0);
                 nii=length(ii);

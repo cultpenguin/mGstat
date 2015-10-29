@@ -14,20 +14,35 @@
 %   %% 
 %   S=snesim(S,1:1:10,1:1:10,1);
 %
+%
+% Source code for SNESIM can be downloaded here:
+% https://github.com/SCRFpublic/snesim-standalone
+%
+% executable files must be located in $MGSTAT_INSTALL/bin
+% The default executable for windows is $MGSTAT_INSTALL/bin/snesim.exe
+% The default executable for 64bit linux is $MGSTAT_INSTALL/bin/snesim_glnxa64
+% The default executable for 64bit OSX is $MGSTAT_INSTALL/bin/snesim_maci64
+%
 % See also snesim_init, read_snesim, write_snesim
+%
 %
 function V=snesim(parfile,x,y,z)
  
   % FIRST TRY TO FIND THE snesim BINARY IN THE mGstat/bin/ DIRECTORY
   [p,f,s]=fileparts(which('mgstat_verbose'));
+  mgstat_bin_dir=[p,filesep,'bin'];
   if isunix==1
-    if ismac
-      if isempty(getenv('DYLD_LIBRARY_PATH'))
-        disp(sprintf('%s: SETTING DYLD LIBRARY PATH',mfilename))
-        setenv('DYLD_LIBRARY_PATH', '/usr/local/bin')
+      snesim_bin=[mgstat_bin_dir,filesep,'snesim_',computer('arch')];
+      if ~exist(snesim_bin,'file')
+          snesim_bin=[mgstat_bin_dir,filesep,'snesim'];
       end
-    end
-      snesim_bin=sprintf('%s/bin/snesim',p);
+      
+      if ismac
+          if isempty(getenv('DYLD_LIBRARY_PATH'))
+              disp(sprintf('%s: SETTING DYLD LIBRARY PATH',mfilename))
+              setenv('DYLD_LIBRARY_PATH', '/usr/local/bin')
+          end
+      end      
   else
       snesim_bin=sprintf('%s\\bin\\snesim.exe',p);
   end
