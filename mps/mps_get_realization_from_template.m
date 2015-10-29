@@ -1,4 +1,4 @@
-function [sim_val,C,ix_ti_min,iy_ti_min]=mps_get_realization_from_template(TI,V,L,options)
+function [sim_val,C,ix_ti_min,iy_ti_min,DIS_MIN]=mps_get_realization_from_template(TI,V,L,options)
 
 C=0;
 N_TI=prod(size(TI.D));
@@ -29,6 +29,7 @@ for iy_ti=iy_arr;for ix_ti=ix_arr;
     %end
     
     if N_COND==0;
+      DIS_MIN=0;
       iy_ti_min=iy_ti;
       ix_ti_min=ix_ti;
       break_flag=1;break

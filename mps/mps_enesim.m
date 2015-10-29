@@ -121,7 +121,7 @@ end
 if isfield(options,'i_path');
   i_path=options.i_path; 
     if options.verbose>1
-        fprintf('loaded path from options file');
+        fprintf('Path set in input');
     end
 end  
 N_PATH=length(i_path);
@@ -133,8 +133,6 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     
     if options.verbose>0
         if ((i/100)==round(i/100))&(options.plot>-1)
-            %progress_txt(i,N_SIM,mfilename);
-            %progress_txt(i,N_PATH,mfilename);
             disp(sprintf('%s: %03d/%02d',mfilename,i,N_PATH))
         end
     end
@@ -174,8 +172,9 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     
     if strcmp(lower(options.type),'dsim');
         %% GET REALIZATION FROM TI USING DIRECT SIMULATION
-        [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min]=mps_get_realization_from_template(TI,V,L,options);
+        [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min,options.COND_DIST(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);
         SIM.D(iy,ix)=sim_val;
+        
         
     elseif strcmp(lower(options.type),'enesim');
         %% GET REALIZATION FROM TI BY
