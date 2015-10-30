@@ -48,8 +48,8 @@ function [D,header,txt_title,dim,txtdata,txtheader]=read_eas_matrix(filename,nx,
    end
    
    
-   %% RESHAPE TO MATRIX73D ARRAY
-   D=reshape(d,dim.ny,dim.nx,dim.nz);
+   %% RESHAPE TO MATRIX 3D ARRAY
+   D=reshape(d,dim.nx,dim.ny,dim.nz);
    if dim.nz==1;
        D=D';
    end
