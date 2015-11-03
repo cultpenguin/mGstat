@@ -53,7 +53,7 @@ if do_plot==1;
   
   s_size=[1:size(template,1)]./size(template,1);
   s_size=fliplr(124*(s_size/2));
-  scatter3(template(:,3),template(:,4),template(:,5),s_size,'filled')
+  scatter3(template(:,1),template(:,2),template(:,3),s_size,'filled')
   hold on
   scatter3(0,0,0,124,10,'filled')
   hold off
@@ -67,8 +67,8 @@ if do_plot==1;
     imagematrix(d);
     hold on
     for i=1:n_max
-        d_index(iy_c+template(i,4),ix_c+template(i,3))=i;
-        t=text(ix_c+template(i,3),iy_c+template(i,4),num2str(i));
+        d_index(iy_c+template(i,2),ix_c+template(i,1))=i;
+        t=text(ix_c+template(i,1),iy_c+template(i,2),num2str(i));
         set(t,'HorizontalAlignment','center')
         set(t,'VerticalAlignment','middle')
         
