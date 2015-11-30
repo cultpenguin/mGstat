@@ -133,7 +133,7 @@ if options.n_mulgrids>0
     end
     
     options_mul.ST=options.ST_mul{i_grid};
-    mgstat_verbose(sprintf('%s: simulating on MultiGrid #%d d_cell=%d',mfilename,i_grid,d_cell(i_grid)),-1);      
+    mgstat_verbose(sprintf('%s: simulating on MultiGrid #%d d_cell=%d',mfilename,i_grid,d_cell(i_grid)),1);      
     [out_mul,o]=mps_snesim(TI.D,SIM_mul,options_mul);
     
     SIM.D(iy,ix)=out_mul;
@@ -159,7 +159,7 @@ if ~isfield(options,'ST');
   toc;
   mgstat_verbose(sprintf('%s: end building search tree (%g s)',mfilename,toc),-1)
 else
-  mgstat_verbose(sprintf('%s: using supplied search tree',mfilename),-1)
+  mgstat_verbose(sprintf('%s: using supplied search tree',mfilename),1)
 end
 
 %% OPEN HANDLE FOR WRITING MOVIE
@@ -209,6 +209,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     % find conditional data
     iz=1; % 2D for now
     [d_cond,n_cond]=mps_cond_from_template(SIM.D,ix,iy,iz,options.T,options.n_cond);
+    
     options.C(iy,ix)=n_cond;
     
     % get conditinal pdf from search tree

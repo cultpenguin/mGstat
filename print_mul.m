@@ -103,7 +103,7 @@ if (trim==1)|(transp~=0)
     end
     
     % TRANSPAREMCY
-    if isstr(transp)
+    if ischar(transp)
         transp_cmd=['-transparent ',transp];
     else
         if transp==1

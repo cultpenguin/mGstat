@@ -37,7 +37,7 @@ if nargin<3
 end
 
 
-if isstr(O)
+if ischar(O)
     O=sgems_read(O);
 end
 

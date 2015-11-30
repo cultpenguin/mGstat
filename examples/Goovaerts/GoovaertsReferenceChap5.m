@@ -56,7 +56,7 @@ V='0.30 Sph(0.2) + 0.26 Sph(1.3)';
 %V='0.5 Nug(0) + .5 Sph(2)';
 %V='0.8 Nug(0) + .2 Sph(2)';
 %V='0 Nug(0) + 1 Sph(2)';
-if isstr(V),
+if ischar(V),
 	V=deformat_variogram(V);
 end 
 

@@ -144,9 +144,9 @@ for i=1:length(names);
             val=str2num(val);
         end
         end
-        %if (isstr(val)&~isempty(val))
+        %if (ischar(val)&~isempty(val))
         %    mgstat_verbose(sprintf('%s = %s',str,val),1);           
-        %elseif (~isempty(val)&isstr(str))
+        %elseif (~isempty(val)&ischar(str))
         %    mgstat_verbose(sprintf('%s = %g',str,val),1);
         %end
         S.(struct_name).(str)=val;

@@ -38,7 +38,7 @@ function [out,z_rand,options,logL]=fft_ma(x,y,z,Va,options)
 %    disp(Va);
 %end
 if nargin>1,
-    if (isstr(y)|isstruct(y))
+    if (ischar(y)|ischar(y))
         Va=y;
         y=1;
         % 1D
@@ -50,7 +50,7 @@ if nargin>1,
 end
 
 if nargin>2,
-    if (isstr(z)|isstruct(z))
+    if (ischar(z)|isstruct(z))
         % 2D
         if nargin==4,options=Va; else; options.null='';end
         Va=z;

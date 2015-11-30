@@ -10,7 +10,7 @@
 %
 function [V,Va]=visim_set_variogram(V,Va);
 
-if isstr(Va);
+if ischar(Va);
     Va=deformat_variogram(Va);
 end
 

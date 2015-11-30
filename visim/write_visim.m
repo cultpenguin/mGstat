@@ -16,7 +16,7 @@ if isstruct(obj)~=1
 end
 
 if nargin==2
-    if isstr(parfile);
+    if ischar(parfile);
         obj.parfile=parfile;
     end
 end

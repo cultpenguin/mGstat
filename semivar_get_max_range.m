@@ -1,6 +1,6 @@
 function max_r=semivar_get_max_range(Va);
 
-if isstr(Va);
+if ischar(Va);
     Va=deformat_variogram(Va);
 end
 

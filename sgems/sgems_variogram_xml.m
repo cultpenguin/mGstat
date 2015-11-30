@@ -15,7 +15,7 @@
 
 
 function XML=sgems_variogram_xml(Va)
-if isstr(Va)
+if ischar(Va)
     Va=deformat_variogram(Va);
 end
 

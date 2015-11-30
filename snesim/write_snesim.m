@@ -24,7 +24,7 @@ function write_snesim(obj,parfile)
   end
 
   if nargin==2
-    if isstr(parfile);
+    if ischar(parfile);
       obj.parfile=parfile;
     end
   end
