@@ -41,9 +41,12 @@ if isempty(gstat)
     if isunix
         gstat=sprintf('%s%sbin%sgstat',p,filesep,filesep);
         % IF NOT FOUND AND ON MAC MAKE USE OF PRECOMPILED GSTAT FOR MAC
-        if ((~exist(gstat,'file'))&ismac)
+        if (ismac)
             gstat=sprintf('%s%sbin%sgstat_mac_g3',p,filesep,filesep);
+        else
+            gstat=sprintf('%s%sbin%sgstat',p,filesep,filesep);
         end
+        
     else
         gstat=sprintf('%s%sbin%sgstat.exe',p,filesep,filesep);
     end
