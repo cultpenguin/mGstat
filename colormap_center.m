@@ -2,7 +2,7 @@
 %
 %
 %
-function cmap_out=colormap_center(c_center_value,cmap,cax)
+function cax_nonlinear=colormap_center(c_center_value,cmap,cax)
 
 if nargin<2
     cmap=colormap(gca);

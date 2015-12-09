@@ -6,8 +6,15 @@
 function [inhood,order_list]=nhood(pos_known,pos_est,options);
   
   if ~isfield(options,'max')
-    options.max=1e+9;
+    options.max=Inf;
   end
+  
+  if isinf(options.max)
+     inhood=1:size(pos_known,1);
+     order_list=inhood;
+     return
+  end
+      
   
   
   
