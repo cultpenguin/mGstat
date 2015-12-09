@@ -1,7 +1,7 @@
 % mps: Multiple point simuation through sequential simulation
 %      using ENESIM and DIRECT SIMULATION %
 % Call
-%    mps_dsim(TI,SIM,options)
+%    mps_enesim(TI,SIM,options)
 %
 %  TI: [ny,nx] 2D training image (categorical variables
 %  SIM: [ny2,nx2] 2D simulation grid. 'NaN' indicates an unkown value
@@ -12,13 +12,12 @@
 %  options.n_cond [int]: number of conditional points (def=5)
 %  options.rand_path [int]: [1] random path (default), [0] sequential path
 %
-%  % specific for options.type='dsim';
-%  options.n_max_ite [int]: number of maximum iterations through the TI for matching patterns (def=200)
-%
-%  % specific for options.type='enesim';
+%  options.n_max_ite [int]: number of maximum iterations through the TI for matching patterns (def=1e+5)
 %  options.plot    [int]: [0]:none, [1]:plot cond, [2]:storing movie (def=0)
 %  options.verbose [int]: [0] no info to screen, [1]:some info (def=1)
-%  % approximating the ocnditional pd:
+%
+%  % specific for options.type='enesim';
+% %    approximating the conditional pd:
 %  options.n_max_condpd=10; % build conditional pd from max 10 counts
 %
 %
@@ -44,7 +43,7 @@
 %
 %
 %
-% See also: mps_enesim, mps_dsim
+% See also: mps, mps_snesim
 %
 function [out,options]=mps_enesim(TI_data,SIM_data,options)
 if nargin<3
@@ -63,9 +62,9 @@ if ~isfield(options,'n_max_condpd');
     options.n_max_condpd=1e+9;
 end
 
-if strcmp(options.type,'dsim');
-    if ~isfield(options,'n_max_ite');options.n_max_ite=200;end
-end
+%if strcmp(options.type,'dsim');
+    if ~isfield(options,'n_max_ite');options.n_max_ite=2000;end
+%end
 if numel(SIM_data)<=10000;
     options.precalc_dist_full=1;
 else
@@ -87,6 +86,15 @@ TI.D=TI_data;
 TI.x=1:1:TI.nx;
 TI.y=1:1:TI.ny;
 N_TI=numel(TI.D);
+
+
+if isfield(options,'TI2')
+    TI2_data=options.TI2;
+    TI2.D=TI2_data;
+    [TI2.ny,TI2.nx]=size(TI2.D);
+    TI2.x=1:1:TI2.nx;
+    TI2.y=1:1:TI2.ny;
+end
 
 SIM.D=SIM_data;
 [SIM.ny,SIM.nx]=size(SIM.D);
@@ -182,17 +190,46 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         %  b) generate a ralization from f(m_i|f(m_1,...,m_{i-1})
         N_PDF=0;
         if N_COND==0
-            [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,[],[],options.n_max_condpd);
+            [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,[],[],options);
+            
+            if isfield(options,'TI2')
+                [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,[],[],options);
+                N_PDF=min([N_PDF N_PDF2]);
+            end
+            
+            
         else
             for ic=1:N_COND               
                 c_arr=(1:(N_COND-ic+1));
-                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V(c_arr),L(c_arr,:),options.n_max_condpd);
+                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V(c_arr),L(c_arr,:),options);
                 
-                if N_PDF>0, break; end
-                disp(sprintf('%s : PRUNING: dropping a node %02d/%02d at[ix,iy]=[%d,%d]',mfilename,N_COND-ic,N_COND,ix,iy))
+                if isfield(options,'TI2')
+                    [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,V(c_arr),L(c_arr,:),options);
+                    N_PDF=min([N_PDF N_PDF2]);
+                end
+                
+                
+                if N_PDF>0, break; end %% N_PDF OS NEVER BELOW 1
+                %disp(sprintf('%s : PRUNING: dropping a node %02d/%02d at[ix,iy]=[%d,%d]',mfilename,N_COND-ic,N_COND,ix,iy))
+                
                 options.N_DROPPED(iy,ix)=ic;
             end
         end
+        
+        if isfield(options,'TI2')
+            p=0;
+            p=ix./SIM.nx;
+            p=.5*(1+cos(pi-pi*p));
+ 	    p=0.5;
+            
+            txt1=(sprintf('p=%4.2f - PDF=[%2.2f %3.2f]  PDF2=[%2.2f %3.2f]',p,C_PDF(1),C_PDF(2),C_PDF2(1),C_PDF2(2)));
+            C_PDF_COMB = p.*C_PDF + (1-p).*C_PDF2;
+            C_PDF=C_PDF_COMB./sum(C_PDF_COMB);
+            txt2=(sprintf('PDF_COMB=[%3.2f %3.2f]',C_PDF(1),C_PDF(2)));
+            disp([txt1,' - ',txt2])
+            
+        end
+        
         options.H(iy,ix)=entropy(C_PDF);
         options.N(iy,ix)=N_PDF;
         

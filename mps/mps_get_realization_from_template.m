@@ -1,4 +1,9 @@
+% mps_get_realization_from_template: Sample from training image using Direct Sampling 
 function [sim_val,C,ix_ti_min,iy_ti_min,DIS_MIN]=mps_get_realization_from_template(TI,V,L,options)
+
+if ~isfield(options,'n_max_ite')
+    options.n_max_ite=1e+9;
+end
 
 C=0;
 N_TI=prod(size(TI.D));
