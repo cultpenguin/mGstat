@@ -19,7 +19,7 @@
 %
 function [cmap,levels]=cmap_linear(colors,levels,n)
 
-if nargin<3, n=1*64;end
+if nargin<3, n=2*64;end
 if nargin<1, colors=[1 0 0;1 1 1;0 0 1];end
 
 

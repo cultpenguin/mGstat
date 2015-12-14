@@ -1,12 +1,12 @@
 rng(1);
 clear all;close all
-options.n_cond=25;
-options.n_template=25;
+options.n_cond=55;
+options.n_template=81;
 
 %options.n_cond=19;
 %options.n_template=19;
 
-options.n_cond=9;
+options.n_cond=49;
 options.n_template=9;
 
 %options.n_mulgrids=4;
@@ -16,9 +16,9 @@ options.plot=1;options.plot_interval=100;
 
 options.rand_path=1;
 
-SIM=ones(30,30).*NaN;
+SIM=ones(200,400).*NaN;
 TI=channels;TI=TI(4:4:end,4:4:end);
-%TI=channels;%TI=TI(2:2:end,2:2:end);
+TI=channels;%TI=TI(2:2:end,2:2:end);
 
 [out,o]=mps_snesim(TI,SIM,options);
 return
@@ -28,7 +28,7 @@ subplot(2,3,1);imagesc(out);axis image
 subplot(2,3,2);imagesc(o.C);colorbar;axis image
 subplot(2,3,3);imagesc(o.IPATH);colorbar;axis image
 options.n_max_ite=10000;
-[out_dsim,o_dsim]=mps_dsim(TI,SIM,options);
+[out_dsim,o_dsim]=mps_enesim(TI,SIM,options);
 subplot(2,3,4);imagesc(out_dsim);colorbar;axis image
 
 
