@@ -93,8 +93,10 @@ if isfield(options,'pad');
     try;options.pad_x=options.pad(1);end
     try;options.pad_y=options.pad(2);end
 end
-if ~isfield(options,'pad_x');options.pad_x=2*nx-1;end
-if ~isfield(options,'pad_y');options.pad_y=ny-1;end
+%if ~isfield(options,'pad_x');options.pad_x=2*nx-1;end
+%if ~isfield(options,'pad_y');options.pad_y=ny-1;end
+if ~isfield(options,'pad_x');options.pad_x=nx;end
+if ~isfield(options,'pad_y');options.pad_y=ny;end
 if ~isfield(options,'padpow2');options.padpow2=0;end
 if isfield(options,'w');    
     if length(options.w)==1, options.w=[1 1].*options.w;end
