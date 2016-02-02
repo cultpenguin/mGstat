@@ -17,13 +17,14 @@
 %
 % TMH/2005, thomas@cultpenguin.com
 %
-function progress_txt(i,max,varargin);
+function progress_txt(i,max_it,varargin);
  
   if nargin==0
     help progress_txt
     return;
   end
   
+  if nargin<2, max_it=Inf;end
   try
       if isnumeric(varargin{length(varargin)});
           statusbar_ok=varargin{length(varargin)};
@@ -49,7 +50,7 @@ function progress_txt(i,max,varargin);
   nchar=45;  
   
   % 
-  pc=i./max;
+  pc=i./max_it;
   
   % clear command window
   if statusbar_ok==0;clc;end 
