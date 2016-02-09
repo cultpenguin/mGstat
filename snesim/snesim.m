@@ -23,6 +23,13 @@
 % The default executable for 64bit linux is $MGSTAT_INSTALL/bin/snesim_glnxa64
 % The default executable for 64bit OSX is $MGSTAT_INSTALL/bin/snesim_maci64
 %
+% 
+% OSX notes:
+%   * Xocde must be installed
+%   * The correct path for gfortran must be set. Usually this can be
+%     obtained using setenv('DYLD_LIBRARY_PATH', '/usr/local/bin');
+%
+%
 % See also snesim_init, read_snesim, write_snesim
 %
 %
@@ -47,7 +54,7 @@ function V=snesim(parfile,x,y,z)
       snesim_bin=sprintf('%s\\bin\\snesim.exe',p);
   end
 
- % TO MANUALLLY SET THE PATH TO snesim PUT IT HERE :
+ % TO MANUALLY SET THE PATH TO snesim PUT IT HERE :
  % snesim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIB/snesim/snesim';
 
   if (exist(snesim_bin,'file'))==0
