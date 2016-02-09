@@ -71,7 +71,8 @@ function progress_txt(i,max_it,varargin);
         char_prog=[char_prog,'-'];
       end
     end
-    txt=sprintf('%10s %s %3.1f %d/%d',txt,char_prog,100*pc(m),i(m),max(m));
+  
+    txt=sprintf('%10s %s %3.1f %d/%d',txt,char_prog,100*pc(m),i,max_it(m));
     if (statusbar_ok==1)
         if (m==1)
             statusbar(0,txt);
