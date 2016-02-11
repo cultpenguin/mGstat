@@ -88,9 +88,19 @@ end
 
 np = get(gcf,'nextplot');
 set(gcf,'nextplot','add');
-if (oldtitle),
-	delete(oldtitle);
+try;
+    if isnumeric(oldtitle)
+        if (oldtitle),
+            delete(oldtitle);
+        else
+        end
+    else
+        try
+            oldtitle.delete;
+        end
+    end
 end
+
 ha=axes('pos',[0 1 1 1],'visible','off','Tag','suptitle');
 ht=text(.5,titleypos-1,str);set(ht,'horizontalalignment','center','fontsize',fs);
 set(gcf,'nextplot',np);
