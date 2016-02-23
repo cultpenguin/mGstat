@@ -258,13 +258,13 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             subplot(1,2,1);
             im=imagesc(TI.D);axis image;
             axis image;
-            axis([1 size(TI.D,2) 1 size(TI.D,1)]);
+            %axis([1 size(TI.D,2) 1 size(TI.D,1)]);
             caxis([-1 1]);
         end
         if exist('im_sim')
             if ((i==N_PATH)|((i/options.plot_interval)==round(i/options.plot_interval)))
                 set(im_sim,'Cdata',SIM.D);
-                axis([1 size(TI.D,2) 1 size(TI.D,1)]);
+                %axis([1 size(TI.D,2) 1 size(TI.D,1)]);
                 drawnow;
             end
         else
