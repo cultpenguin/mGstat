@@ -2,6 +2,7 @@
 %
 % CALL :
 %   [d_nscore,o_nscore]=nscore(d,w1,w2,dmin,dmax,DoPlot)
+%   [d_nscore,o_nscore]=nscore(d,o_nscore);
 %
 %
 % INPUT PARAMETERS :
@@ -31,6 +32,20 @@
 %
 function [normscore_org,o_nscore]=nscore(d,w1,w2,dmin,dmax,DoPlot)
 
+%% FOWARD NORMAL SCORE
+ if nargin==2,
+     if isstruct(w1);
+         o_nscore=w1;
+         
+         normscore_org=interp1(o_nscore.sd,o_nscore.normscore,d,'nearest');
+         return
+         
+     end
+ end
+
+ %% NORMAL SCORE TRANSFORM SETUP
+ 
+         
  if nargin<6
    DoPlot=0;
  end
@@ -179,6 +194,7 @@ if DoPlot==1,
 end
 
 
+o_nscore.sd=sd;
 o_nscore.pk=pk;
 o_nscore.d=d;
 o_nscore.normscore=normscore;

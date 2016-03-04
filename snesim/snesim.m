@@ -23,11 +23,17 @@
 % The default executable for 64bit linux is $MGSTAT_INSTALL/bin/snesim_glnxa64
 % The default executable for 64bit OSX is $MGSTAT_INSTALL/bin/snesim_maci64
 %
+% 
+% OSX notes:
+%   * Xocde must be installed
+%   * The correct path for gfortran must be set. Usually this can be
+%     obtained using setenv('DYLD_LIBRARY_PATH', '/usr/local/bin');
+%
+%
 % See also snesim_init, read_snesim, write_snesim
 %
 %
 function V=snesim(parfile,x,y,z)
- 
   % FIRST TRY TO FIND THE snesim BINARY IN THE mGstat/bin/ DIRECTORY
   [p,f,s]=fileparts(which('mgstat_verbose'));
   mgstat_bin_dir=[p,filesep,'bin'];
@@ -39,15 +45,22 @@ function V=snesim(parfile,x,y,z)
       
       if ismac
           if isempty(getenv('DYLD_LIBRARY_PATH'))
+              
               disp(sprintf('%s: SETTING DYLD LIBRARY PATH',mfilename))
               setenv('DYLD_LIBRARY_PATH', '/usr/local/bin')
+          else
+              if (~strcmp(getenv('DYLD_LIBRARY_PATH'),'/usr/local/bin'))
+                   % setenv('DYLD_LIBRARY_PATH',['/usr/local/bin:',getenv('DYLD_LIBRARY_PATH')]);              
+                   setenv('DYLD_LIBRARY_PATH',['/usr/local/bin:']);              
+              end   
           end
+         
       end      
   else
       snesim_bin=sprintf('%s\\bin\\snesim.exe',p);
   end
 
- % TO MANUALLLY SET THE PATH TO snesim PUT IT HERE :
+ % TO MANUALLY SET THE PATH TO snesim PUT IT HERE :
  % snesim_bin='/scratch/tmh/RESEARCH/PROGRAMMING/GSLIB/snesim/snesim';
 
   if (exist(snesim_bin,'file'))==0

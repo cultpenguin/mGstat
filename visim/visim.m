@@ -14,6 +14,19 @@
 %   name, then the mGstat/bin folder is searhed
 %
 %
+% Source code for SNESIM can be downloaded here:
+% https://github.com/SCRFpublic/snesim-standalone
+%
+% executable files must be located in $MGSTAT_INSTALL/bin
+% The default executable for windows is $MGSTAT_INSTALL/bin/snesim.exe
+% The default executable for 64bit linux is $MGSTAT_INSTALL/bin/snesim_glnxa64
+% The default executable for 64bit OSX is $MGSTAT_INSTALL/bin/snesim_maci64
+%
+% OSX notes:
+%   * Xocde must be installed
+%   * The correct path for gfortran must be set. Usually this can be
+%     obtained using setenv('DYLD_LIBRARY_PATH', '/usr/local/bin');
+%
 % See also: visim_error_sim, visim_cholesky
 %
 function V=visim(parfile,visim_bin)
@@ -50,27 +63,29 @@ if visim_bin_ok==1
     mgstat_verbose(sprintf('%s : using VISIM exe : %s',mfilename,visim_bin),1)
 else
     
-    
-    % FIRST TRY TO FIND THE VISIM BINARY IN THE mGstat/bin/ DIRECTORY
-    
-    
-    [p,f,s]=fileparts(which('visim'));
-    if isunix
-        visim_bin=sprintf('%s/../bin/visim',p);
-    else
-        visim_bin=sprintf('%s\\..\\bin\\visim.exe',p);
-    end
-    
-    if (exist(visim_bin,'file'))==0
-        if isunix
-            % TRY TO LOCATE visim IN THE UNIX PATH
-            [s,visim_bin]=system('which visim');
+
+    % FIRST TRY TO FIND THE snesim BINARY IN THE mGstat/bin/ DIRECTORY
+    [p,f,s]=fileparts(which('mgstat_verbose'));
+    mgstat_bin_dir=[p,filesep,'bin'];
+    if isunix==1
+        visim_bin=[mgstat_bin_dir,filesep,'visim_',computer('arch')];
+        if ~exist(visim_bin,'file')
+            visim_bin=[mgstat_bin_dir,filesep,'visim'];
         end
+        
+        if ismac
+            if isempty(getenv('DYLD_LIBRARY_PATH'))
+                disp(sprintf('%s: SETTING DYLD LIBRARY PATH',mfilename))
+                setenv('DYLD_LIBRARY_PATH', '/usr/local/bin')
+            end
+        end
+    else
+        visim_bin=sprintf('%s\\bin\\visim.exe',p);
     end
     
-    
+
     if (exist(visim_bin,'file'))==0
-        % MANUALLU THE THE PATH TO VISIM
+        % MANUALLY THE THE PATH TO VISIM
         visim_bin=[mgstat_dir,filesep,'bin',filesep,'visim'];
     end
     

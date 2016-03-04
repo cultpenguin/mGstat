@@ -1,3 +1,4 @@
+% [i_notes_out]=mps_tree_get_cond_notes(ST,d_cond,i_note_in,i_level,i_notes_out)
 function [i_notes_out]=mps_tree_get_cond_notes(ST,d_cond,i_note_in,i_level,i_notes_out)
 cat=0:1:(length(ST{1}.count)-1);
 

@@ -1,3 +1,13 @@
+% imagematrix: image plot of a matrix
+%
+% Call 
+%    % M: 2D matrix
+%    [xl,yl]=imagematrix(M);
+%    % lw: linewidth of grid lines
+%    [xl,yl]=imagematrix(M,lw);
+%
+%  /TMH/2015
+%
 function [xl,yl]=imagematrix(M,lw);
 
 
