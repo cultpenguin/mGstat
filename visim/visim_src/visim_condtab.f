@@ -330,9 +330,9 @@ c locate quantile
 
       if (discrete.eq.1) then
 c     FIND ARRAY
-         write(*,*) 'DEBUG7 PRE',im_sel, iv_sel,index_cdf
+c         write(*,*) 'DEBUG7 PRE',im_sel, iv_sel,index_cdf
          draw = condlookup_cpdf(im_sel,iv_sel,index_cdf)
-         write(*,*) 'DEBUG7 PRO, draw=',draw
+c         write(*,*) 'DEBUG7 PRO, draw=',draw
 
       else
 c      ASSUME CONTINIOUS TARGET HISTOGRAM
