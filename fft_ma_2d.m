@@ -229,23 +229,35 @@ if isfield(options,'lim');
         % RANDOM SET TYPE RESIMULATION
         
         n_resim=options.lim(1);
+        
+        nz_rand=prod(size(z_rand));
+        
         if n_resim<=1
             % use n_resim as a proportion of all random deviates
-            n_resim=n_resim.*prod(size(z_rand));
+            n_resim=n_resim.*nz_rand;
         end
         if ((n_resim<2)&&(n_resim>1))
             n_resim=1;
         end
         n_resim=floor(n_resim);
         
-        n_resim = min([n_resim prod(size(z_rand))]);
+        n_resim = min([n_resim nz_rand]);
         
+            
         % ADD PADDING !!!!
         N_all=(nx+options.wx)*(ny+options.wy);
         
         n_resim = min([n_resim N_all]);
         
-        ii=randomsample(N_all,n_resim);                
+        if (n_resim~=N_all)
+            % next line use a lot of CPU if n_resim is high
+            ii=randomsample(N_all,n_resim);            
+            % next two lines use less CPU if_n_resim is high
+            %ii_inv=randomsample(N_all,N_all-n_resim);
+            %ii=setxor(1:1:N_all,ii_inv);
+        else
+            ii=1:1:N_all;
+        end
         
         z_rand_new=randn(size(z_rand(ii)));
         
