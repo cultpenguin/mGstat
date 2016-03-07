@@ -9,8 +9,7 @@
 %
 % pos_known [ndata,ndims] : Locations of data observations
 % val_known [ndata,1 or 2]  : col1 : Data value as measured at 'pos_known'
-%                             col2 : Data uncertainty as measured at
-%                             'pos_known' (optional)
+%                             col2 : Data uncertainty as (variance) (optional)
 % pos_est   [N ,ndims] : Location of N data locations to be estimated
 % V : Variogram model, e.g. '1 Sph(100)'
 % val_0 : A priori assumed data value (default=mean(val_known))
