@@ -63,7 +63,7 @@ for i1=1:(ndata-1)
     for i2=(i1+1):ndata
         i=i+1;
         if ((i/100000)==round(i/100000))
-            disp(sprintf('semivar_exp : i=%d/%d',i,nh))
+            progress_txt(i,nh,sprintf('semivar_exp : i=%d/%d',i,nh))
         end
         
         p1=[pos(i1,:)];
