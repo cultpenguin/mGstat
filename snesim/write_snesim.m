@@ -62,7 +62,10 @@ function write_snesim(obj,parfile)
   fprintf(fid,'%-30s - %s\n',dtxt,txt);
   
   txt='(target) global pdf';
-  dtxt=sprintf('%g %g',obj.pdf_target(1),obj.pdf_target(2));
+  dtxt='';
+  for i=1:length(obj.pdf_target);
+      dtxt=sprintf('%s %4.3f',dtxt,obj.pdf_target(i));
+  end
   fprintf(fid,'%-30s - %s\n',dtxt,txt);
   
   txt=' use (target) vertical proportions (0=no, 1=yes)';
