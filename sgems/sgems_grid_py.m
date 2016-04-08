@@ -14,7 +14,7 @@
 %   S.dim.nx=40; S.dim.ny=30; S.dim.nz=1;
 %   S.dim.dx=1; S.dim.dy=1; S.dim.dz=1;
 %   S.dim.x0=0; S.dim.y0=0; S.dim.z0=0;
-%   pyflie=sgems_grid_py(S)
+%   pyfile=sgems_grid_py(S)
 %   % This will generate a python script called sgsim.py
 %   % that can be run in SGeMS or from the commandline using
 %   % sgems -s sgsim.par
