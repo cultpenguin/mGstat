@@ -13,10 +13,21 @@
 %
 % See also: snesim 
 %
-function S=snesim_init(training_image,x,y,z);
+function S=snesim_init(training_image,x,y,z,S);
 
-load snesim_init_v10
+S.null='';
 
+ORG=load('snesim_init_v10');
+ti=ORG.ti;
+%% update S structure
+fn=fieldnames(ORG.S);
+for ifn=1:length(fn);
+    if ~isfield(S,fn{ifn})
+        S.(fn{ifn})=ORG.S.(fn{ifn});
+    end
+end
+
+%%
 if nargin>0;
     ti=training_image;
 end

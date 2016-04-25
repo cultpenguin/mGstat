@@ -61,7 +61,7 @@ else
     d_cond=[xx(ih) yy(ih) zz(ih) D(ih)];
 end
 
-clos
+%clos
 write_eas(S.fconddata.fname,d_cond);
 
 
