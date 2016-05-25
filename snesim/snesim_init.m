@@ -7,7 +7,7 @@
 %
 %   ti=channels;
 %   S = snesim_init(ti);
-%   S = snesim(1:1:30,1:1:30);
+%   S = snesim(S,1:1:30,1:1:30);
 %   imagesc(S.D(:,:));
 %
 %

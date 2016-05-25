@@ -280,7 +280,6 @@ if isfield(options,'lim');
     end
 end
 
-
 %% linear combinartion of the perturbed paramaters
 if (isfield(options,'gradual') && isfield(options,'z_rand'))
     if options.gradual<1
