@@ -50,7 +50,7 @@ template=[sort_data(2:(n_max+1),2:end)];
 
 if do_plot==1;
     
-  
+  figure
   s_size=[1:size(template,1)]./size(template,1);
   s_size=fliplr(124*(s_size/2));
   scatter3(template(:,1),template(:,2),template(:,3),s_size,'filled')
