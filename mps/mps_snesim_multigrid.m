@@ -46,8 +46,10 @@ end
 if ~isfield(options,'type');options.type='snesim';end
 if ~isfield(options,'storage_type');options.storage_type='tree';end
 if ~isfield(options,'verbose');options.verbose=0;end
-if ~isfield(options,'n_cond');options.n_cond=5;end
 if ~isfield(options,'n_mulgrids');options.n_mulgrids=0;end
+if ~isfield(options,'n_cond');
+    options.n_cond=5;
+end
 if ~isfield(options,'rand_path');options.rand_path=1;end
 if ~isfield(options,'compute_entropy');options.compute_entropy=0;end
 
@@ -74,27 +76,33 @@ N_SIM=numel(SIM.D);
 options.C=zeros(size(SIM.D));
 options.IPATH=zeros(size(SIM.D));
 
-%% SET TEMPLATE
-for i_grid=1:(options.n_mulgrids);
-    if ~isfield(options,'T');
+%% SET TEMPLATE [update to one template per mgrid]
+if ~isfield(options,'T');
+    for i_grid=1:(options.n_mulgrids);
         if ~isfield(options,'n_template');
             options.n_template=48;
         end;
-        n_dim=ndims(SIM);        
-        options.T=mps_template(options.n_template,n_dim,0);
+        if length(options.n_template)==1;
+            n_t=options.n_template;
+        else
+            n_t=options.n_template(i_grid);
+        end
+        n_dim=ndims(SIM);
+        options.T{i_grid}=mps_template(options.n_template,n_dim,0);
     end
 end
 
-%for i_grid=1:(options.n_mulgrids);
+
 d_cell=2.^([(options.n_mulgrids-1):-1:0]);
-%end
 
 if ~isfield(options,'ST_mul')
     for i_grid=1:(options.n_mulgrids);
         mgstat_verbose(sprintf('%s: Building tree for MultiGrid #%d d_cell=%d',mfilename,i_grid,d_cell(i_grid)),-1);
-        [options.ST_mul{i_grid}]=mps_tree_populate(TI.D,options.T,d_cell(i_grid));
+        [options.ST_mul{i_grid}]=mps_tree_populate(TI.D,options.T{i_grid},d_cell(i_grid));
     end
 end
+
+
 
 for i_grid=1:(options.n_mulgrids);
     
@@ -108,6 +116,7 @@ for i_grid=1:(options.n_mulgrids);
     %TI_mul=TI.D(d_cell(i_grid):d_cell(i_grid):TI.ny,d_cell(i_grid):d_cell(i_grid):TI.nx);
     
     options_mul=options;
+    options_mul.T=options.T{i_grid};
     options_mul.n_mulgrids=0;
     % check of local prior probablity and update according to mul grid
     if isfield(options,'local_prob');
