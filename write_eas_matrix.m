@@ -4,6 +4,8 @@
 % Call write_eas_matrix(filename,data,header,nanValue);
 % Call write_eas_matrix(filename,data);
 %
+% ! Assumes: [nx ny nz]=size(data);
+%
 % filename [string]
 % data [ndata,natts] 
 % header [structure{natts}] : SHOU
@@ -18,7 +20,7 @@
 function write_eas_matrix(filename,data,header,nanValue);
   
   if nargin<1,
-    help write_eas;
+    help write_eas_matrix;
     return;
   end
   
@@ -28,7 +30,8 @@ function write_eas_matrix(filename,data,header,nanValue);
     mgstat_verbose(sprintf('%s : Filename not set, using ''%s''.',mfilename,filename),0)
   end
 
-  [ny,nx,nz,natts]=size(data);
+  %[ny,nx,nz,natts]=size(data);
+  [nx,ny,nz,natts]=size(data);
   top_line=sprintf('%d %d %d',nx,ny,nz);
   
   if natts>1, 
@@ -52,7 +55,6 @@ function write_eas_matrix(filename,data,header,nanValue);
 
   
   
-  
   % replace NAN values
   data(find(isnan(data)))=nanValue;
   
@@ -65,12 +67,25 @@ function write_eas_matrix(filename,data,header,nanValue);
   end
   
   
-  if (nz==1)&(ny==1);
-    % 3D;
-  elseif  nz==1
+  if nz==1
     % 2D/1D;
     d=data';
     fprintf(fid,'%18.12g\n',d(:));      
+  else
+    % 3D;
+    n=prod(size(data));
+    d=zeros(1,n);
+    i=0;
+    for iz=1:nz
+    for iy=1:ny
+    for ix=1:nx
+        i=i+1;
+        d(i)=data(ix,iy,iz);
+    end
+    end
+    end
+   
+    fprintf(fid,'%18.12g\n',d(:));            
   end
   
   fclose(fid);

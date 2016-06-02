@@ -73,7 +73,7 @@ n_max=size(template,1);
 cat=unique(ti(:));
 n_cat=length(cat);
 
-%% Initiaize tree
+%% Initialize tree
 if ~exist('ST','var')
   ST{1}.cat=cat;
   ST{1}.count=zeros(1,n_cat);
@@ -86,7 +86,7 @@ for iz=1;1:nz;
   for iy=1:ny;
     for ix=1:nx;
       
-      mgstat_verbose(sprintf('%s: at location [x,y,z]=[%d,%d,%d]',mfilename,ix,iy,iz),1)
+      %mgstat_verbose(sprintf('%s: at location [x,y,z]=[%d,%d,%d]',mfilename,ix,iy,iz),1)
       loop_continue=1;
       
       %% Update base

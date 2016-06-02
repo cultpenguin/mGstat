@@ -30,15 +30,17 @@
 %
 % %% Example
 % TI=channels;
-% TI=TI(3:3:end,3:3:end)
+% TI=TI(3:3:end,3:3:end);
 % SIM=ones(40,40)*NaN;
 %
 % options.n_cond=5;;
 % options.n_template=16;;
-% [out]=mps_snesim(TI,SIM,options)
+% [out]=mps_snesim(TI,SIM,options);
 %
 % See also: mps_snesim, mps, mps_enesim, mps_tree_populate, mps_tree_get_cond
 function [out,options]=mps_snesim_mulgrid(TI_data,SIM_data,options)
+
+t_start_func=now;
 out=[];
 if nargin<3
   options.null='';
@@ -84,30 +86,39 @@ options.IPATH=zeros(size(SIM.D));
 
 d_cell=2.^([(options.n_mulgrids-1):-1:0]);
 
-
-
-for i_grid=1:(options.n_mulgrids);
+%% CHECK THAT TEMPLATE AND SEARCH TREE IS SET FOR EACH MULGRID
+if ~isfield(options,'T');
+    if ~isfield(options,'n_template');
+        options.n_template=48;
+    end;
+    if length(options.n_template)==1;
+        n_t=options.n_template;
+    else
+        n_t=options.n_template(i_grid);
+    end
     
-    %% SET TEMPLATE [update to one template per mgrid]
-    %if ~isempty(options,'T');
-        if ~isfield(options,'n_template');
-            options.n_template=48;
-        end;
-        if length(options.n_template)==1;
-            n_t=options.n_template;
-        else
-            n_t=options.n_template(i_grid);
-        end
+    for i_grid=1:(options.n_mulgrids);
         n_dim=ndims(SIM);
         options.T{i_grid}=mps_template(n_t,n_dim,0);
-    %end
-
-%    if ~isfield(options,'ST_mul');
+    end
+end   
+if ~isfield(options,'ST_mul');
+    for i_grid=1:(options.n_mulgrids);
         t_start=now;
         mgstat_verbose(sprintf('%s: Building tree for MultiGrid #%d d_cell=%d',mfilename,i_grid,d_cell(i_grid)),1);
         [options.ST_mul{i_grid}]=mps_tree_populate(TI.D,options.T{i_grid},d_cell(i_grid));
         t_end=now;
         mgstat_verbose(sprintf('%s: Build tree for MultiGrid #%d d_cell=%d in %5.2f s',mfilename,i_grid,d_cell(i_grid),(t_end-t_start)*(3600*24)),-1);
+
+    end
+end
+
+for i_grid=1:(options.n_mulgrids);
+    
+    %% SET TEMPLATE [update to one template per mgrid]
+
+%    if ~isfield(options,'ST_mul');
+%% CREATE SEARCH TREE IF IT DOES NOT EXIST
 %     else 
 %         key
 %         t_start=now;
@@ -173,4 +184,5 @@ end
 
 out=SIM.D;
 
-
+t_end_func=now;
+mgstat_verbose(sprintf('%s: simulation done in %5.2f s',mfilename,(t_end_func-t_start_func)*(3600*24)),-1);

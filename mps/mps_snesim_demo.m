@@ -1,3 +1,31 @@
+%%
+clear all;close all
+TI=channels;
+TI=TI(2:2:end,2:2:end);
+SIM=ones(40,40)*NaN;
+
+options.n_cond=25;;
+options.n_template=81;;
+options.n_mulgrids=4;;
+
+rng(1);
+[out_1,O_1]=mps_snesim(TI,SIM,options);
+
+
+%%
+O_2=options;
+O_2.T=O_1.T;
+O_2.ST_mul=O_1.ST_mul;
+rng(1);[out_2,O_2]=mps_snesim(TI,SIM,O_2);
+
+figure(2);
+subplot(1,2,1);
+imagesc([out_1]);axis image;
+subplot(1,2,2);
+imagesc([out_2]);axis image;
+
+return
+%%
 rng(1);
 clear all;close all
 options.n_cond=55;
