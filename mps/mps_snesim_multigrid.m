@@ -30,6 +30,7 @@
 %
 % %% Example
 % TI=channels;
+% TI=TI(3:3:end,3:3:end)
 % SIM=ones(40,40)*NaN;
 %
 % options.n_cond=5;;
@@ -46,7 +47,7 @@ end
 if ~isfield(options,'type');options.type='snesim';end
 if ~isfield(options,'storage_type');options.storage_type='tree';end
 if ~isfield(options,'verbose');options.verbose=0;end
-if ~isfield(options,'n_mulgrids');options.n_mulgrids=0;end
+if ~isfield(options,'n_mulgrids');options.n_mulgrids=3;end
 if ~isfield(options,'n_cond');
     options.n_cond=5;
 end
@@ -57,6 +58,10 @@ if ~isfield(options,'compute_entropy');options.compute_entropy=0;end
 if ~isfield(options,'plot');options.plot=1;end
 if ~isfield(options,'plot_interval');options.plot_interval=50;end
 
+%%
+if length(options.n_cond)==1
+    options.n_cond=ones(1,options.n_mulgrids).*options.n_cond;
+end
 %% SET SOME DATA STRUCTURES
 
 TI.D=TI_data;
@@ -76,9 +81,15 @@ N_SIM=numel(SIM.D);
 options.C=zeros(size(SIM.D));
 options.IPATH=zeros(size(SIM.D));
 
-%% SET TEMPLATE [update to one template per mgrid]
-if ~isfield(options,'T');
-    for i_grid=1:(options.n_mulgrids);
+
+d_cell=2.^([(options.n_mulgrids-1):-1:0]);
+
+
+
+for i_grid=1:(options.n_mulgrids);
+    
+    %% SET TEMPLATE [update to one template per mgrid]
+    %if ~isempty(options,'T');
         if ~isfield(options,'n_template');
             options.n_template=48;
         end;
@@ -88,24 +99,27 @@ if ~isfield(options,'T');
             n_t=options.n_template(i_grid);
         end
         n_dim=ndims(SIM);
-        options.T{i_grid}=mps_template(options.n_template,n_dim,0);
-    end
-end
+        options.T{i_grid}=mps_template(n_t,n_dim,0);
+    %end
 
-
-d_cell=2.^([(options.n_mulgrids-1):-1:0]);
-
-if ~isfield(options,'ST_mul')
-    for i_grid=1:(options.n_mulgrids);
-        mgstat_verbose(sprintf('%s: Building tree for MultiGrid #%d d_cell=%d',mfilename,i_grid,d_cell(i_grid)),-1);
+%    if ~isfield(options,'ST_mul');
+        t_start=now;
+        mgstat_verbose(sprintf('%s: Building tree for MultiGrid #%d d_cell=%d',mfilename,i_grid,d_cell(i_grid)),1);
         [options.ST_mul{i_grid}]=mps_tree_populate(TI.D,options.T{i_grid},d_cell(i_grid));
-    end
-end
-
-
-
-for i_grid=1:(options.n_mulgrids);
+        t_end=now;
+        mgstat_verbose(sprintf('%s: Build tree for MultiGrid #%d d_cell=%d in %5.2f s',mfilename,i_grid,d_cell(i_grid),(t_end-t_start)*(3600*24)),-1);
+%     else 
+%         key
+%         t_start=now;
+%         mgstat_verbose(sprintf('%s: Building tree for MultiGrid #%d d_cell=%d',mfilename,i_grid,d_cell(i_grid)),1);
+%         [options.ST_mul{i_grid}]=mps_tree_populate(TI.D,options.T{i_grid},d_cell(i_grid));
+%         t_end=now;
+%         mgstat_verbose(sprintf('%s: Build tree for MultiGrid #%d d_cell=%d in %5.2f s',mfilename,i_grid,d_cell(i_grid),(t_end-t_start)*(3600*24)),-1);
+%     end
     
+    
+    
+    t_start=now;
     %ix=d_cell(i_grid):d_cell(i_grid):SIM.nx;
     %iy=d_cell(i_grid):d_cell(i_grid):SIM.ny;
     ix=1:d_cell(i_grid):SIM.nx;
@@ -118,6 +132,7 @@ for i_grid=1:(options.n_mulgrids);
     options_mul=options;
     options_mul.T=options.T{i_grid};
     options_mul.n_mulgrids=0;
+    options_mul.n_cond=options.n_cond(i_grid);
     % check of local prior probablity and update according to mul grid
     if isfield(options,'local_prob');
         for i_lp=1:length(options.local_prob);
@@ -149,6 +164,10 @@ for i_grid=1:(options.n_mulgrids);
         colormap(cmap_linear([1 1 1 ; 0 0 0; 1 0 0]))
         
     end
+    
+    t_end=now;
+    mgstat_verbose(sprintf('%s: Simulated MultiGrid #%d d_cell=%d in %5.2f s',mfilename,i_grid,d_cell(i_grid),(t_end-t_start)*(3600*24)),-1);
+
     
 end
 

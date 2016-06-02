@@ -66,7 +66,7 @@ if ~isfield(options,'plot_interval');options.plot_interval=50;end
 
 %% CHECK FOR MULTIPLE GRIDS
 if options.n_mulgrids>0
-    [out,options]=mps_snesim_multigrid(TI_data,SIM_data,options)
+    [out,options]=mps_snesim_multigrid(TI_data,SIM_data,options);
     return
 end
 
