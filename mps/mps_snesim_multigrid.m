@@ -91,13 +91,13 @@ if ~isfield(options,'T');
     if ~isfield(options,'n_template');
         options.n_template=48;
     end;
-    if length(options.n_template)==1;
-        n_t=options.n_template;
-    else
-        n_t=options.n_template(i_grid);
-    end
     
     for i_grid=1:(options.n_mulgrids);
+        if length(options.n_template)==1;
+            n_t=options.n_template;
+        else
+            n_t=options.n_template(i_grid);
+        end
         n_dim=ndims(SIM);
         options.T{i_grid}=mps_template(n_t,n_dim,0);
     end
@@ -144,6 +144,7 @@ for i_grid=1:(options.n_mulgrids);
     options_mul.T=options.T{i_grid};
     options_mul.n_mulgrids=0;
     options_mul.n_cond=options.n_cond(i_grid);
+    options_mul.ST=options.ST_mul{i_grid};
     % check of local prior probablity and update according to mul grid
     if isfield(options,'local_prob');
         for i_lp=1:length(options.local_prob);
@@ -152,7 +153,6 @@ for i_grid=1:(options.n_mulgrids);
         options_mul.local_prob=P;
     end
     
-    options_mul.ST=options.ST_mul{i_grid};
     mgstat_verbose(sprintf('%s: simulating on MultiGrid #%d d_cell=%d',mfilename,i_grid,d_cell(i_grid)),1);
     
     if options.plot>0
