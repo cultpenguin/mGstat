@@ -4,9 +4,9 @@ TI=channels;
 TI=TI(2:2:end,2:2:end);
 SIM=ones(80,80)*NaN;
 
+options.n_mulgrids=3;;
 options.n_cond=[25 25 25 25];;
 options.n_template=[9 9 9 9].^2;;
-options.n_mulgrids=4;;
 options.plot_interval=1e+9;;
 
 rng(1);
@@ -23,11 +23,14 @@ O_2.n_cond=[25 18 15 9];;
 %O_2.ST_mul=O_1.ST_mul;
 rng(1);[out_2,O_2]=mps_snesim(TI,SIM,O_2);
 
+%%
 figure(2);
-subplot(1,2,1);
-imagesc([out_1]);axis image;
-subplot(1,2,2);
-imagesc([out_2]);axis image;
+subplot(1,3,1);
+imagesc([out_1]);axis image;caxis([-1 1])
+subplot(1,3,2);
+imagesc([out_2]);axis image;;caxis([-1 1])
+subplot(1,3,3);
+imagesc([out_1-out_2]);axis image;;caxis([-1 1])
 
 return
 %%
