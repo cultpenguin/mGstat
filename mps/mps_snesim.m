@@ -53,6 +53,7 @@ if nargin<3
 end
 
 if ~isfield(options,'type');options.type='snesim';end
+if ~isfield(options,'template_type');options.template_type=1;end
 if ~isfield(options,'storage_type');options.storage_type='tree';end
 if ~isfield(options,'verbose');options.verbose=0;end
 if ~isfield(options,'n_cond');options.n_cond=5;end
@@ -94,7 +95,7 @@ options.IPATH=zeros(size(SIM.D));
 if ~isfield(options,'T');
     if ~isfield(options,'n_template');options.n_template=48;end;
     n_dim=ndims(SIM);
-    options.T=mps_template(options.n_template,n_dim,0);
+    options.T=mps_template(options.n_template,n_dim,options.template_type,0);
 end
 
 
@@ -125,7 +126,16 @@ i_path=find(isnan(SIM.D));
 if options.rand_path==1
     % 'SHUFFLE' index of path to get a random path
     i_path=shuffle(i_path);
+elseif options.rand_path==2
+    % mixed_point_path
+    i_path=rand_list_MaxEnt(SIM.ny,SIM.nx);
 end
+
+% if options.i_path is set, use that;
+if isfield(options,'i_path');
+    i_path=options.i_path;
+end
+
 N_PATH=length(i_path);
 
 

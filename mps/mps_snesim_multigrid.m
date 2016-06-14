@@ -47,6 +47,7 @@ if nargin<3
 end
 
 if ~isfield(options,'type');options.type='snesim';end
+if ~isfield(options,'template_type');options.template_type=1;end
 if ~isfield(options,'storage_type');options.storage_type='tree';end
 if ~isfield(options,'verbose');options.verbose=0;end
 if ~isfield(options,'n_mulgrids');options.n_mulgrids=3;end
@@ -99,7 +100,7 @@ if ~isfield(options,'T');
             n_t=options.n_template(i_grid);
         end
         n_dim=ndims(SIM);
-        options.T{i_grid}=mps_template(n_t,n_dim,0);
+        options.T{i_grid}=mps_template(n_t,n_dim,options.template_type,0);
     end
 end   
 if ~isfield(options,'ST_mul');
