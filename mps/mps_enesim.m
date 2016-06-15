@@ -123,6 +123,9 @@ i_path=find(isnan(SIM.D));
 if options.rand_path==1
     % 'SHUFFLE' index of path to get a random path
     i_path=shuffle(i_path);
+elseif options.rand_path==2
+    % mixed_point_path
+    i_path=rand_list_MaxEnt(SIM.ny,SIM.nx);
 end
 
 % optionally load path from options
@@ -135,7 +138,7 @@ end
 N_PATH=length(i_path);
 
 %% BIG LOOP OVER RANDOM PATH
-
+t_start=now;
 for i=1:N_PATH; %  % START LOOOP OVER PATH
     
     
@@ -315,6 +318,10 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     
     
 end % END LOOOP OVER PATH
+t_end=now;
+options.t=(t_end-t_start)*(3600*24);
+disp(sprintf('%s: simulation ended in %gs',mfilename,options.t));
+
 
 if options.plot>2
     try

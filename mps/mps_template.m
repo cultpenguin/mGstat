@@ -57,11 +57,22 @@ if method==1
     template=[sort_data(2:(n_max+1),2:end)];
     
 elseif method==2
-    template=zeros(n_dim*n_max,3);
+    %template=zeros(n_dim*n_max,3);
+    n_use=floor(n_max/6);
+    %template=[0 0 0];
+    template=[];
     for i_dim=1:n_dim
-        ii =  (1:n_max)-ceil(n_max/2);
-        template([1:n_max]+(i_dim-1)*n_max,i_dim)=ii;
+        for is=[-1 1];
+            ii =  [1:n_use].*is;
+            t=zeros(n_use,3);
+            t(:,i_dim)=ii;
+            template=[template;t];
+        end
     end
+    d=sqrt((template(:,1).^2+template(:,2).^2+template(:,3).^2));
+    sort_data=sortrows([d(:),template],1);
+    template=sort_data(:,2:4);
+    
 end
 
 if do_plot==1;
@@ -71,12 +82,13 @@ if do_plot==1;
     s_size=fliplr(124*(s_size/2));
     scatter3(template(:,1),template(:,2),template(:,3),s_size,'filled')
     hold on
-    scatter3(0,0,0,124,10,'filled')
+    text(template(:,1)+.1,template(:,2)+.1,template(:,3)+.1,num2str([1:size(template,1)]'));
+    %scatter3(0,0,0,124,10,'filled')
     hold off
     
     
-    if n_dim==2;
-    try    
+    if (n_dim==2)&&(method==1);
+    
         d_index=d.*NaN;
         
         subplot(1,2,1);
@@ -96,6 +108,6 @@ if do_plot==1;
         imagematrix(d_index);
         set(gca,'ydir','normal')
         caxis([-1,n_max])
-    end
+    
     end
 end

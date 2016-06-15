@@ -66,8 +66,12 @@ if ~isfield(options,'plot');options.plot=1;end
 if ~isfield(options,'plot_interval');options.plot_interval=50;end
 
 %% CHECK FOR MULTIPLE GRIDS
-if options.n_mulgrids>0
+if options.n_mulgrids>1
+    t_start=now;
     [out,options]=mps_snesim_multigrid(TI_data,SIM_data,options);
+    t_end=now;
+    options.t=(t_end-t_start)*(3600*24);
+    disp(sprintf('%s: simulation ended in %gs',mfilename,options.t));
     return
 end
 
@@ -140,7 +144,7 @@ N_PATH=length(i_path);
 
 
 %% BIG LOOP OVER RANDOM PATH
-
+t_start=now;
 for i=1:N_PATH; %  % START LOOOP OVER PATH
     
     
@@ -263,6 +267,10 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     
     
 end % END LOOOP OVER PATH
+t_end=now;
+options.t=(t_end-t_start)*(3600*24);
+disp(sprintf('%s: simulation ended in %gs',mfilename,options.t));
+
 
 if options.plot>2
     try
