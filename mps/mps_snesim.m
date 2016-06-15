@@ -116,10 +116,9 @@ end
 %% POPULATE SEARCH TREE
 if ~isfield(options,'ST');
     mgstat_verbose(sprintf('%s: start building search tree',mfilename),-1)
-    tic;
-    [options.ST]=mps_tree_populate(TI.D,options.T);
-    toc
-    mgstat_verbose(sprintf('%s: end building search tree (%g s)',mfilename,toc),-1)
+    t1=now;
+    [options.ST]=mps_tree_populate(TI.D,options.T);    
+    mgstat_verbose(sprintf('%s: end building search tree (%g s)',mfilename,(now-t1)*3600*24),-1)
 else
     mgstat_verbose(sprintf('%s: using supplied search tree',mfilename),1)
 end
@@ -132,7 +131,8 @@ if options.rand_path==1
     i_path=shuffle(i_path);
 elseif options.rand_path==2
     % mixed_point_path
-    i_path=rand_list_MaxEnt(SIM.ny,SIM.nx);
+    i_path=rand_list_MaxEnt(SIM.D);
+    %i_path=rand_list_MaxEnt(SIM.D.*NaN);
 end
 
 % if options.i_path is set, use that;

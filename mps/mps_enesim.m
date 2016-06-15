@@ -125,7 +125,7 @@ if options.rand_path==1
     i_path=shuffle(i_path);
 elseif options.rand_path==2
     % mixed_point_path
-    i_path=rand_list_MaxEnt(SIM.ny,SIM.nx);
+    i_path=rand_list_MaxEnt(SIM.D);
 end
 
 % optionally load path from options

@@ -1,8 +1,9 @@
 % write_eas_matrix : writes an 3D arrays as one one column data in GEO EAS
 % format
 %
-% Call write_eas_matrix(filename,data,header,nanValue);
-% Call write_eas_matrix(filename,data);
+% Call;
+%    write_eas_matrix(filename,data,header,nanValue);
+%    write_eas_matrix(filename,data);
 %
 % ! Assumes: [nx ny nz]=size(data);
 %
@@ -66,9 +67,12 @@ function write_eas_matrix(filename,data,header,nanValue);
     fprintf(fid,'%s\n',header{ih});
   end
   
-  
-  if nz==1
-    % 2D/1D;
+  if (nz==1)&(ny==1);
+    % 1D;
+    d=data;
+    fprintf(fid,'%18.12g\n',d(:));      
+  elseif nz==1
+    % 2D;
     d=data';
     fprintf(fid,'%18.12g\n',d(:));      
   else

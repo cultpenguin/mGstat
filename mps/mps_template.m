@@ -3,6 +3,7 @@
 % Call
 %   [template]=mps_template(n_max,n_dim,method,do_plot);
 %
+% IN:
 %   n_max=16; % max 16 conditioning data (def=4);
 %   n_dim=2; % 1D/2D/3D (def=2)
 %   method = 1; % suing n_max pints closest to center
@@ -10,11 +11,8 @@
 %   do_plot=1; % Plots some figures of the template (def=0)
 %
 %
-%   template=mps_template(n_max,n_dim,do_plot);
-%do_plot
-%   template [n_max,5]:
-%       col1: index
-%       col2: distance to center
+%  OUT:
+%   template [n_max,3]:
 %       col3: ix index x-location reltive to center
 %       col4: iy index y-location reltive to center
 %       col5: iz index z-location reltive to center
@@ -58,7 +56,7 @@ if method==1
     
 elseif method==2
     %template=zeros(n_dim*n_max,3);
-    n_use=floor(n_max/6);
+    n_use=floor(n_max/(n_dim*2));
     %template=[0 0 0];
     template=[];
     for i_dim=1:n_dim
