@@ -7,7 +7,8 @@
 %   n_max=16; % max 16 conditioning data (def=4);
 %   n_dim=2; % 1D/2D/3D (def=2)
 %   method = 1; % suing n_max pints closest to center
-%          = 2; % mixed point
+%          = 2; % mixed point cross
+%          = 3; % mixed point cross + star
 %   do_plot=1; % Plots some figures of the template (def=0)
 %
 %
@@ -54,9 +55,9 @@ if method==1
     % Remove the distance column and return as template
     template=[sort_data(2:(n_max+1),2:end)];
     
-elseif method==2
+elseif (method==2)|(method==3)
     %template=zeros(n_dim*n_max,3);
-    n_use=floor(n_max/(n_dim*2));
+    n_use=ceil(n_max/(n_dim*2));
     %template=[0 0 0];
     template=[];
     for i_dim=1:n_dim
@@ -67,9 +68,44 @@ elseif method==2
             template=[template;t];
         end
     end
+    
+    if (method==3)
+        % 2D only
+        if n_dim==2;
+            ii=[1:n_use];
+            template2=[];
+            for ix=[-1 1]
+                for iy=[-1 1]
+                    t=zeros(n_use,3);
+                    t(:,1:n_dim)=repmat(ii(:),1,n_dim);;
+                    t(:,1)=t(:,1).*ix;
+                    t(:,2)=t(:,2).*iy;
+                    template2=[template2;t];
+                end
+            end
+        elseif n_dim==3
+            ii=[1:n_use];
+            template2=[];
+            for ix=[-1 1]
+                for iy=[-1 1]
+                    for iz=[-1 1]
+                        t=zeros(n_use,3);
+                        t(:,1:n_dim)=repmat(ii(:),1,n_dim);;
+                        t(:,1)=t(:,1).*ix;
+                        t(:,2)=t(:,2).*iy;
+                        t(:,3)=t(:,2).*iz;
+                        template2=[template2;t];
+                    end
+                end
+            end
+        end
+        template=[template;template2];
+    end
     d=sqrt((template(:,1).^2+template(:,2).^2+template(:,3).^2));
-    sort_data=sortrows([d(:),template],1);
-    template=sort_data(:,2:4);
+    sort_data=sortrows([d(:),template],1);   
+    template=sort_data(1:n_max,2:4);
+    
+    
     
 end
 
@@ -86,7 +122,7 @@ if do_plot==1;
     
     
     if (n_dim==2)&&(method==1);
-    
+        
         d_index=d.*NaN;
         
         subplot(1,2,1);
@@ -106,6 +142,6 @@ if do_plot==1;
         imagematrix(d_index);
         set(gca,'ydir','normal')
         caxis([-1,n_max])
-    
+        
     end
 end
