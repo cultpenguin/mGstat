@@ -55,7 +55,7 @@ if ~isfield(options,'n_cond');
     options.n_cond=5;
 end
 if ~isfield(options,'rand_path');options.rand_path=1;end
-if ~isfield(options,'compute_entropy');options.compute_entropy=0;end
+if ~isfield(options,'debug_level');options.debug_level=0;end
 
 % OLD
 if ~isfield(options,'plot');options.plot=1;end
@@ -80,10 +80,14 @@ SIM.y=1:1:SIM.ny;
 N_SIM=numel(SIM.D);
 
 
-% PRE ALLOCATE MATRIX WITH COUNTS
-options.C=zeros(size(SIM.D));
-options.IPATH=zeros(size(SIM.D));
 
+% PRE ALLOCATE MATRIX WITH COUNTS
+if options.debug_level>0
+    options.TIME=zeros(size(SIM.D));
+    options.C=zeros(size(SIM.D));
+    options.IPATH=zeros(size(SIM.D));
+    options.E=zeros(size(SIM.D));
+end
 
 d_cell=2.^([(options.n_mulgrids-1):-1:0]);
 
@@ -114,38 +118,32 @@ if ~isfield(options,'ST_mul');
     end
 end
 
+if options.debug_level>0
+    % PRE ALLOCATE MATRIX WITH COUNTS
+    options.C=zeros(size(SIM.D));
+    options.IPATH=zeros(size(SIM.D));
+    options.TIME=zeros(size(SIM.D));
+    options.E=zeros(size(SIM.D));
+end
+
+i_path_0=0; % 
 for i_grid=1:(options.n_mulgrids);
     
-    %% SET TEMPLATE [update to one template per mgrid]
-
-%    if ~isfield(options,'ST_mul');
-%% CREATE SEARCH TREE IF IT DOES NOT EXIST
-%     else 
-%         key
-%         t_start=now;
-%         mgstat_verbose(sprintf('%s: Building tree for MultiGrid #%d d_cell=%d',mfilename,i_grid,d_cell(i_grid)),1);
-%         [options.ST_mul{i_grid}]=mps_tree_populate(TI.D,options.T{i_grid},d_cell(i_grid));
-%         t_end=now;
-%         mgstat_verbose(sprintf('%s: Build tree for MultiGrid #%d d_cell=%d in %5.2f s',mfilename,i_grid,d_cell(i_grid),(t_end-t_start)*(3600*24)),-1);
-%     end
-    
-    
-    
     t_start=now;
-    %ix=d_cell(i_grid):d_cell(i_grid):SIM.nx;
-    %iy=d_cell(i_grid):d_cell(i_grid):SIM.ny;
+    
     ix=1:d_cell(i_grid):SIM.nx;
     iy=1:d_cell(i_grid):SIM.ny;
-    %iz=d_cell(i_grid):d_cell(i_grid):SIM.nz;
+    %iz=1:d_cell(i_grid):SIM.nz;
     
     SIM_mul=SIM.D(iy,ix);
-    %TI_mul=TI.D(d_cell(i_grid):d_cell(i_grid):TI.ny,d_cell(i_grid):d_cell(i_grid):TI.nx);
     
+    % copy simulation otpiosn to current grid
     options_mul=options;
     options_mul.T=options.T{i_grid};
     options_mul.n_mulgrids=0;
     options_mul.n_cond=options.n_cond(i_grid);
     options_mul.ST=options.ST_mul{i_grid};
+    
     % check of local prior probablity and update according to mul grid
     if isfield(options,'local_prob');
         for i_lp=1:length(options.local_prob);
@@ -161,11 +159,25 @@ for i_grid=1:(options.n_mulgrids);
         subplot(options.n_mulgrids,3,(i_grid-1)*3+1);
         imagesc(SIM_mul);axis image;caxis([-1 1])
     end
+    % run mps_sensim on  current grid
     [out_mul,o]=mps_snesim(TI.D,SIM_mul,options_mul);
     
-    SIM.D(iy,ix)=out_mul;
-    options.C(iy,ix)=o.C;
-    options.IPATH(iy,ix)=o.IPATH;
+    % update full grid with simulated data
+    SIM.D(iy,ix)=out_mul;    
+
+    % update PATH, C, E in full grid
+    if options.debug_level>0
+        for i=1:length(ix)
+            for j=1:length(iy)
+                if (o.IPATH(j,i)>0)
+                    options.C(iy(j),ix(i))=o.C(j,i);
+                    options.TIME(iy(j),ix(i))=o.TIME(j,i);
+                    options.E(iy(j),ix(i))=o.E(j,i);
+                    options.IPATH(iy(j),ix(i))=o.IPATH(j,i)+i_path_0;                    
+                end
+            end
+        end
+    end
     
     if options.plot>0
         figure_focus(10);
@@ -180,10 +192,15 @@ for i_grid=1:(options.n_mulgrids);
     t_end=now;
     mgstat_verbose(sprintf('%s: Simulated MultiGrid #%d d_cell=%d in %5.2f s',mfilename,i_grid,d_cell(i_grid),(t_end-t_start)*(3600*24)),-1);
 
+    % index to keep control of random path ID
+    i_path_new = prod(size(SIM_mul))-i_path_0;
+    i_path_0 = i_path_0 + i_path_new;
+    
     
 end
 
 out=SIM.D;
 
 t_end_func=now;
-mgstat_verbose(sprintf('%s: simulation done in %5.2f s',mfilename,(t_end_func-t_start_func)*(3600*24)),-1);
+options.t=(t_end_func-t_start_func)*3600*24;
+mgstat_verbose(sprintf('%s: simulation done in %5.2f s',mfilename,options.t),-1);

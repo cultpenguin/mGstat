@@ -59,7 +59,7 @@ if ~isfield(options,'verbose');options.verbose=0;end
 if ~isfield(options,'n_cond');options.n_cond=5;end
 if ~isfield(options,'n_mulgrids');options.n_mulgrids=0;end
 if ~isfield(options,'rand_path');options.rand_path=1;end
-if ~isfield(options,'compute_entropy');options.compute_entropy=0;end
+if ~isfield(options,'debug_level');options.debug_level=0;end
 
 % OLD
 if ~isfield(options,'plot');options.plot=1;end
@@ -92,8 +92,12 @@ N_SIM=numel(SIM.D);
 
 
 % PRE ALLOCATE MATRIX WITH COUNTS
-options.C=zeros(size(SIM.D));
-options.IPATH=zeros(size(SIM.D));
+if options.debug_level>0
+    options.TIME=zeros(size(SIM.D));
+    options.C=zeros(size(SIM.D));
+    options.IPATH=zeros(size(SIM.D));
+    options.E=zeros(size(SIM.D));
+end
 
 %% SET TEMPLATE
 if ~isfield(options,'T');
@@ -162,8 +166,9 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     if options.verbose>1
         fprintf('i=%d, at node iy,ix=[%3d,%3d]\n',i,iy,ix);
     end
-    options.IPATH(iy,ix)=i;
-    
+    if options.debug_level>0
+        options.IPATH(iy,ix)=i;
+    end
     % only sim if center note is NaN
     if isnan(SIM.D(iy,ix));
         
@@ -171,13 +176,16 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         iz=1; % 2D for now
         [d_cond,n_cond]=mps_cond_from_template(SIM.D,ix,iy,iz,options.T,options.n_cond);
         
-        options.C(iy,ix)=n_cond;
+        if options.debug_level>0
+            options.C(iy,ix)=n_cond;
+        end
         
         % get conditinal pdf from search tree
         tic
         [c_pdf]=mps_tree_get_cond(options.ST,d_cond);
-        options.C(iy,ix)=toc;
-        
+        if options.debug_level>0
+            options.TIME(iy,ix)=toc;
+        end
         
         % optionally get local prior probability
         if isfield(options,'local_prob');
@@ -202,7 +210,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         
         
         %% COMPUTE ENTROPY
-        if options.compute_entropy==1;
+        if options.debug_level>0
             options.E(iy,ix)=entropy(c_pdf);
         end
         
@@ -269,7 +277,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
 end % END LOOOP OVER PATH
 t_end=now;
 options.t=(t_end-t_start)*(3600*24);
-disp(sprintf('%s: simulation ended in %gs',mfilename,options.t));
+%disp(sprintf('%s: simulation ended in %gs',mfilename,options.t));
 
 
 if options.plot>2
