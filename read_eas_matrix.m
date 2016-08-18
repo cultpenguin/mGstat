@@ -52,4 +52,6 @@ function [D,header,txt_title,dim,txtdata,txtheader]=read_eas_matrix(filename,nx,
    D=reshape(d,dim.nx,dim.ny,dim.nz);
    if dim.nz==1;
        D=D';
+   else
+       D=permute(D,[2 1 3]);
    end
