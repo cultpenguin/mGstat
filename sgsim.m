@@ -14,7 +14,7 @@
 %
 % see also: krig
 
-function [sim_mul]=sgsim(pos_known,val_known,pos_sim,V,options);%
+function [sim_mul,options_krig]=sgsim(pos_known,val_known,pos_sim,V,options)
 
 if nargin==0;
     
@@ -134,9 +134,9 @@ for j=1:options.nsim
     i_use_cond=ones(size(pos_known,1),1);
     
     for i=1:size(pos_sim,1)
-        if ((i/100)==round(i/100))
-            disp(sprintf('%s : realization=%d/%d, i=%d/%d',mfilename,j,options.nsim,i,size(pos_sim,1)))
-        end
+%         if ((i/100)==round(i/100))
+%             disp(sprintf('%s : realization=%d/%d, i=%d/%d',mfilename,j,options.nsim,i,size(pos_sim,1)))
+%         end
         i_pos=i_path(i);
         
         % Find the data observations that should be used as conditional
@@ -155,6 +155,7 @@ for j=1:options.nsim
             if iscell(V);
                 [mean_est,var_est] = krig(pos_all,val_all,pos_sim(i_pos,:),V{i_pos},options_krig);
             else
+               
                 [mean_est,var_est] = krig(pos_all,val_all,pos_sim(i_pos,:),V,options_krig);
             end
             
