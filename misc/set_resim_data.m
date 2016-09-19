@@ -14,7 +14,7 @@
 % 
 % See also: set_resim_data_3d
 %
-function [used d_cond]=set_resim_data(x,y,D,lim,pos,wrap_around,xx,yy)
+function [used,d_cond]=set_resim_data(x,y,D,lim,pos,wrap_around,xx,yy)
 
 
 if nargin<4

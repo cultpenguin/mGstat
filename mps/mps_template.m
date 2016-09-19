@@ -21,7 +21,7 @@
 % See also mps, mps_snesim, mps_enesim
 %
 
-function [template]=mps_template(n_max,n_dim,method,do_plot);
+function [template,dist]=mps_template(n_max,n_dim,method,do_plot);
 
 if nargin<1, n_max=4;end
 if nargin<2, n_dim=2;end
@@ -54,6 +54,7 @@ if method==1
     % return the teamplate
     % Remove the distance column and return as template
     template=[sort_data(2:(n_max+1),2:end)];
+    dist=sort_data(2:(n_max+1),1);
     
 elseif (method==2)|(method==3)
     %template=zeros(n_dim*n_max,3);
