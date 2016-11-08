@@ -9,7 +9,7 @@
 %   TI=ti_gaussian_truncated([20 20],6,[-.1 .1],'Sph'); % 20x20 TI, 3 cat,range 26, Spherical 
 %
 
-function TI=ti_gaussian_truncated(n,r,lev,cov_type);
+function [TI,TIs]=ti_gaussian_truncated(n,r,lev,cov_type);
 
 if nargin<1
     n=[30 30 30];
@@ -32,8 +32,8 @@ if length(r)==1
     Va=sprintf('1 %s(%g)',cov_type,r);
 elseif length(r)==3;
     Va=sprintf('1 %s(%g,%g,%f)',cov_type,r(1),r(2),r(3));
-elseif length(r)==3;
-    Va=sprintf('1 %s(%g,%g,%f)',cov_type,r(1),r(2),r(3),r(4),r(5),r(6));
+elseif length(r)==6;
+    Va=sprintf('1 %s(%g,%g,%f,%f,%f,%f)',cov_type,r(1),r(2),r(3),r(4),r(5),r(6));
 end
     
 if length(n)==1;
