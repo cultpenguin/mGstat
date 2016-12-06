@@ -24,13 +24,23 @@ function V=deformat_variogram(txt);
   
   txt=regexprep(txt,'\<;','');
   
-  % HERE IS A BUG WHEN SOMETHING LIKE 'e+24 is used!!!
-	% find position of '+'
+  % find position of '+' separating multiple models
   fp=regexp(txt,'\+');
+  
+  % makse sure 'e+' does not count as seperators
+  fp_use=fp;
+  for ip=1:length(fp);
+      if strcmp(txt(fp(ip)-1),'e');
+          % fp(ip) is not the locaton of a seprator
+          fp_use=setxor(fp_use,fp(ip));
+      end
+  end
+  fp=fp_use;
   
   nvar=length(fp)+1;
   % disp(sprintf('Found %d variograms',nvar))  
 
+  
   if  nvar==1,
     ifp_array=[0];
   else
