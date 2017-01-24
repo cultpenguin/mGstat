@@ -23,7 +23,7 @@
 % The default executable for 64bit OSX is $MGSTAT_INSTALL/bin/snesim_maci64
 %
 % OSX notes:
-%   * Xocde must be installed
+%   * Xcode must be installed
 %   * The correct path for gfortran must be set. Usually this can be
 %     obtained using setenv('DYLD_LIBRARY_PATH', '/usr/local/bin');
 %
