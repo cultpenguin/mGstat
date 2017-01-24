@@ -183,7 +183,21 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     
     if strcmp(lower(options.type),'dsim');
         %% GET REALIZATION FROM TI USING DIRECT SIMULATION
-        [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min,options.COND_DIST(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);
+        
+        accept=0;
+        while accept==0;
+            [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min,options.COND_DIST(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);
+        
+            if isfield(options,'m_soft');
+                % GET PROPER P_ACC
+                P_acc = options.m_soft(iy,ix);
+                if rand(1)<P_acc
+                    accept=1;
+                end
+            else
+                accept=1;
+            end
+        end
         SIM.D(iy,ix)=sim_val;
         
         
