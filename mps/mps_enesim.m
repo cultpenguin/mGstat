@@ -123,9 +123,38 @@ i_path=find(isnan(SIM.D));
 if options.rand_path==1
     % 'SHUFFLE' index of path to get a random path
     i_path=shuffle(i_path);
+    mgstat_verbose(sprintf('%s: Shuffling path',mfilename),1)
 elseif options.rand_path==2
+    % PREFERENTIAL PATH
+    nxy=prod(size(SIM.D));
+    N_CAT=length(unique(TI.D(:)));
+    p_uninformed=ones(1,N_CAT)/N_CAT;
+    maxE=entropy(p_uninformed);
+    if isfield(options,'d_soft');
+        % ONLY WORKS WHEN N_CAT=2
+        d_soft=options.d_soft(:);
+        SOFT_ENTROPY=d_soft.*0;
+        for i=1:length(d_soft);
+            if isnan(d_soft(i));
+                SOFT_ENTROPY(i)=maxE;
+            else
+                SOFT_ENTROPY(i)=entropy([d_soft(i) 1-d_soft(i)]);
+            end
+        end
+    else
+        SOFT_ENTROPY=ones(size(SIM.D)).*maxE;
+        SOFT_ENTROPY=SOFT_ENTROPY(:);
+    end
+    
+    Ifac=4;
+    SE_order = rand(nxy,1)-1+Ifac*(maxE-SOFT_ENTROPY);
+    A=sortrows([SE_order,[1:1:nxy]'],[-1 2]);
+    i_path=A(:,2);    
+    mgstat_verbose(sprintf('%s: Preferential path',mfilename),1)
+elseif options.rand_path==3
     % mixed_point_path
-    i_path=rand_list_MaxEnt(SIM.D);
+    i_path=rand_list(SIM.D,2);
+    mgstat_verbose(sprintf('%s: MIXSIM path',mfilename),1)
 end
 
 % optionally load path from options
@@ -185,16 +214,30 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         %% GET REALIZATION FROM TI USING DIRECT SIMULATION
         
         accept=0;
+        n_test=0;
         while accept==0;
             [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min,options.COND_DIST(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);
-        
-            if isfield(options,'m_soft');
+            
+            % TEST FOR SOFT DATA
+            if isfield(options,'d_soft');
                 % GET PROPER P_ACC
-                P_acc = options.m_soft(iy,ix);
-                if rand(1)<P_acc
+                n_test=n_test+1;
+                if sim_val==0
+                    P_acc = options.d_soft(iy,ix);
+                else
+                    P_acc = 1-options.d_soft(iy,ix);
+                end
+                if isnan(P_acc)
+                    accept=1;
+                elseif rand(1)<P_acc                    
+                    %disp(sprintf('i=%d, P_acc=%g, [ix,iy]=[%d,%d], n_test=%d',i,P_acc,ix,iy,n_test))                    
+                    accept=1;
+                end
+                if n_test>10;
                     accept=1;
                 end
             else
+                % always accept if no soft data available
                 accept=1;
             end
         end
@@ -334,7 +377,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
 end % END LOOOP OVER PATH
 t_end=now;
 options.t=(t_end-t_start)*(3600*24);
-disp(sprintf('%s: simulation ended in %gs',mfilename,options.t));
+mgstat_verbose(sprintf('%s: simulation ended in %gs',mfilename,options.t),1);
 
 
 if options.plot>2
