@@ -56,20 +56,28 @@ if ~isfield(options,'plot');options.plot=-1;end
 if ~isfield(options,'plot_interval');options.plot_interval=100;end
 if ~isfield(options,'n_cond');options.n_cond=5;end
 if ~isfield(options,'rand_path');options.rand_path=1;end
-if ~isfield(options,'precalc_dist_full');end
-
+if ~isfield(options,'precalc_dist_full');
+    if numel(SIM_data)<=10000;
+        options.precalc_dist_full=1;
+    else
+        options.precalc_dist_full=0;
+    end
+end
+% Patching
+if ~isfield(options,'n_patch');options.n_patch=0;end
+if ~isfield(options,'i_patch_start');options.i_patch_start=100;end
+if options.i_patch_start<1;
+    options.i_patch_start=ceil(options.i_patch_start.*prod(size(SIM_data)));
+end
+options.T_patch=mps_template(options.n_patch);
+            
 if ~isfield(options,'n_max_condpd');
     options.n_max_condpd=1e+9;
 end
 
 %if strcmp(options.type,'dsim');
-    if ~isfield(options,'n_max_ite');options.n_max_ite=2000;end
+if ~isfield(options,'n_max_ite');options.n_max_ite=2000;end
 %end
-if numel(SIM_data)<=10000;
-    options.precalc_dist_full=1;
-else
-    options.precalc_dist_full=0;
-end
 if ~strcmp(options.type,'dsim');
     options.H=SIM_data.*0.*NaN;
 end
@@ -106,7 +114,7 @@ N_SIM=numel(SIM.D);
 if options.plot>2
     writerObj = VideoWriter('dsim');
     %writerObj = VideoWriter(vname,'MPEG-4'); % Awful quality ?
-    writerObj.FrameRate=30;
+    writerObj.FrameRate=10;
     writerObj.Quality=90;
     open(writerObj);
 end
@@ -149,7 +157,7 @@ elseif options.rand_path==2
     Ifac=4;
     SE_order = rand(nxy,1)-1+Ifac*(maxE-SOFT_ENTROPY);
     A=sortrows([SE_order,[1:1:nxy]'],[-1 2]);
-    i_path=A(:,2);    
+    i_path=A(:,2);
     mgstat_verbose(sprintf('%s: Preferential path',mfilename),1)
 elseif options.rand_path==3
     % mixed_point_path
@@ -159,11 +167,11 @@ end
 
 % optionally load path from options
 if isfield(options,'i_path');
-  i_path=options.i_path; 
-    if options.verbose>1
+    i_path=options.i_path;
+    if options.verbose>5
         fprintf('Path set in input');
     end
-end  
+end
 N_PATH=length(i_path);
 
 %% BIG LOOP OVER RANDOM PATH
@@ -185,7 +193,9 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     end
     options.IPATH(iy,ix)=i;
     
-    
+    % CONDITIONAL SIMULATION UNLESS ALLREADY SIMULATD
+    if isnan(SIM.D(iy,ix))
+        
     
     %% FIND n_cond CONDITIONAL POINT, find L
     % V value of conditional point
@@ -229,8 +239,8 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                 end
                 if isnan(P_acc)
                     accept=1;
-                elseif rand(1)<P_acc                    
-                    %disp(sprintf('i=%d, P_acc=%g, [ix,iy]=[%d,%d], n_test=%d',i,P_acc,ix,iy,n_test))                    
+                elseif rand(1)<P_acc
+                    %disp(sprintf('i=%d, P_acc=%g, [ix,iy]=[%d,%d], n_test=%d',i,P_acc,ix,iy,n_test))
                     accept=1;
                 end
                 if n_test>10;
@@ -242,6 +252,19 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             end
         end
         SIM.D(iy,ix)=sim_val;
+        
+        if (options.n_patch>0)&&(i>options.i_patch_start)
+            for ip=1:options.n_patch
+                dix=options.T_patch(ip,1);
+                diy=options.T_patch(ip,2);
+                try
+                    if isnan(SIM.D(iy+diy,ix+dix));
+                        SIM.D(iy+diy,ix+dix)=TI.D(iy_ti_min+diy,ix_ti_min+dix);
+                    end
+                end
+            end
+        end
+        
         
         
     elseif strcmp(lower(options.type),'enesim');
@@ -259,7 +282,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             
             
         else
-            for ic=1:N_COND               
+            for ic=1:N_COND
                 c_arr=(1:(N_COND-ic+1));
                 [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V(c_arr),L(c_arr,:),options);
                 
@@ -280,7 +303,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             p=0;
             p=ix./SIM.nx;
             p=.5*(1+cos(pi-pi*p));
- 	    p=0.5;
+            p=0.5;
             
             txt1=(sprintf('p=%4.2f - PDF=[%2.2f %3.2f]  PDF2=[%2.2f %3.2f]',p,C_PDF(1),C_PDF(2),C_PDF2(1),C_PDF2(2)));
             C_PDF_COMB = p.*C_PDF + (1-p).*C_PDF2;
@@ -336,43 +359,47 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             axis image
         end
         if ((i==N_PATH)|((i/options.plot_interval)==round(i/options.plot_interval)))
-        if options.plot>1
-            subplot(1,2,2);
-            hold on
-            im_sim=imagesc(SIM.D);
-            caxis([-1 1]);
-            colormap(cmap_linear([1 1 1 ; 0 0 0; 1 0 0]))
-            axis image
-            plot(ix,iy,'go','MarkerSize',12)
-            for l=1:size(L,1)
-                plot([ix ix+L(l,2)],[iy iy+L(l,1)],'g-')
+            if options.plot>1
+                subplot(1,2,2);
+                hold on
+                im_sim=imagesc(SIM.D);
+                caxis([-1 1]);
+                colormap(cmap_linear([1 1 1 ; 0 0 0; 1 0 0]))
+                axis image
+                plot(ix,iy,'go','MarkerSize',12)
+                for l=1:size(L,1)
+                    plot([ix ix+L(l,2)],[iy iy+L(l,1)],'g-')
+                end
+                hold off
+                
             end
-            hold off
             
-        end
-        
-        if options.plot>1
-            subplot(1,2,1);
-            im=imagesc(TI.D);axis image;
-            caxis([-1 1]);
-            hold on
-            plot(ix_ti_min,iy_ti_min,'go','MarkerSize',12)
-            for l=1:size(L,1)
-                plot([ix_ti_min ix_ti_min+L(l,2)],[iy_ti_min iy_ti_min+L(l,1)],'g-')
+            if options.plot>1
+                subplot(1,2,1);
+                im=imagesc(TI.D);axis image;
+                caxis([-1 1]);
+                hold on
+                plot(ix_ti_min,iy_ti_min,'go','MarkerSize',12)
+                for l=1:size(L,1)
+                    plot([ix_ti_min ix_ti_min+L(l,2)],[iy_ti_min iy_ti_min+L(l,1)],'g-')
+                end
+                hold off
+                %disp('paused - hit keyboard');pause;
             end
-            hold off
-            %disp('paused - hit keyboard');pause;
-        end
-        
-        
-        if options.plot>2
-            frame = getframe(gcf);
-            writeVideo(writerObj,frame);
-        end
+            
+            
+            if options.plot>2
+                frame = getframe(gcf);
+                writeVideo(writerObj,frame);
+            end
+            
+            if options.plot>3
+                pause;
+            end
         end
     end
     %% PLOT END
-    
+    end
     
 end % END LOOOP OVER PATH
 t_end=now;
