@@ -16,6 +16,20 @@
 %
 function [used,d_cond]=set_resim_data(x,y,D,lim,pos,wrap_around,xx,yy)
 
+if nargin==0;
+    x=1:1:10;y=1:1:20;D=rand(length(y),length(x));
+    for ix=20;1:length(x);
+    for iy=1:20;1:length(y);
+        [used,d_cond]=set_resim_data(x,y,D,[3 3],[ix iy],1);
+        imagesc(used);axis image
+        drawnow;
+        disp(length(find(used==0)))
+        pause(.1);
+    end
+    end
+    return
+end
+
 
 if nargin<4
     lim(1)=3;
@@ -41,25 +55,23 @@ end
 used=ones(size(xx));
 used(find(abs(xx-pos(1))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
 
-if wrap_around==1
+if wrap_around==1    
     % upper x
     used(find(abs(xx-(pos(1)-max(x)))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
     % upper y
-    used(find(abs(xx-pos(1))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
+    used(find(abs(xx-pos(1))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;    
     % upper x&y
     used(find(abs(xx-(pos(1)-max(x)))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
     % lower x
-    used(find(abs(fliplr(xx)+pos(1))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
+    used(find(abs(fliplr(xx)+pos(1))<=lim(1) & abs(yy-pos(2))<lim(2)))=0;
     % lower x, lower y
-    used(find(abs(fliplr(xx)+pos(1))<lim(1) & abs(flipud(yy)+pos(2))<lim(2)))=0;
+    used(find(abs(fliplr(xx)+pos(1))<=lim(1) & abs(flipud(yy)+pos(2))<=lim(2)))=0;
     % lower y
-    used(find(abs(xx-pos(1))<lim(1) & abs(flipud(yy)+pos(2))<lim(2)))=0;
-    
-    % upper x, lower y 
-    used(find(abs(xx-( pos(1)- max(x) ))<lim(1) & abs(flipud(yy)+pos(2))<lim(2)))=0;
-    
+    used(find(abs(xx-pos(1))<lim(1) & abs(flipud(yy)+pos(2))<=lim(2)))=0;
+    % upper x, lower y
+    used(find(abs(xx-( pos(1)- max(x) ))<=lim(1) & abs(flipud(yy)+pos(2))<=lim(2)))=0;
     % lower x, upper y 
-    used(find(abs(fliplr(xx)+pos(1))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
+    used(find(abs(fliplr(xx)+pos(1))<=lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
         
 end
 if nargout>1

@@ -19,7 +19,7 @@ CMRmap = [
 1.00 1.00 1.00];
 
 
-[nv]=size(CMRmap,1)
+[nv]=size(CMRmap,1);
 nc=128;
 for i=1:3
     cmap(:,i)=interp1([1:nv],CMRmap(:,1)',linspace(1,nv,128));

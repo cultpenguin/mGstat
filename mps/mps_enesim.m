@@ -114,7 +114,7 @@ N_SIM=numel(SIM.D);
 if options.plot>2
     writerObj = VideoWriter('dsim');
     %writerObj = VideoWriter(vname,'MPEG-4'); % Awful quality ?
-    writerObj.FrameRate=10;
+    writerObj.FrameRate=30;
     writerObj.Quality=90;
     open(writerObj);
 end
@@ -127,43 +127,52 @@ options.IPATH=zeros(size(SIM.D));
 
 %% SET RANDOM PATH
 % find a list of indexes of unsampled values
-i_path=find(isnan(SIM.D));
-if options.rand_path==1
-    % 'SHUFFLE' index of path to get a random path
-    i_path=shuffle(i_path);
-    mgstat_verbose(sprintf('%s: Shuffling path',mfilename),1)
-elseif options.rand_path==2
-    % PREFERENTIAL PATH
-    nxy=prod(size(SIM.D));
-    N_CAT=length(unique(TI.D(:)));
-    p_uninformed=ones(1,N_CAT)/N_CAT;
-    maxE=entropy(p_uninformed);
-    if isfield(options,'d_soft');
-        % ONLY WORKS WHEN N_CAT=2
-        d_soft=options.d_soft(:);
-        SOFT_ENTROPY=d_soft.*0;
-        for i=1:length(d_soft);
-            if isnan(d_soft(i));
-                SOFT_ENTROPY(i)=maxE;
-            else
-                SOFT_ENTROPY(i)=entropy([d_soft(i) 1-d_soft(i)]);
-            end
-        end
-    else
-        SOFT_ENTROPY=ones(size(SIM.D)).*maxE;
-        SOFT_ENTROPY=SOFT_ENTROPY(:);
-    end
-    
-    Ifac=4;
-    SE_order = rand(nxy,1)-1+Ifac*(maxE-SOFT_ENTROPY);
-    A=sortrows([SE_order,[1:1:nxy]'],[-1 2]);
-    i_path=A(:,2);
-    mgstat_verbose(sprintf('%s: Preferential path',mfilename),1)
-elseif options.rand_path==3
-    % mixed_point_path
-    i_path=rand_list(SIM.D,2);
-    mgstat_verbose(sprintf('%s: MIXSIM path',mfilename),1)
+
+if isfield(options,'d_soft');
+    i_path=mps_path(SIM.D,options.rand_path,d_soft);
+else
+    i_path=mps_path(SIM.D,options.rand_path);
 end
+% 
+% i_path=find(isnan(SIM.D));
+% if options.rand_path==1
+%     % 'SHUFFLE' index of path to get a random path
+%     i_path=shuffle(i_path);
+%     mgstat_verbose(sprintf('%s: Shuffling path',mfilename),1)
+% elseif options.rand_path==2
+%     % PREFERENTIAL PATH
+%     nxy=prod(size(SIM.D));
+%     N_CAT=length(unique(TI.D(:)));
+%     p_uninformed=ones(1,N_CAT)/N_CAT;
+%     maxE=entropy(p_uninformed);
+%     if isfield(options,'d_soft');
+%         % ONLY WORKS WHEN N_CAT=2
+%         d_soft=options.d_soft(:);
+%         SOFT_ENTROPY=d_soft.*0;
+%         for i=1:length(d_soft);
+%             if isnan(d_soft(i));
+%                 SOFT_ENTROPY(i)=maxE;
+%             else
+%                 SOFT_ENTROPY(i)=entropy([d_soft(i) 1-d_soft(i)]);
+%             end
+%         end
+%     else
+%         SOFT_ENTROPY=ones(size(SIM.D)).*maxE;
+%         SOFT_ENTROPY=SOFT_ENTROPY(:);
+%     end
+%     
+%     Ifac=4;
+%     SE_order = rand(nxy,1)-1+Ifac*(maxE-SOFT_ENTROPY);
+%     A=sortrows([SE_order,[1:1:nxy]'],[-1 2]);
+%     i_path=A(:,2);
+%     mgstat_verbose(sprintf('%s: Preferential path',mfilename),1)
+% elseif options.rand_path==3
+%     i_path=mps_path(SIM.D,options.rand_path);
+% elseif options.rand_path==4
+%     % mixed_point_path
+%     i_path=rand_list(SIM.D,2);
+%     mgstat_verbose(sprintf('%s: MIXSIM path',mfilename),1)
+% end
 
 % optionally load path from options
 if isfield(options,'i_path');
