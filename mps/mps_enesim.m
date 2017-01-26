@@ -129,7 +129,7 @@ options.IPATH=zeros(size(SIM.D));
 % find a list of indexes of unsampled values
 
 if isfield(options,'d_soft');
-    i_path=mps_path(SIM.D,options.rand_path,d_soft);
+    i_path=mps_path(SIM.D,options.rand_path,options.d_soft);
 else
     i_path=mps_path(SIM.D,options.rand_path);
 end
