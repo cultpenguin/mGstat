@@ -239,6 +239,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                         else
                             P_acc = 1-options.d_soft(iy,ix);
                         end
+                        %disp(sprintf('i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f COLLOCATED',i,n_test,use_soft,P_acc));
                     else
                         % COMPUTE ACCEPTANCE FROM MULTIPLE SOFT DATA!
                         %P_acc_mul=zeros(1,use_soft).*NaN;
@@ -275,14 +276,17 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                         accept=1;
                     end
                     
-                    % remove soft data from list of soft data
-                    options.d_soft(iy,ix)=NaN;
+                    
                     
                 else
                     % always accept if no soft data available
                     accept=1;
                 end
-                
+               
+            end
+            % remove soft data from list of soft data
+            if isfield(options,'d_soft')
+                options.d_soft(iy,ix)=NaN;
             end
             SIM.D(iy,ix)=sim_val;
             
