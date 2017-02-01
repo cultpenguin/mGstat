@@ -84,7 +84,7 @@ if isfield(options,'d_soft')
     options.d_soft_org=options.d_soft;
     
     if ~isfield(options,'n_soft');options.n_soft=3;end
-    if ~isfield(options,'n_test_max_soft');options.n_test_max_soft=100;end
+    if ~isfield(options,'n_test_max_soft');options.n_test_max_soft=20;end
     % only use collocated soft when n_soft==1;
     if options.n_soft==1;
         if ~isfield(options,'collocated_soft');
@@ -264,7 +264,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                         P_acc=prod(P_acc_mul(inn))./prod(P_acc_max(inn));
                         %P_acc=prod(P_acc_mul(inn));
                         ptxt=sprintf(' %3.2f ',P_acc_mul);
-                        disp(sprintf('i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt));
+                        mgstat_verbose(sprintf('i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt));
                     end
                     if isnan(P_acc)
                         accept=1;
@@ -275,7 +275,9 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                     if n_test>options.n_test_max_soft;
                         accept=1;
                     end
-                    
+                     %% SAVE THE CURRENT BEST MATCH!!!
+                     %% PERHAPS HAVE A SLIGHT BIAS WITH OFFSET?
+                     %% PERHAPS COMPUTE A CONDITIONAL ENTROPY MAP!
                     
                     
                 else
@@ -284,6 +286,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                 end
                
             end
+            
             % remove soft data from list of soft data
             if isfield(options,'d_soft')
                 options.d_soft(iy,ix)=NaN;
