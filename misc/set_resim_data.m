@@ -63,7 +63,6 @@ if wrap_around==1
     % upper x&y
     used(find(abs(xx-(pos(1)-max(x)))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
     % lower x
-% <<<<<<< Updated upstream
 %     used(find(abs(fliplr(xx)+pos(1))<=lim(1) & abs(yy-pos(2))<lim(2)))=0;
 %     % lower x, lower y
 %     used(find(abs(fliplr(xx)+pos(1))<=lim(1) & abs(flipud(yy)+pos(2))<=lim(2)))=0;
@@ -74,7 +73,6 @@ if wrap_around==1
 %     % lower x, upper y 
 %     used(find(abs(fliplr(xx)+pos(1))<=lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
 %         
-% =======
     used(find(abs(fliplr(xx)+pos(1)-1)<lim(1) & abs(yy-pos(2))<lim(2)))=0; % Corrected
     % lower x, lower y
     used(find(abs(fliplr(xx)+pos(1)-1)<lim(1) & abs(flipud(yy)+pos(2)-1)<lim(2)))=0; % Corrected
@@ -84,8 +82,7 @@ if wrap_around==1
     used(find(abs(xx-( pos(1)- max(x) ))<lim(1) & abs(flipud(yy)+pos(2)-1)<lim(2)))=0; % Corrected
     % lower x, upper y 
     used(find(abs(fliplr(xx)+pos(1)-1)<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0; % Corrected
-    
-%>>>>>>> Stashed changes
+
 end
 if nargout>1
     ih=find(used);
