@@ -45,7 +45,7 @@
 %
 % See also: mps, mps_snesim
 %
-function [out,options]=mps_enesim(TI_data,SIM_data,options)
+function [out,options]=mps_enesim_soft(TI_data,SIM_data,options)
 if nargin<3
     options.null='';
 end
@@ -226,9 +226,11 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             %% GET REALIZATION FROM TI USING DIRECT SIMULATION
             accept=0;
             n_test=0;
+            optim.P_acc=0;
             while accept==0;
                 [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min,options.COND_DIST(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);
-
+                
+                
                 % TEST FOR SOFT DATA
                 if (use_soft>0)&&(isfield(options,'d_soft'))
                     n_test=n_test+1;
@@ -264,15 +266,33 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                         P_acc=prod(P_acc_mul(inn))./prod(P_acc_max(inn));
                         %P_acc=prod(P_acc_mul(inn));
                         ptxt=sprintf(' %3.2f ',P_acc_mul);
-                        mgstat_verbose(sprintf('i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt));
+                        mgstat_verbose(sprintf('-- i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt),1);
                     end
+                    
+                    if P_acc>optim.P_acc;
+                        % save the best match so far
+                        optim.val_best=sim_val;
+                        optim.ix_ti_min=ix_ti_min;
+                        optim.iy_ti_min=iy_ti_min;
+                        optim.P_acc=P_acc;
+                    end
+                    
                     if isnan(P_acc)
                         accept=1;
                     elseif rand(1)<P_acc
                         %disp(sprintf('i=%d, P_acc=%g, [ix,iy]=[%d,%d], n_test=%d',i,P_acc,ix,iy,n_test))
                         accept=1;
                     end
+                    
+                    
                     if n_test>options.n_test_max_soft;
+                        
+                        % 
+                        sim_val = optim.val_best;
+                        ix_ti_min = optim.ix_ti_min;
+                        iy_ti_min = optim.iy_ti_min;
+                        P_acc = optim.P_acc;
+                        
                         accept=1;
                     end
                      %% SAVE THE CURRENT BEST MATCH!!!
@@ -285,6 +305,11 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                     accept=1;
                 end
                
+            end
+            
+            if (use_soft>1)&&(isfield(options,'d_soft'))
+                 ptxt=sprintf(' %3.2f ',P_acc_mul);
+                 mgstat_verbose(sprintf('i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt));
             end
             
             % remove soft data from list of soft data

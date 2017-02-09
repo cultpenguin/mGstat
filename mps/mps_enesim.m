@@ -222,6 +222,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         end
         SIM.D(iy,ix)=sim_val;
         
+        
         if (options.n_patch>0)&&(i>options.i_patch_start)
             for ip=1:options.n_patch
                 dix=options.T_patch(ip,1);
