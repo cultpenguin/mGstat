@@ -308,8 +308,10 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             end
             
             if (use_soft>0)&&(isfield(options,'d_soft'))
-                 ptxt=sprintf(' %3.2f ',P_acc_mul);
-                 mgstat_verbose(sprintf('i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt));
+                try
+                    ptxt=sprintf(' %3.2f ',P_acc_mul);
+                    mgstat_verbose(sprintf('i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt));
+                end
             end
             
             % remove soft data from list of soft data
