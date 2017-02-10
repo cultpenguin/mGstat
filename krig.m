@@ -348,21 +348,12 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   % SOLVE THE LINEAR SYSTEM
   %lambda = inv(K)*k;
   %fK=factorize(K);
-   global cc
-   global InvTimes
-   cc=cc+1;
-%   tic
-%   lambda = K\k;
-%   InvTimes(cc)=toc;
+  lambda = K\k;
   
   %keyboard
   
   if ktype==0
-      tic
-  lambda = K\k;
     d_est = (val_known' - val_0)*lambda(:)+ val_0;
-    d_var = gvar - k'*lambda;
-    InvTimes(cc)=toc;
   elseif ktype==1
     d_est =  val_known'*lambda(1:nknown);
   elseif ktype==2
