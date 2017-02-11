@@ -204,9 +204,9 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         end
         N_COND=length(V);
         
-        % FIND CONDITIONAL SOFT DATA, 
+        % FIND CONDITIONAL SOFT DATA,
         % NEED NOT BE RUN OF COLLOCATED SOFT DATA IS CONSIDERED.
-        if (isfield(options,'d_soft'))&&(use_soft>0)&&(options.collocated_soft==0);            
+        if (isfield(options,'d_soft'))&&(use_soft>0)&&(options.collocated_soft==0);
             i_good=find(~isnan(options.d_soft));
             [d,options]=mps_get_distance(SIM.ny,SIM.nx,i_node,i_good,options);
             ii=1:length(d);
@@ -234,8 +234,9 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                 % TEST FOR SOFT DATA
                 if (use_soft>0)&&(isfield(options,'d_soft'))
                     n_test=n_test+1;
-                    if options.n_soft==1;
-                        % GET PROPER P_ACC                       
+                    if (options.collocated_soft==1)&&(options.n_soft==1);
+                       Only do this in cases collocated soft data is considered 
+                        % GET PROPER P_ACC
                         if sim_val==0
                             P_acc = options.d_soft(iy,ix);
                         else
@@ -261,12 +262,18 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                                 end
                                 P_acc_max(is)=max([1-soft_prob_0 soft_prob_0]);
                             end
-                        end       
+                        end
+                        
+                        % a very simple appraoch handling non-existing soft
+                        % data in TI -- P(nan)=1,, should be
+                        % reconsidered...
                         inn=~isnan(P_acc_mul);
                         P_acc=prod(P_acc_mul(inn))./prod(P_acc_max(inn));
+                        
+                        
                         %P_acc=prod(P_acc_mul(inn));
                         ptxt=sprintf(' %3.2f ',P_acc_mul);
-                        mgstat_verbose(sprintf('-- i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt),1);
+                        mgstat_verbose(sprintf('-- i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt),2);
                     end
                     
                     if P_acc>optim.P_acc;
@@ -287,7 +294,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                     
                     if n_test>options.n_test_max_soft;
                         
-                        % 
+                        %
                         sim_val = optim.val_best;
                         ix_ti_min = optim.ix_ti_min;
                         iy_ti_min = optim.iy_ti_min;
@@ -295,22 +302,22 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                         
                         accept=1;
                     end
-                     %% SAVE THE CURRENT BEST MATCH!!!
-                     %% PERHAPS HAVE A SLIGHT BIAS WITH OFFSET?
-                     %% PERHAPS COMPUTE A CONDITIONAL ENTROPY MAP!
+                    %% SAVE THE CURRENT BEST MATCH!!!
+                    %% PERHAPS HAVE A SLIGHT BIAS WITH OFFSET?
+                    %% PERHAPS COMPUTE A CONDITIONAL ENTROPY MAP!
                     
                     
                 else
                     % always accept if no soft data available
                     accept=1;
                 end
-               
+                
             end
             
             if (use_soft>0)&&(isfield(options,'d_soft'))
                 try
                     ptxt=sprintf(' %3.2f ',P_acc_mul);
-                    mgstat_verbose(sprintf('i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt));
+                    mgstat_verbose(sprintf('i=%03d, n=%03d, nsoft=%d, Pacc=%3.2f (%s)',i,n_test,use_soft,P_acc,ptxt),1);
                 end
             end
             
