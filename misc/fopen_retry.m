@@ -30,7 +30,7 @@ while fid<0
     end
     
     if fid<0
-        disp(sprintf('failed to %s (%d time) trying again',filename,i));
+        disp(sprintf('failed to opening handle for ''%s'' (%d time) trying again',filename,i));
         pause(t_pause);
     end
     
