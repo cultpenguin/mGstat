@@ -235,7 +235,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                 if (use_soft>0)&&(isfield(options,'d_soft'))
                     n_test=n_test+1;
                     if (options.collocated_soft==1)&&(options.n_soft==1);
-                       Only do this in cases collocated soft data is considered 
+                       % Only do this in cases collocated soft data is considered 
                         % GET PROPER P_ACC
                         if sim_val==0
                             P_acc = options.d_soft(iy,ix);
