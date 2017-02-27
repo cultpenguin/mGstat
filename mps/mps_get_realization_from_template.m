@@ -2,10 +2,30 @@
 %
 % Call:
 %   [sim_val,C,ix_ti_min,iy_ti_min,DIS_MIN]=mps_get_realization_from_template(TI,V,L,options)
+%
+%  % optional inputs
+%    options.n_max_ite=1e+9; % Max number of iterations in 
+%    options.min_dist=0; % Stop scanning TI when distance is below options.min_dist.
+%    
+%    options.distance_measure=1; % DISCRETE distance (for discrete TIs)
+%    options.distance_measure=2; % EUCLIDEAN distance (for continous TIs)
+%
+% See also: mps_enesim.m
+%
+
 function [sim_val,C,ix_ti_min,iy_ti_min,DIS_MIN]=mps_get_realization_from_template(TI,V,L,options)
 
 if ~isfield(options,'n_max_ite')
     options.n_max_ite=1e+9;
+end
+
+if ~isfield(options,'min_dist')
+   options.min_dist=0;
+end
+
+if ~isfield(options,'distance_measure')
+   options.distance_measure=1; % DISCRETE
+   %options.distance_measure=2; % EUCLIDEAN
 end
 
 C=0;
@@ -45,27 +65,54 @@ for iy_ti=iy_arr;for ix_ti=ix_arr;
       % GET INDEX CENTER INDEX IN TI
       
       % COMPUTE DISTANCE
-      DIS=0;
-      for k=1:size(L,1);
-        iy_test=L(k,1)+iy_ti;
-        ix_test=L(k,2)+ix_ti;
-        
-        if ((iy_test>0)&&(iy_test<=TI.ny)&&(ix_test>0)&(ix_test<=TI.nx))
-          if TI.D(iy_test,ix_test)==V(k);
-            DIS=DIS+0;
-          else
-            DIS=DIS+1;
+      if options.distance_measure==1;
+          % DISCRETE
+          DIS=0;
+
+          for k=1:size(L,1);
+              iy_test=L(k,1)+iy_ti;
+              ix_test=L(k,2)+ix_ti;
+              
+              
+              if ((iy_test>0)&&(iy_test<=TI.ny)&&(ix_test>0)&(ix_test<=TI.nx))
+                  if TI.D(iy_test,ix_test)==V(k);
+                      DIS=DIS+0;
+                  else
+                      DIS=DIS+1;
+                  end
+              else
+                  DIS=DIS+1;
+              end
           end
-        else
-          DIS=DIS+1;
-        end
+      elseif options.distance_measure==2;
+          % CONTINIOUS / EUCLIDEAN
+          DIS_all=zeros(size(L,1),1);
+          
+          for k=1:size(L,1);
+              iy_test=L(k,1)+iy_ti;
+              ix_test=L(k,2)+ix_ti;
+              
+              
+              if ((iy_test>0)&&(iy_test<=TI.ny)&&(ix_test>0)&(ix_test<=TI.nx))
+                  DIS_all(k)= (TI.D(iy_test,ix_test)-V(k));                  
+              else
+                  DIS_all(k)=100;options.min_dist;                  
+              end
+          end
+          DIS = sqrt(sum(DIS_all.^2));
+      else
+          %%
       end
+      
+      
+      
       
       %% keep track of the pattern with the smallesty dist so far
       if DIS<DIS_MIN
         DIS_MIN=DIS;
         iy_ti_min=iy_ti;
         ix_ti_min=ix_ti;
+        %disp(sprintf('id=%04d DIS_MIN=%g',ij,DIS_MIN))
       end
       
       % store how many iteration in the TI is performed
@@ -73,8 +120,8 @@ for iy_ti=iy_arr;for ix_ti=ix_arr;
       
       C=ij;
       
-      %% STOP, if perfect match has been reached
-      if DIS==0
+      %% STOP, if perfect match has been reached      
+      if DIS<=options.min_dist;
         iy_ti_min=iy_ti;
         ix_ti_min=ix_ti;
         break_flag=1;break
@@ -93,6 +140,6 @@ for iy_ti=iy_arr;for ix_ti=ix_arr;
     break;
   end;
 end
-
+%disp(sprintf('BREAK id=%04d DIS_MIN=%g',ij,DIS_MIN))
 % UPDATE SIM GRID WITH CONDITIONAL VALAUE
 sim_val=TI.D(iy_ti_min,ix_ti_min);

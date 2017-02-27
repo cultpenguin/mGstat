@@ -142,6 +142,7 @@ end
 % PRE ALLOCATE MATRIX WITH COUNTS
 options.C=zeros(size(SIM.D));
 options.IPATH=zeros(size(SIM.D));
+options.COND_DIST=zeros(size(SIM.D));
 
 
 %% SET RANDOM PATH
@@ -229,7 +230,6 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             optim.P_acc=0;
             while accept==0;
                 [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min,options.COND_DIST(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);
-                
                 
                 % TEST FOR SOFT DATA
                 if (use_soft>0)&&(isfield(options,'d_soft'))
@@ -415,8 +415,9 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                 subplot(1,2,1);
                 im=imagesc(TI.D);axis image;
                 axis image;
+                cax=caxis;
                 %axis([1 size(TI.D,2) 1 size(TI.D,1)]);
-                caxis([-1 1]);
+                %caxis([-1 1]);
             end
             if exist('im_sim')
                 if ((i==N_PATH)|((i/options.plot_interval)==round(i/options.plot_interval)))
@@ -428,7 +429,8 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                 figure_focus(2);
                 subplot(1,2,2);
                 im_sim=imagesc(SIM.D);
-                caxis([-1 1]);
+                %caxis([-1 1]);
+                try;caxis(cax);end
                 colormap(cmap_linear([1 1 1 ; 0 0 0; 1 0 0]))
                 axis image
             end
