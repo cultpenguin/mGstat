@@ -41,7 +41,7 @@ function [L,li,h,d,gv,mfAll,out]=visim_prior_prob_mcmc(V,options);
         options.gridsearch=0;
     end
     
-    fid=fopen('optim.txt','w');
+    fid=fopen_retry('optim.txt','w');
 
     if isfield(options,'a_hmax')==0, options.a_hmax.null=0;end
     if isfield(options,'a_hmin')==0, options.a_hmin.null=0;end

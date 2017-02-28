@@ -29,8 +29,9 @@ while fid<0
         break;
     end
     
-    if fid<0
+    if fid<0    
         disp(sprintf('failed to open handle for ''%s'' (%d time) trying again',filename,i));
+        t_pause=4*exp(i-N_max_try);
         pause(t_pause);
     end
     

@@ -72,7 +72,7 @@ function [V,gibbs]=visim_prior_prob_gibbs(V,options);
     V.parfile=sprintf('%s_gibbs.par',f);
     
            
-    fid=fopen('optim.txt','w');
+    fid=fopen_retry('optim.txt','w');
     
     a_hmax.arr=[a_hmax.min:a_hmax.step:a_hmax.max];
     a_hmin.arr=[a_hmin.min:a_hmin.step:a_hmin.max];

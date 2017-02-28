@@ -29,7 +29,7 @@ end
 
 obj.parfile=filename;
 
-fid = fopen(filename,'r');
+fid = fopen_retry(filename,'r');
 
 
 % READ HEADER
