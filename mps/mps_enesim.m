@@ -50,6 +50,7 @@ if nargin<3
     options.null='';
 end
 
+if ~isfield(options,'skip_sim');options.skip_sim=0;end
 if ~isfield(options,'type');options.type='dsim';end
 if ~isfield(options,'verbose');options.verbose=1;end
 if ~isfield(options,'plot');options.plot=-1;end
@@ -289,7 +290,15 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         % DRAW REALIZARTION FROM C_PDF
         sim_val=min(find(cumsum(C_PDF)>rand(1)))-1;
         try
-            SIM.D(iy,ix)=sim_val;
+            if options.skip_sim==0;
+                SIM.D(iy,ix)=sim_val;
+            else
+                % store condtional event
+                % remeber to preallocate
+                for k=1:length(C_PDF)
+                    options.CPDF(iy,ix,k)=C_PDF(k);
+                end
+            end
         catch
             keyboard
         end
