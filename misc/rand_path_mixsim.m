@@ -67,13 +67,17 @@ end
         % Locations where both a not NaN:
         list_tmp=list1_2D(~isnan(list1_2D(:,ix)) & ~isnan(sum(list1_2D,2)),ix);
         
-        if isempty(list_tmp) % Looking along x-direction of another y value:
+        try
             list_tmp=list1_2D(iy,~isnan(list1_2D(iy,:)) & ~isnan(sum(list1_2D,1)));
             n=rand_list(list_tmp);
             ix=XX(n);
-            list_tmp=list1_2D(~isnan(list1_2D(:,ix)),ix);         
+            list_tmp=list1_2D(~isnan(list1_2D(:,ix)),ix);
+        catch
+            % All positions in this column have been
+            % simualted -> change direction, which happens
+            % after the next 'catch' eight lines down.
         end
-                
+        
         % Simulate a "crossing position":
         try
             n=rand_list(list_tmp);
@@ -89,11 +93,17 @@ end
     elseif dir==2 % Looking along x-direction
         list_tmp=list1_2D(iy,~isnan(list1_2D(iy,:)) & ~isnan(sum(list1_2D,1)));
         
-        if isempty(list_tmp) % Looking along x-direction of another y value:
-            list_tmp=list1_2D(~isnan(list1_2D(:,ix)) & ~isnan(sum(list1_2D,2)),ix);
-            n=rand_list(list_tmp);
-            iy=YY(n);
-            list_tmp=list1_2D(iy,~isnan(list1_2D(iy,:)));
+        if isempty(list_tmp) % Looking along horizontal for another y-value:
+            try
+                list_tmp=list1_2D(~isnan(list1_2D(:,ix)) & ~isnan(sum(list1_2D,2)),ix);
+                n=rand_list(list_tmp);
+                iy=YY(n);
+                list_tmp=list1_2D(iy,~isnan(list1_2D(iy,:)));
+            catch
+                % All positions in this row have been simualted
+                % -> change direction, which happens
+                % after the next 'catch' eight lines down.
+            end
         end
         
         % Simulate a "crossing position":
