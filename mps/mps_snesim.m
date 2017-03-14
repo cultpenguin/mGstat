@@ -52,6 +52,7 @@ if nargin<3
     options.null='';
 end
 
+if ~isfield(options,'skip_sim');options.skip_sim=0;end
 if ~isfield(options,'type');options.type='snesim';end
 if ~isfield(options,'template_type');options.template_type=1;end
 if ~isfield(options,'storage_type');options.storage_type='tree';end
@@ -202,7 +203,18 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         % simulate from search tree
         sim_val=min(find(cumsum(c_pdf)>rand(1)))-1;
         try
-            SIM.D(iy,ix)=sim_val;
+            if options.skip_sim==0;
+                SIM.D(iy,ix)=sim_val;
+            else
+                if ~isfield(options,'C_PDF')
+                    options.C_PDF=zeros([SIM.ny,SIM.nx,[length(c_pdf)]])*NaN;
+                end
+                % store condtional event
+                % remeber to preallocate
+                for k=1:length(c_pdf)
+                    options.C_PDF(iy,ix,k)=c_pdf(k);
+                end
+            end
         catch
             keyboard
         end

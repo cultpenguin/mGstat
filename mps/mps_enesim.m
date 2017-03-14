@@ -289,14 +289,22 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         
         % DRAW REALIZARTION FROM C_PDF
         sim_val=min(find(cumsum(C_PDF)>rand(1)))-1;
+        if isnan(sim_val);
+            keyboard
+        end
+        
         try
             if options.skip_sim==0;
                 SIM.D(iy,ix)=sim_val;
             else
+                if ~isfield(options,'C_PDF')
+                    options.C_PDF=zeros([SIM.ny,SIM.nx,[length(C_PDF)]])*NaN;
+                end
                 % store condtional event
                 % remeber to preallocate
                 for k=1:length(C_PDF)
-                    options.CPDF(iy,ix,k)=C_PDF(k);
+                    
+                    options.C_PDF(iy,ix,k)=C_PDF(k);
                 end
             end
         catch
