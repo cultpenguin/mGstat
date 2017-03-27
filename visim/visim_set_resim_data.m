@@ -82,7 +82,6 @@ else
     d_cond=[xx(ih(:)) yy(ih(:)) yy(ih(:)).*0+S.z(1) D(ih(:))];
 end
     
-    
 % WRITE CONDITIONAL HARD DATA
 if isfield(S,'fconddata')==0
     S.fconddata.fname='cond.eas';

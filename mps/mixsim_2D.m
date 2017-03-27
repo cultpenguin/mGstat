@@ -1,4 +1,4 @@
-function ALL_sim=mixsim_2D(Ny,Nx,Nsim,TI,options)
+function [ALL_sim,options]=mixsim_2D(Ny,Nx,Nsim,TI,options)
 % call: sim=mixsim_2D(Ny,Nx,Nsim,options)
 %
 % --- Primary input parameters --- :
@@ -14,6 +14,8 @@ function ALL_sim=mixsim_2D(Ny,Nx,Nsim,TI,options)
 % options.covar_type; Type of covaraince function used for the two-point statistics; 1 = exponential, 2 = spherical (default), 3= Gaussian.
 % options.range; Horizontal range used by two-point statistic. Default = 20.
 % options.Ty; Neighborhood size for multi-point-statistics vertically. The height of the template/neighborhood is 2*option.Ty+1. Default = 8. 
+% options.Cm; Covariance matrix for horizontal dependencies (by default this is calculated using range and covar_type).  
+% options.ST; Search tree used for the multiple-point statistics vertically (by default this is calculated using TI).
 % options.random_path; Random path; 6 = random path used in paper (default); 1= completely random path
 % Other random_path options:
 % 0: Raster scan manner along y-direction
@@ -67,7 +69,7 @@ for i=1:length(TI)
         Hist1D(j)=Hist1D(j)+sum(logi==j);
     end
 end
-pdf1D=Hist1D/sum(Hist1D);
+options.pdf1D=Hist1D/sum(Hist1D);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Combined two-point and multi-point sim      %
@@ -113,7 +115,12 @@ elseif options.covar_type==2;
 elseif options.covar_type==3
     Va=sprintf('1 Gau(%d,0,0.00001)',options.range);
 end
-Cm=precal_cov_2d(1,Nx,1,1,Va);
+if ~isfield(options,'Cm')
+    Cm=precal_cov_2d(1,Nx,1,1,Va);
+else
+   Cm=options.Cm; 
+end
+
 
 for ns=1:Nsim
 %     if round(ns/1)==ns/1
@@ -329,10 +336,10 @@ for ns=1:Nsim
             % Kriging:
             Ci=Cm(1,1);
             if isempty(K) % No previously simulated parameters within the neighborhood
-                pdf_tp=pdf1D;
+                pdf_tp=options.pdf1D;
             else
                 for j=1:options.sV
-                    Vmean=pdf1D(j);
+                    Vmean=options.pdf1D(j);
                     d_obs=zeros(size(val_known));
                     d_obs(val_known==j)=1;
                     pdf_tp(j)=Vmean+k'*inv(K)*(d_obs-Vmean);
@@ -351,7 +358,7 @@ for ns=1:Nsim
             
             % The MIXED-point statistics in relation to combined sim %
             % Combined part of the calculations %
-            comb_pdf=(pdf_tp.*pdf_mp)./pdf1D;
+            comb_pdf=(pdf_tp.*pdf_mp)./options.pdf1D;
             comb_pdf=comb_pdf/sum(comb_pdf);
             
             % Simulate from the combined 1Dpdf
