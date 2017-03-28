@@ -21,7 +21,7 @@ end
 NXYZ=prod([ny,nx]);
 
 
-i_path=find(isnan(SIM'));
+i_path=find(isnan(SIM));
 if rand_path==0
     j=0;
     for ix=1:nx

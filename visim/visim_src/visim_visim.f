@@ -296,6 +296,7 @@ c     Assign the sample data to the closest grid node:
 c
       TINY = 0.0001
 c     write(ldbg,*) nd
+c      write(*,*) 'nd (conditional data)=',nd
       do id=1,nd
          call getindx(nx,xmn,xsiz,x(id),ix,testind)
          call getindx(ny,ymn,ysiz,y(id),iy,testind)
@@ -308,17 +309,19 @@ c     write(ldbg,*) nd
 c         WRITE(ldbg,*) X(ID), Y(ID), Z(ID)
 c         WRITE(ldbg,*) IX, IY, IZ
 c         WRITE(ldbg,*) XX, YY, ZZ
-c         WRITE(*,*) X(ID), Y(ID), Z(ID)
+c          WRITE(*,*) X(ID),Y(ID),Z(ID),XX,YY,ZZ
 c          WRITE(*,*) IX, IY, IZ, vr(id)
-c          WRITE(*,*) XX, YY, ZZ,
+c          WRITE(*,*) XX, YY, ZZ
 
 c     coordinates of x, y and z
 c
          test = abs(xx-x(id)) + abs(yy-y(id)) + abs(zz-z(id))
+c         if (test.gt.(0.0001)) then
+c            WRITE(*,*) id,X(ID),Y(ID),Z(ID),XX,YY,ZZ,test
+c         end if
 c
 c     Assign sample data to the closest grid node unles there is a close data:
 c
-
 
          if(sstrat.eq.1) then
             if(sim(ind).ge.0.0) then

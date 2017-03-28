@@ -35,7 +35,7 @@ end
 parfile=obj.parfile;
 [par_path,par_file]=fileparts(parfile);
 
-fid = fopen(parfile,'w');
+fid = fopen_retry(parfile,'w');
 
 % MAKE OUT FILE NAME THE SAME AS THE PARAMETER FILE + .OUT
 [p,f]=fileparts(obj.parfile);

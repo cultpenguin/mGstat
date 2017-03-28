@@ -33,7 +33,7 @@ function write_eas_matrix(filename,data,header,nanValue);
 
   %[ny,nx,nz,natts]=size(data);
   [nx,ny,nz,natts]=size(data);
-  top_line=sprintf('%d %d %d',nx,ny,nz);
+  top_line=sprintf('%d %d %d',ny,nx,nz);
   
   if natts>1, 
      disp(sprintf('%s: only 1 attriubute is supported ATM',mfilename));

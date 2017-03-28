@@ -1,7 +1,7 @@
-% ti_checkboard: create a 1D-3D checkerboard image
+% ti_checkerboard: create a 1D-3D checkerboard image
 %
 % Call:
-%   C = checkboard(n,w)   
+%   C = ti_checkerboard(n,w)   
 %   n: numver of pixels per dimension
 %   w: width of each checker board (def, w=1);
 %
@@ -11,7 +11,7 @@
 %   C = ti_checkboard([80 80],8) % 2D 
 % 
 % Using:  http://matlabtricks.com/post-31/three-ways-to-generate-a-checkerboard-matrix
-function C = ti_checkboard(n,w,mod_val);
+function C = ti_checkerboard(n,w,mod_val);
 
 if nargin<1
     n=80;

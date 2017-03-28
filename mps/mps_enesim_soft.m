@@ -143,6 +143,8 @@ end
 options.C=zeros(size(SIM.D));
 options.IPATH=zeros(size(SIM.D));
 options.COND_DIST=zeros(size(SIM.D));
+options.TI_ind=zeros(size(SIM.D));
+
 
 
 %% SET RANDOM PATH
@@ -230,6 +232,8 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             optim.P_acc=0;
             while accept==0;
                 [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min,options.COND_DIST(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);
+                options.TI_ind(iy,ix)=ix_ti_min*TI.nx+iy_ti_min;
+                
                 
                 % TEST FOR SOFT DATA
                 if (use_soft>0)&&(isfield(options,'d_soft'))
@@ -334,6 +338,8 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                     try
                         if isnan(SIM.D(iy+diy,ix+dix));
                             SIM.D(iy+diy,ix+dix)=TI.D(iy_ti_min+diy,ix_ti_min+dix);
+                            options.TI_ind(iy+diy,ix+dix)=(ix_ti_min+dix)*TI.nx+(iy_ti_min+diy);
+                            
                         end
                     end
                 end

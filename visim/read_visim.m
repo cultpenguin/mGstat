@@ -17,7 +17,7 @@ end
 obj.parfile=filename;
 [par_path,par_file]=fileparts(filename);
 
-fid = fopen(filename,'r');
+fid = fopen_retry(filename,'r');
 UNEST=-9999999.0;
 
 % READ HEADER

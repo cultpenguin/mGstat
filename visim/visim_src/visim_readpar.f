@@ -38,7 +38,7 @@ c-----------------------------------------------------------------------
       integer   ix1,iy1,iz1
       integer   ndinv,ivol,iv,ivol_new,nvoldata,IntVar
       real      ivolx,ivoly,ivolz,ivoll,cumsum,vvtmp,realtmp
-      logical   testind 
+      logical   testind
       integer   tempa,tempb,iargc,tempint
 c
 c Note VERSION number:
@@ -47,19 +47,19 @@ c
 c Get the name of the parameter file - try the default name if no input:
 c
 c TMH/05 : USING iargc and getarg to read filename from commandline
-c if this cause trouble, uncomment the next 8 lines, and remove 
+c if this cause trouble, uncomment the next 8 lines, and remove
 c comments form the following two lines.
 c
 
       argc = IARGC()
 
 c     call getarg(1,str)
-c     if (idbg.gt.-1) write(*,*) 'filename is ', str,argc 
+c     if (idbg.gt.-1) write(*,*) 'filename is ', str,argc
 
       if ( argc.eq.1 ) then
          call getarg(1,str)
       else
-         if (idbg.gt.-10) write(*,*) 'Which parameter file do you 
+         if (idbg.gt.-10) write(*,*) 'Which parameter file do you
      1        want to use?'
          read (*,'(a40)') str
       endif
@@ -67,16 +67,16 @@ c      if (idbg.gt.-1) write(*,*) 'Which parameter file do you want to use?'
 c      read (*,'(a40)') str
 
       if(str(1:1).eq.' ')str='visim.par                               '
-      
+
       inquire(file=str,exist=testfl)
       if(.not.testfl) then
-         if (idbg.gt.-2) write(*,*) 'ERROR - the parameter file does 
+         if (idbg.gt.-2) write(*,*) 'ERROR - the parameter file does
      1        not exist,'
-         if (idbg.gt.-2) write(*,*) '        check for the file and 
+         if (idbg.gt.-2) write(*,*) '        check for the file and
      1        try again  '
          if (idbg.gt.-2) write(*,*)
          if(str(1:20).eq.'visim.par           ') then
-            if (idbg.gt.-2) write(*,*) '        creating a blank 
+            if (idbg.gt.-2) write(*,*) '        creating a blank
      1           parameter file'
             call makepar
             if (idbg.gt.-2) write(*,*)
@@ -122,16 +122,16 @@ c      call chknam(datacovfl,40)
      1 	read_volnh,read_randpath
 
 
-      
+
       if (idbg.gt.-2) then
         write(*,*) 'VISIM ',VERSION,' ',parfile
 c         write(*,9999) VERSION,parilfe
 c 9999    format(' VISIM Version: ',f5.3,' Start',I10)
       endif
-c      if (idbg.gt.-2) write(*,*) 'VISIM parfile: ', parfile 
+c      if (idbg.gt.-2) write(*,*) 'VISIM parfile: ', parfile
 
 
-      if (idbg.gt.0) then 
+      if (idbg.gt.0) then
          write(*,*) ' data file = ',datafl
          write(*,*) ' conditional simulation = ', icond
          write(*,*) ' input columns = ',ixl,iyl,izl,ivrl,
@@ -140,7 +140,7 @@ c      if (idbg.gt.-2) write(*,*) 'VISIM parfile: ', parfile
          write(*,*) ' data file = ',volsumfl
          write(*,*) ' trimming limits = ',tmin,tmax
          write(*,*) ' debugging level = ',idbg
-         
+
          if (read_covtable.eq.1) then
             write(*,*) ' read covariance lookup tables = YES ['
      1           ,'1]'
@@ -148,7 +148,7 @@ c      if (idbg.gt.-2) write(*,*) 'VISIM parfile: ', parfile
             write(*,*) ' read covariance lookup tables = NO ['
      1           ,'0]'
          endif
-         
+
          if (read_lambda.eq.1) then
             write(*,*) ' read lambda from file = YES ['
      1           ,'1] --> NO MATRIX IS INVERTED'
@@ -170,7 +170,7 @@ c      open(ldbg,file=dbgfl,status='UNKNOWN')
 c      write(*,*) parfile,'.OUT'
 
 c      stop
-      tmpfl='debug'//'_'//outfl 
+      tmpfl='debug'//'_'//outfl
       if (idbg.gt.0) write(*,*) ' debugging file = ',tmpfl
       open(ldbg,file=tmpfl,status='UNKNOWN')
 
@@ -179,18 +179,18 @@ c     changed for visim
       if (nsim.eq.0) then
          nsim=1
          doestimation=1
-         if (idbg.gt.0) write(*,*) ' Doing ESTIMATION rather than 
+         if (idbg.gt.0) write(*,*) ' Doing ESTIMATION rather than
      1        SIMULATION'
          if (idbg.gt.0) write(*,*) ' since nsim=',nsim,doestimation
       else
          doestimation=0
          if (idbg.gt.0) write(*,*) ' number of realizations = ',nsim
       endif
-        
+
 
 
       read(lin,*,err=98) idrawopt
-      if (idbg.gt.0) write(*,*) ' Conditional distribution type = ', 
+      if (idbg.gt.0) write(*,*) ' Conditional distribution type = ',
      1     idrawopt
 
       read(lin,'(a40)',err=98) btfl
@@ -201,7 +201,7 @@ c      if ((idrawopt .eq. 2).or.(idrawopt.eq.4)) then
       end if
 
       read(lin,*,err=98) ibt,ibtw
-      if (idbg.gt.0) write(*,*) ' input columns for histogram file = 
+      if (idbg.gt.0) write(*,*) ' input columns for histogram file =
      1     ',ibt,ibtw
 
 c     READ OPTIONS FOR DSSIM HISTOGRAM REPRO, CPDF LOOKUP
@@ -212,15 +212,15 @@ c     READ OPTIONS FOR DSSIM HISTOGRAM REPRO, CPDF LOOKUP
       if (idbg.gt.0) write(*,*) ' Nscore VAR range = ',
      1     min_Gvar, max_Gvar, n_Gvar
       read(lin,*,err=98) n_q, discrete
-      
-      
+
+
 c     use of n_monte depreceated
       nmonte=1000
       if (idbg.gt.0) write(*,*) ' Number of quantiles = ',n_q
-c     if (idbg.gt.0) write(*,*) ' Number of samples drawn 
+c     if (idbg.gt.0) write(*,*) ' Number of samples drawn
 c     1     in nscore space = ',n_monte
-      if (idbg.gt.0) write(*,*) ' Discrete target histogram = ',discrete     
-      
+      if (idbg.gt.0) write(*,*) ' Discrete target histogram = ',discrete
+
       read(lin,*,err=98) nx,xmn,xsiz
       if (idbg.gt.0) write(*,*) ' X grid specification = ',nx,xmn,xsiz
 
@@ -243,7 +243,7 @@ c          write(*,*)'ERROR 1: Allocation of x failed',
 c     +         ' due to insufficient memory.'
 c          stop
 c       end if
-      
+
 
       read(lin,*,err=98) ixv(1)
       if (idbg.gt.0) write(*,*) ' random number seed = ',ixv(1)
@@ -256,7 +256,7 @@ c       end if
 
       if(idbg.ge.2) then
          write(ldbg,*) 'The random seed value p=', p
-      end if 
+      end if
 
       read(lin,*,err=98) ndmin,ndmax
       if (idbg.gt.0) write(*,*) ' min and max data = ',ndmin,ndmax
@@ -277,10 +277,10 @@ c         musevols=0
          densitypr=0;
          if (idbg.ge.-1) write(*,*) ' forcing random path = ',densitypr
       endif
-      
+
       if (idbg.gt.0) write(*,*) ' random path = ',densitypr
 
-      
+
 
 
       read(lin,*,err=98) sstrat
@@ -312,12 +312,12 @@ c      if (idbg.gt.0) write(*,*) ' multiple grid search flag = ',mults,nmult
       if (idbg.gt.0) write(*,*) ' search anisotropy angles = ',
      1     sang1,sang2,sang3
 
-c      read(lin,*,err=98) ktype 
+c      read(lin,*,err=98) ktype
 c      if (idbg.gt.0) write(*,*) ' kriging type = ',ktype
 c     THE KRIGING TYPE IS SET TO SK for NOW, THOMAS/2005
 c     MAYBE THE OTHER TYPES SHOULD BE ENABLED AGAIN.
       ktype=0
-      
+
       colocorr = 1.0
       if(ktype.eq.4) then
             backspace lin
@@ -331,8 +331,8 @@ c     MAYBE THE OTHER TYPES SHOULD BE ENABLED AGAIN.
             if (idbg.gt.-1) write(*,*) ' secondary variable varred = ',
      1           varred
       end if
-	
-      read(lin,*,err=98) skgmean, gvar 
+
+      read(lin,*,err=98) skgmean, gvar
       if (idbg.gt.0) write(*,*) ' kriging type = ',ktype
 
 c     SECONDARY DATA DISABLED
@@ -360,17 +360,17 @@ c      if (idbg.gt.0) write(*,*) ' column in secondary model file = ',icollvm
 
       do i=1,nst(1)
 
-         
+
          read(lin,*,err=98) it(i),cc(i),ang1(i),ang2(i),ang3(i)
-         
+
             read(lin,*,err=98) aa(i),aa1,aa2
             anis1(i) = aa1 / max(aa(i),EPSLON)
             anis2(i) = aa2 / max(aa(i),EPSLON)
             sill     = sill + cc(i)
             if(it(i).eq.4) then
-                  if (idbg.gt.-1) write(*,*) 
+                  if (idbg.gt.-1) write(*,*)
      1              ' A power model is NOT allowed '
-                  if (idbg.gt.-1) write(*,*) 
+                  if (idbg.gt.-1) write(*,*)
      1                 ' Choose a different model and re start '
                   stop
             endif
@@ -383,32 +383,32 @@ c      if (idbg.gt.0) write(*,*) ' column in secondary model file = ',icollvm
 c     next line leftover from old dssim code
 c     to be cleaned up
       itrans=0
-c      if (idbg.gt.-1) write(*,*) ' Use trans after simulation ? ', 
+c      if (idbg.gt.-1) write(*,*) ' Use trans after simulation ? ',
 c     1     itrans
 
 
-      
+
       if (idrawopt.eq.1) then
-         
+
          if (idbg.gt.0) write(*,*) 'READING NSCORE OPTIONS'
-         
+
          read(lin,*,err=98) zmin,zmax
          if (idbg.gt.0) write(*,*) ' data limits (tails) = ',zmin,zmax
-         
+
          read(lin,*,err=98) ltail,ltpar
          if (idbg.gt.0) write(*,*) ' lower tail option = ',ltail,ltpar
-         
+
          read(lin,*,err=98) utail,utpar
          if (idbg.gt.0) write(*,*) ' upper tail option = ',utail,utpar
-         
-         
-         
+
+
+
       end if
-      
-      
-c 
+
+
+c
 c  End of reading in for trans after direct sequential simulation
-c  
+c
 
 
       close(lin)
@@ -425,39 +425,39 @@ c
             testfl = .true.
       end if
 
-      if(itrans.eq.1) then 
+      if(itrans.eq.1) then
         if(ltail.ne.1.and.ltail.ne.2) then
-            if (idbg.gt.-1) write(*,*) 'ERROR invalid lower tail 
+            if (idbg.gt.-1) write(*,*) 'ERROR invalid lower tail
      1          option ',ltail
-            if (idbg.gt.-1) write(*,*) '      only allow 1 or 2 - 
+            if (idbg.gt.-1) write(*,*) '      only allow 1 or 2 -
      1           see manual '
             testfl = .true.
         endif
         if(utail.ne.1.and.utail.ne.2.and.utail.ne.4) then
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      1          'ERROR invalid upper tail option ',ltail
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      1           '      only allow 1,2 or 4 - see manual '
             testfl = .true.
         endif
         if(utail.eq.4.and.utpar.lt.1.0) then
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      1          'ERROR invalid power for hyperbolic tail',utpar
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      1           '      must be greater than 1.0!'
             testfl = .true.
         endif
         if(ltail.eq.2.and.ltpar.lt.0.0) then
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      1          'ERROR invalid power for power model',ltpar
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      1           '      must be greater than 0.0!'
             testfl = .true.
         endif
         if(utail.eq.2.and.utpar.lt.0.0) then
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      1          'ERROR invalid power for power model',utpar
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      1           '      must be greater than 0.0!'
             testfl = .true.
         endif
@@ -467,48 +467,48 @@ c
 
 c
 c If conditional simulation,  check to make sure the data file exists if
-c If unconditional simulation, set necessary parameters 
+c If unconditional simulation, set necessary parameters
 c
       nd = 0
       av = 0.0
       ss = 0.0
-      if(icond.ge.1) then 
+      if(icond.ge.1) then
         inquire(file=datafl,exist=testfl)
         if(.not.testfl) then
-             if (idbg.gt.-1) write(*,*) 
+             if (idbg.gt.-1) write(*,*)
      1          'WARNING data file ',datafl,' does not exist!'
-             if (idbg.gt.-1) write(*,*) 
-     1            'If you want to create conditional simulation',   
-     +                  'please check whether you have specified ', 
+             if (idbg.gt.-1) write(*,*)
+     1            'If you want to create conditional simulation',
+     +                  'please check whether you have specified ',
      +                  'the correct filename '
-	     if (idbg.gt.-1) write(*,*) 
+	     if (idbg.gt.-1) write(*,*)
      1            'If you want to create an unconditional simulation ',
      +                  'please reset icond = 0'
 c	      stop
         end if
       else
-        inquire(file=datafl,exist=testfl) 
+        inquire(file=datafl,exist=testfl)
         datafl='nodata'
 	if(testfl) then
-	   if (idbg.gt.-1) write(*,*) 
-	   if (idbg.gt.-1) write(*,*) 
+	   if (idbg.gt.-1) write(*,*)
+	   if (idbg.gt.-1) write(*,*)
      +          'WARNING: You are doing unconditional simulation',
      +          ' the filename of conditioning data has been reset',
      +          ' to be nodata. Next time, please set it to nodata',
-     +          ' if you are doing unconditioning simulation.' 
-	endif 
+     +          ' if you are doing unconditioning simulation.'
+	endif
 	ndmin  = 0
-        ndmax  = 0 
+        ndmax  = 0
 c     WHY SSTRAT = 1 ?
         sstrat = 1
-      end if 		
+      end if
 
       if(icond.eq.2) then
 c     Condition to VOLUME data only
          ndmin  = 0
          ndmax  = 0
          sstrat = 1
-      endif 
+      endif
 
 c
 c FIND NUMBER OF CONDITIONAL DATA
@@ -533,20 +533,20 @@ c$$$      end if
 c$$$      write(*,*) MAXDAT1
 c      stop
 
-      
+
 c
-c Read in the conditioning data for the simulation: 
-c 
+c Read in the conditioning data for the simulation:
+c
 c
 
 c
 c Now, read the data if conditional simulation is specified:
 c
-      
+
       inquire(file=datafl,exist=testfl)
       if (testfl.and.((icond.eq.1).OR.(icond.eq.2))) then
 
-c     FIRST READ THE NUMBER OF DATA  IN THE 
+c     FIRST READ THE NUMBER OF DATA  IN THE
 
          if (idbg.gt.0) write(*,*) 'Reading input data'
          open(lin,file=datafl,status='OLD')
@@ -557,36 +557,37 @@ c     FIRST READ THE NUMBER OF DATA  IN THE
          end do
          if(ixl.gt.nvari.or.iyl.gt.nvari.or.izl.gt.nvari.or.
      +        ivrl.gt.nvari.or.isecvr.gt.nvari.or.iwt.gt.nvari) then
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      +           'ERROR: you have asked for a column number'
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      +           '       greater than available in file'
 c            stop
          end if
-         
-         
+
+
          if (idbg.gt.1) write(*,*) 'read data '
-c     
+c
 c     Read all the conditioning data until the end of the file:
-c     
+c
          twt = 0.0
          nd  = 0
          nt  = 0
  5       read(lin,*,end=6,err=99) (var(j),j=1,nvari)
          if(var(ivrl).lt.tmin.or.var(ivrl).ge.tmax) then
             nt = nt + 1
+            write(*,*) 'nt=',nt,tmin,tmax,ivrl,var(ivrl)
             go to 5
          end if
          nd = nd + 1
          
          if(nd.gt.MAXDAT) then
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      +           ' ERROR exceeded MAXDAT - check inc file'
             stop
          end if
-c     
+c
 c     Acceptable data, assign the value, X, Y, Z coordinates, and weight:
-c     
+c
          vr(nd) = var(ivrl)
 c     vr(nd)=2.928
          if(ixl.le.0) then
@@ -604,21 +605,21 @@ c     vr(nd)=2.928
          else
             z(nd) = var(izl)
          endif
-         
-         
+
+
          if(iwt.le.0) then
             wt(nd) = 1.0
          else
             wt(nd) = var(iwt)
          endif
-         
-         
+
+
          if(isecvr.le.0) then
             sec(nd) = UNEST
          else
             sec(nd) = var(isecvr)
          endif
-         
+
          twt = twt + wt(nd)
          av  = av  + var(ivrl)*wt(nd)
          ss  = ss  + var(ivrl)*var(ivrl)*wt(nd)
@@ -626,20 +627,20 @@ c     vr(nd)=2.928
  6       close(lin)
 
       endif
-         
-c     
-c     Read in the VOLUME conditioning data for the simulation: 
-c     
-c     
-c     
+
+c
+c     Read in the VOLUME conditioning data for the simulation:
+c
+c
+c
 c     First read the summary of the volume data
-c     
+c
       if ((icond.eq.1).OR.(icond.eq.3)) then
 
          if (idbg.gt.0) write(*,*) '----------------------------'
          inquire(file=volsumfl,exist=testfl)
          if(testfl) then
-            if (idbg.gt.0) write(*,*) 
+            if (idbg.gt.0) write(*,*)
      +           'Reading SUMMARY VOLUME volume data'
             open(lin,file=volsumfl,status='OLD')
          endif
@@ -659,7 +660,7 @@ c     NEXT LINE TO NOT(!!!) READ IN UNCERTAINTY
 c            read(lin,*,iostat = IntVar) ivol,nvoldata,cumsum
 c            vvtmp=0
 
-ccccc            
+ccccc
 
             if (IntVar.lt.0) then
                exit
@@ -667,24 +668,24 @@ ccccc
             ndatainvol(i)=nvoldata
             volobs(i)=cumsum
             volvar(i)=vvtmp
-            nvol = nvol + 1            
+            nvol = nvol + 1
             if (i.gt.MAXVOLS) then
-               if (idbg.gt.-1) 
+               if (idbg.gt.-1)
      +              write(*,*) 'You specify more volumes, than assigned
      +              by fortran, please change MAXVOLS=',MAXVOLS
                stop
             end if
-            
+
             if (idbg.ge.4) then
-               if (idbg.gt.-1) 
+               if (idbg.gt.-1)
      +              write(*,*) 'ivol,ndatainvol,volobs,volvar=',+
      +              ivol,ndatainvol(i),volobs(i),volvar(i)
             endif
-            
+
          end do
-         if (idbg.gt.0) write(*,*) 'READ SUMMARY FILE, nvol=',nvol 
+         if (idbg.gt.0) write(*,*) 'READ SUMMARY FILE, nvol=',nvol
          if (idbg.gt.0) write(*,*) '----------------------------'
-         
+
 
 
 c +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -693,7 +694,7 @@ c
          datacovfl='datacov'//'_'//outfl
          inquire(file=datacovfl,exist=testfl)
          if(testfl) then
-            if (idbg.gt.(-1)) write(*,*) 
+            if (idbg.gt.(-1)) write(*,*)
      +           'Reading data covariance from file =',datacovfl
             open(lin,file=datacovfl,status='OLD')
 c     READ THE FIRST COMMENTED LINES
@@ -714,9 +715,9 @@ c     +                 write(*,*) '(ix,iy)=(',i,',',j,')',datacov(i,j)
             enddo
 
          else
-            if (idbg.gt.(-1)) then 
-               write(*,*) 
-     +              'No data covariance from file =',datacovfl 
+            if (idbg.gt.(-1)) then
+               write(*,*)
+     +              'No data covariance from file =',datacovfl
                write(*,*) 'Using uncorrelated data uncertainty!'
             endif
 
@@ -738,18 +739,18 @@ c     Uncorrelated data uncertainty / diagonal of datcov matrix
                enddo
             endif
          endif
-c     
+c
 c     Then read the geometry of the volume data
-c     
+c
 
          inquire(file=volgeomfl,exist=testfl)
 
          if(testfl) then
-            if (idbg.gt.1) write(*,*) 
+            if (idbg.gt.1) write(*,*)
      +           'START - Reading VOLUME GEOMETRY volume data'
             open(lin,file=volgeomfl,status='OLD')
          else
-            if (idbg.gt.-1) write(*,*) 'COULD NOT OPEN FILE'                     
+            if (idbg.gt.-1) write(*,*) 'COULD NOT OPEN FILE'
          endif
 c     READ THE FIRST COMMENTED LINES
          read(lin,*,err=99)
@@ -761,21 +762,21 @@ c     READ THE ACTUAL DATA
          ndinv=0
          ivol_new=1
          iv=1
-         
+
          do i=1,MAXGEOMDATA
             ivolx=0
             ivoly=0
             ivolz=0
             ivoll=0
 
-            read(lin,*,iostat = IntVar) 
+            read(lin,*,iostat = IntVar)
      +           ivolx,ivoly,ivolz,ivol_new,ivoll
-            
+
 c     CHECK THAT WE AE NOT AT THE END OF A FILE GIVEN BY A BLANK
 c     OR MALFORMED LINE
             if ((ivolx.eq.0).and.(ivoly.eq.0).and.(ivolz.eq.0)) then
                if (idbg.gt.0) write(*,*) 'Seems like a blank line'
-               if (idbg.gt.0) write(*,*) 
+               if (idbg.gt.0) write(*,*)
      +              '--> assuming no more data in file'
 c               ndinv=ndinv-1
                exit
@@ -783,21 +784,21 @@ c               ndinv=ndinv-1
 
 
 c+ (iy1-1)*nx + (iz1-1)*nxy
-            
+
 c            if (idbg.gt.-1) write(*,*) '*****',iv,ndinv,ivolx
-            
-            
+
+
 c     CHECK IF AT END OF FILE
             if (IntVar.lt.0) then
 c     CHECK FOR CONSITENCY WITH SUMMARY FILE
                if (ndatainvol(iv).ne.ndinv) then
-                  if (idbg.gt.-1) write(*,*) 
+                  if (idbg.gt.-1) write(*,*)
      +                 '  Geo and Sum differ for volume=',iv
-                  if (idbg.gt.0) write(*,*) 
+                  if (idbg.gt.0) write(*,*)
      +                 '  ndatainvolume=',ndatainvol(iv)
                   if (idbg.gt.0) write(*,*) '  ndinv=',ndinv
                 endif
-               if (idbg.gt.1) write(*,*) 
+               if (idbg.gt.1) write(*,*)
      +               'END - READ GEOMETRY OF VOLUME=',iv,ndinv,
      +              ndatainvol(iv),volobs(iv)
                exit
@@ -807,18 +808,18 @@ c     CHECK IF WE ARE AT A NEW VOLUME NODE
             if (ivol_new.ne.iv) then
 c     CHECK FOR CONSITENCY WITH SUMMARY FILE
                if (ndatainvol(iv).ne.ndinv) then
-                  if (idbg.gt.-1) write(*,*) 
+                  if (idbg.gt.-1) write(*,*)
      +                 'RAYINFO Geometry and Summary',
      +             ' differ for vol=',iv
-                  if (idbg.gt.0) write(*,*) 
+                  if (idbg.gt.0) write(*,*)
      +                 'SUM : ndatainvol=',ndatainvol(iv)
-                  if (idbg.gt.0) write(*,*) 
+                  if (idbg.gt.0) write(*,*)
      +                 'GEO : ndatainvol=',ndinv
 c                  stop '**************'
                endif
-               
+
                if (idbg.ge.4) then
-                  if (idbg.gt.0) write(*,*) 
+                  if (idbg.gt.0) write(*,*)
      +                 '    finished reading volume=',iv,ndinv,
      +                 ndatainvol(iv),volobs(iv)
                endif
@@ -827,18 +828,18 @@ c                  stop '**************'
             else
                ndinv=ndinv+1
             endif
-            
+
             if (ndinv.ge.MAXDINVOL) then
-               if (idbg.gt.-1) write(*,*) 
+               if (idbg.gt.-1) write(*,*)
      +              'You specify more data for volume,
-     +              than assigned by fortran, please change 
+     +              than assigned by fortran, please change
      +              MAXDINVOL=',MAXDINVOL
                stop '*****************'
             end if
-            
+
 c            if (idbg.gt.-1) write(*,*) 'ndinv,ivo1lx,ivoly,ivoll,ivol=',+
 c     +           ndinv,ndatainvol(ivol),ivolx,ivoly,ivoll,ivol,ivol_new
-            
+
 c     ASSIGHN DATA
 c     ASSIGN VALUES TO /geometry/ COMMON BLOCK
             volx(iv,ndinv)=ivolx
@@ -852,18 +853,18 @@ c     ASSIGN VALUES TO /geometry/ COMMON BLOCK
             voli(iv,ndinv) = ix1 + (iy1-1)*nx + (iz1-1)*nxy
 
          end do
- 
+
          if (idbg.gt.0) write(*,*) 'ndatainvolume=',ndatainvol(iv)
          if (idbg.gt.0) write(*,*) 'ndinv=',ndinv
-         
-         if (idbg.gt.1) write(*,*) 
-     +        'END - READ VOLUME GEOMETRY FILE, nvol=',nvol 
+
+         if (idbg.gt.1) write(*,*)
+     +        'END - READ VOLUME GEOMETRY FILE, nvol=',nvol
          if (idbg.gt.0) write(*,*) '----------------------------'
          close(lin)
 
-c WRITE DEBUG TO SCREEN         
+c WRITE DEBUG TO SCREEN
          if (idbg.ge.4) then
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      +           '***************** VOLUME DATA ****************'
             if (idbg.gt.-1) write(*,*) 'volx,voly,volz,voll,voli'
             do ivol=1,nvol
@@ -876,38 +877,38 @@ c WRITE DEBUG TO SCREEN
  44               format(i8,' ',f6.4,' ',f6.4,' ',f6.4,' ',f6.4,' ',i8)
                enddo
             enddo
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      +           '**********************************************'
          endif
 
 
 c
-c COMPUTE REFERENCE VELOCITY 
-c     
-         
+c COMPUTE REFERENCE VELOCITY
+c
+
          do i=1,nvol
             volobs_ref(i)=0;
             do j=1,ndatainvol(i)
-              volobs_ref(i) = 
+              volobs_ref(i) =
      +              volobs_ref(i) + voll(i,j)*skgmean
-c               if (i.eq.33) then 
+c               if (i.eq.33) then
 c                  if (voll(i,j).gt.0) write(*,*) '',voll(i,j)
-c               endif                          
+c               endif
             enddo
 c    write(*,*) 'i,vref=',i,volobs_ref(i)
 
-c            if (volobs_ref(i).gt.7) then 
+c            if (volobs_ref(i).gt.7) then
 c               write(*,*), '>7--',i,volobs_ref(i)
 c            endif
-c            if (volobs_ref(i).lt.6) then 
+c            if (volobs_ref(i).lt.6) then
 c               write(*,*), '<6--',i,volobs_ref(i)
 c            endif
 
 
          enddo
-     
 
-       
+
+
 c
 c Populate the V matrix containig the geometry if the volume data !!
 c
@@ -918,14 +919,14 @@ c Compute the averages and variances as an error check for the user:
 c
             av = av / max(twt,EPSLON)
             ss =(ss / max(twt,EPSLON)) - av * av
-            
+
             if (idbg.gt.0) then
                write(*,   111) nd,nt,av,ss
             endif
             if (idbg.gt.-2) then
-               write(ldbg,111) nd,nt,av,ss   
+               write(ldbg,111) nd,nt,av,ss
             endif
- 111  format(/,' Conditioning Data for VISIM: ', 
+ 111  format(/,' Conditioning Data for VISIM: ',
      +         'Number of acceptable data = ',i8,/,
      +         '               Number trimmed             = ',i8,/,
      +         '               Weighted Average           = ',f12.4,/,
@@ -970,7 +971,7 @@ c
 
 c
 c In case the local conditional distribution is obtained from bootstrap (idrawopt=2)
-c  read the file that is used in the bootstrap 
+c  read the file that is used in the bootstrap
 c
 
 
@@ -987,48 +988,48 @@ c      if ((idrawopt .eq. 2).or.(idrawopt .eq. 4)) then
      +           ' does not exist!')
             stop
          end if
-         
+
          open(lin,file=btfl,status='OLD')
          read(lin,*,err=999)
          read(lin,*,err=999) nvarbt
          do i=1,nvarbt
             read(lin,*,err=999)
          end do
-                         
+
  55      read(lin,*,end=66,err=999) (var(j),j=1,nvarbt)
-         
-         
+
+
          nbt = nbt + 1
          if(nbt.gt.MAXDAT) then
-            if (idbg.gt.-1) write(*,*) 
+            if (idbg.gt.-1) write(*,*)
      +           ' ERROR exceeded MAXDAT for bootstrap'
             stop
          end if
-         
+
          bootvar(nbt) = var(ibt)
-         if (ibtw .eq. 0) then 
+         if (ibtw .eq. 0) then
             bootwt(nbt) = 1.0
          else
             bootwt(nbt) = var(ibtw)
          end if
-         
+
          twt = twt + bootwt(nbt)
          av  = av  + bootvar(nbt)*bootwt(nbt)
          ss  = ss  + bootvar(nbt)*bootvar(nbt)*bootwt(nbt)
-         
+
          go to 55
  66      close(lin)
-         
-         
+
+
             btmean = av / max(twt,EPSLON)
             btvar = (ss / max(twt,EPSLON)) - btmean*btmean
             if (idbg.gt.-1) then
 	            write(ldbg,1111) nbt,btmean,btvar
 	            write(*,   1111) nbt,btmean,btvar
-	    endif	
-	            
+	    endif
 
- 1111    format(/,' Bootstrap Data for VISIM: ', 
+
+ 1111    format(/,' Bootstrap Data for VISIM: ',
      +       'Number of bootstrap data = ',i8,/,
      +       '        Bootstrap Weighted Average           = ',f12.4,/,
      +       '        Bootstrap Weighted Variance          = ',f12.4)
@@ -1039,18 +1040,18 @@ c      if ((idrawopt .eq. 2).or.(idrawopt .eq. 4)) then
 	    do i = 1, nbt
 		bootwt(i) = bootwt(i)/(twt+1)
 		sumwt = sumwt + bootwt(i)
-		bootcdf(i) = sumwt 
+		bootcdf(i) = sumwt
 	    end do
 
-      end if	
+      end if
 
 
 
 c
 c Read secondary attribute model if lvm, exdr and colc kriging is used:
 c Please note that secondary variable file must be gridded with secondary
-c variable values at each grid node. 
- 
+c variable values at each grid node.
+
       if(ktype.ge.2) then
          if (idbg.gt.-1) write(*,*) 'Reading secondary attribute file'
          inquire(file=lvmfl,exist=testfl)
@@ -1058,7 +1059,7 @@ c variable values at each grid node.
             write(*,104) lvmfl
  104        format('WARNING secondary attribute file ',a40,
      +           ' does not exist!')
-            stop 
+            stop
          end if
          open(llvm,file=lvmfl,status='OLD')
          read(llvm,*,err=97)
@@ -1067,7 +1068,7 @@ c variable values at each grid node.
             read(llvm,*,err=97)
          end do
          index = 0
-         
+
          av = 0.0
          ss = 0.0
          do iz=1,nz
@@ -1089,17 +1090,17 @@ c variable values at each grid node.
  112     format(/,' Sec Data: Number of data             = ',i8,/,
      +        '                 Equal Weighted Average     = ',f12.4,/,
      +        '                 Equal Weighted Variance    = ',f12.4,/)
-         
-         
+
+
 c     c When using kriging with locally varying mean (LVM, ktype=2), the
-c     c array lvm() denotes the mean m(u) at every grid node, while sec() 
+c     c array lvm() denotes the mean m(u) at every grid node, while sec()
 c     c denotes the mean at sample data location u_{alpha}.  In order to do
 c     c kriging, we need the mean m(u_{alpha}) at sample data location
 c     c u_{alpha}. In lvm, m(u_{alpha}) is usually not given
-c     c at sample data location, but m(u) is available at a regular 
-c     c grid. That is why we copy nearest m(u) to  m(u_{alpha}) 
-c     c given in the lvmfl file. 
-         
+c     c at sample data location, but m(u) is available at a regular
+c     c grid. That is why we copy nearest m(u) to  m(u_{alpha})
+c     c given in the lvmfl file.
+
          if(ktype.eq.2) then
             do i=1,nd
                call getindx(nx,xmn,xsiz,x(i),ix,testind)
@@ -1107,25 +1108,25 @@ c     c given in the lvmfl file.
                call getindx(nz,zmn,zsiz,z(i),iz,testind)
                index = ix + (iy-1)*nx + (iz-1)*nxy
                sec(i) = lvm(index)
-c     
+c
 c     Calculation of residual moved to krige subroutine: vr(i)=vr(i)-sec(i)
-c     
+c
             end do
          end if
-         
-         
-         
+
+
+
 c     c When using kriging with external drift (EXDR, ktype=3), lvm()
-c     c usually denotes a smoothly varying secondary variable at grid 
-c     c locations u given in the file lvmfl, while sec() denotes  sec. 
+c     c usually denotes a smoothly varying secondary variable at grid
+c     c locations u given in the file lvmfl, while sec() denotes  sec.
 c     c variable at sample data location u_{alpha}. In order to do kriging
-c     c with EXDR, you need to know the sec. variable information both at 
+c     c with EXDR, you need to know the sec. variable information both at
 c     c grid node u and sample data location u_{alpha}. In the case when sec.
 c     c variable info. sec() at sample data location u_{alpha} is not read
 c     c from the sample data file datafl, i.e. (sec(i)=UNEST), it will copy
 c     c the secondary variable information from the nearest grid node to this
 c     c sample location.
-         
+
          if(ktype.eq.3) then
             do i=1,nd
                if(sec(i).eq.UNEST) then
@@ -1137,18 +1138,18 @@ c     c sample location.
                end if
             end do
          end if
-         
-         
-c     
+
+
+c
 c     In the case of collocated kriging(COLC, ktype=4), we need secondary
 c     variable information at the gridded node. It must be provided by the
-c     sec. attribute model file lvmfl at each grid node. 
-c     
-         
-         
+c     sec. attribute model file lvmfl at each grid node.
+c
+
+
       end if
-      
-      
+
+
       return
 
 c
@@ -1159,5 +1160,3 @@ c
  99   stop 'ERROR in data file!'
  999  stop 'ERROR in bootstrap file!'
       end
-
-
