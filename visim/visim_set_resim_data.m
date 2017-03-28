@@ -52,9 +52,6 @@ if length(pos)==1;
     pos(2)=S.y(1);
 end
 
-
-
-
 [xx,yy]=meshgrid(S.x,S.y);
 
 if type==1;
