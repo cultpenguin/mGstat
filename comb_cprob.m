@@ -1,7 +1,7 @@
 % comb_cprob : PDF combination using permancne of ratios
 %
 % Call : 
-%  pAgBC=comb_cprob(pA,pAgB,pAgC)
+%  pAgBC=comb_cprob(pA,pAgB,pAgC,tau)
 %
 %
 % pA    : Prob(A)

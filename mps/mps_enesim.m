@@ -364,6 +364,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             if options.plot>1
                 subplot(1,2,1);
                 im=imagesc(TI.D);axis image;
+                ax=axis;
                 caxis([-1 1]);
                 hold on
                 plot(ix_ti_min,iy_ti_min,'go','MarkerSize',12)
@@ -371,6 +372,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
                     plot([ix_ti_min ix_ti_min+L(l,2)],[iy_ti_min iy_ti_min+L(l,1)],'g-')
                 end
                 hold off
+                axis(ax);
                 %disp('paused - hit keyboard');pause;
             end
             
