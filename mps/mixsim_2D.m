@@ -121,6 +121,7 @@ else
    Cm=options.Cm; 
 end
 
+cat=0:1:options.sV-1;
 
 for ns=1:Nsim
 %     if round(ns/1)==ns/1
@@ -342,9 +343,12 @@ for ns=1:Nsim
                     Vmean=options.pdf1D(j);
                     d_obs=zeros(size(val_known));
                     d_obs(val_known==j)=1;
-                    pdf_tp(j)=Vmean+k'*inv(K)*(d_obs-Vmean);
+                    
+                    lambda = K\k;
+                    pdf_tp(j)=Vmean+lambda'*(d_obs-Vmean);
                 end
             end
+  
             
             % The multi-point statistics in relation to combined sim %
             
@@ -353,7 +357,7 @@ for ns=1:Nsim
             d_cond=marginal_mp(LT+1+T(:,2));
             
             % get conditinal pdf from search tree
-            pdf_mp=mps_tree_get_cond(ST,d_cond,0:1:4);
+            pdf_mp=mps_tree_get_cond(ST,d_cond,cat);
             pdf_mp=pdf_mp/sum(pdf_mp);
             
             % The MIXED-point statistics in relation to combined sim %

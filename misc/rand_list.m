@@ -12,15 +12,11 @@ if r==0
     num=round(rand*(length(list)-1))+1;
     n=list(num);
     list(num)=NaN;
-    list_tmp=list(find(~isnan(list)));
-    clear list
+    list_tmp=list(~isnan(list));
     list=list_tmp;
-    clear list_tmp
 elseif r==1
     n=list(1);
     list(1)=NaN;
-    list_tmp=list(find(~isnan(list)));
-    clear list
+    list_tmp=list(~isnan(list));
     list=list_tmp;
-    clear list_tmp
 end

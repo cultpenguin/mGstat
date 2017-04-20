@@ -1,13 +1,16 @@
 % [i_notes_out]=mps_tree_get_cond_notes(ST,d_cond,i_note_in,i_level,i_notes_out)
-function [i_notes_out]=mps_tree_get_cond_notes(ST,d_cond,i_note_in,i_level,i_notes_out)
-cat=0:1:(length(ST{1}.count)-1);
+function [i_notes_out]=mps_tree_get_cond_notes(ST,d_cond,cat,i_note_in,i_level,i_notes_out)
 
-if nargin<2, d_cond=[];end
-if nargin<3, 
+if nargin<3
+    cat=0:1:(length(ST{1}.count)-1);
+end
+
+if nargin<3, d_cond=[];end
+if nargin<4, 
   i_level=0;
   i_note_in=1;
 end
-if nargin<3, i_notes_out=[];end
+if nargin<4, i_notes_out=[];end
 
 if isempty(d_cond);
   i_notes_out=1;
@@ -33,11 +36,11 @@ if isnan(d_cond(i_level));
 else 
   v_cond=d_cond(i_level);
   
-  i_child_next=find(v_cond==cat);
+  i_child_next=v_cond==cat;
   i_child_notes=ST{i_note_in}.child(i_child_next);
 end
 % remove notes with no children
-i_child_notes=i_child_notes(find(i_child_notes>0));
+i_child_notes=i_child_notes(i_child_notes>0);
 if isempty(i_child_notes)
   % NO conditoinal match -> return and prune
   return
@@ -50,7 +53,7 @@ end
 
 
 for i_child=1:length(i_child_notes);
-  i_notes_out=mps_tree_get_cond_notes(ST,d_cond,i_child_notes(i_child),i_level,i_notes_out);
+  i_notes_out=mps_tree_get_cond_notes(ST,d_cond,cat,i_child_notes(i_child),i_level,i_notes_out);
 end
 
 

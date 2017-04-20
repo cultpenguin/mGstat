@@ -28,7 +28,7 @@ j=0;
 while isempty(i_notes)
   j=j+1;
   use_cond=1:(n_cond-j+1);
-  i_notes=mps_tree_get_cond_notes(ST,d_cond(use_cond));
+  i_notes=mps_tree_get_cond_notes(ST,d_cond(use_cond),cat);
   if isempty(i_notes)
     mgstat_verbose(sprintf('%s pruning conditional data ',mfilename),1);
   end
@@ -49,7 +49,7 @@ if doUsePruneForSmallCount==1;
   min_count=10;
   if sum(c)<min_count
     % d_cond(1:(length(d_cond)-1))
-    [c_pdf,c,d_cond_use]=mps_tree_get_cond(ST,d_cond(1:(length(d_cond)-1)));
+    [c_pdf,c,d_cond_use]=mps_tree_get_cond(ST,d_cond(1:(length(d_cond)-1)),cat);
   else
     d_cond_use=d_cond(use_cond);
   end

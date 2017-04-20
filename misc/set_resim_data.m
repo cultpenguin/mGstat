@@ -53,15 +53,15 @@ if nargin<7
     [xx,yy]=meshgrid(x,y);
 end
 used=ones(size(xx));
-used(find(abs(xx-pos(1))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
+used(abs(xx-pos(1))<lim(1) & abs(yy-pos(2))<lim(2))=0;
 
 if wrap_around==1    
     % upper x
-    used(find(abs(xx-(pos(1)-max(x)))<lim(1) & abs(yy-pos(2))<lim(2)))=0;
+    used(abs(xx-(pos(1)-max(x)))<lim(1) & abs(yy-pos(2))<lim(2))=0;
     % upper y
-    used(find(abs(xx-pos(1))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;    
+    used(abs(xx-pos(1))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2))=0;    
     % upper x&y
-    used(find(abs(xx-(pos(1)-max(x)))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
+    used(abs(xx-(pos(1)-max(x)))<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2))=0;
     % lower x
 %     used(find(abs(fliplr(xx)+pos(1))<=lim(1) & abs(yy-pos(2))<lim(2)))=0;
 %     % lower x, lower y
@@ -73,15 +73,15 @@ if wrap_around==1
 %     % lower x, upper y 
 %     used(find(abs(fliplr(xx)+pos(1))<=lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0;
 %         
-    used(find(abs(fliplr(xx)+pos(1)-1)<lim(1) & abs(yy-pos(2))<lim(2)))=0; % Corrected
+    used(abs(fliplr(xx)+pos(1)-1)<lim(1) & abs(yy-pos(2))<lim(2))=0; % Corrected
     % lower x, lower y
-    used(find(abs(fliplr(xx)+pos(1)-1)<lim(1) & abs(flipud(yy)+pos(2)-1)<lim(2)))=0; % Corrected
+    used(abs(fliplr(xx)+pos(1)-1)<lim(1) & abs(flipud(yy)+pos(2)-1)<lim(2))=0; % Corrected
     % lower y
-    used(find(abs(xx-pos(1))<lim(1) & abs(flipud(yy)+pos(2)-1)<lim(2)))=0; % Corrected
+    used(abs(xx-pos(1))<lim(1) & abs(flipud(yy)+pos(2)-1)<lim(2))=0; % Corrected
     % upper x, lower y 
-    used(find(abs(xx-( pos(1)- max(x) ))<lim(1) & abs(flipud(yy)+pos(2)-1)<lim(2)))=0; % Corrected
+    used(abs(xx-( pos(1)- max(x) ))<lim(1) & abs(flipud(yy)+pos(2)-1)<lim(2))=0; % Corrected
     % lower x, upper y 
-    used(find(abs(fliplr(xx)+pos(1)-1)<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2)))=0; % Corrected
+    used(abs(fliplr(xx)+pos(1)-1)<lim(1) & abs(yy-(pos(2)-max(y)))<lim(2))=0; % Corrected
 
 end
 if nargout>1
