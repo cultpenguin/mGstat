@@ -188,7 +188,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         end
         
     end
-    N_COND=length(V);
+    N_COND=length(V)
     
     if strcmp(lower(options.type),'dsim');
         %% GET REALIZATION FROM TI USING DIRECT SIMULATION

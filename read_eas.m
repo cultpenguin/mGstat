@@ -5,7 +5,7 @@
 % TMH (tmh@gfy.ku.dk)
 %
 function [data,header,txt_title,dim,txtdata,txtheader]=read_eas(filename);
-   fid=fopen(filename,'r');
+   fid=fopen_retry(filename,'r');
    txt_title=fgetl(fid);
    try
        id1=strfind(txt_title,'(');

@@ -1,9 +1,9 @@
-% kl: Kullback–Leibler divergence
+% kl: Kullbackï¿½Leibler divergence
 % [d]=kl(P,Q)
 %
 
 function d=kl(P,Q)
-i=P>0;
+i=(P>0)&(Q>0);
 
 
-d=sum(P.*log(P./Q));
+d=sum(P(i).*log(P(i)./Q(i)));
