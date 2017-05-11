@@ -42,6 +42,10 @@ end
 if ~isfield(options,'do_cond')
     options.do_cond=0;
 end
+if ~isfield(options,'data') & options.do_cond==1
+    options.do_cond=0;
+    %disp('No conditioning data have been defined')
+end
 if ~isfield(options,'sV')
     options.sV=length(unique(cell2mat(TI)));
 end
@@ -60,6 +64,15 @@ end
 if ~isfield(options,'random_path')
     options.random_path=6;
 end
+if ~isfield(options,'Tmin')
+    options.Tmin=5*0.00001/options.sV;
+end
+if ~isfield(options,'max_average_pruning')
+    options.max_average_pruning=1;
+end
+
+
+
 
 % Learn the one-point-statistics from the logs:
 Hist1D=zeros(1,options.sV);
@@ -83,21 +96,26 @@ if options.do_cond==1
     pos_x=options.data(:,3);
 end
 
-% Set up template for mps:
-TT=1:options.Ty;
-LT=length(TT);
-Order=zeros(2*options.Ty,1);
-Order(1:2:end-1)=-TT';
-Order(2:2:end)=TT';
-T=[zeros(2*LT,1),Order,zeros(2*LT,1)];
-
 lim=[options.Tx options.Tx];
+
+if ~isfield(options,'T')
+    % Set up template for mps:
+    TT=1:options.Ty;
+    LT=length(TT);
+    Order=zeros(2*options.Ty,1);
+    Order(1:2:end-1)=-TT';
+    Order(2:2:end)=TT';
+    T=[zeros(2*LT,1),Order,zeros(2*LT,1)];
+else
+    T=options.T;
+end
 
 % Populate search tree using training images and template:
 if ~isfield(options,'ST')
+    
     ST=mps_tree_populate(TI,T);
 else
-   ST=options.ST; 
+    ST=options.ST;
 end
 
 % Geometry of the field to be simulated
@@ -121,7 +139,11 @@ else
    Cm=options.Cm; 
 end
 
+% Allocate and initialize:
 cat=0:1:options.sV-1;
+pdf_tp=zeros(1,options.sV);
+c_sim=0;
+options.average_pruning=0;
 
 for ns=1:Nsim
 %     if round(ns/1)==ns/1
@@ -158,9 +180,14 @@ for ns=1:Nsim
         sim(index1)=data;
         index2 = sub2ind([sim_grid_y sim_grid_x], pos_y, pos_x);
     end
-    
+                   
     Nseqsim=length(list1);
-    
+    if exist('index1','var')
+        options.pruning_counts=zeros(1,sim_grid_x*sim_grid_y-length(index1));
+    else
+        options.pruning_counts=zeros(1,sim_grid_x*sim_grid_y);
+    end
+   
     for i=1:Nseqsim
         % Random node to be simulated:
         if options.random_path==1
@@ -303,68 +330,36 @@ for ns=1:Nsim
         
         if isnan(sim(iy,ix)) % This line can be removed if no conditional data are used
             
+            c_sim=c_sim+1;
             % The two-point statistics in relation to mixsim:
+            [pdf_tp,~]=tps_mixsim(X,Y,sim,lim,pos,iy,ix,Cm,pdf_tp,options);
+        
+
+            % ---- The multi-point statistics in relation to combined sim ---- %
             
-            % Chose neighborhood:
-            if lim(1)>0
-                used=set_resim_data(X,Y,sim,lim,pos,0);
-                used=used(iy-options.Ty,:);
-            else
-                used=zeros(size(sim));
-                used=used(iy,:);
+            % Take out the area to be simulated:
+            marginal_mp=sim(iy-options.Ty:iy+options.Ty,ix)-1;
+            d_cond=marginal_mp(options.Ty+1+T(:,2));
+            
+            % Reduce the conditioning event during seq. Gibbs sampling:
+            if isfield(options,'min_cond_data')
+                %options.max_average_pruning=max([options.max_average_pruning options.last_average_pruning]);
+                max_cond_data=2*options.Ty;
+                d_cond=d_cond(1:min([round(2*options.Ty*options.last_average_pruning+options.min_cond_data) max_cond_data]));
             end
             
-            sim_tmp=sim(iy,:); % Remove two-point conditioing above and below the simulation
+            % Get conditional pdf from search tree
+            [pdf_mp,~,~,~,N_prune]=mps_tree_get_cond(ST,d_cond,cat,options);
+            options.average_pruning=options.average_pruning+N_prune;
             
-            % The neighborhood values of conditioning data:
-            Neig=sim_tmp(used==0);
-            
-            % Take the values in the neighborhood that are known or allready
-            % simualted:
-            val_known=Neig(~isnan(Neig))';
-            
-            % Data-to-data covariance:
-            A1=used(1:end,1:end)==0;
-            A2=~isnan(sim_tmp(1:end,1:end));
-            K=Cm(A1(:) & A2(:),A1(:) & A2(:));
-            
-            % data-to-unknown covariance:
-            tmp=zeros(size(sim_tmp));
-            tmp(ix)=NaN;
-            B2=isnan(tmp(1:end,1:end));
-            k=Cm(A1(:) & A2(:),A1(:) & B2(:));
-            
-            % Kriging:
-            Ci=Cm(1,1);
-            if isempty(K) % No previously simulated parameters within the neighborhood
-                pdf_tp=options.pdf1D;
-            else
-                for j=1:options.sV
-                    Vmean=options.pdf1D(j);
-                    d_obs=zeros(size(val_known));
-                    d_obs(val_known==j)=1;
-                    
-                    lambda = K\k;
-                    pdf_tp(j)=Vmean+lambda'*(d_obs-Vmean);
-                end
-            end
-  
-            
-            % The multi-point statistics in relation to combined sim %
-            
-            % Take out the area to be simualted:
-            marginal_mp=sim(iy-LT:iy+LT,ix)-1;
-            d_cond=marginal_mp(LT+1+T(:,2));
-            
-            % get conditinal pdf from search tree
-            pdf_mp=mps_tree_get_cond(ST,d_cond,cat);
+            %pdf_mp=mps_tree_get_cond(ST,d_cond,cat,options);
             pdf_mp=pdf_mp/sum(pdf_mp);
-            
+         
             % The MIXED-point statistics in relation to combined sim %
             % Combined part of the calculations %
             comb_pdf=(pdf_tp.*pdf_mp)./options.pdf1D;
             comb_pdf=comb_pdf/sum(comb_pdf);
-            
+           
             % Simulate from the combined 1Dpdf
             ra=rand;
             sim_val=find(cumsum(comb_pdf)>ra,1,'first');
@@ -378,13 +373,14 @@ for ns=1:Nsim
                 disp('Inconsistency')
                 keyboard
             end
+            %options.pruning_counts(c_sim)=N_prune;
         end
     end
+    options.average_pruning=options.average_pruning/c_sim;
     
     sim=sim(options.Ty+1:end-options.Ty,:);
     
     ALL_sim(:,:,ns)=sim;
-    
 end
 
 
