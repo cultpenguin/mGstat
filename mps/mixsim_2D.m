@@ -71,9 +71,6 @@ if ~isfield(options,'max_average_pruning')
     options.max_average_pruning=1;
 end
 
-
-
-
 % Learn the one-point-statistics from the logs:
 Hist1D=zeros(1,options.sV);
 for i=1:length(TI)
@@ -146,9 +143,11 @@ c_sim=0;
 options.average_pruning=0;
 
 for ns=1:Nsim
-%     if round(ns/1)==ns/1
-%         progress_txt(ns,Nsim,'Simulates');
-%     end
+    if Nsim>1
+        if round(ns/1)==ns/1
+            progress_txt(ns,Nsim,'Simulates');
+        end
+    end
     
     % Initialize grid to be simualted:
     sim=ones(sim_grid_y+2*options.Ty,sim_grid_x)*NaN;
@@ -346,6 +345,8 @@ for ns=1:Nsim
                 %options.max_average_pruning=max([options.max_average_pruning options.last_average_pruning]);
                 max_cond_data=2*options.Ty;
                 d_cond=d_cond(1:min([round(2*options.Ty*options.last_average_pruning+options.min_cond_data) max_cond_data]));
+                % A more general solution below:
+                %d_cond=d_cond(1:min([round(2*options.Ty*options.last_average_pruning./options.max_average_pruning+options.min_cond_data) max_cond_data]));
             end
             
             % Get conditional pdf from search tree
@@ -373,7 +374,6 @@ for ns=1:Nsim
                 disp('Inconsistency')
                 keyboard
             end
-            %options.pruning_counts(c_sim)=N_prune;
         end
     end
     options.average_pruning=options.average_pruning/c_sim;
