@@ -143,7 +143,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   if ischar(V),
     V=deformat_variogram(V);
   end 
-
+  
   if isfield(options,'xvalid')
     if options.xvalid==1,
       mgstat_verbose(sprintf('%s : doing cross validation since xvalid=%d', mfilename,options.xvalid),-1)
@@ -198,6 +198,17 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     isorange=options.isorange;
   else
     isorange=0;
+  end
+  
+  % TEST WHETHER NO CONDITIONING DATA ARE AVAILABLE
+  if isempty(pos_known);
+      d_est=ones(size(pos_est,1)).*val_0;
+      d_var=ones(size(pos_est,1)).*sum([V.par1]);
+      lambda=[];
+      K=[];
+      k=[];
+      K=[];
+      return;
   end
   
   
@@ -349,8 +360,6 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   %lambda = inv(K)*k;
   %fK=factorize(K);
   lambda = K\k;
-  
-  %keyboard
   
   if ktype==0
     d_est = (val_known' - val_0)*lambda(:)+ val_0;
