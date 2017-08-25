@@ -8,7 +8,7 @@ function draw_frame(x1,x2,y1,y2,w,color)
 % color: e.g. 'g' for green frame
 
 if nargin<6
-    color='g';
+    color='k';
     
 end
 
