@@ -10,8 +10,11 @@
 %
 function [D,header,txt_title,dim,txtdata,txtheader]=read_eas_matrix(filename,nx,ny,nz);
 
+   nanVal=-997799;
+
    %% GET COLUMN DATA
    [d,header,txt_title,txtheader]=read_eas(filename);
+   ncols=length(header);
    if nargin == 1
        % GET NX,NY,NZ
        % SGeMS header info
@@ -48,10 +51,12 @@ function [D,header,txt_title,dim,txtdata,txtheader]=read_eas_matrix(filename,nx,
    end
    
    
+   d(find(d==nanVal))=NaN;
+   
    %% RESHAPE TO MATRIX 3D ARRAY
-   D=reshape(d,dim.nx,dim.ny,dim.nz);
-   if dim.nz==1;
-       D=D';
-   else
-       D=permute(D,[2 1 3]);
-   end
+   D=reshape(d,dim.nx,dim.ny,dim.nz,ncols);
+   %if dim.nz==1;
+   %    D=D';
+   %else
+       D=permute(D,[2 1 3 4]);
+   %end
