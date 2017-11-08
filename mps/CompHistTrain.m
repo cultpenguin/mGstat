@@ -14,6 +14,17 @@ function [H, nV] = CompHistTrain(Z, N, sV)
 %  H ...
 
 
+if nargin <2
+    N=ones(3,3);
+end
+if nargin<3
+    [yN xN zN]=size(N);
+    yc = ceil(yN/2); %y
+    xc = ceil(xN/2); %x
+    zc = 1; %z
+    sV=1;
+end
+
 nc=1;mc=1;pc=1;
 
 % Size of the training image

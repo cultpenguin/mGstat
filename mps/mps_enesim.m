@@ -53,7 +53,7 @@ end
 if ~isfield(options,'skip_sim');options.skip_sim=0;end
 if ~isfield(options,'type');options.type='dsim';end
 if ~isfield(options,'verbose');options.verbose=1;end
-if ~isfield(options,'plot');options.plot=-1;end
+if ~isfield(options,'plot');options.plot=1;end
 if ~isfield(options,'plot_interval');options.plot_interval=100;end
 if ~isfield(options,'n_cond');options.n_cond=5;end
 if ~isfield(options,'rand_path');options.rand_path=1;end
@@ -188,7 +188,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         end
         
     end
-    N_COND=length(V)
+    N_COND=length(V);
     
     if strcmp(lower(options.type),'dsim');
         %% GET REALIZATION FROM TI USING DIRECT SIMULATION
