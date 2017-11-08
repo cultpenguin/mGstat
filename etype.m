@@ -1,4 +1,6 @@
 % etype: return etype mean, std, and mode from a set of 2 realizations.
+%
+%    [E,Evar,Emode]=etype(D)
 function [E,Evar,Emode]=etype(D)
 [ny,nx,nsim]=size(D);
 E=zeros(ny,nx);
