@@ -18,11 +18,16 @@ end
 if nargin<3
     position=[.6 .01 .39 .05];
 end
+if length(position)==2;
+    position(3:4)=0;
+end
 
 ax=axes;
 h=0.1;
 
-if position(1)>.5;
+if position(1)==.5;
+    HorizontalAlignment='center';
+elseif position(1)>.5;
     HorizontalAlignment='right';
 else
     HorizontalAlignment='left';
