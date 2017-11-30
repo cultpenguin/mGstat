@@ -1,3 +1,7 @@
+% sample_from_2d_pdf
+% 
+%   [x_sim,y_sim,ir_x,ir_y]=sample_from_2d_pdf(P,x,y);
+%
 function [x_sim,y_sim,ir_x,ir_y]=sample_from_2d_pdf(P,x,y);
 
 CPDF_x = cumsum((sum(P)));
