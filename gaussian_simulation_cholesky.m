@@ -69,7 +69,6 @@ for i=1:nsim
     if nargin<5
         z_rand=randn(length(m),1);
     end
-    %z(:,i)=m+L'*z_rand; % L=chol(Cm);
     z(:,i)=m+L*z_rand; % L is allready transposed L=chol(Cm,'lower');
 end
 t2=now;
