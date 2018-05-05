@@ -9,7 +9,7 @@
 %
 % See also nscore.m
 %
-function d_out=inscore(d_normal,o_nscore)
+function d_out=inscore(d_normal,o_nscore,style)
   if nargin<3
     style='nearest';%  - nearest neighbor interpolation
     %style='linear';%   - linear interpolation
