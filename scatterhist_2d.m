@@ -22,6 +22,8 @@ if nargin<4, y=linspace(min(y_acc),max(y_acc),51); end
 if nargin<5, plot_1d=1;end
 if nargin<6, gain=.8;end
 if nargin<7, linecolor=[1 0 0];end
+x_acc = x_acc(:);
+y_acc = y_acc(:);
 N=length(x_acc);
 nx=length(x);dx=x(2)-x(1);
 ny=length(y);dy=y(2)-y(1);
