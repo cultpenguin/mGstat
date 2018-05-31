@@ -81,8 +81,8 @@ function write_eas_matrix(filename,data,header,nanValue);
     d=zeros(1,n);
     i=0;
     for iz=1:nz
-    for iy=1:ny
     for ix=1:nx
+    for iy=1:ny
         i=i+1;
         d(i)=data(ix,iy,iz);
     end
