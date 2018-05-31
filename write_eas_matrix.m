@@ -59,7 +59,7 @@ function write_eas_matrix(filename,data,header,nanValue);
   % replace NAN values
   data(find(isnan(data)))=nanValue;
   
-  fid=fopen(filename,'wt');
+  fid=fopen_retry(filename,'wt');
   
   fprintf(fid,'%s\n',top_line);
   fprintf(fid,'%d\n',natts);
