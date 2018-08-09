@@ -13,6 +13,11 @@
 % Thomas Mejer Hansen, 2008,2014
 %
 function [hb]=colorbar_shift(shift,ax)
+
+if isoctave
+  hb=colorbar;
+  return
+end
     
 if nargin<2
     ax=gca;

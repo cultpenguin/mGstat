@@ -64,13 +64,13 @@ end
 fname=space2char(fname);
 
 i=0;
-if ((types==1)|(types==4)|(types==5))
+if ((types==1)||(types==4)||(types==5))
     i=i+1;P{i}.type='-dpng';P{i}.ext='.png';
 end
-if ((types==2)|(types==4))
+if ((types==2)||(types==4))
     i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';
 end
-if ((types==3)|(types==5))
+if ((types==3)||(types==5))
     i=i+1;P{i}.type='-depsc';P{i}.ext='.eps';
 end
 
@@ -93,7 +93,7 @@ end
 
 %% TRIM IMAGE USING MOGRIFY
 
-if (trim==1)|(transp~=0)
+if (trim==1)||(transp~=0)
     if isunix
         [a,mogrifybin]=unix('which mogrify');
         mogrifybin=mogrifybin(1:length(mogrifybin)-1);
