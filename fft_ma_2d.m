@@ -281,7 +281,7 @@ if isfield(options,'lim');
 end
 
 %% linear combinartion of the perturbed paramaters
-if (isfield(options,'gradual') && isfield(options,'z_rand'))
+if (isfield(options,'gradual') && isfield(options,'z_rand'))   
     if options.gradual<1
         if exist('gaussian_linear_combine','file')            
             i_perturbed=find((options.z_rand-z_rand)~=0);
