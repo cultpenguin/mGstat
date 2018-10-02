@@ -53,7 +53,10 @@ end
 
 t0=now;
 if is_chol==0
+<<<<<<< HEAD
     %L=chol(L); % = chol(L,'upper');
+=======
+>>>>>>> 3f3074486483e66ea1eb6afb61a6bea4f3f74caa
     L=chol(L,'lower');
 end
 z=zeros(length(m),nsim);
@@ -70,8 +73,12 @@ for i=1:nsim
     if nargin<5
         z_rand=randn(length(m),1);
     end
+<<<<<<< HEAD
     %z(:,i)=m+L'*z_rand; % L=chol(Cm,'upper')=chol(Cm);
     z(:,i)=m+L*z_rand; % L=chol(Cm,'lower');
+=======
+    z(:,i)=m+L*z_rand; % L is allready transposed L=chol(Cm,'lower');
+>>>>>>> 3f3074486483e66ea1eb6afb61a6bea4f3f74caa
 end
 t2=now;
 mgstat_verbose(sprintf('%s : cholesky   : Elapsed time : %6.1fs',mfilename,(t1-t0).*(24*3600)),1);

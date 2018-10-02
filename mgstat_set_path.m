@@ -22,8 +22,23 @@ ip=ip+1;P{ip}='ti';
 
 for ip=1:length(P);
     pa=[mgstat_dir,filesep,P{ip}];
-    mgstat_verbose(sprintf('%s : Adding path to ''%s''',mfilename,pa),0)
-    addpath(pa);
+    try 
+        mgstat_verbose(sprintf('%s : Adding path to ''%s''',mfilename,pa),0)
+        addpath(pa);
+    catch
+        mgstat_verbose(sprintf('Could not add path to: %s',pa))
+    end
+end
+
+if isoctave==1
+    % add path to Octave specific functions
+     pa=[mgstat_dir,filesep,'misc',filesep,'octave'];
+     try    
+         mgstat_verbose(sprintf('%s : Adding path to ''%s''',mfilename,pa),0)
+         addpath(pa)
+     catch
+        mgstat_verbose(sprintf('Could not add path to Octave specific files: %s',pa))
+     end
 end
 
 succ=savepath;
