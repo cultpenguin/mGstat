@@ -315,14 +315,15 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     end
     
     %% GET FULL CONDITIONAL TO COMPUTE ENTROPY
-    options.compute_entropy=0;
-    if options.compute_entropy==1;
-        [C_PDF,TI]=mp_get_conditional_from_template(TI,V,L);
+    options.compute_entropy=1;
+    if options.compute_entropy==1;        
+        [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V,L);
         options.E(iy,ix)=entropy(C_PDF);
+        
     end
     
     % PLOT START
-    if options.plot>0
+    if options.plot>0       
         if ~exist('im')
             figure_focus(2);
             subplot(1,2,1);
