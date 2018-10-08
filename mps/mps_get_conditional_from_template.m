@@ -20,11 +20,9 @@ if ~isfield(options,'n_max_ite')
     options.n_max_ite=1e+9;
 end
 
-
-
 N_TI=prod(size(TI.D));
 N_COND=length(V);
-
+%if N_COND>3, keyboard;end
 if ~isfield(TI,'N_CAT');TI.N_CAT=length(unique(TI.D));end
 
 j_start=ceil(rand(1)*N_TI);

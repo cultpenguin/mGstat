@@ -244,7 +244,11 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         %  b) generate a ralization from f(m_i|f(m_1,...,m_{i-1})
         N_PDF=0;
         if N_COND==0
-            [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,[],[],options);
+            if isfield(options,'fastMPS')                
+                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template_1d(TI,[],[],options);
+            else
+                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,[],[],options);
+            end
             
             if isfield(options,'TI2')
                 [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,[],[],options);
@@ -255,10 +259,17 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         else
             for ic=1:N_COND
                 c_arr=(1:(N_COND-ic+1));
-                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V(c_arr),L(c_arr,:),options);
-                
+                if isfield(options,'fastMPS')                
+                    [C_PDF,N_PDF,TI]=mps_get_conditional_from_template_1d(TI,V(c_arr),L(c_arr,:),options);
+                else
+                    [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V(c_arr),L(c_arr,:),options);
+                end
                 if isfield(options,'TI2')
-                    [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,V(c_arr),L(c_arr,:),options);
+                    if isfield(options,'fastMPS')                
+                        [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,V(c_arr),L(c_arr,:),options);
+                    else
+                        [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,V(c_arr),L(c_arr,:),options);
+                    end
                     N_PDF=min([N_PDF N_PDF2]);
                 end
                 
@@ -315,7 +326,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     end
     
     %% GET FULL CONDITIONAL TO COMPUTE ENTROPY
-    options.compute_entropy=1;
+    %options.compute_entropy=1;
     if options.compute_entropy==1;        
         [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V,L);
         options.E(iy,ix)=entropy(C_PDF);
