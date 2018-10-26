@@ -3,6 +3,8 @@
 % Call:
 %    [C_PDF,TI]=mps_get_conditional_from_template(TI,V,L)
 %
+%    V : [d1; d2]
+%    L : [iy1, ix1; iy2, ix2]
 %    TI: training image struct
 %       TI.x, TI.y, TI.D
 %function [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V,L,COUNT_MAX,N_MAX_ITE)
