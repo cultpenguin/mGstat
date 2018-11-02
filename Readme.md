@@ -17,6 +17,7 @@ These codes will therefore not win any speed competition, but allow easy hackabl
 * Semivariogram: Experimental semivariograms can be calculated from data observations. Synthetic semivariogram can be calculated using both GSLIB and GSTAT syntax. Experimental semivariograms can be calculated from data observations. 
 * Simulation: Sequential Gaussian Simulation (sgsim.m), LU simulation (lusim.m), Direct Sequential Simulation (dssim.m), FFT Moving Averate (fft-ma.m)
 * Normal Score: forward and inverse normal score (nscore.m, inscore.m)
+
 [..more in the manual](doc/chapKriging.md)
 
 ## Native Multiple Point Statistics - MPS
