@@ -11,14 +11,17 @@ mGstat provides
 ## Native kriging kriging algorithms
 Simple kriging, ordinary kriging and Universial/Kriging with a trend are available. All methods support data observations in ND-space. Thus, for example Time-Space kriging can be used.
 Synthetic semivariogram can be calculated using both GSLIB and GSTAT syntax. Experimental semivariograms can be calculated from data observations. 
-[.. more info in the manual][..more in the manual](doc/chapMPSLIB.md)
+
+[..more in the manual](doc/chapMPSLIB.md)
 
 ## Native MPS algorithms
 Simple kriging, ordinary kriging and Universial/Kriging with a trend are available. All methods support data observations in ND-space. Thus, for example Time-Space kriging can be used.
 Synthetic semivariogram can be calculated using both GSLIB and GSTAT syntax. Experimental semivariograms can be calculated from data observations. 
+
 [.. more info in the manual][..more in the manual](doc/chapMPSLIB.md)
 
 ## An interface to MPSLIB
+
 [..more in the manual](doc/chapMPSLIB.md)
 
 ## An interface to SNESIM (Fortran Stanford Version)
