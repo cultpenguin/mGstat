@@ -1,4 +1,4 @@
-## Native MPS algorithms in mGstat
+# Native MPS algorithms in mGstat
 
 
    mps.m
