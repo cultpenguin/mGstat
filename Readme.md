@@ -9,6 +9,8 @@ The latest version is availale from [Github](https://github.com/cultpenguin/mGst
 mGstat provides
 
 ## Native Matlab code
+mGstat contains a number of codes and functions written in pure Matlab/Octave.
+These codes will therefore not win any speed competition, but allow easy hackable code.
 
 ### Native Kriging
 Simple kriging, ordinary kriging and Universial/Kriging with a trend are available. All methods support data observations in ND-space. Thus, for example Time-Space kriging can be used.
@@ -17,7 +19,13 @@ Synthetic semivariogram can be calculated using both GSLIB and GSTAT syntax. Exp
 [..more in the manual](doc/chapKriging.md)
 
 ## Native Multiple Point Statistics - MPS
-Simple kriging, ordinary kriging and Universial/Kriging with a trend are available. All methods support data observations in ND-space. Thus, for example Time-Space kriging can be used.
+
+
+* ENESIM
+* Direct Sampling
+* SNESIM (tree)
+* SNESIM (list)
+
 Synthetic semivariogram can be calculated using both GSLIB and GSTAT syntax. Experimental semivariograms can be calculated from data observations. 
 
 [.. more info in the manual][..more in the manual](doc/chapMPS.md)
