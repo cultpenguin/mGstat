@@ -245,7 +245,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         N_PDF=0;
         if N_COND==0
             if isfield(options,'fastMPS')                
-                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template_1d(TI,[],[],options);
+                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template_1d(TI,[],[],options.CPDF);
             else
                 [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,[],[],options);
             end
@@ -260,7 +260,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             for ic=1:N_COND
                 c_arr=(1:(N_COND-ic+1));
                 if isfield(options,'fastMPS')                
-                    [C_PDF,N_PDF,TI]=mps_get_conditional_from_template_1d(TI,V(c_arr),L(c_arr,:),options);
+                    [C_PDF,N_PDF,TI]=mps_get_conditional_from_template_1d(TI,V(c_arr),L(c_arr,:),options.CPDF);
                 else
                     [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V(c_arr),L(c_arr,:),options);
                 end
