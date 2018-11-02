@@ -13,10 +13,10 @@ mGstat contains a number of codes and functions written in pure Matlab/Octave.
 These codes will therefore not win any speed competition, but allow easy hackable code.
 
 ### Native Kriging
-* Kriging: Simple kriging, ordinary kriging and Universial/Kriging (krig.m) with a trend are available, and support 1D/2D/3D/ND. Synthetic semivariogram can be calculated using both GSLIB and GSTAT syntax.
+* Kriging: Simple kriging, ordinary kriging and Universial/Kriging [krig.m](mfiles/krig.m) with a trend are available, and support 1D/2D/3D/ND. Synthetic semivariogram can be calculated using both GSLIB and GSTAT syntax.
 * Semivariogram: Experimental semivariograms can be calculated from data observations. Synthetic semivariogram can be calculated using both GSLIB and GSTAT syntax. Experimental semivariograms can be calculated from data observations. 
-* Simulation: Sequential Gaussian Simulation (sgsim.m), LU simulation (lusim.m), Direct Sequential Simulation (dssim.m), FFT Moving Averate (fft-ma.m)
-* Normal Score: forward and inverse normal score ([nscore.m](mfiles/ncore.m), [inscore.m](mfiles/inscore.m))
+* Simulation: Sequential Gaussian Simulation [sgsim.m](mfiles/sgsim.m), LU simulation [lusim.m](mfiles/lusim.m), Direct Sequential Simulation [dssim.m](mfiles/dssim.m), FFT Moving Averate [fft-ma.m](mfiles/fft-ma.m)
+* Normal Score: forward and inverse normal score ([nscore.m](mfiles/nscore.m), [inscore.m](mfiles/inscore.m))
 
 [..more in the manual](doc/chapKriging.md)
 
