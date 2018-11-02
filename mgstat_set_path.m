@@ -18,6 +18,7 @@ ip=ip+1;P{ip}='sgems';
 ip=ip+1;P{ip}='misc';
 ip=ip+1;P{ip}='mps';
 ip=ip+1;P{ip}='mixsim';
+ip=ip+1;P{ip}='io';
 ip=ip+1;P{ip}='ti';
 
 for ip=1:length(P);
