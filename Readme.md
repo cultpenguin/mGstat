@@ -24,7 +24,7 @@ These codes will therefore not win any speed competition, but allow easy hackabl
 * ENESIM/GENESIM/Direct Sampling [mps_enesim.m](mps/mps_enesim.m)
 * SNESIM (tree/list) [mps_snesim.m](mps/mps_snesim.m)
 
-[.. more info in the manual][..more in the manual](doc/chapMPS.md)
+[.. more info in the manual][..more in the manual](mps/README_mps.md)
 
 ## In Interface to existing codes
 
