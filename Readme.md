@@ -1,10 +1,9 @@
 # mGstat
 mGstat is a geostatistical toolbox for Matlab/Octave.
 
-The latest version is availale fromgithub:
+The latest version is availale from [Github](https://github.com/cultpenguin/mGstat):
 
     git clone https://github.com/cultpenguin/mGstat.git
-
 
 
 mGstat provides
