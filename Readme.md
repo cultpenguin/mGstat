@@ -21,10 +21,8 @@ These codes will therefore not win any speed competition, but allow easy hackabl
 [..more in the manual](doc/chapKriging.md)
 
 ## Native Multiple Point Statistics - MPS
-* ENESIM
-* Direct Sampling
-* SNESIM (tree)
-* SNESIM (list)
+* ENESIM/GENESIM/Direct Sampling [mps_enesim.m](mps/mps_enesim.m)
+* SNESIM (tree/list) [mps_snesim.m](mps/mps_snesim.m)
 
 [.. more info in the manual][..more in the manual](doc/chapMPS.md)
 
