@@ -57,7 +57,10 @@ function write_eas_matrix(filename,data,header,nanValue);
   
   
   % replace NAN values
-  data(find(isnan(data)))=nanValue;
+  inan=find(isnan(data));
+  if ~isempty(inan)
+      data(inan)=nanValue;
+  end
   
   fid=fopen_retry(filename,'wt');
   
