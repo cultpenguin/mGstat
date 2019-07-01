@@ -11,7 +11,8 @@ if nargin<2
 end
 i=find(p>0);
 
-I=-log2(p(i)); 
+
+%I=-log(p(i)); 
 I=- log(p(i))./log(base); 
 
 P=p(i);

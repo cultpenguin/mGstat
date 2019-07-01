@@ -326,7 +326,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     end
     
     %% GET FULL CONDITIONAL TO COMPUTE ENTROPY
-    %options.compute_entropy=1;
+    options.compute_entropy=1;
     if options.compute_entropy==1;        
         [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V,L);
         options.E(iy,ix)=entropy(C_PDF);
