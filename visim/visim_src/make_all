@@ -12,6 +12,7 @@ for par in 101_101_1_2000_199\
 
 do
   cp visim_$par.inc visim.inc
+  make clean
   make
   #  cp visim visim_$par.exe
   cp visim visim_$par

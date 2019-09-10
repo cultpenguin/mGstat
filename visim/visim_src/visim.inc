@@ -42,7 +42,7 @@ c
       integer MAXSBX, MAXSBY, MAXSBZ, MAXDAT, MAXNOD, MAXSAM
       integer MAXNST, MAXREF, MAXCAT, MV, MAXVOLS, MAXDINVOL
 
-      parameter(MAXX   =   901, MAXY   = 901, MAXZ   = 1,
+      parameter(MAXX   =   801, MAXY   = 801, MAXZ   = 1,
      +          MAXCTX =  MAXX, MAXCTY =MAXY, MAXCTZ =MAXZ,
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
      +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,
@@ -66,7 +66,6 @@ c ACORN parameters:
 c
       integer KORDEI, MAXOP1, MAXINT
       parameter(KORDEI=12,MAXOP1=KORDEI+1,MAXINT=2**30)
-
 c
 c Variable Declaration:
 c

@@ -13,7 +13,7 @@ PROG = visim
 COMP = gfortran
 
 # WINDOWS/LINUX
-FFLAGS = -O3
+FFLAGS = -O3 -static
 # OSX
 #FFLAGS = -O3
 
