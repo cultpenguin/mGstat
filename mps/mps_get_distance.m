@@ -1,7 +1,7 @@
 % mps_get_distance: Compute distance (using distance matrix)
 
 function [d,options]=mps_get_distance(ny,nx,i_node,i_good,options)
-
+d=[];
 
 
 %% PRECALCULATED DISTANCE MATRIX
