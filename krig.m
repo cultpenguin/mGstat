@@ -359,6 +359,9 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   % SOLVE THE LINEAR SYSTEM
   %lambda = inv(K)*k;
   %fK=factorize(K);
+  if (size(k,1)==1),
+      k=k';
+  end
   lambda = K\k;
   
   if ktype==0
@@ -369,5 +372,5 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
     d_est = val_known'*lambda(1:nknown);
   else
   end
-  d_var = gvar - k'*lambda;
+  d_var = gvar - k'*lambda(:);
   
