@@ -65,7 +65,7 @@ if ~isfield(options,'precalc_dist_full');
 end
 % Patching
 if ~isfield(options,'n_patch');options.n_patch=0;end
-if ~isfield(options,'i_patch_start');options.i_patch_start=100;end
+if ~isfield(options,'i_patch_start');options.i_patch_start=1e+9;end
 if options.i_patch_start<1;
     options.i_patch_start=ceil(options.i_patch_start.*prod(size(SIM_data)));
 end

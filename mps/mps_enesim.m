@@ -71,7 +71,11 @@ if options.i_patch_start<1;
     options.i_patch_start=ceil(options.i_patch_start.*prod(size(SIM_data)));
 end
 options.T_patch=mps_template(options.n_patch);
-            
+   
+if ~isfield(options,'compute_entropy');
+    options.compute_entropy=0;
+end
+
 if ~isfield(options,'n_max_condpd');
     options.n_max_condpd=1e+9;
 end
@@ -326,7 +330,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     end
     
     %% GET FULL CONDITIONAL TO COMPUTE ENTROPY
-    options.compute_entropy=1;
+   
     if options.compute_entropy==1;        
         [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V,L);
         options.E(iy,ix)=entropy(C_PDF);

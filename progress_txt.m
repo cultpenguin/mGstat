@@ -52,7 +52,7 @@ function progress_txt(i,max_it,varargin);
   % 
   pc=i./max_it;
   % clear command window
-  %if statusbar_ok==0;clc;end 
+  if statusbar_ok==0;clc;end 
 
   for m=1:ncols
     
