@@ -47,6 +47,10 @@ if nargin<2, types=1;end
 if types==0; return;end
 if nargin<5, res=300;end
 if nargin<3, trim=0;end
+if trim>1
+    res=trim;
+    trim=0;
+end
 if nargin<4, 
     %transp=1;
     transp=0;
