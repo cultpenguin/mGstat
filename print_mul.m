@@ -11,6 +11,7 @@
 %            [3] eps
 %            [4] png,pdf
 %            [5] png,pdf,eps
+%            [6] png transparent with export_fig (+1,+2)
 %    trim  : trim PNG image (remove borders - requires mogrify)
 %            [0]: no trimminf (def)
 %            [1]: trimming
@@ -64,10 +65,10 @@ end
 fname=space2char(fname);
 
 i=0;
-if ((types==1)||(types==4)||(types==5))
+if ((types==1)||(types==4)||(types==5)||(types==6))
     i=i+1;P{i}.type='-dpng';P{i}.ext='.png';
 end
-if ((types==2)||(types==4))
+if ((types==2)||(types==4)||(types==6))
     i=i+1;P{i}.type='-dpdf';P{i}.ext='.pdf';
 end
 if ((types==3)||(types==5))
@@ -88,6 +89,18 @@ end
 %% SAVE FIG FILE
 if (save_fig==1)
     saveas(gcf,[fname,'.fig'],'fig');
+end
+
+
+%% EXPORT FIG
+if types==6,
+    if exist('export_fig','file')
+        scale=res/180;
+        export_fig(sprintf('%s_transp.png',fname),'-transparent',sprintf('-m%3.1f',scale))
+        %export_fig(sprintf('%s_transp.png',fname),'-transparent','-m8')
+    else
+        disp(sprintf('%s: export_fig is not available -- skipping',mfilename))
+    end
 end
 
 
