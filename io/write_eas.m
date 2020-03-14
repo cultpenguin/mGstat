@@ -70,7 +70,7 @@ function write_eas(filename,data,header,line1,nanValue);
       fprintf(fid,'%18.12g   %18.12g   %18.12g   %18.12g\n',d(:));
   elseif size(data,2)==5
       d=data';
-      fprintf(fid,'%18.12g   %18.12g   %18.12g   %18.12g   %18.12g\n',d(:));
+      fprintf(fid,'%g   %g   %g   %18.12g   %18.12g\n',d(:));
   else
       
       for id=1:size(data,1),
