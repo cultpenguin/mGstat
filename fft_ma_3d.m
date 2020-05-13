@@ -273,7 +273,7 @@ if isfield(options,'lim');
         for k=1:length(ii);
             
             x0=round(ix(k))-ceil(options.wx/2);
-            y0=round(iy(k))-ceil(options.wx/2);
+            y0=round(iy(k))-ceil(options.wy/2);
             z0=round(iz(k))-ceil(options.wz/2);
             
             if x0<1; x0=size(z_rand,2)+x0;end
@@ -284,6 +284,7 @@ if isfield(options,'lim');
             if z0>size(z_rand,3); z0=z0-size(z_rand,3);end
             
             z_rand(y0,x0,z0)=z_rand_new(k);
+            
         end
     end
 end
