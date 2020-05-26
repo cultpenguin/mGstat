@@ -246,46 +246,34 @@ if isfield(options,'lim');
         ii=find(options.used==0);
         z_rand_new=randn(size(z_rand(ii)));
         z_rand(ii) = z_rand_new;
-    else 
+    else
         % RANDOM SET TYPE RESIMULATION 
-        
-        % MAKE SURE ONLY TO SELECT RESIM DATA
-        % WITHIN (and close to) SIMULATION AREA
-        
+        z_rand_in=z_rand;
         n_resim=options.lim(1);
+        
+        nz_rand=prod(size(z_rand));
+        
         if n_resim<=1
             % use n_resim as a proportion of all random deviates
-            n_resim=n_resim.*prod(size(z_rand));
+            n_resim=n_resim.*nz_rand;
         end
-        n_resim=ceil(n_resim);
-        n_resim = min([n_resim prod(size(z_rand))]);
+        if ((n_resim<2)&&(n_resim>1))
+            n_resim=1;
+        end
+        n_resim=floor(n_resim);
         
-        N_all=(nx+options.wx)*(ny+options.wy)*(nz+options.wz);
+        n_resim = min([n_resim nz_rand]);
         
-        n_resim = min([n_resim N_all]);
         
+        %        if (n_resim==nz:rand);
+        %end
         % Select random set of nodes within simulation grid !
-        ii=randomsample(N_all,n_resim);
         
-        z_rand_new=randn(size(z_rand(ii)));
-        [ix,iy,iz]=ind2sub([ny+options.wy,nx+options.wx,nz+options.wz],ii);
+        ii=randomsample(nz_rand,n_resim);
         
-        for k=1:length(ii);
-            
-            x0=round(ix(k))-ceil(options.wx/2);
-            y0=round(iy(k))-ceil(options.wy/2);
-            z0=round(iz(k))-ceil(options.wz/2);
-            
-            if x0<1; x0=size(z_rand,2)+x0;end
-            if y0<1; y0=size(z_rand,1)+y0;end
-            if z0<1; z0=size(z_rand,3)+z0;end
-            if x0>size(z_rand,2); x0=x0-size(z_rand,2);end
-            if y0>size(z_rand,1); y0=y0-size(z_rand,1);end
-            if z0>size(z_rand,3); z0=z0-size(z_rand,3);end
-            
-            z_rand(y0,x0,z0)=z_rand_new(k);
-            
-        end
+        z_rand_new=z_rand;
+        z_rand_new(ii)=randn(1,n_resim);
+        z_rand=z_rand_new;
     end
 end
  
