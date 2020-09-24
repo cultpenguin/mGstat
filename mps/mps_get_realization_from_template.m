@@ -23,6 +23,12 @@ if ~isfield(options,'min_dist')
    options.min_dist=0;
 end
 
+if ~isfield(options,'distance_w')
+   options.distance_w=100;
+end
+
+
+
 if ~isfield(options,'distance_measure')
    options.distance_measure=1; % DISCRETE
    %options.distance_measure=2; % EUCLIDEAN
@@ -48,6 +54,10 @@ DIS_MIN=1e+5;
 
 break_flag=0; % needed to break out of double loop
 
+% Distance to conditioning events;
+h=sqrt(sum(L.^2,2));
+          
+
 for iy_ti=iy_arr;for ix_ti=ix_arr;
     
     ij=ij+1;
@@ -68,7 +78,7 @@ for iy_ti=iy_arr;for ix_ti=ix_arr;
       if options.distance_measure==1;
           % DISCRETE
           DIS=0;
-
+          D=zeros(size(L,1),1);
           for k=1:size(L,1);
               iy_test=L(k,1)+iy_ti;
               ix_test=L(k,2)+ix_ti;
@@ -77,13 +87,23 @@ for iy_ti=iy_arr;for ix_ti=ix_arr;
               if ((iy_test>0)&&(iy_test<=TI.ny)&&(ix_test>0)&(ix_test<=TI.nx))
                   if TI.D(iy_test,ix_test)==V(k);
                       DIS=DIS+0;
+                      D(k)=0;
                   else
+                      %% Weighted distance perhaps
+                      D(k)=1;
                       DIS=DIS+1;
                   end
               else
+                  D(k)=1;
                   DIS=DIS+1;
               end
           end
+          
+          % weighted distance (Mariethoz et al., 2010)
+          hw=h.^(-options.distance_w);
+          DIS=sum(D.*hw)/sum(hw);
+          
+          
       elseif options.distance_measure==2;
           % CONTINIOUS / EUCLIDEAN
           DIS_all=zeros(size(L,1),1);
@@ -140,6 +160,7 @@ for iy_ti=iy_arr;for ix_ti=ix_arr;
     break;
   end;
 end
+
 %disp(sprintf('BREAK id=%04d DIS_MIN=%g',ij,DIS_MIN))
 % UPDATE SIM GRID WITH CONDITIONAL VALAUE
 sim_val=TI.D(iy_ti_min,ix_ti_min);

@@ -41,6 +41,13 @@
 % options.n_max_condpd=10;
 % [out_enesim_app]=mps(TI,SIM,options)
 %
+% %% ENESIM w BATCH PASTING
+% options.i_patch_start=1;  % >1, start patching at this iteration number
+% options.i_patch_start=0.05;  % <1, start patching at this fraction of total number of iterations
+% options.n_patch=39;         % size of patch
+% options.patch_fraction=1;   % Percentage of pacth to use [0;1](def=1);
+
+% edit sippi_setup_nebraska_1d_abc_mul
 %
 %
 % See also: mps, mps_snesim
@@ -70,11 +77,16 @@ if ~isfield(options,'i_patch_start');options.i_patch_start=100;end
 if options.i_patch_start<1;
     options.i_patch_start=ceil(options.i_patch_start.*prod(size(SIM_data)));
 end
-options.T_patch=mps_template(options.n_patch);
-   
+if ~isfield(options,'patch_fraction');options.patch_fraction=1;end
+
+[options.T_patch,options.T_dist]=mps_template(max(options.n_patch));
+
 if ~isfield(options,'compute_entropy');
     options.compute_entropy=0;
 end
+if ~isfield(options,'patch_dist_max');options.patch_dist_max=0.5;end
+                
+
 
 if ~isfield(options,'n_max_condpd');
     options.n_max_condpd=1e+9;
@@ -170,240 +182,251 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
     % CONDITIONAL SIMULATION UNLESS ALLREADY SIMULATD
     if isnan(SIM.D(iy,ix))
         
-    
-    %% FIND n_cond CONDITIONAL POINT, find L
-    % V value of conditional point
-    % L relative location of conditional point
-    %
-    if i>0
-        i_good=find(~isnan(SIM.D));
         
-        [d,options]=mps_get_distance(SIM.ny,SIM.nx,i_node,i_good,options);
-        ii=1:length(d);
-        s=sortrows([ii(:) d(:)],2);
-        use_cond=min([options.n_cond length(d)]);
-        i_close=i_good(s(1:use_cond,1));
-        V=zeros(use_cond,1);
-        L=zeros(use_cond,2);
-        for k=1:use_cond;
-            [iiy,iix]=ind2sub_2d([SIM.ny,SIM.nx],i_close(k));
-            V(k,1)=SIM.D(iiy,iix);
-            L(k,:)=[iiy-iy iix-ix];
-        end
-        
-    end
-    N_COND=length(V);
-    
-    if strcmp(lower(options.type),'dsim');
-        %% GET REALIZATION FROM TI USING DIRECT SIMULATION
-        
-        accept=0;
-        n_test=0;
-        while accept==0;
-            [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min,options.COND_DIST(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);
+        %% FIND n_cond CONDITIONAL POINT
+        % V value of conditional point
+        % L relative location of conditional point
+        %
+        if i>0
+            i_good=find(~isnan(SIM.D));
             
-            % TEST FOR SOFT DATA
-            if isfield(options,'d_soft');
-                % GET PROPER P_ACC
-                n_test=n_test+1;
-                if sim_val==0
-                    P_acc = options.d_soft(iy,ix);
-                else
-                    P_acc = 1-options.d_soft(iy,ix);
-                end
-                if isnan(P_acc)
-                    accept=1;
-                elseif rand(1)<P_acc
-                    %disp(sprintf('i=%d, P_acc=%g, [ix,iy]=[%d,%d], n_test=%d',i,P_acc,ix,iy,n_test))
-                    accept=1;
-                end
-                if n_test>10;
-                    accept=1;
-                end
-            else
-                % always accept if no soft data available
-                accept=1;
+            [d,options]=mps_get_distance(SIM.ny,SIM.nx,i_node,i_good,options);
+            ii=1:length(d);
+            s=sortrows([ii(:) d(:)],2);
+            use_cond=min([options.n_cond length(d)]);
+            i_close=i_good(s(1:use_cond,1));
+            V=zeros(use_cond,1);
+            L=zeros(use_cond,2);
+            for k=1:use_cond;
+                [iiy,iix]=ind2sub_2d([SIM.ny,SIM.nx],i_close(k));
+                V(k,1)=SIM.D(iiy,iix);
+                L(k,:)=[iiy-iy iix-ix];
             end
         end
-        SIM.D(iy,ix)=sim_val;
+        N_COND=length(V);
         
-        
-        if (options.n_patch>0)&&(i>options.i_patch_start)
-            for ip=1:options.n_patch
-                dix=options.T_patch(ip,1);
-                diy=options.T_patch(ip,2);
-                try
-                    if isnan(SIM.D(iy+diy,ix+dix));
-                        SIM.D(iy+diy,ix+dix)=TI.D(iy_ti_min+diy,ix_ti_min+dix);
-                    end
-                end
-            end
-        end
-        
-        
-        
-    elseif strcmp(lower(options.type),'enesim');
-        %% GET REALIZATION FROM TI BY
-        %  a) scanning the whole TO to establisj f(m_i|f(m_1,...,m_{i-1})
-        %  b) generate a ralization from f(m_i|f(m_1,...,m_{i-1})
-        N_PDF=0;
-        if N_COND==0
-            if isfield(options,'fastMPS')                
-                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template_1d(TI,[],[],options.CPDF);
-            else
-                [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,[],[],options);
-            end
-            
-            if isfield(options,'TI2')
-                [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,[],[],options);
-                N_PDF=min([N_PDF N_PDF2]);
-            end
-            
-            
-        else
-            for ic=1:N_COND
-                c_arr=(1:(N_COND-ic+1));
-                if isfield(options,'fastMPS')                
-                    [C_PDF,N_PDF,TI]=mps_get_conditional_from_template_1d(TI,V(c_arr),L(c_arr,:),options.CPDF);
-                else
-                    [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V(c_arr),L(c_arr,:),options);
-                end
-                if isfield(options,'TI2')
-                    if isfield(options,'fastMPS')                
-                        [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,V(c_arr),L(c_arr,:),options);
+        if strcmp(lower(options.type),'dsim');
+            %% GET REALIZATION FROM TI USING DIRECT SIMULATION
+            accept=0;
+            n_test=0;            
+            while accept==0;
+                [sim_val,options.C(iy,ix),ix_ti_min,iy_ti_min,options.COND_DIST(iy,ix)]=mps_get_realization_from_template(TI,V,L,options);                
+                %%disp(sprintf('dis=%g',options.COND_DIST(iy,ix)))
+                % TEST FOR SOFT DATA
+                if isfield(options,'d_soft');
+                    % GET PROPER P_ACC
+                    n_test=n_test+1;
+                    if sim_val==0
+                        P_acc = options.d_soft(iy,ix);
                     else
-                        [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,V(c_arr),L(c_arr,:),options);
+                        P_acc = 1-options.d_soft(iy,ix);
                     end
+                    if isnan(P_acc)
+                        accept=1;
+                    elseif rand(1)<P_acc
+                        %disp(sprintf('i=%d, P_acc=%g, [ix,iy]=[%d,%d], n_test=%d',i,P_acc,ix,iy,n_test))
+                        accept=1;
+                    end
+                    if n_test>10;
+                        accept=1;
+                    end
+                else
+                    % always accept if no soft data available
+                    accept=1;
+                end
+            end
+            SIM.D(iy,ix)=sim_val;
+            % PATCHING
+            % Make som clever ways of choosing n_patch
+            if (max(options.n_patch)>0)&&(i>options.i_patch_start)
+                
+                L_dist=sqrt(sum(L'.^2))';
+                PatchDistMax=max(L_dist).*options.patch_dist_max;
+                if length(options.n_patch)>1
+                    i_patch=1:options.n_patch(i);
+                else                   
+                    i_patch=1:options.n_patch;                    
+                end
+                if options.patch_fraction<1;
+                    n_b=ceil(length(i_patch)*options.patch_fraction);                    
+                    i_patch=randomsample(1:length(i_patch),n_b);
+                end
+                for ip=i_patch
+                    dix=options.T_patch(ip,1);
+                    diy=options.T_patch(ip,2);
+                    dist=options.T_dist(ip);
+                    try
+                        if (isnan(SIM.D(iy+diy,ix+dix)))&&(dist<PatchDistMax)
+                            SIM.D(iy+diy,ix+dix)=TI.D(iy_ti_min+diy,ix_ti_min+dix);
+                        end
+                    end
+                end
+            end
+            
+            
+            
+        elseif strcmp(lower(options.type),'enesim');
+            %% GET REALIZATION FROM TI BY
+            %  a) scanning the whole TO to establisj f(m_i|f(m_1,...,m_{i-1})
+            %  b) generate a ralization from f(m_i|f(m_1,...,m_{i-1})
+            N_PDF=0;
+            if N_COND==0
+                if isfield(options,'fastMPS')
+                    [C_PDF,N_PDF,TI]=mps_get_conditional_from_template_1d(TI,[],[],options.CPDF);
+                else
+                    [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,[],[],options);
+                end
+                
+                if isfield(options,'TI2')
+                    [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,[],[],options);
                     N_PDF=min([N_PDF N_PDF2]);
                 end
                 
                 
-                if N_PDF>0, break; end %% N_PDF OS NEVER BELOW 1
-                %disp(sprintf('%s : PRUNING: dropping a node %02d/%02d at[ix,iy]=[%d,%d]',mfilename,N_COND-ic,N_COND,ix,iy))
-                
-                options.N_DROPPED(iy,ix)=ic;
-            end
-        end
-        
-        if isfield(options,'TI2')
-            p=0;
-            p=ix./SIM.nx;
-            p=.5*(1+cos(pi-pi*p));
-            p=0.5;
-            
-            txt1=(sprintf('p=%4.2f - PDF=[%2.2f %3.2f]  PDF2=[%2.2f %3.2f]',p,C_PDF(1),C_PDF(2),C_PDF2(1),C_PDF2(2)));
-            C_PDF_COMB = p.*C_PDF + (1-p).*C_PDF2;
-            C_PDF=C_PDF_COMB./sum(C_PDF_COMB);
-            txt2=(sprintf('PDF_COMB=[%3.2f %3.2f]',C_PDF(1),C_PDF(2)));
-            disp([txt1,' - ',txt2])
-            
-        end
-        
-        options.H(iy,ix)=entropy(C_PDF);
-        options.N(iy,ix)=N_PDF;
-        
-        % DRAW REALIZARTION FROM C_PDF
-        sim_val=min(find(cumsum(C_PDF)>rand(1)))-1;
-        if isnan(sim_val);
-            keyboard
-        end
-        
-        try
-            if options.skip_sim==0;
-                SIM.D(iy,ix)=sim_val;
             else
-                if ~isfield(options,'C_PDF')
-                    options.C_PDF=zeros([SIM.ny,SIM.nx,[length(C_PDF)]])*NaN;
-                end
-                % store condtional event
-                % remeber to preallocate
-                for k=1:length(C_PDF)
+                for ic=1:N_COND
+                    c_arr=(1:(N_COND-ic+1));
+                    if isfield(options,'fastMPS')
+                        [C_PDF,N_PDF,TI]=mps_get_conditional_from_template_1d(TI,V(c_arr),L(c_arr,:),options.CPDF);
+                    else
+                        [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V(c_arr),L(c_arr,:),options);
+                    end
+                    if isfield(options,'TI2')
+                        if isfield(options,'fastMPS')
+                            [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,V(c_arr),L(c_arr,:),options);
+                        else
+                            [C_PDF2,N_PDF2]=mps_get_conditional_from_template(TI2,V(c_arr),L(c_arr,:),options);
+                        end
+                        N_PDF=min([N_PDF N_PDF2]);
+                    end
                     
-                    options.C_PDF(iy,ix,k)=C_PDF(k);
+                    
+                    if N_PDF>0, break; end %% N_PDF OS NEVER BELOW 1
+                    %disp(sprintf('%s : PRUNING: dropping a node %02d/%02d at[ix,iy]=[%d,%d]',mfilename,N_COND-ic,N_COND,ix,iy))
+                    
+                    options.N_DROPPED(iy,ix)=ic;
                 end
             end
-        catch
-            keyboard
-        end
-        
-        
-    end
-    
-    %% GET FULL CONDITIONAL TO COMPUTE ENTROPY
-   
-    if options.compute_entropy==1;        
-        [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V,L);
-        options.E(iy,ix)=entropy(C_PDF);
-        
-    end
-    
-    % PLOT START
-    if options.plot>0       
-        if ~exist('im')
-            figure_focus(2);
-            subplot(1,2,1);
-            im=imagesc(TI.D);axis image;
-            axis image;
-            %axis([1 size(TI.D,2) 1 size(TI.D,1)]);
-            caxis([-1 1]);
-        end
-        if exist('im_sim')
-            if ((i==N_PATH)|((i/options.plot_interval)==round(i/options.plot_interval)))
-                set(im_sim,'Cdata',SIM.D);
-                %axis([1 size(TI.D,2) 1 size(TI.D,1)]);
-                drawnow;
+            
+            if isfield(options,'TI2')
+                p=0;
+                p=ix./SIM.nx;
+                p=.5*(1+cos(pi-pi*p));
+                p=0.5;
+                
+                txt1=(sprintf('p=%4.2f - PDF=[%2.2f %3.2f]  PDF2=[%2.2f %3.2f]',p,C_PDF(1),C_PDF(2),C_PDF2(1),C_PDF2(2)));
+                C_PDF_COMB = p.*C_PDF + (1-p).*C_PDF2;
+                C_PDF=C_PDF_COMB./sum(C_PDF_COMB);
+                txt2=(sprintf('PDF_COMB=[%3.2f %3.2f]',C_PDF(1),C_PDF(2)));
+                disp([txt1,' - ',txt2])
+                
             end
-        else
-            figure_focus(2);
-            subplot(1,2,2);
-            im_sim=imagesc(SIM.D);
-            caxis([-1 1]);
-            colormap(cmap_linear([1 1 1 ; 0 0 0; 1 0 0]))
-            axis image
+            
+            options.H(iy,ix)=entropy(C_PDF);
+            options.N(iy,ix)=N_PDF;
+            
+            % DRAW REALIZARTION FROM C_PDF
+            sim_val=min(find(cumsum(C_PDF)>rand(1)))-1;
+            if isnan(sim_val);
+                keyboard
+            end
+            
+            try
+                if options.skip_sim==0;
+                    SIM.D(iy,ix)=sim_val;
+                else
+                    if ~isfield(options,'C_PDF')
+                        options.C_PDF=zeros([SIM.ny,SIM.nx,[length(C_PDF)]])*NaN;
+                    end
+                    % store condtional event
+                    % remeber to preallocate
+                    for k=1:length(C_PDF)
+                        
+                        options.C_PDF(iy,ix,k)=C_PDF(k);
+                    end
+                end
+            catch
+                keyboard
+            end
+            
+            
         end
-        if ((i==N_PATH)|((i/options.plot_interval)==round(i/options.plot_interval)))
-            if options.plot>1
+        
+        %% GET FULL CONDITIONAL TO COMPUTE ENTROPY
+        
+        if options.compute_entropy==1;
+            [C_PDF,N_PDF,TI]=mps_get_conditional_from_template(TI,V,L);
+            options.E(iy,ix)=entropy(C_PDF);
+            
+        end
+        
+        % PLOT START
+        if options.plot>0
+            if ~exist('im')
+                figure_focus(2);
+                subplot(1,2,1);
+                im=imagesc(TI.D);axis image;
+                axis image;
+                %axis([1 size(TI.D,2) 1 size(TI.D,1)]);
+                caxis([-1 1]);
+            end
+            if exist('im_sim')
+                if ((i==N_PATH)|((i/options.plot_interval)==round(i/options.plot_interval)))
+                    set(im_sim,'Cdata',SIM.D);
+                    %axis([1 size(TI.D,2) 1 size(TI.D,1)]);
+                    drawnow;
+                end
+            else
+                figure_focus(2);
                 subplot(1,2,2);
-                hold on
                 im_sim=imagesc(SIM.D);
                 caxis([-1 1]);
                 colormap(cmap_linear([1 1 1 ; 0 0 0; 1 0 0]))
                 axis image
-                plot(ix,iy,'go','MarkerSize',12)
-                for l=1:size(L,1)
-                    plot([ix ix+L(l,2)],[iy iy+L(l,1)],'g-')
+            end
+            if ((i==N_PATH)|((i/options.plot_interval)==round(i/options.plot_interval)))
+                if options.plot>1
+                    subplot(1,2,2);
+                    hold on
+                    im_sim=imagesc(SIM.D);
+                    caxis([-1 1]);
+                    colormap(cmap_linear([1 1 1 ; 0 0 0; 1 0 0]))
+                    axis image
+                    plot(ix,iy,'go','MarkerSize',12)
+                    for l=1:size(L,1)
+                        plot([ix ix+L(l,2)],[iy iy+L(l,1)],'g-')
+                    end
+                    hold off
+                    
                 end
-                hold off
                 
-            end
-            
-            if options.plot>1
-                subplot(1,2,1);
-                im=imagesc(TI.D);axis image;
-                ax=axis;
-                caxis([-1 1]);
-                hold on
-                plot(ix_ti_min,iy_ti_min,'go','MarkerSize',12)
-                for l=1:size(L,1)
-                    plot([ix_ti_min ix_ti_min+L(l,2)],[iy_ti_min iy_ti_min+L(l,1)],'g-')
+                if options.plot>1
+                    subplot(1,2,1);
+                    im=imagesc(TI.D);axis image;
+                    ax=axis;
+                    caxis([-1 1]);
+                    hold on
+                    plot(ix_ti_min,iy_ti_min,'go','MarkerSize',12)
+                    for l=1:size(L,1)
+                        plot([ix_ti_min ix_ti_min+L(l,2)],[iy_ti_min iy_ti_min+L(l,1)],'g-')
+                    end
+                    hold off
+                    axis(ax);
+                    %disp('paused - hit keyboard');pause;
                 end
-                hold off
-                axis(ax);
-                %disp('paused - hit keyboard');pause;
-            end
-            
-            
-            if options.plot>2
-                frame = getframe(gcf);
-                writeVideo(writerObj,frame);
-            end
-            
-            if options.plot>3
-                pause;
+                
+                
+                if options.plot>2
+                    frame = getframe(gcf);
+                    writeVideo(writerObj,frame);
+                end
+                
+                if options.plot>3
+                    pause;
+                end
             end
         end
-    end
-    %% PLOT END
+        %% PLOT END
     end
     
 end % END LOOOP OVER PATH
