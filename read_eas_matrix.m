@@ -6,8 +6,6 @@
 %
 % See also write_eas_matrix, write_eas
 %
-% Note: works only for one column, and up to 2D
-%
 function [D,header,txt_title,dim,txtdata,txtheader]=read_eas_matrix(filename,nx,ny,nz);
 
    nanVal=-997799;
@@ -55,8 +53,5 @@ function [D,header,txt_title,dim,txtdata,txtheader]=read_eas_matrix(filename,nx,
    
    %% RESHAPE TO MATRIX 3D ARRAY
    D=reshape(d,dim.nx,dim.ny,dim.nz,ncols);
-   %if dim.nz==1;
-   %    D=D';
-   %else
-       D=permute(D,[2 1 3 4]);
-   %end
+   D=permute(D,[2 1 3 4]);
+ 
