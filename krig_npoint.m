@@ -62,14 +62,21 @@ d_var=zeros(n_est,1);
 if isfield(options,'d2u');
     % MAKE USE OF PRECALCULATED DATA 2 UNKNOWN
     for i=1:n_est
+        o_mul{i}=options;
+        o_mul{i}.d2u=d2u(:,i);
+    end
+    parfor i=1:n_est
+    %for i=1:n_est
         if (i/500)==round(i/500),
             progress_txt(i,n_est,sprintf('%s : kriging',mfilename));
         end
-        options.d2u=d2u(:,i);
-        [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i,:),V,options);
+        %options.d2u=d2u(:,i);
+        %[d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i,:),V,options);
+        [d_est(i),d_var(i)]=krig(pos_known,val_known,pos_est(i,:),V,o_mul{i});
     end
 else
-    for i=1:n_est
+    parfor i=1:n_est
+    %for i=1:n_est
         if (i/100)==round(i/100),
             %    if (i/5)==round(i/5),
             progress_txt(i,n_est,sprintf('%s : kriging',mfilename));
