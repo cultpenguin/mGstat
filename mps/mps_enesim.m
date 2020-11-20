@@ -20,7 +20,6 @@
 % %    approximating the conditional pd:
 %  options.n_max_condpd=10; % build conditional pd from max 10 counts
 %
-%
 % %% Example
 % TI=channels;
 % SIM=ones(40,40)*NaN;
@@ -46,9 +45,22 @@
 % options.i_patch_start=0.05;  % <1, start patching at this fraction of total number of iterations
 % options.n_patch=39;         % size of patch
 % options.patch_fraction=1;   % Percentage of pacth to use [0;1](def=1);
-
-% edit sippi_setup_nebraska_1d_abc_mul
 %
+% %% ENESIM with rotation and scaling
+% TI=channels;
+% nx=100; ny=50;
+% SIM=ones(ny,nx).*NaN;
+% O.type='enesim';
+% O.n_max_cond=1;
+% O.n_cond=25;
+% % set scale ar matrix or scalar 
+% O.scale=2; 
+% S=ones(size(SIM));sarr=linspace(0.5,3,ny);for i=1:ny;S(i,:)=sarr(i);end;
+% O.scale=S;
+% % set rotation as matrix or scalar
+% R=ones(size(SIM));r1=15;rarr=linspace(0+r1,180-r1,nx);for i=1:nx;R(:,i)=rarr(i);end;
+% O.rotate=R; 
+% [out,options]=mps(TI,SIM,O)
 %
 % See also: mps, mps_snesim
 %
@@ -100,6 +112,16 @@ if ~strcmp(options.type,'dsim');
 end
 options.N=SIM_data.*0.*NaN;
 options.N_DROPPED=zeros(size(SIM_data));;
+
+if ~isfield(options,'rotate');
+    options.rotate=0;
+end
+
+if ~isfield(options,'scale');
+    options.scale=1;
+end
+
+
 
 %% SET SEOM DATA STRICTURES
 
@@ -205,6 +227,27 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
         end
         N_COND=length(V);
         
+        
+        doRotate=1;
+        if (doRotate==1)&&(N_COND>0)
+            if isscalar(options.rotate)
+                theta=options.rotate;
+            else
+                theta=options.rotate(iy,ix);
+            end
+            if isscalar(options.scale)
+                scale=options.scale;
+            else
+                scale=options.scale(iy,ix);
+            end
+            %theta
+            %scale
+            ROT=[cosd(theta) -sind(theta);sind(theta) cosd(theta)];
+            Lnew=round(scale.*(ROT*L')');
+            L=Lnew;
+        end
+        
+       
         if strcmp(lower(options.type),'dsim');
             %% GET REALIZATION FROM TI USING DIRECT SIMULATION
             accept=0;
@@ -238,8 +281,7 @@ for i=1:N_PATH; %  % START LOOOP OVER PATH
             SIM.D(iy,ix)=sim_val;
             % PATCHING
             % Make som clever ways of choosing n_patch
-            if (max(options.n_patch)>0)&&(i>options.i_patch_start)
-                
+            if (max(options.n_patch)>0)&&(i>options.i_patch_start)                
                 L_dist=sqrt(sum(L'.^2))';
                 PatchDistMax=max(L_dist).*options.patch_dist_max;
                 if length(options.n_patch)>1
