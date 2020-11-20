@@ -54,6 +54,7 @@ function [D,header,txt_title,dim,txtdata,txtheader]=read_eas_matrix(filename,nx,
    d(find(d==nanVal))=NaN;
    
    %% RESHAPE TO MATRIX 3D ARRAY
+   
    D=reshape(d,dim.nx,dim.ny,dim.nz,ncols);
    %if dim.nz==1;
    %    D=D';
