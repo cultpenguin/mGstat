@@ -709,8 +709,8 @@ c     READ THE FIRST COMMENTED LINES
                   k=k+1
                   read(lin,*,iostat = IntVar) vvreal
                   datacov(i,j)=vvreal
-c                  if (idbg.gt.1)
-c     +                 write(*,*) '(ix,iy)=(',i,',',j,')',datacov(i,j)
+                  if (idbg.gt.1)
+     +                 write(*,*) '(ix,iy)=(',i,',',j,')',datacov(i,j)
                enddo
             enddo
 
