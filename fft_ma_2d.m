@@ -263,12 +263,12 @@ if isfield(options,'lim');
         z_rand_new=randn(size(z_rand(ii)));
         
         [iy,ix]=ind2sub([ny+options.wy,nx+options.wx],ii);
+        wx0=ceil(options.wx/2);
+        wy0=ceil(options.wy/2);
         for k=1:length(ii);
             
-            %x0=round(ix(k))-ceil(options.wx/2);
-            %y0=round(iy(k))-ceil(options.wy/2);
-            x0=ix(k)-ceil(options.wx/2);
-            y0=iy(k)-ceil(options.wy/2);
+            x0=ix(k)-wx0;
+            y0=iy(k)-wy0;
             
             if x0<1; x0=size(z_rand,2)+x0;end
             if y0<1; y0=size(z_rand,1)+y0;end

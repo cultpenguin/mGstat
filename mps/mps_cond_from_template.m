@@ -1,4 +1,7 @@
 % mps_cond_from_template: find conditional data within template
+% 
+% Call:
+%    [d_cond,n_cond]=mps_cond_from_template(SIM,ix,iy,iz,T,n_cond_max)
 %
 % SIM: simulation grid (NaN-> non simulated nodes)
 % [ix,iy,iz]: index of center node in TI
@@ -6,6 +9,8 @@
 % c_cond_max: find maximum number of conditional points
 %
 % See also: mps_template
+%
+%
 %
 % NOTE: currently only working in 1D/2D
 %

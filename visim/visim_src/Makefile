@@ -13,7 +13,7 @@ PROG = visim
 COMP = gfortran
 
 # WINDOWS/LINUX
-FFLAGS = -O3
+FFLAGS =  -fallow-argument-mismatch -O3
 # OSX
 #FFLAGS = -O3
 

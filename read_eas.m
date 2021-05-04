@@ -28,7 +28,7 @@ function [data,header,txt_title,dim,txtdata,txtheader]=read_eas(filename);
    end
    nc=str2num(l);
    for i=1:nc,
-     header{i}=fgetl(fid);
+     header{i}=strip_space(fgetl(fid));
    end
    header=regexprep(header,char(9),'');
    nvar=length(header);

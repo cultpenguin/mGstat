@@ -5,7 +5,7 @@
 COMP = gfortran
 
 # WINDOWS/LINUX
-FFLAGS = -c -static -O3
+FFLAGS = -c  -fallow-argument-mismatch -static -O3
 # OSX
 #FFLAGS = -c -O3
 
