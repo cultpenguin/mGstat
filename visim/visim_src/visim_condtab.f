@@ -33,8 +33,7 @@ c     DISCRETE = 1
 c
 c-----------------------------------------------------------------------
 c      implicit none
-      use geostat_allocate
-	  include 'visim.inc'
+      include 'visim.inc'
       integer i,j,k,im,iv,i_monte
       real Gmean,gGvar
       real sum_sim,sum_sim2
@@ -235,8 +234,7 @@ c
 c
 c-----------------------------------------------------------------------
 c      implicit none
-	  use geostat_allocate
-      include 'visim.inc'
+	   include 'visim.inc'
       real cmean, cvar
       integer im,iv,iq,ie,is,xid
       real cmean_arr(500), i_arr(500)

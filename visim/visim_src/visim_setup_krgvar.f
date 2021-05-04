@@ -32,8 +32,7 @@ c
 c
 c
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-      use geostat_allocate
-	  include  'visim.inc'
+      include  'visim.inc'
 
       real*8   acorni
       logical testind

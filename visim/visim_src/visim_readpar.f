@@ -25,7 +25,6 @@ c
 c
 c
 c-----------------------------------------------------------------------
-      use geostat_allocate
       include  'visim.inc'
       real      var(50)
       real*8    p,acorni,cp,oldcp,w
@@ -232,17 +231,6 @@ c     1     in nscore space = ',n_monte
 
       nxy  = nx*ny
       nxyz = nx*ny*nz
-
-c     ALLOCATE X,Y,Z
-       allocate(xxx(nx),stat = test)
-       allocate(xxx(2*nx),stat = test)
-c       allocate(y(ny),stat = test)
-c       allocate(z(nz),stat = test)
-c       if(test.ne.0)then
-c          write(*,*)'ERROR 1: Allocation of x failed',
-c     +         ' due to insufficient memory.'
-c          stop
-c       end if
 
 
       read(lin,*,err=98) ixv(1)

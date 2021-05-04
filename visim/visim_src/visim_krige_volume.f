@@ -50,8 +50,7 @@ c     ORIGINAL: C.V. Deutsch                               DATE: August 1990
 c     REVISION : Thomas Mejer Hansen                       DATE: June 2004
 c     including volume average data
 c-----------------------------------------------------------------------
-      use geostat_allocate
-	  include 'visim.inc'
+      include 'visim.inc'
       logical first
       real	spos(MAXKR1)
       real covsum
@@ -185,7 +184,7 @@ c
 
 
             if (i.eq.j) then
-c                  This where oné should add uncertainty of POINT DATA
+c                  This where onï¿½ should add uncertainty of POINT DATA
 c                  write(*,*) 'a(',in,')=',a(in)
 c                  a(in)=a(in)+0.1
             endif

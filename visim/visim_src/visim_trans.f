@@ -29,8 +29,7 @@ c
 c
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 
-      use geostat_allocate
-	  include 'visim.inc'
+      include 'visim.inc'
       real var(50) 
       logical testfl
       
@@ -191,14 +190,13 @@ c
 c
 c-----------------------------------------------------------------------
 
-      use geostat_allocate
-	  include 'visim.inc'
+      include 'visim.inc'
  
       character str*40
       real var(20)
       logical   testfl
 
-	print *,'Transforming data '
+	   print *,'Transforming data '
       
       if(idbg.ge.3) then
          write(*,*) 'The simulation resuls from visim is shown below'

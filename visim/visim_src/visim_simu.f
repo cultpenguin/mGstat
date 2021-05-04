@@ -23,8 +23,7 @@ c
 c     ADAPTION : Thomas Mejer Hansen                DATE: August 2005-2015
 c
 
-      use geostat_allocate
-	  include  'visim.inc'
+      include  'visim.inc'
       real*8   acorni
       real p
       real cmean1, cstdev1

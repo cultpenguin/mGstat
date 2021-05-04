@@ -41,8 +41,7 @@ c
 c ORIGINAL: Yongshe Liu Thomas Mejer Hansen   DATE: June, 2004
 c-----------------------------------------------------------------------
       
-      use geostat_allocate
-	  include 'visim.inc'
+      include 'visim.inc'
       integer ind,ix,iy,iz,nxy,j,k,nvp
       real tempsim(MXYZ),vvx(MAXGEOMDATA)
       real simrest(MXYZ)

@@ -109,8 +109,7 @@ c     Concepts taken from F. Alabert and E. Isaaks
 c
 c-----------------------------------------------------------------------
 c      implicit none
-      use geostat_allocate
-	  include  'visim.inc'
+      include  'visim.inc'
       real      randnu(1),var(10),vobs,derr
       real*8    p,acorni,cp,oldcp,w
       logical   testind

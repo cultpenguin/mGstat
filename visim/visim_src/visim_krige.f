@@ -38,8 +38,7 @@ c
 c
 c ORIGINAL: C.V. Deutsch                               DATE: August 1990
 c-----------------------------------------------------------------------
-      use geostat_allocate
-	  include 'visim.inc'
+      include 'visim.inc'
       logical first
       real	spos(MAXKR1)
       integer ix1,ix2,iy1,iy2,iz1,iz2
