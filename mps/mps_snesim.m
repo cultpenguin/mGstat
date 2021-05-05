@@ -76,7 +76,7 @@ if options.n_mulgrids>1
     return
 end
 
-%% SET SOME DATA STRICTURES
+%% SET SOME DATA STRUCTURES
 
 TI.D=TI_data;
 [TI.ny,TI.nx]=size(TI.D);
@@ -127,7 +127,7 @@ if ~isfield(options,'ST');
 else
     mgstat_verbose(sprintf('%s: using supplied search tree',mfilename),1)
 end
-
+keyboard
 %% SET RANDOM PATH
 % find a list of indexes of unsampled values
 i_path=find(isnan(SIM.D));
