@@ -29,7 +29,7 @@
 %
 % See also: visim_error_sim, visim_cholesky
 %
-function V=visim(parfile,visim_bin)
+function [V,status,result]=visim(parfile,visim_bin)
 
 p=mgstat_dir;
 
