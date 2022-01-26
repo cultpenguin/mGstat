@@ -8,6 +8,6 @@ mgstat_set_path
 
 This sets the proper paths and saves the path for future Matlab session. 
 
-Then, go to a working directory, and try out some of the demos :
+Then, go to a working directory, and try out some of the demos:
 
 mgstat_demo
