@@ -1,4 +1,15 @@
-function [m_mode,m_entropy,P]=mode_from_reals(sample,cat,direction);
+% mode_from_reals, get modem entropy and probability from sample of discrete parameter
+%
+% Call:
+%  [m_mode,m_entropy,P,cat]=mode_from_reals(sample,cat,direction); 
+%  [m_mode,m_entropy,P,cat]=mode_from_reals(sample,cat);
+%  [m_mode,m_entropy,P,cat]=mode_from_reals(sample);
+% Input 
+%  sample [n_modelparameters, n_reals]
+%  cat [1:ncat]: Integer of category
+%  direction [0:def,1], if direction=1, sample-->[n_reals,n_modelparameters];
+%
+function [m_mode,m_entropy,P,cat]=mode_from_reals(sample,cat,direction);
 
 if nargin<2
     cat = unique(sample);
