@@ -15,7 +15,7 @@ if nargin<2
     cat = unique(sample);
 end
 
-if nargin<2
+if nargin<3
     direction = 0 ; % [nm,nr]
 end
 
