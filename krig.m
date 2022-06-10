@@ -33,8 +33,7 @@
 %
 % see also : krig_npoint, krig_blinderror, sgsim
 %
-
-% Example 1 : 1D - NO DATA UNCERTAINTY
+% % Example 1 : 1D - NO DATA UNCERTAINTY
 % pos_known=[1;5;10];
 % val_known=[0 3 2]'; % adding some uncertainty
 % pos_est=[0:.01:10]';
@@ -46,7 +45,7 @@
 % legend('SK estimate','SK variance','Observed Data')
 % title(['V = ',V])
 %
-% Example 2 : 1D - Data Uncertainty 
+% % Example 2 : 1D - Data Uncertainty 
 % pos_known=[1;5;10];
 % val_known=[0 3 2;0 1 0]'; % adding some uncertainty
 % pos_est=[0:.01:10]';
@@ -59,7 +58,7 @@
 % title(['using data uncertainty, V = ',V])
 %
 %
-% Example 3 : 2D : 
+% % Example 3 : 2D : 
 % pos_known=[0 1;5 1;10 1];
 % val_known=[0 3 2]';
 % pos_est=[1.1 1];
@@ -252,7 +251,7 @@ function [d_est,d_var,lambda,K,k,inhood]=krig(pos_known,val_known,pos_est,V,opti
   
   % SET GLOBAL VARIANCE
   gvar=sum([V.par1]);
-  
+
   transform=V(1).par2;
     
   if ktype==0
