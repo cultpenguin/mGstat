@@ -189,7 +189,7 @@ if DoPlot==1,
   xlabel('X');
   ylabel('CPDF')
   title('ORIG CDF')
-  legend('ORG+Head+Tail','ORIGINAL',4)
+  legend('ORG+Head+Tail','ORIGINAL')
 
 end
 
