@@ -10,6 +10,8 @@
 %   w=[.1, .1, 1];
 %   p_com=bordley(p0,[p1;p2;p3],w);
 %
+% See also, comb_cprob
+%
 function p_com=bordley(p0,p,w);
 if nargin<3, w=1;end
 [n,dim]=size(p);
