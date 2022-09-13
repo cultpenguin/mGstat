@@ -1,13 +1,13 @@
-# mGstat: Matlab toolbox of geostatistical tools
+# mGstat: a Matlab toolbox of geostatistical tools
 
 mGstat contains a native Matalab implementation of kriging (simpe, oridnary, and trend) for both estimation and simulation, 
-and the FFT Moving Average method [https://doi.org/10.1023/A:1007542406333].
+and the FFT Moving Average method, [FFT-MA](https://doi.org/10.1023/A:1007542406333).
 
 mGstat contains a Matlab interface of 
-GSTAT [http://gstat.org/], 
-VISIM [https://doi.org/10.1016/j.cageo.2007.02.003], an early version of 
-SNESIM [https://github.com/SCRFpublic/snesim-standalone],and an early open version of 
-SGeMS [http://sgems.sourceforge.net/].
+[GSTAT](http://gstat.org/), 
+[VISIM](https://doi.org/10.1016/j.cageo.2007.02.003), an early version of 
+[SNESIM](https://github.com/SCRFpublic/snesim-standalone),and an early open version of 
+[SGeMS](http://sgems.sourceforge.net/).
 
 
 Documentation available at  
