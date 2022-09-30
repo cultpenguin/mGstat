@@ -14,7 +14,8 @@
 %
 % Journel, An Alternative to Traditional Data Independence
 % Hypotheses, Math Geol(34), 2002
-% 
+%
+% See also comb_cprob_nd, bordley
 %
 function pAgBC=comb_cprob(pA,pAgB,pAgC,tau)
   
