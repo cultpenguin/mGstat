@@ -30,14 +30,17 @@
 %
 % See also : inscore
 %
-function [normscore_org,o_nscore]=nscore(d,w1,w2,dmin,dmax,DoPlot)
+function [normscore_org,o_nscore]=nscore(d,w1,w2,dmin,dmax,style,DoPlot)
 
 %% FOWARD NORMAL SCORE
  if nargin==2,
      if isstruct(w1);
          o_nscore=w1;
-         
-         normscore_org=interp1(o_nscore.sd,o_nscore.normscore,d,'nearest');
+         % TODO: ALLOW DIFFERENT TYPE OF INTERPOLATION
+         if ~isfield(o_nscore,'style');
+             o_nscore.style='nearest';
+         end
+         normscore_org=interp1(o_nscore.sd,o_nscore.normscore,d,o_nscore.style);
          return
          
      end
@@ -46,7 +49,7 @@ function [normscore_org,o_nscore]=nscore(d,w1,w2,dmin,dmax,DoPlot)
  %% NORMAL SCORE TRANSFORM SETUP
  
          
- if nargin<6
+ if nargin<7
    DoPlot=0;
  end
 
@@ -54,7 +57,11 @@ function [normscore_org,o_nscore]=nscore(d,w1,w2,dmin,dmax,DoPlot)
  if nargin<3, w2=1;end 
  if nargin<4, dmin=min(d(:));end 
  if nargin<5, dmax=max(d(:));end 
- 
+ if nargin<6, 
+     style='nearest';%  - nearest neighbor interpolation
+     style='linear';%   - linear interpolation
+  end
+ o_nscore.style=style;
 d_in=d;  
   
   
@@ -88,12 +95,7 @@ if DoPlot==1,
   hist(d_in)
   xlabel('X');title('orig data')
   ylabel('PDF')
-  subplot(3,2,2)
-  hist(normscore)
-  xlabel('X, normal score transformed');
-  ylabel('PDF')
-  title('Normal Score Data')
-
+ 
   subplot(2,2,2)
   hist(normscore)
   xlabel('NS(X)');
@@ -117,8 +119,7 @@ if exist('w1')
     dmin=min(d)-1e-9;
   end
   d1=min(d); 
-  
-  if abs(min(d)-dmin)/dmin<1e-9
+  if abs(min(d)-dmin)/abs(dmin)<1e-9
       nbin=0;
   else
       nbin=10;
@@ -177,11 +178,17 @@ s_sort=sortrows([d id]);
 d_nscore=0.*d;
 d_nscore(s_sort(:,2))=normscore;
 
+doSmooth=0;
+if doSmooth==1;
+    % TODO
+    keyboard
+    
+end
 
 
 if DoPlot==1,
 
-  subplot(2,1,2)
+  subplot(2,2,[3,4])
   plot(sd,pk,'r-*','MarkerSize',8)
   hold on
   plot(sd_org,pk_org,'kd','MarkerSize',10)
@@ -189,7 +196,7 @@ if DoPlot==1,
   xlabel('X');
   ylabel('CPDF')
   title('ORIG CDF')
-  legend('ORG+Head+Tail','ORIGINAL',4)
+  legend('ORG+Head+Tail','ORIGINAL','Location','NorthEast')
 
 end
 
