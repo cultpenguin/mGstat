@@ -24,8 +24,8 @@
 % OUTPUT PARAMETERS
 %
 % d_nscore : normal score transform of input data
-% o_nscore : normal socre object containing information 
-%            needed to perform normal score backtransform. 
+% o_nscore : normal socre object containing information
+%            needed to perform normal score backtransform.
 %
 %
 % See also : inscore
@@ -33,40 +33,54 @@
 function [normscore_org,o_nscore]=nscore(d,w1,w2,dmin,dmax,style,DoPlot)
 
 %% FOWARD NORMAL SCORE
- if nargin==2,
-     if isstruct(w1);
-         o_nscore=w1;
-         % TODO: ALLOW DIFFERENT TYPE OF INTERPOLATION
-         if ~isfield(o_nscore,'style');
-             o_nscore.style='nearest';
-         end
-         normscore_org=interp1(o_nscore.sd,o_nscore.normscore,d,o_nscore.style);
-         return
-         
-     end
- end
+if nargin==2,
+    if isstruct(w1);
+        o_nscore=w1;
+        % TODO: ALLOW DIFFERENT TYPE OF INTERPOLATION
+        if ~isfield(o_nscore,'style');
+            o_nscore.style='nearest';
+        end
+        normscore_org=interp1(o_nscore.sd,o_nscore.normscore,d,o_nscore.style,'extrap');
+        
+        % CHECK 
+        % i_high = find(d>o_nscore.sd(end));
+        % i_low = find(d<o_nscore.sd(1));
+        % normscore_org(i_high) = o_nscore.normscore(end);
+        % normscore_org(i_low) = o_nscore.normscore(1);
+        
+        return
 
- %% NORMAL SCORE TRANSFORM SETUP
- 
-         
- if nargin<7
-   DoPlot=0;
- end
+    end
+end
 
- if nargin<2, w1=1;end 
- if nargin<3, w2=1;end 
- if nargin<4, dmin=min(d(:));end 
- if nargin<5, dmax=max(d(:));end 
- if nargin<6, 
-     style='nearest';%  - nearest neighbor interpolation
-     style='linear';%   - linear interpolation
-  end
- o_nscore.style=style;
-d_in=d;  
-  
-  
+%% NORMAL SCORE TRANSFORM SETUP
 d=d(:);
 n=length(d);
+
+if length(unique(d))~=n
+    disp(sprintf('The data series is not uniqe, adding a small random value to force uniqueness.',mfilename))
+    d=d+0.000000001*std(d)*randn(size(d));
+end
+
+
+if nargin<7
+    DoPlot=0;
+end
+
+if nargin<2, w1=1;end
+if nargin<3, w2=1;end
+if nargin<4, dmin=min(d(:));end
+if nargin<5, dmax=max(d(:));end
+if nargin<6,
+    style='nearest';%  - nearest neighbor interpolation
+    style='linear';%   - linear interpolation
+end
+o_nscore.style=style;
+d_in=d;
+
+
+
+
 %Calculte normal scores
 id=[1:n]';
 pk=id./n-.5/n;
@@ -86,84 +100,85 @@ normscore_org(s_sort(:,2))=normscore;
 normscore_org=normscore_org(:);
 
 
-
 if DoPlot==1,
-  sd_org=sort(d);
-  pk_org=pk;
+    sd_org=sort(d);
+    pk_org=pk;
 
-  subplot(2,2,1)
-  hist(d_in)
-  xlabel('X');title('orig data')
-  ylabel('PDF')
- 
-  subplot(2,2,2)
-  hist(normscore)
-  xlabel('NS(X)');
-  ylabel('CPDF')
-  title('NORMAL SCORE PDF')
+    subplot(2,2,1)
+    hist(d_in)
+    xlabel('X');title('orig data')
+    ylabel('PDF')
+
+    subplot(2,2,2)
+    hist(normscore)
+    xlabel('NS(X)');
+    ylabel('CPDF')
+    title('NORMAL SCORE PDF')
 
 end
 
 % lower tail
 if exist('w1')
-  if exist('dmin')==0, dmin=min(d)-1e-9;end
+    if exist('dmin')==0, dmin=min(d)-1e-9;end
 
-  if dmin>min(d)
-    disp([mfilename,' dmin is selected larger than the minimum value of data'])
-    disp(sprintf('dmin=%8.3g and min(d)=%8.3g',dmin,min(d)))
-    disp([mfilename,' THIS IS BAD'])    
-    dmin=min(d);
-    disp(sprintf('NOW USING dmin=%8.3g',dmin))
-  end
-  if dmin==min(d)
-    dmin=min(d)-1e-9;
-  end
-  d1=min(d); 
-  if abs(min(d)-dmin)/abs(dmin)<1e-9
-      nbin=0;
-  else
-      nbin=10;
-  end
-  
-  pk1=min(pk);
-  
-  dlow=linspace(dmin,d1,nbin+1);
-  dlow=dlow(1:nbin);
-  pklow=pk1.*((dlow-dmin)./(d1-dmin)).^(w1);
-  
-  d=[dlow(:);d];
-  pk=[pklow(:);pk];
+    if dmin>min(d)
+        disp([mfilename,' dmin is selected larger than the minimum value of data'])
+        disp(sprintf('dmin=%8.3g and min(d)=%8.3g',dmin,min(d)))
+        disp([mfilename,' THIS IS BAD'])
+        dmin=min(d);
+        disp(sprintf('NOW USING dmin=%8.3g',dmin))
+    end
+    if dmin==min(d)
+        dmin=min(d)-1e-9;
+    end
+    d1=min(d);
+    if abs(min(d)-dmin)/abs(dmin)<1e-9
+        nbin=0;
+    else
+        nbin=10;
+    end
+
+    pk1=min(pk);
+
+    dlow=linspace(dmin,d1,nbin+1);
+    dlow=dlow(1:nbin);
+    pklow=pk1.*((dlow-dmin)./(d1-dmin)).^(w1);
+
+    d=[dlow(:);d];
+    pk=[pklow(:);pk];
 
 end
 
 % upper tail
 if exist('w2')
-  if dmax<max(d)
-    disp([mfilename,' dmax is selected smaller than the maximum value of data'])
-    disp(sprintf('dmax=%8.3g and max(d)=%8.3g',dmax,max(d)))
-    disp([mfilename,' THIS IS BAD'])
-    dmax=max(d);
-    disp(sprintf('NOW USING dmax=%8.3g',dmax))
-  end
-  if dmax==max(d) 
-    dmax=max(d)+1e-9;
-  end
-  
-  if abs(max(d)-dmax)/dmax<1e-9
-      nbin=0;
-  else
-      nbin=10;
-  end
-  
-  dk=max(d);
-  pkk=max(pk);
-  dhigh=linspace(dk,dmax,nbin+1);
-  dhigh=dhigh(2:(nbin+1));
-  
-  pkhigh=pkk + (1-pkk).*((dhigh-dk)./(dmax-dk)).^(w2);
-  
-  d=[d;dhigh(:)];
-  pk=[pk;pkhigh(:)];
+    if dmax<max(d)
+        disp([mfilename,' dmax is selected smaller than the maximum value of data'])
+        disp(sprintf('dmax=%8.3g and max(d)=%8.3g',dmax,max(d)))
+        disp([mfilename,' THIS IS BAD'])
+        dmax=max(d);
+        disp(sprintf('NOW USING dmax=%8.3g',dmax))
+    end
+    if dmax==max(d)
+        dmax=max(d)+1e-9;
+    end
+
+    if abs(max(d)-dmax)/abs(dmax)<1e-9
+        nbin=0;
+    else
+        nbin=10;
+    end
+
+    dk=max(d);
+    pkk=max(pk);
+    dhigh=linspace(dk,dmax,nbin+1);
+    dhigh=dhigh(2:(nbin+1));
+
+    pkhigh=pkk + .999999*(1-pkk).*((dhigh-dk)./(dmax-dk)).^(w2);
+    
+    d=[d;dhigh(:)];
+    pk=[pk;pkhigh(:)];
+    
+    
 end
 
 
@@ -182,21 +197,21 @@ doSmooth=0;
 if doSmooth==1;
     % TODO
     keyboard
-    
+
 end
 
 
 if DoPlot==1,
 
-  subplot(2,2,[3,4])
-  plot(sd,pk,'r-*','MarkerSize',8)
-  hold on
-  plot(sd_org,pk_org,'kd','MarkerSize',10)
-  hold off
-  xlabel('X');
-  ylabel('CPDF')
-  title('ORIG CDF')
-  legend('ORG+Head+Tail','ORIGINAL','Location','NorthEast')
+    subplot(2,2,[3,4])
+    plot(sd,pk,'r-*','MarkerSize',8)
+    hold on
+    plot(sd_org,pk_org,'kd','MarkerSize',10)
+    hold off
+    xlabel('X');
+    ylabel('CPDF')
+    title('ORIG CDF')
+    legend('ORG+Head+Tail','ORIGINAL','Location','NorthEast')
 
 end
 
