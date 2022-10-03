@@ -43,10 +43,10 @@ if nargin==2,
         normscore_org=interp1(o_nscore.sd,o_nscore.normscore,d,o_nscore.style,'extrap');
         %keyboard
         % CHECK 
-        %i_high = find(d>o_nscore.dmax);
-        %i_low = find(d<o_nscore.dmin);
-        %normscore_org(i_high) = o_nscore.normscore(end);
-        %normscore_org(i_low) = o_nscore.normscore(1);
+        i_high = find(d>o_nscore.dmax);
+        i_low = find(d<o_nscore.dmin);
+        normscore_org(i_high) = o_nscore.normscore(end);
+        normscore_org(i_low) = o_nscore.normscore(1);
         
         return
 
