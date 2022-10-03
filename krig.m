@@ -66,6 +66,9 @@
 % [d_est,d_var]=krig(pos_known,val_known,pos_est,V,options);
 %
 %
+% See also sgsim
+% 
+%
 
 % TMH/2005
 %

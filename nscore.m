@@ -41,45 +41,46 @@ if nargin==2,
             o_nscore.style='nearest';
         end
         normscore_org=interp1(o_nscore.sd,o_nscore.normscore,d,o_nscore.style,'extrap');
-        
+        %keyboard
         % CHECK 
-        % i_high = find(d>o_nscore.sd(end));
-        % i_low = find(d<o_nscore.sd(1));
-        % normscore_org(i_high) = o_nscore.normscore(end);
-        % normscore_org(i_low) = o_nscore.normscore(1);
+        %i_high = find(d>o_nscore.dmax);
+        %i_low = find(d<o_nscore.dmin);
+        %normscore_org(i_high) = o_nscore.normscore(end);
+        %normscore_org(i_low) = o_nscore.normscore(1);
         
         return
 
     end
 end
 
-%% NORMAL SCORE TRANSFORM SETUP
 d=d(:);
+d_in=d;
+dstd=std(d);
 n=length(d);
 
-if length(unique(d))~=n
-    disp(sprintf('The data series is not uniqe, adding a small random value to force uniqueness.',mfilename))
-    d=d+0.000000001*std(d)*randn(size(d));
-end
-
-
+% Inputs and defaults
 if nargin<7
     DoPlot=0;
 end
 
 if nargin<2, w1=1;end
+if isempty(w1); w1=1;end
 if nargin<3, w2=1;end
-if nargin<4, dmin=min(d(:));end
-if nargin<5, dmax=max(d(:));end
+if isempty(w2); w2=1;end
+if nargin<4, dmin=min(d)-0.001*dstd;end
+if isempty(dmin); dmin=min(d(:))-0.001*dstd;end
+if nargin<5, dmax=max(d)+0.001*dstd;end
+if isempty(dmax); dmax=max(d(:))+0.001*dstd;end
 if nargin<6,
     style='nearest';%  - nearest neighbor interpolation
     style='linear';%   - linear interpolation
 end
-o_nscore.style=style;
-d_in=d;
 
-
-
+%% NORMAL SCORE TRANSFORM SETUP
+if length(unique(d))~=n
+    disp(sprintf('The data series is not uniqe, adding a small random value to force uniqueness.',mfilename))
+    d=d+1e-9*dstd*randn(size(d));
+end
 
 %Calculte normal scores
 id=[1:n]';
@@ -87,18 +88,12 @@ pk=id./n-.5/n;
 %pk=id./n; used in VISIM 1.6, DSSIM mode, for better target hist reproduction
 
 normscore=norminv(pk);
-
-n=length(d);
 id=[1:n]';
-
-normscore=norminv(pk);
 sd=sort(d);
-
 s_sort=sortrows([d id]);
 d_nscore=0.*d;
 normscore_org(s_sort(:,2))=normscore;
 normscore_org=normscore_org(:);
-
 
 if DoPlot==1,
     sd_org=sort(d);
@@ -119,8 +114,7 @@ end
 
 % lower tail
 if exist('w1')
-    if exist('dmin')==0, dmin=min(d)-1e-9;end
-
+    
     if dmin>min(d)
         disp([mfilename,' dmin is selected larger than the minimum value of data'])
         disp(sprintf('dmin=%8.3g and min(d)=%8.3g',dmin,min(d)))
@@ -136,14 +130,16 @@ if exist('w1')
         nbin=0;
     else
         nbin=10;
-    end
-
+    end    
     pk1=min(pk);
 
     dlow=linspace(dmin,d1,nbin+1);
-    dlow=dlow(1:nbin);
+    dlow=(dlow(2:end)+dlow(1:end-1))/2;
     pklow=pk1.*((dlow-dmin)./(d1-dmin)).^(w1);
-
+    %pklow=(pklow(2:end)+pklow(1:end-1))/2;
+    % dlow=dlow(1:nbin);
+    %pklow=pk1.*((dlow-dmin)./(d1-dmin)).^(w1);
+    
     d=[dlow(:);d];
     pk=[pklow(:);pk];
 
@@ -152,6 +148,7 @@ end
 % upper tail
 if exist('w2')
     if dmax<max(d)
+        keyboard
         disp([mfilename,' dmax is selected smaller than the maximum value of data'])
         disp(sprintf('dmax=%8.3g and max(d)=%8.3g',dmax,max(d)))
         disp([mfilename,' THIS IS BAD'])
@@ -164,10 +161,9 @@ if exist('w2')
 
     if abs(max(d)-dmax)/abs(dmax)<1e-9
         nbin=0;
-    else
+    else        
         nbin=10;
-    end
-
+    end    
     dk=max(d);
     pkk=max(pk);
     dhigh=linspace(dk,dmax,nbin+1);
@@ -178,7 +174,6 @@ if exist('w2')
     d=[d;dhigh(:)];
     pk=[pk;pkhigh(:)];
     
-    
 end
 
 
@@ -187,6 +182,9 @@ n=length(d);
 id=[1:n]';
 
 normscore=norminv(pk);
+if sum(isinf(normscore))>0
+    keyboard
+end
 sd=sort(d);
 
 s_sort=sortrows([d id]);
@@ -197,7 +195,6 @@ doSmooth=0;
 if doSmooth==1;
     % TODO
     keyboard
-
 end
 
 
@@ -216,7 +213,14 @@ if DoPlot==1,
 end
 
 
+o_nscore.style=style;
+o_nscore.w1=w1;
+o_nscore.w2=w2;
+o_nscore.dmin=dmin;
+o_nscore.dmax=dmax;
 o_nscore.sd=sd;
 o_nscore.pk=pk;
 o_nscore.d=d;
 o_nscore.normscore=normscore;
+
+
