@@ -41,6 +41,7 @@ if length(lim)<3, lim(3)=lim(2);end
 
 [xx,yy,zz]=meshgrid(S.x,S.y,S.z);
 
+
 if resim_type==2;
     % RANDOM SELECTION OF MODEL PARAMETERS FOR RESIM
     N=prod(size(xx));
