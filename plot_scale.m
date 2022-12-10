@@ -18,26 +18,21 @@
 %
 %
 
-function plot_scale(ax,len,pos,FS)
+function plot_scale(ax,len,pos,FS,txt)
 
+    if nargin==0
+        ax=gca;
+    end
     if nargin==1
     end
 
-    if nargin<4
-        FS=6;
-    end
-    
-    if nargin<3
-        pos=3;
-    end
-    
+    if nargin<3, pos=3;end
+    if nargin<4, FS=6; end
+    if nargin<5, txt=''; end
     
     
     dc=0.05;
     
-    if nargin==0
-        ax=gca;
-    end
     
     Xlim = get(ax,'Xlim');
     Ylim = get(ax,'Ylim');
@@ -84,21 +79,37 @@ function plot_scale(ax,len,pos,FS)
         yc=1-dc-ly;
         zc=dc;
     end
+    if isempty(txt)
+        txt_x=num2str(lenx);
+        txt_y=num2str(lenx);        
+    else
+        txt_x=txt;txt_y=txt;
+    end
     
-    
-    
+
+    plot_xscale=1;
+    plot_yscale=0;
     % X-scale
-    plot([Xlim(1)+xc*dx Xlim(1)+(xc+lx)*dx],[1 1].*(Ylim(1)+yc*dy),'k-')
-    tx=text([Xlim(1)+xc*dx]+dx*lx/2,(Ylim(1)+yc*dy),num2str(lenx));
-    set(tx,'HorizontalAlignment','Center')
-    set(tx,'VerticalAlignment','Top')
-    set(tx,'FontSize',FS,'FontName','Arial')
-    
+    if plot_xscale==1;
+        y0=(Ylim(1)+yc*dy);
+        plot([Xlim(1)+xc*dx Xlim(1)+(xc+lx)*dx],[1 1].*y0,'k-')
+        tx=text([Xlim(1)+xc*dx]+dx*lx/2,(Ylim(1)+yc*dy),txt_x);
+        set(tx,'HorizontalAlignment','Center')
+        set(tx,'VerticalAlignment','Top')
+        set(tx,'FontSize',FS,'FontName','Arial')        
+        if plot_yscale==0;           
+            x1=Xlim(1)+xc*dx;
+            x2=Xlim(1)+(xc+lx)*dx;
+            plot([1 1].*x1,[-1 1].*(0.10*(x2-x1))+y0,'k-')
+            plot([1 1].*x2,[-1 1].*(0.10*(x2-x1))+y0,'k-')        
+        end
+    end
     % Y-scale
-    plot([1 1].*(Xlim(1)+xc*dx),[Ylim(1)+yc*dy Ylim(1)+(yc+ly)*dy],'k-')
-    ty=text([Xlim(1)+xc*dx],(Ylim(1)+yc*dy)+dy*ly/2,num2str(leny));
-    set(ty,'HorizontalAlignment','Center')
-    set(ty,'VerticalAlignment','Bottom')
-    set(ty,'FontSize',FS,'FontName','Arial')
-    set(ty,'Rotation',90)
-    
+    if plot_yscale==1;
+        plot([1 1].*(Xlim(1)+xc*dx),[Ylim(1)+yc*dy Ylim(1)+(yc+ly)*dy],'k-')
+        ty=text([Xlim(1)+xc*dx],(Ylim(1)+yc*dy)+dy*ly/2,txt_y);
+        set(ty,'HorizontalAlignment','Center')
+        set(ty,'VerticalAlignment','Bottom')
+        set(ty,'FontSize',FS,'FontName','Arial')
+        set(ty,'Rotation',90)
+    end
