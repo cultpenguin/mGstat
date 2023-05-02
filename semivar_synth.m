@@ -25,9 +25,6 @@
 %
 function [sv,d]=semivar_synth(V,d,gstat,nugtype);
   
-  %% UPDATE TO WORK FOR 2D PROBLEMS !!!
-  %%
-  
   if nargin<3
     gstat=0;
     % GET FORMAT FROM ENV VARIABLE IF IOT EXISTS
@@ -90,26 +87,26 @@ function [sgamma,h]=synthetic_variogram(V,h,gstat)
       nu=0.5;
   end
   
-  if strmatch(type,'Nug')
+  if strmatch(lower(type),'nug')
     mgstat_verbose('Nug',12);
     sgamma=h.*0+v1;
     sgamma(find(h==0))=0;
-  elseif strmatch(type,'iNug')
+  elseif strmatch(lower(type),'inug')
     mgstat_verbose('iNug',-12);
     sgamma=h.*0+v1;    
     %% SEE GSTAT MANUAL FOR TYPES....
-  elseif strmatch(type,'Sph')
+  elseif strmatch(lower(type),'sph')
     mgstat_verbose('Sph',12);
     sgamma(s1)=v1.*(1.5*abs(h(s1))/(v2) - .5* (h(s1)./v2).^3);
     sgamma(s2)=v1;
-  elseif strmatch(type,'Gau')
+  elseif strmatch(lower(type),'gau')
     mgstat_verbose('Gau',12);
     if gstat==0
       sgamma=v1.*(1-exp(-3*h.^2/v2.^2)); % GSLIB2/Goovaerts
     else
       sgamma=v1.*(1-exp(-h.^2/v2.^2)); % GSTAT
     end
-  elseif strmatch(type,'Lin')
+  elseif strmatch(lower(type),'lin')
     mgstat_verbose('Lin',12);
     if v2==0,
       sgamma=v1.*h;
@@ -118,25 +115,25 @@ function [sgamma,h]=synthetic_variogram(V,h,gstat)
       sgamma(s2)=1;
       sgamma=sgamma.*v1;
     end
-  elseif strmatch(type,'Log')
+  elseif strmatch(lower(type),'log')
     mgstat_verbose(type,12);
     sgamma=log(h+v2);
-  elseif strmatch(type,'Pow')
+  elseif strmatch(lower(type),'pow')
     mgstat_verbose(type,12);
     sgamma=h.^v2;
-  elseif strmatch(type,'Exp')
+  elseif strmatch(lower(type),'exp')
     mgstat_verbose(type,12);
     if gstat==0
       sgamma=v1.*(1-exp(-3*h./v2)); % GSLIB2/Goovaerts
     else
       sgamma=v1.*(1-exp(-h./v2)); % GSTAT
     end
-  elseif strmatch(type,'Bal')
+  elseif strmatch(lower(type),'bal')
         % BALGOVIND, Daley, Atmospheric Data Analysis, (4.3.20), page 117
         sgamma = v1.*(1-(1+abs(h)./v2).*exp(-1.*(abs(h)./v2)));
-  elseif strmatch(type,'Thie')
+  elseif strmatch(lower(type),'thi')
         % THIBEAUX, Daley, Atmospheric Data Analysis, (4.3.18), page 117
-        c=3;
+        c=nu;
         sgamma = (cos(c*h) + sin(c*h)./(v2.*c)).*exp(-1.*h./v2);
         sgamma= v1.*(1-sgamma);
   elseif strmatch(type,'Mat')
