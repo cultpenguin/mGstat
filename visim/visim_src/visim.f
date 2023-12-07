@@ -59,11 +59,7 @@ c
 c
 c Read the parameters and data (transform as required):
 c
-
-
-
       call readparm
-
 
 c
 c Create Conditional Prob Lookup Table

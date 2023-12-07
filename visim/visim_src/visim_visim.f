@@ -129,6 +129,25 @@ c      implicit none
       integer n_mean, n_var
 
       character tmpfl*80
+
+      REAL, ALLOCATABLE :: X2(:), Y2(:), Z2(:)
+      INTEGER :: N_X, N_Y, N_Z
+
+      ! Determine the required sizes (e.g., based on input or computation)
+      N_X = 201
+      N_Y = 201
+      N_Z = 1
+
+      ! Allocate the arrays
+      ALLOCATE(X2(N_X), Y2(N_Y), Z2(N_Z))
+
+      ! ... use the arrays ...
+
+      ! Deallocate the arrays when done
+      DEALLOCATE(X2, Y2, Z2)
+
+
+
 c      integer lout_krig
 
 c
@@ -169,8 +188,6 @@ c     Set up the covariance table and the spiral search:
 c
 
       call ctable
-
-
 
 c     In the case of a collocated cokriging, secondary variable is avalaible
 c     at every grid for each realization.  Read in the secondary data
