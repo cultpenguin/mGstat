@@ -38,11 +38,13 @@ c-----------------------------------------------------------------------
 c
 c User Adjustable Parameters:
 c
-      integer MAXX, MAXY, MAXZ, MAXCTX, MAXCTY, MAXCTZ
+      integer MAXX, MAXY, MAXZ
+      integer MAXCTX, MAXCTY, MAXCTZ
       integer MAXSBX, MAXSBY, MAXSBZ, MAXDAT, MAXNOD, MAXSAM
       integer MAXNST, MAXREF, MAXCAT, MV, MAXVOLS, MAXDINVOL
 
-      parameter(MAXX   =   201, MAXY   = 201, MAXZ   = 1,
+
+      parameter(MAXX = 201, MAXY   = 201, MAXZ   = 1,
      +          MAXCTX =  MAXX, MAXCTY =MAXY, MAXCTZ =MAXZ,
      +          MAXSBX =    21, MAXSBY =  21, MAXSBZ = 11,
      +          MAXDAT = 50000, MAXNOD =  1448, MAXSAM = 148,

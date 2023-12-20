@@ -41,9 +41,9 @@ if isoctave==1
      end
 end
 
-succ=savepath;
-if succ==0
-    mgstat_verbose(sprintf('%s : saved path for later session',mfilename),0)
-else
-    mgstat_verbose(sprintf('%s : COULD NOT SAVE PATH for later session',mfilename),0)
-end
+%succ=savepath;
+%if succ==0
+%    mgstat_verbose(sprintf('%s : saved path for later session',mfilename),0)
+%else
+%    mgstat_verbose(sprintf('%s : COULD NOT SAVE PATH for later session',mfilename),0)
+%end
